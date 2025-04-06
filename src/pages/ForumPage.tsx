@@ -45,7 +45,7 @@ const POSTS = [
       avatar: "/placeholder.svg",
     },
     timeAgo: "2d ago",
-    category: "Animals",
+    category: "Animals & Pets",
     content: "Spotted this rare bird in the park today. The scanner identified it as a Northern Flicker!",
     likes: 15,
     comments: 7,
@@ -54,8 +54,12 @@ const POSTS = [
   }
 ];
 
-// Category options for filtering
-const CATEGORIES = ["All", "Plants", "Gardening", "Nature", "Food", "Animals"];
+// Updated category options for filtering
+const CATEGORIES = [
+  "All", "Plants", "Gardening", "Nature", "Food", "Healthy Recipes", 
+  "Nutrition Tips", "Cooking", "Kitchen", "Animals & Pets", "DIY", 
+  "Home", "Decor", "Travel", "Questions", "Product Talk"
+];
 
 export const ForumPage = () => {
   const navigate = useNavigate();
@@ -131,7 +135,7 @@ export const ForumPage = () => {
   };
   
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 pb-20">
+    <div className="flex flex-col min-h-screen bg-gray-100 pb-20">
       {/* Header - Using the same header as home page */}
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
         <div className="w-6"></div> {/* Empty div for spacing */}
@@ -155,13 +159,13 @@ export const ForumPage = () => {
       {/* Tab Navigation */}
       <div className="flex border-b border-gray-200 bg-white">
         <button
-          className={`flex-1 py-3 font-medium text-lg ${activeTab === "all" ? "text-wayscanner-blue border-b-2 border-wayscanner-blue" : "text-gray-500"}`}
+          className={`flex-1 py-3 font-medium ${activeTab === "all" ? "text-wayscanner-blue border-b-2 border-wayscanner-blue" : "text-gray-500"}`}
           onClick={() => handleTabChange("all")}
         >
           <span className="text-[18px]">All Posts</span>
         </button>
         <button
-          className={`flex-1 py-3 font-medium text-lg ${activeTab === "my" ? "text-wayscanner-blue border-b-2 border-wayscanner-blue" : "text-gray-500"}`}
+          className={`flex-1 py-3 font-medium ${activeTab === "my" ? "text-wayscanner-blue border-b-2 border-wayscanner-blue" : "text-gray-500"}`}
           onClick={() => handleTabChange("my")}
         >
           <span className="text-[18px]">My Posts</span>
@@ -208,8 +212,11 @@ export const ForumPage = () => {
                   <span className="text-gray-500 text-sm">{post.timeAgo}</span>
                   <span className={`ml-2 px-3 py-1 rounded-full text-xs ${
                     post.category === "Plants" ? "bg-green-100 text-green-700" : 
-                    post.category === "Food" ? "bg-red-100 text-red-700" : 
-                    post.category === "Animals" ? "bg-yellow-100 text-yellow-700" :
+                    post.category.includes("Food") || post.category.includes("Recipe") || post.category.includes("Cooking") || post.category.includes("Kitchen") || post.category.includes("Nutrition") ? "bg-red-100 text-red-700" : 
+                    post.category.includes("Animals") || post.category.includes("Pets") ? "bg-yellow-100 text-yellow-700" :
+                    post.category === "Travel" ? "bg-purple-100 text-purple-700" :
+                    post.category.includes("DIY") || post.category.includes("Home") || post.category.includes("Decor") ? "bg-orange-100 text-orange-700" :
+                    post.category.includes("Question") ? "bg-blue-100 text-blue-700" :
                     "bg-blue-100 text-blue-700"
                   }`}>
                     {post.category}
@@ -229,7 +236,7 @@ export const ForumPage = () => {
               >
                 <Heart 
                   size={22} 
-                  className={post.liked ? "fill-red-500 text-red-500" : "text-gray-500"}
+                  className={post.liked ? "fill-red-500 text-red-500" : "text-black"}
                 />
                 <span className="ml-1 text-gray-600">{post.likes}</span>
               </button>
@@ -237,7 +244,7 @@ export const ForumPage = () => {
                 className="flex items-center mr-5"
                 onClick={() => handleCommentClick(post.id)}
               >
-                <MessageSquare size={22} className="text-gray-500" />
+                <MessageSquare size={22} className="text-black" />
                 <span className="ml-1 text-gray-600">{post.comments}</span>
               </button>
               <button 
@@ -246,7 +253,7 @@ export const ForumPage = () => {
               >
                 <Bookmark 
                   size={22} 
-                  className={post.bookmarked ? "fill-gray-700 text-gray-700" : "text-gray-500"}
+                  className={post.bookmarked ? "fill-wayscanner-blue text-wayscanner-blue" : "text-black"}
                 />
               </button>
             </div>

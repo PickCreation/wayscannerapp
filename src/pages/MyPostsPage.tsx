@@ -51,8 +51,12 @@ const MY_POSTS = [
   }
 ];
 
-// Category options for filtering
-const CATEGORIES = ["All", "Plants", "Gardening", "Nature", "Food", "Animals"];
+// Updated category options for filtering
+const CATEGORIES = [
+  "All", "Plants", "Gardening", "Nature", "Food", "Healthy Recipes", 
+  "Nutrition Tips", "Cooking", "Kitchen", "Animals & Pets", "DIY", 
+  "Home", "Decor", "Travel", "Questions", "Product Talk"
+];
 
 const MyPostsPage = () => {
   const navigate = useNavigate();
@@ -137,7 +141,7 @@ const MyPostsPage = () => {
   };
   
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 pb-20">
+    <div className="flex flex-col min-h-screen bg-gray-100 pb-20">
       {/* Header - Using the same header as home page */}
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
         <button onClick={() => navigate('/forum')} className="p-2 -ml-2">
@@ -163,13 +167,13 @@ const MyPostsPage = () => {
       {/* Tab Navigation */}
       <div className="flex border-b border-gray-200 bg-white">
         <button
-          className={`flex-1 py-3 font-medium text-lg ${activeTab === "all" ? "text-wayscanner-blue border-b-2 border-wayscanner-blue" : "text-gray-500"}`}
+          className={`flex-1 py-3 font-medium ${activeTab === "all" ? "text-wayscanner-blue border-b-2 border-wayscanner-blue" : "text-gray-500"}`}
           onClick={() => handleTabChange("all")}
         >
           <span className="text-[18px]">All Posts</span>
         </button>
         <button
-          className={`flex-1 py-3 font-medium text-lg ${activeTab === "my" ? "text-wayscanner-blue border-b-2 border-wayscanner-blue" : "text-gray-500"}`}
+          className={`flex-1 py-3 font-medium ${activeTab === "my" ? "text-wayscanner-blue border-b-2 border-wayscanner-blue" : "text-gray-500"}`}
           onClick={() => handleTabChange("my")}
         >
           <span className="text-[18px]">My Posts</span>
@@ -243,9 +247,11 @@ const MyPostsPage = () => {
                     <span className="text-gray-500 text-sm">{post.timeAgo}</span>
                     <span className={`ml-2 px-3 py-1 rounded-full text-xs ${
                       post.category === "Plants" ? "bg-green-100 text-green-700" : 
-                      post.category === "Food" ? "bg-red-100 text-red-700" : 
-                      post.category === "Animals" ? "bg-yellow-100 text-yellow-700" :
-                      post.category === "Gardening" ? "bg-blue-100 text-blue-700" :
+                      post.category.includes("Food") || post.category.includes("Recipe") || post.category.includes("Cooking") || post.category.includes("Kitchen") || post.category.includes("Nutrition") ? "bg-red-100 text-red-700" : 
+                      post.category.includes("Animals") || post.category.includes("Pets") ? "bg-yellow-100 text-yellow-700" :
+                      post.category === "Travel" ? "bg-purple-100 text-purple-700" :
+                      post.category.includes("DIY") || post.category.includes("Home") || post.category.includes("Decor") ? "bg-orange-100 text-orange-700" :
+                      post.category.includes("Question") ? "bg-blue-100 text-blue-700" :
                       "bg-blue-100 text-blue-700"
                     }`}>
                       {post.category}
@@ -266,7 +272,7 @@ const MyPostsPage = () => {
                 >
                   <Heart 
                     size={22} 
-                    className={post.liked ? "fill-red-500 text-red-500" : "text-gray-500"}
+                    className={post.liked ? "fill-red-500 text-red-500" : "text-black"}
                   />
                   <span className="ml-1 text-gray-600">{post.likes}</span>
                 </button>
@@ -275,7 +281,7 @@ const MyPostsPage = () => {
                   onClick={() => handleCommentClick(post.id)}
                   type="button"
                 >
-                  <MessageSquare size={22} className="text-gray-500" />
+                  <MessageSquare size={22} className="text-black" />
                   <span className="ml-1 text-gray-600">{post.comments}</span>
                 </button>
                 <button 
@@ -285,7 +291,7 @@ const MyPostsPage = () => {
                 >
                   <Bookmark 
                     size={22} 
-                    className={post.bookmarked ? "fill-gray-700 text-gray-700" : "text-gray-500"}
+                    className={post.bookmarked ? "fill-wayscanner-blue text-wayscanner-blue" : "text-black"}
                   />
                 </button>
               </div>

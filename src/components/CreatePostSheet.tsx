@@ -13,6 +13,13 @@ interface CreatePostSheetProps {
   onOpenChange: (open: boolean) => void;
 }
 
+// Updated category options
+const CATEGORIES = [
+  "Plants", "Gardening", "Nature", "Food", "Healthy Recipes", 
+  "Nutrition Tips", "Cooking", "Kitchen", "Animals & Pets", "DIY", 
+  "Home", "Decor", "Travel", "Questions", "Product Talk"
+];
+
 const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange }) => {
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("");
@@ -103,11 +110,9 @@ const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange })
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Plants">Plants</SelectItem>
-                <SelectItem value="Gardening">Gardening</SelectItem>
-                <SelectItem value="Nature">Nature</SelectItem>
-                <SelectItem value="Food">Food</SelectItem>
-                <SelectItem value="Animals">Animals</SelectItem>
+                {CATEGORIES.map(cat => (
+                  <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
