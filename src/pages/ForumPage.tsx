@@ -121,6 +121,15 @@ export const ForumPage = () => {
     setShowCameraSheet(true);
   };
   
+  // Navigate to My Posts page
+  const handleTabChange = (tab: "all" | "my") => {
+    if (tab === "my") {
+      navigate('/forum/my-posts');
+      return;
+    }
+    setActiveTab(tab);
+  };
+  
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 pb-20">
       {/* Header - Using the same header as home page */}
@@ -147,15 +156,15 @@ export const ForumPage = () => {
       <div className="flex border-b border-gray-200 bg-white">
         <button
           className={`flex-1 py-3 font-medium text-lg ${activeTab === "all" ? "text-wayscanner-blue border-b-2 border-wayscanner-blue" : "text-gray-500"}`}
-          onClick={() => setActiveTab("all")}
+          onClick={() => handleTabChange("all")}
         >
-          All Posts
+          <span className="text-[18px]">All Posts</span>
         </button>
         <button
           className={`flex-1 py-3 font-medium text-lg ${activeTab === "my" ? "text-wayscanner-blue border-b-2 border-wayscanner-blue" : "text-gray-500"}`}
-          onClick={() => setActiveTab("my")}
+          onClick={() => handleTabChange("my")}
         >
-          My Posts
+          <span className="text-[18px]">My Posts</span>
         </button>
       </div>
       
@@ -184,7 +193,7 @@ export const ForumPage = () => {
       {/* Posts List */}
       <div className="flex-1 p-3 space-y-4">
         {posts.map(post => (
-          <div key={post.id} className="bg-white rounded-lg shadow p-4 border border-gray-100">
+          <div key={post.id} className="bg-white rounded-lg shadow p-4 border border-gray-200">
             {/* Post Header - Author & Time */}
             <div className="flex items-center mb-3">
               <Avatar className="h-12 w-12 mr-3">
@@ -194,7 +203,7 @@ export const ForumPage = () => {
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h3 className="font-medium text-lg text-gray-800">{post.author.name}</h3>
+                <h3 className="font-medium text-[16px] text-gray-800">{post.author.name}</h3>
                 <div className="flex items-center">
                   <span className="text-gray-500 text-sm">{post.timeAgo}</span>
                   <span className={`ml-2 px-3 py-1 rounded-full text-xs ${
@@ -210,7 +219,7 @@ export const ForumPage = () => {
             </div>
             
             {/* Post Content */}
-            <p className="text-gray-700 mb-4">{post.content}</p>
+            <p className="text-[14px] text-gray-700 mb-4">{post.content}</p>
             
             {/* Post Actions */}
             <div className="flex items-center border-t border-gray-100 pt-3">

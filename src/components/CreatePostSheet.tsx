@@ -73,7 +73,7 @@ const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange })
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="px-4 pb-6">
         <DrawerHeader className="border-b pb-4">
-          <DrawerTitle className="text-center text-xl">Create Post</DrawerTitle>
+          <DrawerTitle className="text-center text-[16px]">Create Post</DrawerTitle>
           <DrawerDescription className="sr-only">Create a new forum post</DrawerDescription>
           <DrawerClose className="absolute right-4 top-4">
             <X className="h-5 w-5" />
@@ -159,7 +159,7 @@ const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange })
           
           {/* Submit button */}
           <Button
-            className="w-full bg-wayscanner-blue hover:bg-blue-700 py-6 text-lg font-medium"
+            className="w-full bg-wayscanner-blue hover:bg-blue-700 py-6 text-[16px] font-medium"
             onClick={handleSubmit}
             type="button"
           >
