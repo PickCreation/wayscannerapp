@@ -125,7 +125,7 @@ const EditPreferencesSheet: React.FC<EditPreferencesSheetProps> = ({
 
           <div className="pt-4 pb-10">
             <button
-              className="w-full py-3 bg-wayscanner-blue text-white rounded-lg font-semibold mb-10"
+              className="w-full py-3 bg-wayscanner-blue text-white rounded-lg font-semibold"
               onClick={handleSave}
             >
               Save Preferences
