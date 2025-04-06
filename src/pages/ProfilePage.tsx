@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { 
   ArrowLeft, Edit, Lock, Store, Bookmark, Heart, 
@@ -255,29 +256,47 @@ const ProfilePage = () => {
         </button>
       </div>
 
+      {/* Account Settings - Only show certain items when logged in */}
       <div className="px-4 pb-2">
         <h3 className="text-base font-semibold mb-3">Account Settings</h3>
         
-        <ProfileMenuItem 
-          icon={<Edit className="h-5 w-5 text-wayscanner-blue" />} 
-          title="Edit Profile" 
-          description="Update your personal information"
-          onClick={() => handleMenuItemClick("Edit Profile")}
-        />
+        {isAuthenticated && (
+          <>
+            <ProfileMenuItem 
+              icon={<Edit className="h-5 w-5 text-wayscanner-blue" />} 
+              title="Edit Profile" 
+              description="Update your personal information"
+              onClick={() => handleMenuItemClick("Edit Profile")}
+            />
+            
+            <ProfileMenuItem 
+              icon={<Lock className="h-5 w-5 text-wayscanner-blue" />} 
+              title="Change Password" 
+              description="Update your password"
+              onClick={() => handleMenuItemClick("Change Password")}
+            />
+            
+            <ProfileMenuItem 
+              icon={<Store className="h-5 w-5 text-wayscanner-blue" />} 
+              title="Seller Dashboard" 
+              description="Manage your store and products"
+              onClick={() => handleMenuItemClick("Seller Dashboard")}
+            />
+          </>
+        )}
         
-        <ProfileMenuItem 
-          icon={<Lock className="h-5 w-5 text-wayscanner-blue" />} 
-          title="Change Password" 
-          description="Update your password"
-          onClick={() => handleMenuItemClick("Change Password")}
-        />
-        
-        <ProfileMenuItem 
-          icon={<Store className="h-5 w-5 text-wayscanner-blue" />} 
-          title="Seller Dashboard" 
-          description="Manage your store and products"
-          onClick={() => handleMenuItemClick("Seller Dashboard")}
-        />
+        {!isAuthenticated && (
+          <div className="flex justify-center py-2">
+            <Button 
+              variant="outline" 
+              className="text-wayscanner-blue" 
+              onClick={handleLoginClick}
+            >
+              <LogIn className="mr-2 h-4 w-4" />
+              Login to access settings
+            </Button>
+          </div>
+        )}
       </div>
 
       <div className="px-4 pb-2">
@@ -304,19 +323,23 @@ const ProfilePage = () => {
           onClick={() => handleMenuItemClick("Cart")}
         />
         
-        <ProfileMenuItem 
-          icon={<Truck className="h-5 w-5 text-wayscanner-blue" />} 
-          title="My Orders" 
-          description="Track your orders"
-          onClick={() => handleMenuItemClick("Orders")}
-        />
+        {isAuthenticated && (
+          <>
+            <ProfileMenuItem 
+              icon={<Truck className="h-5 w-5 text-wayscanner-blue" />} 
+              title="My Orders" 
+              description="Track your orders"
+              onClick={() => handleMenuItemClick("Orders")}
+            />
 
-        <ProfileMenuItem 
-          icon={<Package className="h-5 w-5 text-wayscanner-blue" />} 
-          title="My Purchases" 
-          description="View your purchase history"
-          onClick={() => handleMenuItemClick("Purchases")}
-        />
+            <ProfileMenuItem 
+              icon={<Package className="h-5 w-5 text-wayscanner-blue" />} 
+              title="My Purchases" 
+              description="View your purchase history"
+              onClick={() => handleMenuItemClick("Purchases")}
+            />
+          </>
+        )}
         
         <ProfileMenuItem 
           icon={<Ticket className="h-5 w-5 text-wayscanner-blue" />} 
@@ -326,23 +349,25 @@ const ProfilePage = () => {
         />
       </div>
 
-      <div className="px-4 pb-2">
-        <h3 className="text-base font-semibold mb-3">Payment & Shipping</h3>
-        
-        <ProfileMenuItem 
-          icon={<MapPin className="h-5 w-5 text-wayscanner-blue" />} 
-          title="My Addresses" 
-          description="Manage your shipping addresses"
-          onClick={() => handleMenuItemClick("Addresses")}
-        />
-        
-        <ProfileMenuItem 
-          icon={<CreditCard className="h-5 w-5 text-wayscanner-blue" />} 
-          title="Payment Methods" 
-          description="Manage your payment options"
-          onClick={() => handleMenuItemClick("Payment Methods")}
-        />
-      </div>
+      {isAuthenticated && (
+        <div className="px-4 pb-2">
+          <h3 className="text-base font-semibold mb-3">Payment & Shipping</h3>
+          
+          <ProfileMenuItem 
+            icon={<MapPin className="h-5 w-5 text-wayscanner-blue" />} 
+            title="My Addresses" 
+            description="Manage your shipping addresses"
+            onClick={() => handleMenuItemClick("Addresses")}
+          />
+          
+          <ProfileMenuItem 
+            icon={<CreditCard className="h-5 w-5 text-wayscanner-blue" />} 
+            title="Payment Methods" 
+            description="Manage your payment options"
+            onClick={() => handleMenuItemClick("Payment Methods")}
+          />
+        </div>
+      )}
 
       <div className="px-4 pb-2">
         <h3 className="text-base font-semibold mb-3">Preferences & Support</h3>

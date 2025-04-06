@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, Heart, Bookmark, Send, Bell, User } from "lucide-react";
+import { ChevronLeft, Heart, Bookmark, Send, Bell, User, LogIn } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useParams } from "react-router-dom";
@@ -7,15 +7,19 @@ import { Input } from "@/components/ui/input";
 import BottomNavigation from "@/components/BottomNavigation";
 import { useToast } from "@/hooks/use-toast";
 import CameraSheet from "@/components/CameraSheet";
+import LoginDialog from "@/components/LoginDialog";
+import { useAuth } from "@/hooks/use-auth";
 
 const PostDetailPage = () => {
   const navigate = useNavigate();
   const params = useParams();
   const { toast } = useToast();
+  const { isAuthenticated } = useAuth();
   const [post, setPost] = useState<any>(null);
   const [comments, setComments] = useState<any[]>([]);
   const [newComment, setNewComment] = useState("");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
@@ -40,6 +44,11 @@ const PostDetailPage = () => {
   
   const handleLikePost = () => {
     if (!post) return;
+    
+    if (!isAuthenticated) {
+      setShowLoginDialog(true);
+      return;
+    }
     
     setPost((prev: any) => {
       const newLikes = prev.likes + (prev.liked ? -1 : 1);
@@ -71,6 +80,11 @@ const PostDetailPage = () => {
   const handleBookmarkPost = () => {
     if (!post) return;
     
+    if (!isAuthenticated) {
+      setShowLoginDialog(true);
+      return;
+    }
+    
     setPost((prev: any) => ({ ...prev, bookmarked: !prev.bookmarked }));
     
     const savedPosts = localStorage.getItem('forumPosts');
@@ -94,6 +108,11 @@ const PostDetailPage = () => {
 
   const handleSubmitComment = () => {
     if (!newComment.trim() || !post) return;
+    
+    if (!isAuthenticated) {
+      setShowLoginDialog(true);
+      return;
+    }
 
     const newCommentObj = {
       id: `c${Date.now()}`,
@@ -139,6 +158,10 @@ const PostDetailPage = () => {
       title: "Comment posted",
       description: "The author has been notified",
     });
+  };
+
+  const handleLoginClick = () => {
+    setShowLoginDialog(true);
   };
 
   const handleProfileClick = () => {
@@ -292,20 +315,30 @@ const PostDetailPage = () => {
             )}
           </div>
           
-          <div className="flex space-x-2">
-            <Input
-              value={newComment}
-              onChange={e => setNewComment(e.target.value)}
-              placeholder="Add a comment..."
-              className="flex-1"
-            />
-            <Button onClick={handleSubmitComment} size="icon" type="button">
-              <Send size={18} />
-            </Button>
-          </div>
+          {isAuthenticated ? (
+            <div className="flex space-x-2">
+              <Input
+                value={newComment}
+                onChange={e => setNewComment(e.target.value)}
+                placeholder="Add a comment..."
+                className="flex-1"
+              />
+              <Button onClick={handleSubmitComment} size="icon" type="button">
+                <Send size={18} />
+              </Button>
+            </div>
+          ) : (
+            <div className="text-center py-2">
+              <Button onClick={handleLoginClick} className="gap-2" type="button">
+                <LogIn size={16} />
+                Login to comment
+              </Button>
+            </div>
+          )}
         </div>
       </div>
       
+      <LoginDialog open={showLoginDialog} onOpenChange={setShowLoginDialog} />
       <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
       
       <BottomNavigation

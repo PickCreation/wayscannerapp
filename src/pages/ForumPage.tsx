@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Heart, MessageSquare, Bookmark, Bell, User } from "lucide-react";
+import { Heart, MessageSquare, Bookmark, Bell, User, LogIn } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
 import BottomNavigation from "@/components/BottomNavigation";
 import { useToast } from "@/hooks/use-toast";
 import CreatePostSheet from "@/components/CreatePostSheet";
 import CameraSheet from "@/components/CameraSheet";
+import LoginDialog from "@/components/LoginDialog";
+import { useAuth } from "@/hooks/use-auth";
 
 // Sample forum data
 const INITIAL_POSTS = [
@@ -62,6 +64,7 @@ const CATEGORIES = [
 
 export const ForumPage = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState<"all" | "my">("all");
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("forum");
@@ -72,6 +75,7 @@ export const ForumPage = () => {
   });
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [showCameraSheet, setShowCameraSheet] = useState(false);
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
   const { toast } = useToast();
 
   // Save posts to localStorage whenever they change
@@ -117,6 +121,11 @@ export const ForumPage = () => {
   
   // Handle post interactions
   const handleLikePost = (postId: string) => {
+    if (!isAuthenticated) {
+      setShowLoginDialog(true);
+      return;
+    }
+    
     setPosts(posts.map(post => {
       if (post.id === postId) {
         const newLikes = post.likes + (post.liked ? -1 : 1);
@@ -132,6 +141,11 @@ export const ForumPage = () => {
   };
   
   const handleBookmarkPost = (postId: string) => {
+    if (!isAuthenticated) {
+      setShowLoginDialog(true);
+      return;
+    }
+    
     setPosts(posts.map(post => {
       if (post.id === postId) {
         return { ...post, bookmarked: !post.bookmarked };
@@ -155,12 +169,20 @@ export const ForumPage = () => {
   };
   
   const handleCameraClick = () => {
+    if (!isAuthenticated) {
+      setShowLoginDialog(true);
+      return;
+    }
     setShowCameraSheet(true);
   };
   
   // Navigate to My Posts page
   const handleTabChange = (tab: "all" | "my") => {
     if (tab === "my") {
+      if (!isAuthenticated) {
+        setShowLoginDialog(true);
+        return;
+      }
       navigate('/forum/my-posts');
       return;
     }
@@ -337,6 +359,11 @@ export const ForumPage = () => {
       {/* Camera Sheet */}
       {showCameraSheet && (
         <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
+      )}
+      
+      {/* Login Dialog */}
+      {showLoginDialog && (
+        <LoginDialog open={showLoginDialog} onOpenChange={setShowLoginDialog} />
       )}
       
       {/* Bottom Navigation */}
