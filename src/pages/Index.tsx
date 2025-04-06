@@ -3,13 +3,16 @@ import React, { useState, useEffect } from "react";
 import ScannerCard from "@/components/ScannerCard";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
+import SplashScreen from "@/components/SplashScreen";
 import { Bell, User, Utensils, Leaf, PawPrint, ShoppingBag } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { AnimatePresence } from "framer-motion";
 
 const Index = () => {
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("home");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
@@ -21,7 +24,20 @@ const Index = () => {
     if (tab) {
       navigate(`/scan?tab=${tab}`);
     }
+    
+    // Check if we've shown the splash screen before in this session
+    const hasSeenSplash = sessionStorage.getItem("hasSeenSplash");
+    if (hasSeenSplash) {
+      setShowSplash(false);
+    } else {
+      // Set session storage so we only show it once per session
+      sessionStorage.setItem("hasSeenSplash", "true");
+    }
   }, [location, navigate]);
+
+  const handleCloseSplash = () => {
+    setShowSplash(false);
+  };
 
   const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop" | "profile") => {
     setActiveNavItem(item);
@@ -77,6 +93,10 @@ const Index = () => {
 
   return (
     <div className="pb-20 bg-white min-h-screen">
+      <AnimatePresence>
+        {showSplash && <SplashScreen onClose={handleCloseSplash} />}
+      </AnimatePresence>
+
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
         <img 
           src="/lovable-uploads/8fdd5ac8-39b5-43e6-86de-c8b27715d7c8.png" 
