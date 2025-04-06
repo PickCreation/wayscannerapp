@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { ChevronLeft, Camera, Upload, Plus, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -24,8 +23,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useToast } from "@/hooks/use-toast";
+import BottomNavigation from "@/components/BottomNavigation";
+import CameraSheet from "@/components/CameraSheet";
 
-// Array of all countries
 const countries = [
   "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", 
   "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", 
@@ -78,6 +78,8 @@ const AddListingPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [images, setImages] = useState<{file: File, preview: string}[]>([]);
+  const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("shop");
+  const [showCameraSheet, setShowCameraSheet] = useState(false);
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -123,7 +125,6 @@ const AddListingPage = () => {
       return;
     }
 
-    // In a real app, this would send the data to an API
     console.log({
       ...values,
       images: images.map(img => img.preview),
@@ -134,19 +135,35 @@ const AddListingPage = () => {
       description: "Your listing has been created successfully",
     });
 
-    // Navigate back to marketplace
     setTimeout(() => {
       navigate("/marketplace");
     }, 1500);
   };
 
+  const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop") => {
+    setActiveNavItem(item);
+    
+    if (item === "home") {
+      navigate("/");
+    } else if (item === "forum") {
+      navigate("/forum");
+    } else if (item === "recipes") {
+      navigate("/recipes");
+    } else if (item === "shop") {
+      navigate("/marketplace");
+    }
+  };
+
+  const handleCameraClick = () => {
+    setShowCameraSheet(true);
+  };
+
   return (
-    <div className="pb-8 bg-white min-h-screen">
-      {/* Header */}
+    <div className="pb-20 bg-white min-h-screen">
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
         <button 
           className="p-2" 
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/marketplace")}
         >
           <ChevronLeft size={24} color="white" />
         </button>
@@ -157,7 +174,6 @@ const AddListingPage = () => {
       <div className="p-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Images Upload */}
             <div>
               <FormLabel className="block mb-2">Product Images (up to 6)</FormLabel>
               <div className="grid grid-cols-3 gap-2">
@@ -192,7 +208,6 @@ const AddListingPage = () => {
               )}
             </div>
 
-            {/* Title */}
             <FormField
               control={form.control}
               name="title"
@@ -207,7 +222,6 @@ const AddListingPage = () => {
               )}
             />
 
-            {/* Brand */}
             <FormField
               control={form.control}
               name="brand"
@@ -222,7 +236,6 @@ const AddListingPage = () => {
               )}
             />
 
-            {/* Description */}
             <FormField
               control={form.control}
               name="description"
@@ -237,7 +250,6 @@ const AddListingPage = () => {
               )}
             />
 
-            {/* Category */}
             <FormField
               control={form.control}
               name="category"
@@ -263,7 +275,6 @@ const AddListingPage = () => {
               )}
             />
 
-            {/* Condition */}
             <FormField
               control={form.control}
               name="condition"
@@ -287,7 +298,6 @@ const AddListingPage = () => {
               )}
             />
 
-            {/* Color */}
             <FormField
               control={form.control}
               name="color"
@@ -311,7 +321,6 @@ const AddListingPage = () => {
               )}
             />
 
-            {/* Price and Weight in the same row */}
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -342,7 +351,6 @@ const AddListingPage = () => {
               />
             </div>
 
-            {/* Country */}
             <FormField
               control={form.control}
               name="country"
@@ -366,7 +374,6 @@ const AddListingPage = () => {
               )}
             />
 
-            {/* Product Variations */}
             <FormField
               control={form.control}
               name="variations"
@@ -384,7 +391,6 @@ const AddListingPage = () => {
               )}
             />
 
-            {/* Submit Button */}
             <Button 
               type="submit" 
               className="w-full bg-wayscanner-blue hover:bg-blue-700 text-white"
@@ -394,6 +400,14 @@ const AddListingPage = () => {
           </form>
         </Form>
       </div>
+
+      <BottomNavigation
+        activeItem={activeNavItem}
+        onItemClick={handleNavItemClick}
+        onCameraClick={handleCameraClick}
+      />
+      
+      <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
     </div>
   );
 };

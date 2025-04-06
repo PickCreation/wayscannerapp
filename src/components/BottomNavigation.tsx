@@ -1,3 +1,4 @@
+
 import React from "react";
 import { 
   MessageCircle, 
@@ -23,7 +24,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
   const navigate = useNavigate();
   const isProfilePage = location.pathname === "/profile";
   const isRecipesPage = location.pathname.includes("/recipes");
-  const isMarketplacePage = location.pathname.includes("/marketplace");
+  const isMarketplacePage = location.pathname.includes("/marketplace") || location.pathname.includes("/add-listing");
 
   const handleRecipesClick = () => {
     navigate("/recipes");
