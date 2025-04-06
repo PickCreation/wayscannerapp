@@ -1,10 +1,10 @@
 
 import React, { useState } from "react";
-import { Drawer, DrawerContent, DrawerClose, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { Drawer, DrawerContent, DrawerClose, DrawerHeader, DrawerTitle, DrawerDescription } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { X, UploadCloud, Image } from "lucide-react";
+import { X, Image } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 
@@ -74,6 +74,7 @@ const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange })
       <DrawerContent className="px-4 pb-6">
         <DrawerHeader className="border-b pb-4">
           <DrawerTitle className="text-center text-xl">Create Post</DrawerTitle>
+          <DrawerDescription className="sr-only">Create a new forum post</DrawerDescription>
           <DrawerClose className="absolute right-4 top-4">
             <X className="h-5 w-5" />
           </DrawerClose>
@@ -131,6 +132,7 @@ const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange })
               <button
                 onClick={removeImage}
                 className="absolute top-2 right-2 bg-black bg-opacity-70 text-white p-1 rounded-full"
+                type="button"
               >
                 <X size={16} />
               </button>
@@ -159,6 +161,7 @@ const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange })
           <Button
             className="w-full bg-wayscanner-blue hover:bg-blue-700 py-6 text-lg font-medium"
             onClick={handleSubmit}
+            type="button"
           >
             Post
           </Button>

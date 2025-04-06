@@ -22,7 +22,7 @@ const POSTS = [
     likes: 2,
     comments: 2,
     bookmarked: false,
-    liked: false, // Add the liked property
+    liked: false,
   },
   {
     id: "2",
@@ -36,7 +36,7 @@ const POSTS = [
     likes: 3,
     comments: 1,
     bookmarked: false,
-    liked: false, // Add the liked property
+    liked: false,
   },
   {
     id: "3",
@@ -50,7 +50,7 @@ const POSTS = [
     likes: 15,
     comments: 7,
     bookmarked: true,
-    liked: false, // Add the liked property
+    liked: false,
   }
 ];
 
@@ -66,8 +66,8 @@ export const ForumPage = () => {
   const [showCameraSheet, setShowCameraSheet] = useState(false);
   const { toast } = useToast();
   
+  // Listen for openCreatePost event from CameraSheet
   useEffect(() => {
-    // Listen for openCreatePost event from CameraSheet
     const handleOpenCreatePost = () => {
       setShowCreatePost(true);
     };
@@ -79,6 +79,7 @@ export const ForumPage = () => {
     };
   }, []);
   
+  // Handle post interactions
   const handleLikePost = (postId: string) => {
     setPosts(posts.map(post => {
       if (post.id === postId) {
@@ -245,10 +246,14 @@ export const ForumPage = () => {
       </div>
       
       {/* Create Post Sheet */}
-      <CreatePostSheet open={showCreatePost} onOpenChange={setShowCreatePost} />
+      {showCreatePost && (
+        <CreatePostSheet open={showCreatePost} onOpenChange={setShowCreatePost} />
+      )}
       
       {/* Camera Sheet */}
-      <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
+      {showCameraSheet && (
+        <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
+      )}
       
       {/* Bottom Navigation */}
       <BottomNavigation
