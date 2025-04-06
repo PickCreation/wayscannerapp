@@ -1,6 +1,6 @@
 
 import React from "react";
-import { ChevronRight, MoreVertical, Droplets, Sun, Plant } from "lucide-react";
+import { ChevronRight, MoreVertical, Droplets, Sun, Flower } from "lucide-react";
 
 interface PlantItem {
   id: string;
@@ -71,7 +71,7 @@ const PlantScanTab = () => {
               <div className="flex space-x-4 mt-2">
                 <Droplets className="text-blue-500" size={24} />
                 <Sun className="text-yellow-500" size={24} />
-                <Plant className="text-green-500" size={24} />
+                <Flower className="text-green-500" size={24} />
               </div>
             </div>
           </div>
