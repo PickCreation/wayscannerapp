@@ -1,10 +1,10 @@
-
 import { useState, useEffect, createContext, useContext } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 interface User {
   name: string;
   email: string;
+  isAdmin?: boolean;
 }
 
 interface AuthContextType {
@@ -16,6 +16,10 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// Admin credentials
+const ADMIN_EMAIL = 'Pickcreations@gmail.com';
+const ADMIN_PASSWORD = 'Admin123!';
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -34,15 +38,51 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
     
     checkAuth();
+    
+    // Auto-login as admin for development/testing purposes
+    // This should be removed in production
+    const autoLoginAsAdmin = async () => {
+      const isAlreadyLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      if (!isAlreadyLoggedIn) {
+        // Simulate a delay to allow the app to render first
+        setTimeout(() => {
+          login(ADMIN_EMAIL, ADMIN_PASSWORD).catch(err => 
+            console.error("Auto admin login failed:", err)
+          );
+        }, 500);
+      }
+    };
+    
+    // Call auto login function
+    autoLoginAsAdmin();
   }, []);
 
   const login = async (email: string, password: string) => {
-    // This is where you would normally call your auth API
-    // For demo purposes, we're just storing in localStorage
-    
     console.log("Logging in with:", email, password);
     
-    // Simulate login success
+    // Admin login check
+    if (email.toLowerCase() === ADMIN_EMAIL.toLowerCase() && password === ADMIN_PASSWORD) {
+      const adminUser = {
+        name: 'Admin',
+        email: ADMIN_EMAIL,
+        isAdmin: true,
+      };
+      
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('user', JSON.stringify(adminUser));
+      
+      setIsAuthenticated(true);
+      setUser(adminUser);
+      
+      toast({
+        title: "Admin Login Successful",
+        description: "Welcome back, Admin!",
+      });
+      
+      return;
+    }
+    
+    // Regular user login (keeping existing code)
     localStorage.setItem('isLoggedIn', 'true');
     localStorage.setItem('user', JSON.stringify({
       name: 'John Doe',
@@ -62,9 +102,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signup = async (name: string, email: string, password: string) => {
-    // This is where you would normally call your auth API
-    // For demo purposes, we're just storing in localStorage
-    
     console.log("Signing up with:", name, email, password);
     
     // Simulate signup success

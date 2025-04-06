@@ -196,6 +196,11 @@ const ProfilePage = () => {
             <>
               <h2 className="text-base font-bold mb-0">{user?.name || "User"}</h2>
               <p className="mb-1">{user?.email || "user@example.com"}</p>
+              {user?.isAdmin && (
+                <span className="bg-yellow-400 text-black px-2 py-0.5 rounded-full text-xs font-medium">
+                  Admin
+                </span>
+              )}
             </>
           ) : (
             <div className="text-center mt-2">
