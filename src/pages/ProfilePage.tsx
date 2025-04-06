@@ -17,6 +17,27 @@ import CameraSheet from "@/components/CameraSheet";
 import LoginDialog from "@/components/LoginDialog";
 import { useAuth } from "@/hooks/use-auth";
 
+const ProfileMenuItem = ({ icon, title, description, onClick }: ProfileMenuItemProps) => {
+  return (
+    <button 
+      className="flex items-center w-full py-3"
+      onClick={onClick}
+      type="button"
+    >
+      <div className="bg-blue-50 rounded-full p-3 mr-3">
+        {icon}
+      </div>
+      <div className="flex-1 text-left">
+        <h4 className="font-semibold text-base text-black">{title}</h4>
+        <p className="text-[13px] text-[#6E6E6E]">{description}</p>
+      </div>
+      <div className="text-gray-400">
+        <ChevronRight size={20} />
+      </div>
+    </button>
+  );
+};
+
 const ProfilePage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -49,7 +70,7 @@ const ProfilePage = () => {
 
   const handleMenuItemClick = (item: string) => {
     if (!isAuthenticated && ['Bookmarks', 'Favorites', 'Cart', 'Orders', 'Purchases', 'Addresses', 
-                             'Payment Methods', 'Edit Profile'].includes(item)) {
+                             'Payment Methods', 'Edit Profile', 'Seller Dashboard'].includes(item)) {
       setShowLoginDialog(true);
       return;
     }
@@ -129,6 +150,11 @@ const ProfilePage = () => {
       return;
     }
 
+    if (item === "Seller Dashboard") {
+      navigate("/seller-dashboard");
+      return;
+    }
+    
     toast({
       title: "Coming Soon",
       description: `The ${item} feature is under development.`,
@@ -461,26 +487,5 @@ interface ProfileMenuItemProps {
   description: string;
   onClick: () => void;
 }
-
-const ProfileMenuItem = ({ icon, title, description, onClick }: ProfileMenuItemProps) => {
-  return (
-    <button 
-      className="flex items-center w-full py-3"
-      onClick={onClick}
-      type="button"
-    >
-      <div className="bg-blue-50 rounded-full p-3 mr-3">
-        {icon}
-      </div>
-      <div className="flex-1 text-left">
-        <h4 className="font-semibold text-base text-black">{title}</h4>
-        <p className="text-[13px] text-[#6E6E6E]">{description}</p>
-      </div>
-      <div className="text-gray-400">
-        <ChevronRight size={20} />
-      </div>
-    </button>
-  );
-};
 
 export default ProfilePage;
