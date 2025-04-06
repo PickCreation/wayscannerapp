@@ -223,7 +223,7 @@ const ProfilePage = () => {
       </div>
 
       {/* Logout Button */}
-      <div className="px-4 pb-10 mt-4 flex flex-col"> {/* Changed pb-40 to pb-10 to reduce padding */}
+      <div className="px-4 pb-20 mt-4 flex flex-col"> {/* Added pb-20 to make room for bottom nav */}
         <Button 
           className="bg-wayscanner-blue hover:bg-blue-700 w-full py-6 rounded-lg flex items-center justify-center gap-2 mb-4"
           onClick={() => handleMenuItemClick("Logout")}
@@ -233,7 +233,7 @@ const ProfilePage = () => {
         </Button>
         
         <button 
-          className="text-red-500 text-center font-semibold text-base py-2 mb-8"
+          className="text-red-500 text-center font-semibold text-base"
           onClick={() => handleMenuItemClick("Delete Account")}
         >
           Delete Account
