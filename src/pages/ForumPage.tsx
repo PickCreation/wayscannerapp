@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Heart, MessageSquare, Bookmark, Bell, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -64,6 +65,7 @@ export const ForumPage = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"all" | "my">("all");
   const [activeCategory, setActiveCategory] = useState("All");
+  const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("forum");
   const [posts, setPosts] = useState(() => {
     // Try to get posts from localStorage
     const savedPosts = localStorage.getItem('forumPosts');
