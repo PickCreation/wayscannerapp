@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Clock, Star } from "lucide-react";
+import { Clock, LightbulbIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface Recipe {
@@ -18,6 +18,14 @@ interface RecipeCardProps {
 }
 
 export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onClick }) => {
+  // Determine rating label based on rating value
+  const getRatingLabel = (rating: number): string => {
+    if (rating > 4) return "Delicious";
+    if (rating > 3) return "Tasty";
+    if (rating > 2) return "Just Okay";
+    return "Not Great";
+  };
+
   return (
     <Card className="overflow-hidden cursor-pointer shadow-sm hover:shadow-md transition-shadow mb-3" onClick={onClick}>
       <div className="flex h-28">
@@ -33,8 +41,8 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onClick }) => {
           <div className="flex items-center text-xs text-gray-600">
             <Clock size={14} className="mr-1" />
             <span className="mr-3">{recipe.time}</span>
-            <Star size={14} className="mr-1 text-yellow-400 fill-yellow-400" />
-            <span>{recipe.rating} <span className="text-xs">({recipe.reviews})</span></span>
+            <LightbulbIcon size={14} className="mr-1 text-yellow-500" />
+            <span>{getRatingLabel(recipe.rating)}</span>
           </div>
         </CardContent>
       </div>

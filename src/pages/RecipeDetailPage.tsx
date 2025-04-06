@@ -14,14 +14,24 @@ import {
   Info,
   MessageSquare,
   LightbulbIcon,
-  Check
+  Check,
+  Tags
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+  DrawerClose,
+  DrawerFooter,
+} from "@/components/ui/drawer";
 
 // Mock recipe data (in a real app this would come from an API)
 const recipeData = {
@@ -181,6 +191,7 @@ const RecipeDetailPage = () => {
   const [isLiked, setIsLiked] = useState(false);
   const [comment, setComment] = useState("");
   const [selectedRating, setSelectedRating] = useState<string | null>("delicious");
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   // Get recipe data using the recipeId from URL params
   const recipe = recipeData[recipeId as keyof typeof recipeData] || getDefaultRecipe(recipeId || "unknown");
@@ -251,10 +262,7 @@ const RecipeDetailPage = () => {
   };
 
   const handleViewAllComments = () => {
-    toast({
-      title: "Comments",
-      description: "Comments section is coming soon!",
-    });
+    setIsDrawerOpen(true);
   };
 
   const handlePostComment = () => {
@@ -290,7 +298,7 @@ const RecipeDetailPage = () => {
             onClick={handleBack}
             className="bg-white/20 backdrop-blur-sm rounded-full p-2"
           >
-            <ArrowLeft size={14} color="white" />
+            <ArrowLeft size={16} color="white" />
           </button>
           
           <div className="flex space-x-2">
@@ -299,7 +307,7 @@ const RecipeDetailPage = () => {
               className="bg-white/20 backdrop-blur-sm rounded-full p-2"
             >
               <BookmarkPlus 
-                size={14} 
+                size={16} 
                 color="white"
                 fill={isSaved ? "white" : "none"}
               />
@@ -309,7 +317,7 @@ const RecipeDetailPage = () => {
               className="bg-white/20 backdrop-blur-sm rounded-full p-2"
             >
               <Heart 
-                size={14} 
+                size={16} 
                 color="white"
                 fill={isLiked ? "white" : "none"}
               />
@@ -318,7 +326,7 @@ const RecipeDetailPage = () => {
               onClick={handleShare}
               className="bg-white/20 backdrop-blur-sm rounded-full p-2"
             >
-              <Share2 size={14} color="white" />
+              <Share2 size={16} color="white" />
             </button>
           </div>
         </div>
@@ -326,7 +334,7 @@ const RecipeDetailPage = () => {
 
       {/* Recipe Title */}
       <div className="px-4 pt-4">
-        <h1 className="text-base font-semibold mb-3">{recipe.title}</h1>
+        <h1 className="text-2xl font-semibold mb-3">{recipe.title}</h1>
         
         {/* Recipe Info */}
         <div className="flex flex-wrap gap-2 mb-3">
@@ -335,13 +343,6 @@ const RecipeDetailPage = () => {
               {tag}
             </Badge>
           ))}
-        </div>
-      </div>
-
-      {/* Description */}
-      <div className="px-4 py-2">
-        <div className="border border-gray-200 bg-gray-50 rounded-lg p-3 mb-4">
-          <p className="text-sm text-gray-700">{recipe.description}</p>
         </div>
       </div>
 
@@ -356,14 +357,10 @@ const RecipeDetailPage = () => {
         </div>
         <div className="flex flex-col items-center">
           <div className="bg-green-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
-            <svg width="16" height="16" viewBox="0 0 24 24" className="text-green-500">
-              <rect x="3" y="12" width="4" height="6" fill="currentColor" />
-              <rect x="10" y="8" width="4" height="10" fill="currentColor" />
-              <rect x="17" y="4" width="4" height="14" fill="currentColor" />
-            </svg>
+            <Tags size={16} className="text-green-500" />
           </div>
-          <p className="text-xs text-green-500 font-medium">Easy</p>
-          <p className="text-[10px] text-gray-500">Difficulty</p>
+          <p className="text-xs text-green-500 font-medium">Category</p>
+          <p className="text-[10px] text-gray-500">Type</p>
         </div>
         <div className="flex flex-col items-center">
           <div className="bg-orange-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
@@ -374,10 +371,18 @@ const RecipeDetailPage = () => {
         </div>
         <div className="flex flex-col items-center">
           <div className="bg-yellow-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
-            <Star size={16} className="text-yellow-500" />
+            <LightbulbIcon size={16} className="text-yellow-500" />
           </div>
-          <p className="text-xs text-yellow-500 font-medium">{recipe.rating}</p>
+          <p className="text-xs text-yellow-500 font-medium">{recipe.rating > 4 ? "Delicious" : recipe.rating > 3 ? "Tasty" : recipe.rating > 2 ? "Just Okay" : "Not Great"}</p>
           <p className="text-[10px] text-gray-500">Rating</p>
+        </div>
+      </div>
+
+      {/* Description */}
+      <div className="px-4 py-2">
+        <h3 className="text-base font-semibold mb-2">Description</h3>
+        <div className="border border-gray-200 bg-gray-50 rounded-lg p-3 mb-4">
+          <p className="text-sm text-gray-700">{recipe.description}</p>
         </div>
       </div>
 
@@ -498,7 +503,7 @@ const RecipeDetailPage = () => {
 
         {/* Display comments */}
         <div className="space-y-4 mb-6">
-          {recipe.comments && recipe.comments.map((comment) => (
+          {recipe.comments && recipe.comments.slice(0, 2).map((comment) => (
             <div key={comment.id} className="bg-gray-50 p-3 rounded-lg">
               <div className="flex justify-between mb-1">
                 <div className="font-medium text-sm">{comment.author}</div>
@@ -520,7 +525,7 @@ const RecipeDetailPage = () => {
 
         {/* Add comment form */}
         <div className="mt-6">
-          <h3 className="text-xl font-semibold mb-4">Add Your Comment</h3>
+          <h3 className="text-base font-semibold mb-4">Add Your Comment</h3>
           
           <Textarea 
             placeholder="Share your experience with this recipe..." 
@@ -530,7 +535,7 @@ const RecipeDetailPage = () => {
           />
           
           <div className="mb-4">
-            <h4 className="text-base text-gray-700 mb-2">Rate this recipe:</h4>
+            <h4 className="text-sm text-gray-700 mb-2">Rate this recipe:</h4>
             <div className="flex flex-wrap gap-2">
               <div className={`flex items-center border ${selectedRating === 'delicious' ? 'bg-green-100 border-green-500' : 'bg-gray-50 border-gray-200'} rounded-full px-4 py-2`}>
                 <input
@@ -622,6 +627,51 @@ const RecipeDetailPage = () => {
           </Button>
         </div>
       </div>
+
+      {/* Comments Drawer */}
+      <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+        <DrawerContent className="p-4 max-h-[90vh]">
+          <DrawerHeader>
+            <DrawerTitle className="text-center">All Comments</DrawerTitle>
+            <DrawerDescription className="text-center">
+              {recipe.comments?.length || 0} comments on this recipe
+            </DrawerDescription>
+          </DrawerHeader>
+          
+          <div className="mt-4 space-y-4 overflow-auto max-h-[60vh] p-2">
+            {recipe.comments && recipe.comments.map((comment) => (
+              <div key={comment.id} className="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                <div className="flex justify-between mb-1">
+                  <div className="font-medium text-sm">{comment.author}</div>
+                  <div className="text-xs text-gray-500">{comment.date}</div>
+                </div>
+                <div className="flex items-center mb-2">
+                  {[...Array(5)].map((_, i) => (
+                    <Star 
+                      key={i} 
+                      size={12} 
+                      className={i < comment.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"} 
+                    />
+                  ))}
+                </div>
+                <p className="text-sm text-gray-700">{comment.text}</p>
+              </div>
+            ))}
+
+            {!recipe.comments || recipe.comments.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                No comments yet. Be the first to add one!
+              </div>
+            ) : null}
+          </div>
+          
+          <DrawerFooter>
+            <DrawerClose asChild>
+              <Button variant="outline">Close</Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 };
