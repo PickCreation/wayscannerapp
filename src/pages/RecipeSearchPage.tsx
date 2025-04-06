@@ -127,7 +127,7 @@ const RecipeSearchPage = () => {
       return;
     }
     
-    if (item !== "recipes") {
+    if (item === "shop") {
       toast({
         title: "Coming Soon",
         description: `The ${item} feature is under development.`,
