@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
-import { LogIn, User, Lock, Mail } from "lucide-react";
+import { LogIn, User, Lock, Mail, X } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 
 interface LoginDialogProps {
@@ -71,12 +71,22 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, onOpenChange }) => {
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="px-4 pb-8">
-        <DrawerHeader className="px-0 pb-0">
-          <DrawerTitle className="text-center text-xl">Welcome to WayScanner</DrawerTitle>
-          <DrawerDescription className="text-center">
-            Login or create an account to access all features
-          </DrawerDescription>
-        </DrawerHeader>
+        <div className="relative">
+          <button 
+            onClick={() => onOpenChange(false)}
+            className="absolute right-1 top-3 p-2 rounded-full hover:bg-gray-100"
+            aria-label="Close"
+          >
+            <X className="h-5 w-5 text-gray-500" />
+          </button>
+          
+          <DrawerHeader className="px-0 pb-0">
+            <DrawerTitle className="text-center text-xl">Welcome to WayScanner</DrawerTitle>
+            <DrawerDescription className="text-center">
+              Login or create an account to access all features
+            </DrawerDescription>
+          </DrawerHeader>
+        </div>
         
         <Tabs 
           defaultValue="login" 
