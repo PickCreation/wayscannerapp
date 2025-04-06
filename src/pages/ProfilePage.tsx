@@ -1,19 +1,43 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { 
   ArrowLeft, Edit, Lock, Store, Bookmark, Heart, 
   ShoppingCart, Truck, Ticket, Globe, HelpCircle, Info, 
-  Shield, LogOut, Trash2, FileText, ChevronRight, User
+  Shield, LogOut, FileText, ChevronRight, User
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
+
+  // Handle native back functionality
+  useEffect(() => {
+    // Function to handle hardware back button press
+    const handleBackButton = () => {
+      navigate("/");
+      return true; // Prevent default behavior
+    };
+
+    // Only add listeners on mobile devices
+    if (isMobile) {
+      // For Android, add event listener for hardware back button
+      document.addEventListener('backbutton', handleBackButton);
+    }
+
+    // Cleanup
+    return () => {
+      if (isMobile) {
+        document.removeEventListener('backbutton', handleBackButton);
+      }
+    };
+  }, [navigate, isMobile]);
 
   const handleBackClick = () => {
     navigate("/");
@@ -31,11 +55,17 @@ const ProfilePage = () => {
       {/* Header */}
       <div className="bg-wayscanner-blue text-white p-4 relative">
         <div className="flex justify-between items-center mb-2">
-          <button className="p-2" onClick={handleBackClick}>
-            <ArrowLeft size={24} />
-          </button>
-          <h1 className="text-xl font-bold text-base" style={{ fontSize: '20px' }}>My Profile</h1>
-          <div className="w-10"></div> {/* Placeholder to maintain centering */}
+          {!isMobile && (
+            <button className="p-2" onClick={handleBackClick}>
+              <ArrowLeft size={24} />
+            </button>
+          )}
+          <h1 className="text-xl font-bold text-base" style={{ 
+            fontSize: '20px',
+            marginLeft: isMobile ? '0' : 'auto',
+            marginRight: isMobile ? '0' : 'auto'
+          }}>My Profile</h1>
+          <div className={isMobile ? "hidden" : "w-10"}></div> {/* Placeholder to maintain centering when not on mobile */}
         </div>
 
         {/* Profile Info */}
