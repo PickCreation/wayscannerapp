@@ -192,15 +192,11 @@ export const ForumPage = () => {
   
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 pb-20">
-      {/* Header - Using the same header as home page */}
+      {/* Header - Updated to show "Forum" text instead of logo */}
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
         <div className="w-6"></div> {/* Empty div for spacing */}
         <div className="flex justify-center">
-          <img 
-            src="/lovable-uploads/8fdd5ac8-39b5-43e6-86de-c8b27715d7c8.png" 
-            alt="WayScanner Logo" 
-            className="h-8" 
-          />
+          <h1 className="text-xl font-bold">Forum</h1>
         </div>
         <div className="flex items-center space-x-3">
           <button className="p-2" type="button">
