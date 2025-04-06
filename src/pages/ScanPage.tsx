@@ -55,48 +55,66 @@ const ScanPage = () => {
         >
           <ChevronLeft className="h-6 w-6" color="white" />
         </button>
-        <h1 className="text-lg font-semibold">Scan Results</h1>
+        <h1 className="text-lg font-medium text-[20px]">Scan Results</h1>
         <div className="w-10 h-10 flex items-center justify-center">
           <Search size={24} color="white" />
         </div>
       </header>
 
-      {/* Scan Tabs */}
-      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="w-full flex justify-between border-b mb-4">
-          <TabsTrigger 
-            value="food" 
-            className="flex flex-col items-center py-3 px-6 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
-          >
-            <Utensils className="mb-1" size={22} color={activeTab === "food" ? "#034AFF" : "#666"} />
-            <span className="text-sm font-medium">Food</span>
-          </TabsTrigger>
-          <TabsTrigger 
-            value="plants" 
-            className="flex flex-col items-center py-3 px-6 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
-          >
-            <Flower className="mb-1" size={22} color={activeTab === "plants" ? "#4CAF50" : "#666"} />
-            <span className="text-sm font-medium">Plants</span>
-          </TabsTrigger>
-          <TabsTrigger 
-            value="animals" 
-            className="flex flex-col items-center py-3 px-6 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
-          >
-            <PawPrint className="mb-1" size={22} color={activeTab === "animals" ? "#FF6B6B" : "#666"} />
-            <span className="text-sm font-medium">Animals</span>
-          </TabsTrigger>
-        </TabsList>
+      {/* Scan Tabs - Redesigned to match forum page style */}
+      <div className="flex border-b border-gray-200 bg-white">
+        <button
+          className={`flex-1 py-3 px-2 flex flex-col items-center ${
+            activeTab === "food" 
+              ? "text-wayscanner-blue border-b-2 border-wayscanner-blue" 
+              : "text-gray-500"
+          }`}
+          onClick={() => handleTabChange("food")}
+        >
+          <Utensils 
+            size={22} 
+            className={activeTab === "food" ? "text-wayscanner-blue mb-1" : "text-gray-500 mb-1"} 
+          />
+          <span className="text-sm font-medium">Food</span>
+        </button>
+        
+        <button
+          className={`flex-1 py-3 px-2 flex flex-col items-center ${
+            activeTab === "plants" 
+              ? "text-wayscanner-green border-b-2 border-wayscanner-green" 
+              : "text-gray-500"
+          }`}
+          onClick={() => handleTabChange("plants")}
+        >
+          <Flower 
+            size={22} 
+            className={activeTab === "plants" ? "text-wayscanner-green mb-1" : "text-gray-500 mb-1"} 
+          />
+          <span className="text-sm font-medium">Plants</span>
+        </button>
+        
+        <button
+          className={`flex-1 py-3 px-2 flex flex-col items-center ${
+            activeTab === "animals" 
+              ? "text-wayscanner-red border-b-2 border-wayscanner-red" 
+              : "text-gray-500"
+          }`}
+          onClick={() => handleTabChange("animals")}
+        >
+          <PawPrint 
+            size={22} 
+            className={activeTab === "animals" ? "text-wayscanner-red mb-1" : "text-gray-500 mb-1"} 
+          />
+          <span className="text-sm font-medium">Animals</span>
+        </button>
+      </div>
 
-        <TabsContent value="food" className="px-4">
-          <FoodScanTab />
-        </TabsContent>
-        <TabsContent value="plants" className="px-4">
-          <PlantScanTab />
-        </TabsContent>
-        <TabsContent value="animals" className="px-4">
-          <AnimalScanTab />
-        </TabsContent>
-      </Tabs>
+      {/* Tab Content */}
+      <div className="p-4">
+        {activeTab === "food" && <FoodScanTab />}
+        {activeTab === "plants" && <PlantScanTab />}
+        {activeTab === "animals" && <AnimalScanTab />}
+      </div>
 
       {/* Bottom Navigation */}
       <BottomNavigation
