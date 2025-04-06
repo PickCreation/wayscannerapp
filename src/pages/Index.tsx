@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import ScannerCard from "@/components/ScannerCard";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
-import { BellIcon, UserIcon, Utensils, Leaf, PawPrint, ShoppingBag } from "lucide-react";
+import { Bell, User, Utensils, Leaf, PawPrint, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
@@ -46,10 +46,10 @@ const Index = () => {
         </div>
         <div className="flex items-center space-x-3">
           <button className="p-2">
-            <BellIcon size={24} fill="white" strokeWidth={1.5} />
+            <Bell size={24} />
           </button>
           <button className="p-2">
-            <UserIcon size={24} fill="white" strokeWidth={1.5} />
+            <User size={24} stroke="white" strokeWidth={2.5} />
           </button>
         </div>
       </header>
