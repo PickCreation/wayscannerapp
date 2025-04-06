@@ -58,10 +58,10 @@ const FoodScanTab: React.FC<FoodScanTabProps> = ({ onEditPreferences, onHowWeSco
   };
 
   const getCardBorderColor = (score: number) => {
-    if (score >= 80) return "border-teal-500";
-    if (score >= 60) return "border-purple-500";
-    if (score >= 40) return "border-orange-500";
-    return "border-red-500";
+    if (score >= 80) return "border-teal-200";
+    if (score >= 60) return "border-purple-200";
+    if (score >= 40) return "border-orange-200";
+    return "border-red-200";
   };
 
   const getScoreText = (score: number) => {
@@ -76,7 +76,7 @@ const FoodScanTab: React.FC<FoodScanTabProps> = ({ onEditPreferences, onHowWeSco
       {scanResults.map((item) => (
         <div 
           key={item.id} 
-          className={`p-3 rounded-xl border-2 shadow-sm bg-white flex items-center justify-between cursor-pointer ${getCardBorderColor(item.score)}`}
+          className={`p-3 rounded-xl border shadow-sm bg-white flex items-center justify-between cursor-pointer ${getCardBorderColor(item.score)}`}
           onClick={() => navigate(`/food/${item.id}`)}
         >
           <div className="flex-1">
