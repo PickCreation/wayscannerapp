@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ChevronLeft, AlertTriangle, PawPrint, Utensils, Moon, PhoneCall, Info } from "lucide-react";
 import BottomNavigation from "@/components/BottomNavigation";
+import CameraSheet from "@/components/CameraSheet";
 
 interface AnimalDetails {
   id: string;
@@ -34,7 +34,6 @@ interface AnimalDetails {
   }[];
 }
 
-// Mock data for animal details
 const animalDetailsData: AnimalDetails[] = [
   {
     id: "1",
@@ -138,6 +137,7 @@ const AnimalDetailPage = () => {
   const { animalId } = useParams<{ animalId: string }>();
   const [animal, setAnimal] = useState<AnimalDetails | null>(null);
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("home");
+  const [cameraSheetOpen, setCameraSheetOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -163,7 +163,7 @@ const AnimalDetailPage = () => {
   };
 
   const handleCameraClick = () => {
-    navigate("/scan-camera");
+    setCameraSheetOpen(true);
   };
 
   const getRiskColor = (risk: "High" | "Moderate" | "Low") => {
@@ -335,6 +335,12 @@ const AnimalDetailPage = () => {
         activeItem={activeNavItem}
         onItemClick={handleNavItemClick}
         onCameraClick={handleCameraClick}
+      />
+
+      {/* Camera Sheet */}
+      <CameraSheet 
+        open={cameraSheetOpen} 
+        onOpenChange={setCameraSheetOpen} 
       />
     </div>
   );
