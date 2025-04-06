@@ -1,8 +1,7 @@
+
 import React, { useState } from "react";
 import { 
   Search, 
-  Clock, 
-  Star, 
   ChevronRight, 
   Coffee, 
   Utensils, 
@@ -10,8 +9,6 @@ import {
   Cookie,
   ArrowLeft
 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -19,16 +16,6 @@ import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
 import { RecipeCard } from "@/components/RecipeCard";
 import { useToast } from "@/hooks/use-toast";
-
-const featuredRecipe = {
-  id: "pasta-1",
-  title: "Creamy Garlic Parmesan Pasta",
-  time: "30 mins",
-  rating: 4.8,
-  reviews: 256,
-  isFeatured: true,
-  image: "/lovable-uploads/1485fb6f-36f0-4eee-98e1-0a56eb978616.png"
-};
 
 const trendingRecipes = [
   {
@@ -136,50 +123,20 @@ const RecipesPage = () => {
 
   return (
     <div className="pb-20 bg-white min-h-screen">
-      <div className="fixed top-0 left-0 right-0 bg-primary text-white z-10">
+      <div className="fixed top-0 left-0 right-0 z-10" style={{ backgroundColor: "#034AFF" }}>
         <div className="flex items-center justify-between h-14 px-4">
           <button 
             onClick={handleBack}
-            className="p-2"
+            className="p-2 text-white"
           >
             <ArrowLeft size={24} />
           </button>
-          <h1 className="text-lg font-semibold">Recipes</h1>
+          <h1 className="text-lg font-semibold text-white">Recipes</h1>
           <div className="w-10"></div>
         </div>
       </div>
       
       <div className="pt-14">
-        <div 
-          className="relative h-60 bg-gradient-to-br from-gray-100 to-gray-200 cursor-pointer rounded-md mx-4 mt-3 shadow-md overflow-hidden" 
-          onClick={() => handleRecipeClick(featuredRecipe.id)}
-        >
-          <img 
-            src={featuredRecipe.image}
-            alt={featuredRecipe.title}
-            className="w-full h-full object-cover opacity-90"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-          <div className="absolute top-4 left-4">
-            <div className="bg-yellow-400 text-white font-bold px-3 py-1 rounded-full text-xs">
-              Featured
-            </div>
-          </div>
-          <div className="absolute bottom-4 left-4 right-4 text-white">
-            <h2 className="text-lg font-bold mb-2">{featuredRecipe.title}</h2>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center">
-                <Clock size={14} className="mr-1" />
-                <span className="text-sm">{featuredRecipe.time}</span>
-              </div>
-              <div className="flex items-center">
-                <Star size={14} className="mr-1 text-yellow-400 fill-yellow-400" />
-                <span className="text-sm">{featuredRecipe.rating} <span className="text-xs">({featuredRecipe.reviews})</span></span>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <div className="px-4 my-4">
           <form onSubmit={handleSearch}>
             <div className="relative">
@@ -201,8 +158,8 @@ const RecipesPage = () => {
         </div>
 
         <div className="px-4 mt-6 mb-8">
-          <h2 className="text-base font-bold mb-4 text-gray-800 text-[16px]">Categories</h2>
-          <div className="flex space-x-4 overflow-x-auto pb-2 no-scrollbar">
+          <h2 className="text-base font-bold mb-4 text-gray-800 text-[16px] text-center">Categories</h2>
+          <div className="flex justify-center space-x-4 overflow-x-auto pb-2 no-scrollbar">
             {categories.map((category) => (
               <div
                 key={category.id}
