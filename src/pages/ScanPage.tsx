@@ -7,15 +7,11 @@ import FoodScanTab from "@/components/FoodScanTab";
 import PlantScanTab from "@/components/PlantScanTab";
 import AnimalScanTab from "@/components/AnimalScanTab";
 import CameraSheet from "@/components/CameraSheet";
-import EditPreferencesSheet from "@/components/EditPreferencesSheet";
-import HowWeScoreSheet from "@/components/HowWeScoreSheet";
 
 const ScanPage = () => {
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("home");
   const [activeTab, setActiveTab] = useState("food");
   const [cameraSheetOpen, setCameraSheetOpen] = useState(false);
-  const [editPreferencesOpen, setEditPreferencesOpen] = useState(false);
-  const [howWeScoreOpen, setHowWeScoreOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -117,12 +113,7 @@ const ScanPage = () => {
 
       {/* Tab Content */}
       <div className="p-4">
-        {activeTab === "food" && (
-          <FoodScanTab 
-            onEditPreferences={() => setEditPreferencesOpen(true)}
-            onHowWeScore={() => setHowWeScoreOpen(true)} 
-          />
-        )}
+        {activeTab === "food" && <FoodScanTab />}
         {activeTab === "plants" && <PlantScanTab />}
         {activeTab === "animals" && <AnimalScanTab />}
       </div>
@@ -136,19 +127,6 @@ const ScanPage = () => {
 
       {/* Camera Sheet */}
       <CameraSheet open={cameraSheetOpen} onOpenChange={setCameraSheetOpen} />
-      
-      {/* Edit Preferences Sheet */}
-      <EditPreferencesSheet 
-        open={editPreferencesOpen} 
-        onOpenChange={setEditPreferencesOpen} 
-        onSave={() => {}} 
-      />
-      
-      {/* How We Score Sheet */}
-      <HowWeScoreSheet 
-        open={howWeScoreOpen} 
-        onOpenChange={setHowWeScoreOpen} 
-      />
     </div>
   );
 };
