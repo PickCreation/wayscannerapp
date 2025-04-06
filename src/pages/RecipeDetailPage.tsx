@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, 
@@ -10,7 +10,10 @@ import {
   Heart, 
   Share2,
   ChefHat,
-  CircleCheck
+  CircleCheck,
+  Info,
+  MessageSquare,
+  LightbulbIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -54,7 +57,14 @@ const recipeData = {
       carbs: "65g",
       fat: "35g"
     },
-    tags: ["pasta", "italian", "dinner", "weeknight", "easy"]
+    tags: ["pasta", "italian", "dinner", "weeknight", "easy"],
+    tips: [
+      "For extra protein, add grilled chicken or shrimp.",
+      "Use freshly grated Parmesan for the best flavor and melting properties.",
+      "Make the sauce ahead of time for quicker meal prep.",
+      "If sauce becomes too thick, add a splash of milk or pasta water."
+    ],
+    comments: 18
   },
   "stir-fry-1": {
     id: "stir-fry-1",
@@ -95,7 +105,14 @@ const recipeData = {
       carbs: "22g",
       fat: "9g"
     },
-    tags: ["vegetarian", "healthy", "quick", "asian"]
+    tags: ["vegetarian", "healthy", "quick", "asian"],
+    tips: [
+      "For protein, add tofu, chicken, or beef.",
+      "Use any vegetables you have on hand.",
+      "Make the sauce ahead of time for even quicker preparation.",
+      "If you like spice, add red pepper flakes or sriracha."
+    ],
+    comments: 24
   }
 };
 
@@ -117,7 +134,9 @@ const getDefaultRecipe = (id: string) => ({
     carbs: "0g",
     fat: "0g"
   },
-  tags: []
+  tags: [],
+  tips: [],
+  comments: 0
 });
 
 const RecipeDetailPage = () => {
@@ -131,17 +150,52 @@ const RecipeDetailPage = () => {
   // Get recipe data using the recipeId from URL params
   const recipe = recipeData[recipeId as keyof typeof recipeData] || getDefaultRecipe(recipeId || "unknown");
 
+  useEffect(() => {
+    // Check if recipe is already saved in bookmarks
+    const savedBookmarks = localStorage.getItem('bookmarkedRecipes');
+    if (savedBookmarks) {
+      const bookmarks = JSON.parse(savedBookmarks);
+      const isRecipeSaved = bookmarks.some((item: any) => item.id === recipe.id);
+      setIsSaved(isRecipeSaved);
+    }
+  }, [recipe.id]);
+
   const handleBack = () => {
     navigate(-1);
   };
 
   const handleSave = () => {
-    setIsSaved(!isSaved);
+    const newSaveState = !isSaved;
+    setIsSaved(newSaveState);
+    
+    // Update localStorage
+    const savedBookmarks = localStorage.getItem('bookmarkedRecipes');
+    let bookmarks = savedBookmarks ? JSON.parse(savedBookmarks) : [];
+    
+    if (newSaveState) {
+      // Add to bookmarks if not already saved
+      if (!bookmarks.some((item: any) => item.id === recipe.id)) {
+        const bookmarkItem = {
+          id: recipe.id,
+          title: recipe.title,
+          author: "Chef Jamie", // Example author
+          difficulty: recipe.tags.includes("easy") ? "Easy" : "Medium",
+          time: recipe.time
+        };
+        bookmarks.push(bookmarkItem);
+      }
+    } else {
+      // Remove from bookmarks
+      bookmarks = bookmarks.filter((item: any) => item.id !== recipe.id);
+    }
+    
+    localStorage.setItem('bookmarkedRecipes', JSON.stringify(bookmarks));
+
     toast({
-      title: isSaved ? "Removed from Bookmarks" : "Saved to Bookmarks",
-      description: isSaved 
-        ? `${recipe.title} has been removed from your bookmarks.` 
-        : `${recipe.title} has been added to your bookmarks.`,
+      title: newSaveState ? "Saved to Bookmarks" : "Removed from Bookmarks",
+      description: newSaveState 
+        ? `${recipe.title} has been added to your bookmarks.` 
+        : `${recipe.title} has been removed from your bookmarks.`,
     });
   };
 
@@ -157,6 +211,13 @@ const RecipeDetailPage = () => {
     toast({
       title: "Share Recipe",
       description: `Sharing options for ${recipe.title} are coming soon.`,
+    });
+  };
+
+  const handleViewAllComments = () => {
+    toast({
+      title: "Comments",
+      description: "Comments section is coming soon!",
     });
   };
 
@@ -176,7 +237,7 @@ const RecipeDetailPage = () => {
             onClick={handleBack}
             className="bg-white/20 backdrop-blur-sm rounded-full p-2"
           >
-            <ArrowLeft size={24} color="white" />
+            <ArrowLeft size={20} color="white" />
           </button>
           
           <div className="flex space-x-2">
@@ -185,7 +246,7 @@ const RecipeDetailPage = () => {
               className="bg-white/20 backdrop-blur-sm rounded-full p-2"
             >
               <BookmarkPlus 
-                size={24} 
+                size={20} 
                 color="white"
                 fill={isSaved ? "white" : "none"}
               />
@@ -195,7 +256,7 @@ const RecipeDetailPage = () => {
               className="bg-white/20 backdrop-blur-sm rounded-full p-2"
             >
               <Heart 
-                size={24} 
+                size={20} 
                 color="white"
                 fill={isLiked ? "white" : "none"}
               />
@@ -204,38 +265,25 @@ const RecipeDetailPage = () => {
               onClick={handleShare}
               className="bg-white/20 backdrop-blur-sm rounded-full p-2"
             >
-              <Share2 size={24} color="white" />
+              <Share2 size={20} color="white" />
             </button>
           </div>
         </div>
         
         <div className="absolute bottom-6 left-6 right-6 text-white">
-          <h1 className="text-2xl font-bold mb-2">{recipe.title}</h1>
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center">
-              <Clock size={16} className="mr-1" />
-              <span>{recipe.time}</span>
-            </div>
-            <div className="flex items-center">
-              <Star size={16} className="mr-1 text-yellow-400 fill-yellow-400" />
-              <span>{recipe.rating} ({recipe.reviews})</span>
-            </div>
-            <div className="flex items-center">
-              <Users size={16} className="mr-1" />
-              <span>{recipe.servings} servings</span>
-            </div>
-          </div>
+          <h1 className="text-2xl font-bold">{recipe.title}</h1>
         </div>
       </div>
 
       {/* Description */}
       <div className="px-4 py-4">
-        <p className="text-gray-700">{recipe.description}</p>
+        <h2 className="text-base font-semibold mb-2">Description</h2>
+        <p className="text-sm text-gray-700">{recipe.description}</p>
         
         {/* Tags */}
         <div className="flex flex-wrap gap-2 mt-4">
           {recipe.tags.map(tag => (
-            <Badge key={tag} variant="secondary" className="capitalize">
+            <Badge key={tag} variant="secondary" className="capitalize text-xs">
               {tag}
             </Badge>
           ))}
@@ -251,8 +299,8 @@ const RecipeDetailPage = () => {
           </TabsList>
           
           <TabsContent value="ingredients" className="mt-4">
-            <h3 className="text-lg font-semibold mb-3 flex items-center">
-              <ChefHat className="mr-2" size={20} />
+            <h3 className="text-base font-semibold mb-3 flex items-center">
+              <ChefHat className="mr-2" size={16} />
               Ingredients
             </h3>
             <ul className="space-y-2">
@@ -261,15 +309,15 @@ const RecipeDetailPage = () => {
                   <div className="h-6 w-6 rounded-full border border-gray-300 flex-shrink-0 flex items-center justify-center mr-3 mt-0.5">
                     <span className="text-xs text-gray-500">{index + 1}</span>
                   </div>
-                  <span className="text-gray-700">{ingredient}</span>
+                  <span className="text-sm text-gray-700">{ingredient}</span>
                 </li>
               ))}
             </ul>
           </TabsContent>
           
           <TabsContent value="instructions" className="mt-4">
-            <h3 className="text-lg font-semibold mb-3 flex items-center">
-              <CircleCheck className="mr-2" size={20} />
+            <h3 className="text-base font-semibold mb-3 flex items-center">
+              <CircleCheck className="mr-2" size={16} />
               Instructions
             </h3>
             <ol className="space-y-4">
@@ -278,7 +326,7 @@ const RecipeDetailPage = () => {
                   <div className="h-6 w-6 bg-wayscanner-blue text-white rounded-full flex-shrink-0 flex items-center justify-center mr-3 mt-0.5">
                     <span className="text-xs">{index + 1}</span>
                   </div>
-                  <span className="text-gray-700">{instruction}</span>
+                  <span className="text-sm text-gray-700">{instruction}</span>
                 </li>
               ))}
             </ol>
@@ -288,24 +336,73 @@ const RecipeDetailPage = () => {
 
       {/* Nutrition Info */}
       <div className="px-4 mt-8">
-        <h3 className="text-lg font-semibold mb-3">Nutrition Information</h3>
-        <div className="grid grid-cols-4 gap-2 text-center">
-          <div className="bg-gray-100 rounded-lg p-3">
-            <p className="text-sm text-gray-500">Calories</p>
-            <p className="font-bold">{recipe.nutrition.calories}</p>
+        <h3 className="text-base font-semibold mb-3">Nutrition Information</h3>
+        <div className="flex justify-between mb-2">
+          <div className="flex flex-col items-center">
+            <div className="bg-red-100 w-20 h-20 rounded-full flex items-center justify-center mb-2">
+              <span className="text-red-500 text-xl font-semibold">{recipe.nutrition.calories}</span>
+            </div>
+            <p className="text-sm text-gray-600">Calories</p>
           </div>
-          <div className="bg-gray-100 rounded-lg p-3">
-            <p className="text-sm text-gray-500">Protein</p>
-            <p className="font-bold">{recipe.nutrition.protein}</p>
+          <div className="flex flex-col items-center">
+            <div className="bg-purple-100 w-20 h-20 rounded-full flex items-center justify-center mb-2">
+              <span className="text-purple-600 text-xl font-semibold">{recipe.nutrition.protein}</span>
+            </div>
+            <p className="text-sm text-gray-600">Protein</p>
           </div>
-          <div className="bg-gray-100 rounded-lg p-3">
-            <p className="text-sm text-gray-500">Carbs</p>
-            <p className="font-bold">{recipe.nutrition.carbs}</p>
+          <div className="flex flex-col items-center">
+            <div className="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mb-2">
+              <span className="text-green-500 text-xl font-semibold">{recipe.nutrition.carbs}</span>
+            </div>
+            <p className="text-sm text-gray-600">Carbs</p>
           </div>
-          <div className="bg-gray-100 rounded-lg p-3">
-            <p className="text-sm text-gray-500">Fat</p>
-            <p className="font-bold">{recipe.nutrition.fat}</p>
+          <div className="flex flex-col items-center">
+            <div className="bg-yellow-100 w-20 h-20 rounded-full flex items-center justify-center mb-2">
+              <span className="text-yellow-600 text-xl font-semibold">{recipe.nutrition.fat}</span>
+            </div>
+            <p className="text-sm text-gray-600">Fat</p>
           </div>
+        </div>
+        <div className="bg-gray-100 p-3 rounded-lg text-center">
+          <div className="flex items-center justify-center">
+            <Info size={16} className="mr-2 text-gray-500" />
+            <p className="text-sm text-gray-500">Values are per serving and are approximate.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Tips Section */}
+      <div className="px-4 mt-8">
+        <h3 className="text-base font-semibold mb-3">Tips</h3>
+        <div className="bg-yellow-50 border border-yellow-100 rounded-lg p-4">
+          <div className="flex items-start mb-3">
+            <LightbulbIcon size={20} className="text-yellow-500 mr-2 mt-0.5" />
+            <h4 className="text-base font-semibold text-yellow-600">Chef Tips</h4>
+          </div>
+          <ul className="space-y-2 ml-2">
+            {recipe.tips && recipe.tips.map((tip, index) => (
+              <li key={index} className="flex items-start">
+                <span className="text-gray-700 mr-2 mt-1">•</span>
+                <span className="text-sm text-gray-700">{tip}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      {/* Comments Section */}
+      <div className="px-4 mt-8">
+        <div className="flex justify-between items-center mb-3">
+          <div className="flex items-center">
+            <MessageSquare size={18} className="mr-2 text-blue-500" />
+            <h3 className="text-base font-semibold">Comments ({recipe.comments || 0})</h3>
+          </div>
+          <button 
+            className="text-blue-500 text-sm font-medium"
+            onClick={handleViewAllComments}
+          >
+            View All
+          </button>
         </div>
       </div>
 
