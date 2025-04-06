@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { 
   ArrowLeft, Edit, Lock, Store, Bookmark, Heart, 
@@ -194,11 +193,11 @@ const ProfilePage = () => {
       <div className="px-4 my-3">
         <button 
           onClick={handleUpgradeClick}
-          className="w-full bg-gradient-to-b from-blue-500 to-blue-900 text-white py-3 px-4 rounded-lg flex items-center justify-between"
+          className="w-full bg-gradient-to-r from-blue-600 via-blue-700 to-blue-900 text-white py-3 px-4 rounded-lg flex items-center justify-between"
         >
           <div className="flex items-center">
             <div className="bg-white rounded-full p-2 mr-3">
-              <Crown className="h-5 w-5 text-red-500" />
+              <Crown className="h-5 w-5 text-blue-600" />
             </div>
             <div className="text-left">
               <h3 className="font-bold text-lg">Upgrade Now!</h3>

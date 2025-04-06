@@ -85,19 +85,19 @@ const SubscriptionPage = () => {
           {restoringPurchase ? "Restoring..." : "Restore Purchase"}
         </div>
 
-        <h1 className="text-4xl font-bold mb-2">Go Premium</h1>
-        <h2 className="text-xl mb-1">Scan Smarter</h2>
-        <p className="mb-6 text-center text-white/90">Learn more!</p>
+        <h1 className="text-3xl font-bold mb-2">Go Premium</h1>
+        <h2 className="text-lg mb-1">Scan Smarter</h2>
+        <p className="mb-5 text-center text-white/90 text-sm">Learn more!</p>
 
-        <p className="text-center mb-8 max-w-xs">
-          Scan food, plants, and animals with no limits, engage in our community forum, 
-          shop and sell in our marketplace, and earn store coupons every 5 scans.
+        <p className="text-center mb-6 max-w-xs text-sm">
+          Scan food, plants, and animals with no limits, engage in community forum, 
+          shop and sell in marketplace, and earn store coupons every 5 scans.
         </p>
 
-        <div className="flex justify-center space-x-6 mb-8">
-          <Apple className="w-8 h-8" />
-          <Flower className="w-8 h-8" />
-          <Dog className="w-8 h-8" />
+        <div className="flex justify-center space-x-6 mb-6">
+          <Apple className="w-7 h-7" />
+          <Flower className="w-7 h-7" />
+          <Dog className="w-7 h-7" />
         </div>
 
         {/* Weekly Plan */}
@@ -107,15 +107,15 @@ const SubscriptionPage = () => {
         >
           <div className="flex justify-between items-start">
             <div>
-              <h3 className="text-xl font-bold">Weekly Plan</h3>
-              <p className="text-2xl font-bold mb-1">$5.99 / 7 days</p>
-              <p className="text-yellow-300 text-sm mb-2">
+              <h3 className="text-lg font-bold">Weekly Plan</h3>
+              <p className="text-xl font-bold mb-1">$5.99 / 7 days</p>
+              <p className="text-yellow-300 text-xs mb-2">
                 Scan food endlessly, community forum, and earn store coupons every 5 scans.
               </p>
-              <p className="text-sm">Great for short-term or casual use.</p>
+              <p className="text-xs">Great for short-term or casual use.</p>
             </div>
-            <div className="w-6 h-6 border-2 border-white rounded-sm flex items-center justify-center bg-black/10">
-              {selectedPlan === 'Weekly' && <Check className="w-5 h-5" />}
+            <div className="min-w-6 min-h-6 w-6 h-6 border-2 border-white rounded-sm flex items-center justify-center bg-black/10">
+              {selectedPlan === 'Weekly' && <Check className="w-4 h-4" />}
             </div>
           </div>
         </div>
@@ -127,15 +127,15 @@ const SubscriptionPage = () => {
         >
           <div className="flex justify-between items-start">
             <div>
-              <h3 className="text-xl font-bold">Monthly</h3>
-              <p className="text-2xl font-bold mb-1">$15.99 / monthly</p>
-              <p className="text-blue-600 text-sm mb-2">
+              <h3 className="text-lg font-bold">Monthly</h3>
+              <p className="text-xl font-bold mb-1">$15.99 / monthly</p>
+              <p className="text-blue-600 text-xs mb-2">
                 All weekly features included, offering better value for regular users.
               </p>
-              <p className="text-sm text-gray-700">Perfect for ongoing learners and explorers.</p>
+              <p className="text-xs text-gray-700">Perfect for ongoing learners and explorers.</p>
             </div>
-            <div className="w-6 h-6 border-2 border-blue-900 rounded-sm flex items-center justify-center bg-black/5">
-              {selectedPlan === 'Monthly' && <Check className="w-5 h-5" />}
+            <div className="min-w-6 min-h-6 w-6 h-6 border-2 border-blue-900 rounded-sm flex items-center justify-center bg-black/5">
+              {selectedPlan === 'Monthly' && <Check className="w-4 h-4" />}
             </div>
           </div>
         </div>
@@ -148,28 +148,29 @@ const SubscriptionPage = () => {
           <div className="flex justify-between items-start">
             <div className="flex items-start gap-2">
               <div className="bg-black/20 rounded-full p-1">
-                <Star className="w-5 h-5" />
+                <Star className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-xl font-bold">Annual Plan</h3>
-                <p className="text-2xl font-bold mb-1">$170.99 / year</p>
-                <p className="text-sm mb-2">
+                <h3 className="text-lg font-bold">Annual Plan</h3>
+                <p className="text-xl font-bold mb-1">$170.99 / year</p>
+                <p className="text-xs mb-2">
                   Get unlimited access to all premium features.
                 </p>
-                <p className="text-lg font-bold">Save $100 annually!</p>
+                <p className="text-base font-bold">Save $100 annually!</p>
               </div>
             </div>
-            <div className="w-6 h-6 border-2 border-white rounded-sm flex items-center justify-center bg-black/10">
-              {selectedPlan === 'Annual' && <Check className="w-5 h-5" />}
+            <div className="min-w-6 min-h-6 w-6 h-6 border-2 border-white rounded-sm flex items-center justify-center bg-black/10">
+              {selectedPlan === 'Annual' && <Check className="w-4 h-4" />}
             </div>
           </div>
         </div>
 
-        <p className="text-center mb-8">Cancel anytime</p>
+        <p className="text-center mb-6 text-sm">Cancel anytime</p>
 
         <Button 
           onClick={handleGetStarted}
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white text-lg font-semibold py-6"
+          className="w-full bg-[#034AFF] hover:bg-blue-700 text-white text-lg font-semibold py-6"
+          style={{ backgroundColor: "#034AFF" }}
         >
           Get Started
         </Button>
