@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, Heart, Bookmark, Send, Bell, User, LogIn } from "lucide-react";
+import { ChevronLeft, Heart, Bookmark, Send, Bell, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useParams } from "react-router-dom";
@@ -13,7 +14,7 @@ const PostDetailPage = () => {
   const navigate = useNavigate();
   const params = useParams();
   const { toast } = useToast();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [post, setPost] = useState<any>(null);
   const [comments, setComments] = useState<any[]>([]);
   const [newComment, setNewComment] = useState("");
@@ -115,8 +116,8 @@ const PostDetailPage = () => {
     const newCommentObj = {
       id: `c${Date.now()}`,
       author: {
-        name: "You",
-        avatar: "/placeholder.svg",
+        name: user?.name || "You",
+        avatar: user?.avatar || "/placeholder.svg",
       },
       timeAgo: "Just now",
       content: newComment.trim(),
@@ -209,10 +210,13 @@ const PostDetailPage = () => {
         <div className="bg-white rounded-lg shadow p-4 mb-4 border border-gray-100">
           <div className="flex items-center mb-3">
             <Avatar className="h-12 w-12 mr-3">
-              <AvatarImage src={post?.author?.avatar} alt={post?.author?.name} />
-              <AvatarFallback>
-                {post?.author?.name?.charAt(0)}
-              </AvatarFallback>
+              {post?.author?.avatar ? (
+                <AvatarImage src={post.author.avatar} alt={post.author.name} />
+              ) : (
+                <AvatarFallback>
+                  {post?.author?.name?.charAt(0)}
+                </AvatarFallback>
+              )}
             </Avatar>
             <div>
               <h3 className="font-medium text-lg text-gray-800">{post?.author?.name}</h3>
@@ -282,10 +286,13 @@ const PostDetailPage = () => {
               comments.map(comment => (
                 <div key={comment.id} className="flex">
                   <Avatar className="h-10 w-10 mr-3 mt-1">
-                    <AvatarImage src={comment.author.avatar} alt={comment.author.name} />
-                    <AvatarFallback>
-                      {comment.author.name.charAt(0)}
-                    </AvatarFallback>
+                    {comment.author.avatar ? (
+                      <AvatarImage src={comment.author.avatar} alt={comment.author.name} />
+                    ) : (
+                      <AvatarFallback>
+                        {comment.author.name.charAt(0)}
+                      </AvatarFallback>
+                    )}
                   </Avatar>
                   <div className="flex-1">
                     <div className="bg-gray-50 p-3 rounded-lg">

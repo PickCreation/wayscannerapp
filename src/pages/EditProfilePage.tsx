@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Camera, UserCircle, Mail, Phone } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -9,19 +8,23 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
+import { useAuth } from "@/hooks/use-auth";
 
 const EditProfilePage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("profile");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
+  const { user, updateUserProfile } = useAuth();
   
   const [formData, setFormData] = useState({
-    fullName: "John Doe",
-    email: "johndoe@example.com",
-    phone: "+1 555-123-4567",
-    bio: "Nature enthusiast and eco-friendly lifestyle advocate.",
+    fullName: user?.name || "John Doe",
+    email: user?.email || "johndoe@example.com",
+    phone: user?.phone || "+1 555-123-4567",
+    bio: user?.bio || "Nature enthusiast and eco-friendly lifestyle advocate.",
   });
+  
+  const [profileImage, setProfileImage] = useState<string>(user?.avatar || "");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -34,6 +37,15 @@ const EditProfilePage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    updateUserProfile({
+      name: formData.fullName,
+      email: formData.email,
+      phone: formData.phone,
+      bio: formData.bio,
+      avatar: profileImage
+    });
+    
     toast({
       title: "Profile Updated",
       description: "Your profile has been successfully updated.",
@@ -63,6 +75,21 @@ const EditProfilePage = () => {
   const handleCameraClick = () => {
     setShowCameraSheet(true);
   };
+  
+  useEffect(() => {
+    const handleImageCapture = (event: CustomEvent) => {
+      const capturedImage = event.detail.imageUrl;
+      if (capturedImage) {
+        setProfileImage(capturedImage);
+      }
+    };
+    
+    window.addEventListener('imageCaptured', handleImageCapture as EventListener);
+    
+    return () => {
+      window.removeEventListener('imageCaptured', handleImageCapture as EventListener);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -80,10 +107,13 @@ const EditProfilePage = () => {
         <div className="flex flex-col items-center mb-6">
           <div className="relative mb-4">
             <Avatar className="w-24 h-24 border-4 border-white">
-              <AvatarImage src="" />
-              <AvatarFallback className="bg-gray-200 text-gray-400">
-                <UserCircle size={60} />
-              </AvatarFallback>
+              {profileImage ? (
+                <AvatarImage src={profileImage} />
+              ) : (
+                <AvatarFallback className="bg-gray-200 text-gray-400">
+                  <UserCircle size={60} />
+                </AvatarFallback>
+              )}
             </Avatar>
             <button 
               type="button"

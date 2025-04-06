@@ -187,10 +187,13 @@ const ProfilePage = () => {
 
         <div className="flex flex-col items-center pb-3">
           <Avatar className="w-16 h-16 border-4 border-white mb-1">
-            <AvatarImage src="" />
-            <AvatarFallback className="bg-white text-gray-400">
-              <User size={30} />
-            </AvatarFallback>
+            {isAuthenticated && user?.avatar ? (
+              <AvatarImage src={user.avatar} alt={user.name} />
+            ) : (
+              <AvatarFallback className="bg-white text-gray-400">
+                <User size={30} />
+              </AvatarFallback>
+            )}
           </Avatar>
           {isAuthenticated ? (
             <>

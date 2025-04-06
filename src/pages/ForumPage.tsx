@@ -276,10 +276,13 @@ export const ForumPage = () => {
               {/* Post Header - Author & Time */}
               <div className="flex items-center mb-3">
                 <Avatar className="h-12 w-12 mr-3">
-                  <AvatarImage src={post.author.avatar} alt={post.author.name} />
-                  <AvatarFallback>
-                    {post.author.name.charAt(0)}
-                  </AvatarFallback>
+                  {post.author.avatar ? (
+                    <AvatarImage src={post.author.avatar} alt={post.author.name} />
+                  ) : (
+                    <AvatarFallback>
+                      {post.author.name.charAt(0)}
+                    </AvatarFallback>
+                  )}
                 </Avatar>
                 <div>
                   <h3 className="font-medium text-[16px] text-gray-800">{post.author.name}</h3>
