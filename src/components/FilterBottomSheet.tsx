@@ -25,16 +25,26 @@ export interface FilterOptions {
 
 const colors = [
   { value: "any", label: "Any", color: "#E0E0E0" },
-  { value: "black", label: "Black", color: "#000000" },
-  { value: "white", label: "White", color: "#FFFFFF" },
-  { value: "red", label: "Red", color: "#F44336" },
-  { value: "blue", label: "Blue", color: "#2196F3" },
-  { value: "green", label: "Green", color: "#4CAF50" },
-  { value: "yellow", label: "Yellow", color: "#FFEB3B" },
+  { value: "Red", label: "Red", color: "#F44336" },
+  { value: "Gold", label: "Gold", color: "#FFD700" },
+  { value: "Pink", label: "Pink", color: "#FFC0CB" },
+  { value: "Orange", label: "Orange", color: "#FF9800" },
+  { value: "Grey", label: "Grey", color: "#9E9E9E" },
+  { value: "Brown", label: "Brown", color: "#795548" },
+  { value: "Navy blue", label: "Navy Blue", color: "#000080" },
+  { value: "Yellow", label: "Yellow", color: "#FFEB3B" },
+  { value: "Black", label: "Black", color: "#000000" },
+  { value: "Green", label: "Green", color: "#4CAF50" },
+  { value: "Maroon", label: "Maroon", color: "#800000" },
+  { value: "Silver", label: "Silver", color: "#C0C0C0" },
+  { value: "Turquoise", label: "Turquoise", color: "#40E0D0" },
+  { value: "Purple", label: "Purple", color: "#9C27B0" },
+  { value: "Teal", label: "Teal", color: "#008080" },
+  { value: "Blue", label: "Blue", color: "#2196F3" }
 ];
 
 const countries = ["Any", "United States", "Canada", "United Kingdom", "Germany", "France", "Japan", "Australia"];
-const conditions = ["Any", "New", "Used - Like New", "Used - Good", "Used - Fair"];
+const conditions = ["Any", "New", "Open Box", "Like New", "Used", "Refurbished"];
 const sortOptions = ["Relevance", "Recent", "Price: Low to High", "Price: High to Low", "Most Reviews", "Highest Rated"];
 
 const FilterBottomSheet: React.FC<FilterBottomSheetProps> = ({ open, onOpenChange, onApplyFilters }) => {
