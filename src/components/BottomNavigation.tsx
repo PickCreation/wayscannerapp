@@ -1,3 +1,4 @@
+
 import React from "react";
 import { 
   MessageCircle, 
@@ -75,13 +76,15 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
         isActive={activeItem === "shop" || isMarketplacePage}
         onClick={handleShopClick}
       />
-      <NavItem
-        icon={<User size={24} />}
-        activeIcon={<User size={24} fill="currentColor" />}
-        label="Profile"
-        isActive={activeItem === "profile" || isProfilePage}
-        onClick={handleProfileClick}
-      />
+      {isProfilePage && (
+        <NavItem
+          icon={<User size={24} />}
+          activeIcon={<User size={24} fill="currentColor" />}
+          label="Profile"
+          isActive={activeItem === "profile" || isProfilePage}
+          onClick={handleProfileClick}
+        />
+      )}
       <button
         className="flex items-center justify-center"
         onClick={onCameraClick}

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import ScannerCard from "@/components/ScannerCard";
 import BottomNavigation from "@/components/BottomNavigation";
@@ -71,6 +72,7 @@ const Index = () => {
 
   const handleProfileClick = () => {
     navigate("/profile");
+    setActiveNavItem("profile");
   };
 
   return (
