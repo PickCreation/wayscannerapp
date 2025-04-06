@@ -1,7 +1,7 @@
 
 import React from "react";
 import { ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react";
-import { Sheet, SheetContent, SheetHeader } from "@/components/ui/sheet";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 interface HowWeScoreSheetProps {
   open: boolean;
@@ -11,7 +11,7 @@ interface HowWeScoreSheetProps {
 const HowWeScoreSheet: React.FC<HowWeScoreSheetProps> = ({ open, onOpenChange }) => {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:max-w-md p-0 overflow-auto">
+      <SheetContent side="right" className="w-full sm:max-w-md p-0 overflow-auto" hideCloseButton>
         <div className="bg-wayscanner-blue text-white py-4 px-4 flex items-center">
           <button 
             onClick={() => onOpenChange(false)}
@@ -129,20 +129,35 @@ const HowWeScoreSheet: React.FC<HowWeScoreSheetProps> = ({ open, onOpenChange })
             </p>
             
             <div className="space-y-3">
-              <button className="bg-gray-100 w-full rounded-lg p-4 flex justify-between items-center">
+              <a 
+                href="https://www.who.int" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="bg-gray-100 w-full rounded-lg p-4 flex justify-between items-center"
+              >
                 <span className="font-semibold">The World Health Organization</span>
                 <ChevronRight className="h-5 w-5 text-gray-500" />
-              </button>
+              </a>
               
-              <button className="bg-gray-100 w-full rounded-lg p-4 flex justify-between items-center">
+              <a 
+                href="https://www.iarc.who.int" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="bg-gray-100 w-full rounded-lg p-4 flex justify-between items-center"
+              >
                 <span className="font-semibold">IARC - Cancer Research</span>
                 <ChevronRight className="h-5 w-5 text-gray-500" />
-              </button>
+              </a>
               
-              <button className="bg-gray-100 w-full rounded-lg p-4 flex justify-between items-center">
+              <a 
+                href="https://www.fao.org/nutrition" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="bg-gray-100 w-full rounded-lg p-4 flex justify-between items-center"
+              >
                 <span className="font-semibold">Global Nutrition Guidelines</span>
                 <ChevronRight className="h-5 w-5 text-gray-500" />
-              </button>
+              </a>
             </div>
           </div>
         </div>
