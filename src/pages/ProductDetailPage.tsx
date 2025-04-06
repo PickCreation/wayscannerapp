@@ -164,6 +164,8 @@ const ProductDetailPage = () => {
     );
   }
 
+  const totalPrice = (product.price * quantity).toFixed(2);
+
   const handleAddToCart = () => {
     toast({
       title: "Added to Cart",
@@ -196,7 +198,7 @@ const ProductDetailPage = () => {
         </button>
       </header>
 
-      <div className="w-full h-72 bg-gray-100">
+      <div className="w-full h-64 bg-gray-100">
         <img 
           src={product.images ? product.images[selectedImage] : product.image} 
           alt={product.title} 
@@ -209,7 +211,7 @@ const ProductDetailPage = () => {
           {product.images.slice(0, 6).map((img, index) => (
             <button 
               key={index} 
-              className={`w-16 h-16 border ${selectedImage === index ? 'border-wayscanner-blue' : 'border-gray-300'}`}
+              className={`w-14 h-14 border ${selectedImage === index ? 'border-wayscanner-blue' : 'border-gray-300'}`}
               onClick={() => setSelectedImage(index)}
             >
               <img 
@@ -246,7 +248,7 @@ const ProductDetailPage = () => {
           <span className="text-sm text-gray-500 ml-1">({product.reviews} reviews)</span>
         </div>
         
-        <p className="text-2xl font-bold text-wayscanner-blue mb-4">${product.price.toFixed(2)}</p>
+        <p className="text-2xl font-bold text-wayscanner-blue mb-4">${totalPrice}</p>
       </div>
       
       <div className="px-4">
