@@ -32,6 +32,10 @@ const Index = () => {
     });
   };
 
+  const handleProfileClick = () => {
+    navigate("/profile");
+  };
+
   return (
     <div className="pb-20 bg-white min-h-screen">
       {/* Header */}
@@ -46,10 +50,10 @@ const Index = () => {
         </div>
         <div className="flex items-center space-x-3">
           <button className="p-2">
-            <Bell size={24} />
+            <Bell size={24} fill="white" strokeWidth={1.5} />
           </button>
-          <button className="p-2">
-            <User size={24} stroke="white" strokeWidth={2.5} />
+          <button className="p-2" onClick={handleProfileClick}>
+            <User size={24} fill="white" strokeWidth={1.5} />
           </button>
         </div>
       </header>

@@ -1,0 +1,233 @@
+
+import React from "react";
+import { 
+  ArrowLeft, Settings, Edit, Lock, Store, Bookmark, Heart, 
+  ShoppingCart, Truck, Ticket, Globe, HelpCircle, Info, 
+  Shield, LogOut, Trash2, FileText, ChevronRight, User
+} from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+
+const ProfilePage = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleBackClick = () => {
+    navigate("/");
+  };
+
+  const handleMenuItemClick = (item: string) => {
+    toast({
+      title: "Coming Soon",
+      description: `The ${item} feature is under development.`,
+    });
+  };
+
+  return (
+    <div className="min-h-screen bg-white flex flex-col">
+      {/* Header */}
+      <div className="bg-wayscanner-blue text-white p-4 relative">
+        <div className="flex justify-between items-center mb-4">
+          <button className="p-2" onClick={handleBackClick}>
+            <ArrowLeft size={24} />
+          </button>
+          <h1 className="text-xl font-bold">My Profile</h1>
+          <button className="p-2" onClick={() => handleMenuItemClick("Settings")}>
+            <Settings size={24} />
+          </button>
+        </div>
+
+        {/* Profile Info */}
+        <div className="flex flex-col items-center pb-8">
+          <Avatar className="w-24 h-24 border-4 border-white mb-4">
+            <AvatarImage src="" />
+            <AvatarFallback className="bg-white text-gray-400">
+              <User size={48} />
+            </AvatarFallback>
+          </Avatar>
+          <h2 className="text-2xl font-bold mb-1">John Doe</h2>
+          <p className="mb-4">johndoe@example.com</p>
+          <button 
+            className="bg-transparent border border-white text-white rounded-full px-6 py-2"
+            onClick={() => handleMenuItemClick("Edit Profile")}
+          >
+            Edit Profile
+          </button>
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="flex justify-around py-6">
+        <div className="text-center">
+          <p className="text-3xl font-bold text-wayscanner-blue">127</p>
+          <p className="text-gray-500">Followers</p>
+        </div>
+        <div className="text-center border-x border-gray-200 px-8">
+          <p className="text-3xl font-bold text-wayscanner-blue">15</p>
+          <p className="text-gray-500">Sales</p>
+        </div>
+        <div className="text-center">
+          <p className="text-3xl font-bold text-wayscanner-blue">32</p>
+          <p className="text-gray-500">Reviews</p>
+        </div>
+      </div>
+
+      {/* Account Settings */}
+      <div className="px-4 pb-2">
+        <h3 className="text-2xl font-semibold mb-4">Account Settings</h3>
+        
+        <ProfileMenuItem 
+          icon={<Edit className="h-5 w-5 text-wayscanner-blue" />} 
+          title="Edit Profile" 
+          description="Update your personal information"
+          onClick={() => handleMenuItemClick("Edit Profile")}
+        />
+        
+        <ProfileMenuItem 
+          icon={<Lock className="h-5 w-5 text-wayscanner-blue" />} 
+          title="Change Password" 
+          description="Update your password"
+          onClick={() => handleMenuItemClick("Change Password")}
+        />
+        
+        <ProfileMenuItem 
+          icon={<Store className="h-5 w-5 text-wayscanner-blue" />} 
+          title="Seller Dashboard" 
+          description="Manage your store and products"
+          onClick={() => handleMenuItemClick("Seller Dashboard")}
+        />
+      </div>
+
+      {/* Content */}
+      <div className="px-4 pb-2">
+        <h3 className="text-2xl font-semibold mb-4">Content</h3>
+        
+        <ProfileMenuItem 
+          icon={<Bookmark className="h-5 w-5 text-wayscanner-blue" />} 
+          title="Bookmarks" 
+          description="Your saved content"
+          onClick={() => handleMenuItemClick("Bookmarks")}
+        />
+        
+        <ProfileMenuItem 
+          icon={<Heart className="h-5 w-5 text-wayscanner-blue" />} 
+          title="My Favorites" 
+          description="Products you love"
+          onClick={() => handleMenuItemClick("Favorites")}
+        />
+        
+        <ProfileMenuItem 
+          icon={<ShoppingCart className="h-5 w-5 text-wayscanner-blue" />} 
+          title="My Cart" 
+          description="Items in your shopping cart"
+          onClick={() => handleMenuItemClick("Cart")}
+        />
+        
+        <ProfileMenuItem 
+          icon={<Truck className="h-5 w-5 text-wayscanner-blue" />} 
+          title="My Orders" 
+          description="Track your orders"
+          onClick={() => handleMenuItemClick("Orders")}
+        />
+        
+        <ProfileMenuItem 
+          icon={<Ticket className="h-5 w-5 text-wayscanner-blue" />} 
+          title="My Coupons" 
+          description="Discount coupons and offers"
+          onClick={() => handleMenuItemClick("Coupons")}
+        />
+      </div>
+
+      {/* Preferences & Support */}
+      <div className="px-4 pb-2">
+        <h3 className="text-2xl font-semibold mb-4">Preferences & Support</h3>
+        
+        <ProfileMenuItem 
+          icon={<Globe className="h-5 w-5 text-wayscanner-blue" />} 
+          title="Language" 
+          description="Change app language"
+          onClick={() => handleMenuItemClick("Language")}
+        />
+        
+        <ProfileMenuItem 
+          icon={<HelpCircle className="h-5 w-5 text-wayscanner-blue" />} 
+          title="Help Center" 
+          description="Get support and assistance"
+          onClick={() => handleMenuItemClick("Help")}
+        />
+        
+        <ProfileMenuItem 
+          icon={<Info className="h-5 w-5 text-wayscanner-blue" />} 
+          title="About" 
+          description="App information and version"
+          onClick={() => handleMenuItemClick("About")}
+        />
+        
+        <ProfileMenuItem 
+          icon={<Shield className="h-5 w-5 text-wayscanner-blue" />} 
+          title="Privacy Policy" 
+          description="How we handle your data"
+          onClick={() => handleMenuItemClick("Privacy")}
+        />
+        
+        <ProfileMenuItem 
+          icon={<FileText className="h-5 w-5 text-wayscanner-blue" />} 
+          title="Terms of Use" 
+          description="Terms and conditions"
+          onClick={() => handleMenuItemClick("Terms")}
+        />
+      </div>
+
+      {/* Logout Button */}
+      <div className="px-4 pb-4 mt-4 flex flex-col">
+        <Button 
+          className="bg-wayscanner-blue hover:bg-blue-700 w-full py-6 rounded-lg flex items-center justify-center gap-2 mb-4"
+          onClick={() => handleMenuItemClick("Logout")}
+        >
+          <LogOut className="h-5 w-5" />
+          <span className="text-lg">Log Out</span>
+        </Button>
+        
+        <button 
+          className="text-red-500 text-center font-medium"
+          onClick={() => handleMenuItemClick("Delete Account")}
+        >
+          Delete Account
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// Helper component for menu items
+interface ProfileMenuItemProps {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  onClick: () => void;
+}
+
+const ProfileMenuItem = ({ icon, title, description, onClick }: ProfileMenuItemProps) => {
+  return (
+    <button 
+      className="flex items-center w-full mb-5"
+      onClick={onClick}
+    >
+      <div className="bg-blue-50 rounded-full p-3 mr-4">
+        {icon}
+      </div>
+      <div className="flex-1 text-left">
+        <h4 className="font-medium text-lg">{title}</h4>
+        <p className="text-gray-500">{description}</p>
+      </div>
+      <div className="text-gray-400">
+        <ChevronRight size={20} />
+      </div>
+    </button>
+  );
+};
+
+export default ProfilePage;
