@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Star, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -32,6 +31,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click
+    
+    if (isAddingToCart) return; // Prevent multiple clicks
+    
     setIsAddingToCart(true);
     
     // Get current cart items
@@ -51,6 +53,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
     }
     
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    
+    // Dispatch custom event to update cart count
+    window.dispatchEvent(new Event('cartUpdated'));
     
     toast({
       title: "Added to Cart",
