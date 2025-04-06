@@ -34,7 +34,7 @@ const CameraSheet: React.FC<CameraSheetProps> = ({ open, onOpenChange }) => {
         
         <div className="space-y-4">
           <h3 className="text-xl text-gray-600 mb-4">Other Actions</h3>
-          <Button className="w-full h-14 bg-[#7C5DC7] hover:bg-[#6B4DB3] justify-center px-6 py-4 text-lg rounded-xl" variant="default">
+          <Button className="w-full h-14 bg-black hover:bg-gray-800 justify-center px-6 py-4 text-lg rounded-xl" variant="default">
             <Pencil className="mr-4 h-6 w-6" />
             Create Post
           </Button>
