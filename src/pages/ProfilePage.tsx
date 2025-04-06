@@ -1,4 +1,3 @@
-
 import React from "react";
 import { 
   ArrowLeft, Edit, Lock, Store, Bookmark, Heart, 
@@ -30,7 +29,7 @@ const ProfilePage = () => {
     <div className="min-h-screen bg-white flex flex-col">
       {/* Header */}
       <div className="bg-wayscanner-blue text-white p-4 relative">
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center mb-2">
           <button className="p-2" onClick={handleBackClick}>
             <ArrowLeft size={24} />
           </button>
@@ -39,21 +38,21 @@ const ProfilePage = () => {
         </div>
 
         {/* Profile Info */}
-        <div className="flex flex-col items-center pb-6">
-          <Avatar className="w-24 h-24 border-4 border-white mb-2">
+        <div className="flex flex-col items-center pb-3">
+          <Avatar className="w-24 h-24 border-4 border-white mb-1">
             <AvatarImage src="" />
             <AvatarFallback className="bg-white text-gray-400">
               <User size={48} />
             </AvatarFallback>
           </Avatar>
-          <h2 className="text-2xl font-bold mb-1">John Doe</h2>
-          <p className="mb-2">johndoe@example.com</p>
+          <h2 className="text-2xl font-bold mb-0">John Doe</h2>
+          <p className="mb-1">johndoe@example.com</p>
           {/* Removed the Edit Profile button below email */}
         </div>
       </div>
 
       {/* Stats */}
-      <div className="flex justify-around py-4">
+      <div className="flex justify-around py-3">
         <div className="text-center">
           <p className="text-3xl font-bold text-wayscanner-blue">127</p>
           <p className="text-gray-500">Followers</p>
@@ -195,7 +194,6 @@ const ProfilePage = () => {
   );
 };
 
-// Helper component for menu items
 interface ProfileMenuItemProps {
   icon: React.ReactNode;
   title: string;
