@@ -24,6 +24,7 @@ interface AuthContextType {
   login: (email: string, password: string) => boolean;
   logout: () => void;
   updateUserProfile: (userData: UserProfileUpdate) => void;
+  signup: (name: string, email: string, password: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -86,6 +87,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return false;
   };
 
+  const signup = (name: string, email: string, password: string) => {
+    if (email && password.length >= 6) {
+      const userData = {
+        name: name || email.split('@')[0],
+        email: email,
+        isAdmin: false
+      };
+      setUser(userData);
+      setIsAuthenticated(true);
+      localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem("userProfile", JSON.stringify(userData));
+      return true;
+    }
+    return false;
+  };
+
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false);
@@ -112,7 +129,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         user,
         login,
         logout,
-        updateUserProfile
+        updateUserProfile,
+        signup
       }}
     >
       {children}
