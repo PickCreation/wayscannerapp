@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import BottomNavigation from "@/components/BottomNavigation";
 import { useToast } from "@/hooks/use-toast";
 import CameraSheet from "@/components/CameraSheet";
-import LoginDialog from "@/components/LoginDialog";
 import { useAuth } from "@/hooks/use-auth";
 
 const PostDetailPage = () => {
@@ -19,7 +18,6 @@ const PostDetailPage = () => {
   const [comments, setComments] = useState<any[]>([]);
   const [newComment, setNewComment] = useState("");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
-  const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
@@ -46,7 +44,7 @@ const PostDetailPage = () => {
     if (!post) return;
     
     if (!isAuthenticated) {
-      setShowLoginDialog(true);
+      navigate("/profile");
       return;
     }
     
@@ -81,7 +79,7 @@ const PostDetailPage = () => {
     if (!post) return;
     
     if (!isAuthenticated) {
-      setShowLoginDialog(true);
+      navigate("/profile");
       return;
     }
     
@@ -110,7 +108,7 @@ const PostDetailPage = () => {
     if (!newComment.trim() || !post) return;
     
     if (!isAuthenticated) {
-      setShowLoginDialog(true);
+      navigate("/profile");
       return;
     }
 
@@ -160,10 +158,6 @@ const PostDetailPage = () => {
     });
   };
 
-  const handleLoginClick = () => {
-    setShowLoginDialog(true);
-  };
-
   const handleProfileClick = () => {
     navigate("/profile");
   };
@@ -200,13 +194,6 @@ const PostDetailPage = () => {
             <ChevronLeft size={24} color="white" />
           </button>
           <h1 className="text-xl font-bold">Forum</h1>
-        </div>
-        <div className="flex justify-center">
-          <img 
-            src="/lovable-uploads/8fdd5ac8-39b5-43e6-86de-c8b27715d7c8.png" 
-            alt="WayScanner Logo" 
-            className="h-8" 
-          />
         </div>
         <div className="flex items-center space-x-3">
           <button className="p-2" type="button">
