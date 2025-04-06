@@ -22,6 +22,7 @@ const allRecipes = [
     time: "20 mins",
     rating: 4.5,
     reviews: 128,
+    category: "dinner",
     image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80"
   },
   {
@@ -30,6 +31,7 @@ const allRecipes = [
     time: "10 mins",
     rating: 4.7,
     reviews: 93,
+    category: "breakfast",
     image: "https://images.unsplash.com/photo-1590301157890-4810ed352733?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80"
   },
   {
@@ -38,6 +40,7 @@ const allRecipes = [
     time: "25 mins",
     rating: 4.6,
     reviews: 112,
+    category: "lunch",
     image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80"
   },
   {
@@ -46,6 +49,7 @@ const allRecipes = [
     time: "15 mins",
     rating: 4.4,
     reviews: 86,
+    category: "breakfast",
     image: "https://images.unsplash.com/photo-1603046891744-1f76eb10aec7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80"
   },
   {
@@ -54,6 +58,7 @@ const allRecipes = [
     time: "30 mins",
     rating: 4.8,
     reviews: 256,
+    category: "dinner",
     image: "/lovable-uploads/1485fb6f-36f0-4eee-98e1-0a56eb978616.png"
   },
   {
@@ -62,6 +67,7 @@ const allRecipes = [
     time: "15 mins",
     rating: 4.9,
     reviews: 178,
+    category: "breakfast",
     image: "https://images.unsplash.com/photo-1528207776546-365bb710ee93?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80"
   },
   {
@@ -70,6 +76,7 @@ const allRecipes = [
     time: "25 mins",
     rating: 4.7,
     reviews: 145,
+    category: "dinner",
     image: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80"
   },
   {
@@ -78,7 +85,17 @@ const allRecipes = [
     time: "20 mins",
     rating: 4.5,
     reviews: 112,
+    category: "lunch",
     image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80"
+  },
+  {
+    id: "cookie",
+    title: "Chocolate Chip Cookies",
+    time: "30 mins",
+    rating: 4.8,
+    reviews: 205,
+    category: "dessert",
+    image: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80"
   }
 ];
 
