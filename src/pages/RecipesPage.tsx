@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { 
   Search, 
@@ -201,7 +202,7 @@ const RecipesPage = () => {
           </form>
         </div>
 
-        <div className="px-4 mt-4 mb-6">
+        <div className="px-4 mt-2 mb-4">
           <h2 className="text-base font-bold mb-3 text-gray-800 text-[16px] text-center">Categories</h2>
           <div className="flex justify-center space-x-3 overflow-x-auto py-2 px-2 no-scrollbar">
             {categories.map((category) => (
@@ -225,8 +226,8 @@ const RecipesPage = () => {
           </div>
         </div>
 
-        <div className="px-4 mb-8">
-          <div className="flex justify-between items-center mb-4">
+        <div className="px-4 mb-6">
+          <div className="flex justify-between items-center mb-2">
             <h2 className="text-base font-bold text-gray-800 text-[16px]">
               {selectedCategory && selectedCategory !== "all"
                 ? `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Recipes` 
@@ -241,7 +242,7 @@ const RecipesPage = () => {
           </div>
           
           {displayedRecipes.length > 0 ? (
-            <div className="grid grid-cols-1 gap-6">
+            <div className="grid grid-cols-1 gap-3">
               {displayedRecipes.map((recipe) => (
                 <RecipeCard 
                   key={recipe.id}

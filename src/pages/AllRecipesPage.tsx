@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { 
   Search, 
@@ -202,10 +203,10 @@ const AllRecipesPage = () => {
         </div>
 
         <div className="px-4 mb-8">
-          <h2 className="text-base font-medium mb-4">
+          <h2 className="text-base font-medium mb-2">
             All Available Recipes
           </h2>
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 gap-3">
             {allRecipes.map((recipe) => (
               <RecipeCard 
                 key={recipe.id}

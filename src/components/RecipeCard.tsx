@@ -41,7 +41,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onClick }) => {
   };
 
   return (
-    <Card className="overflow-hidden cursor-pointer shadow-sm hover:shadow-md transition-shadow mb-3" onClick={onClick}>
+    <Card className="overflow-hidden cursor-pointer shadow-sm hover:shadow-md transition-shadow mb-2" onClick={onClick}>
       <div className="flex h-28">
         <div className="w-1/3">
           <img 
@@ -50,7 +50,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onClick }) => {
             className="h-full w-full object-cover"
           />
         </div>
-        <CardContent className="w-2/3 p-4">
+        <CardContent className="w-2/3 p-3">
           <div className="flex justify-between items-start mb-1">
             <h3 className="font-semibold text-sm line-clamp-1 text-gray-800">{recipe.title}</h3>
             {recipe.difficulty && (
