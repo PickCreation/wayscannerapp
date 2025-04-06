@@ -46,7 +46,7 @@ const Index = () => {
       {/* Greeting */}
       <div className="px-4 py-6 flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold">Hello Explorer! 👋</h2>
+          <h2 className="text-xl font-bold">Hello Explorer! 👋</h2>
           <p className="text-gray-600 mt-1">What would you like to discover today?</p>
         </div>
         <div className="bg-gray-100 rounded-full p-4">
@@ -56,7 +56,7 @@ const Index = () => {
 
       {/* Scanner Options */}
       <div className="px-4 mb-8">
-        <h3 className="text-2xl font-bold mb-4">Start Exploring</h3>
+        <h3 className="text-lg font-bold mb-4">Start Exploring</h3>
         <div className="grid grid-cols-2 gap-4">
           <ScannerCard
             title="Food Scan"
