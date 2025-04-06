@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { 
   ArrowLeft, Edit, Lock, Store, Bookmark, Heart, 
   ShoppingCart, Truck, Ticket, Globe, HelpCircle, Info, 
@@ -11,11 +11,13 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import BottomNavigation from "@/components/BottomNavigation";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("home");
 
   // Handle native back functionality
   useEffect(() => {
@@ -50,35 +52,51 @@ const ProfilePage = () => {
     });
   };
 
+  const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop") => {
+    setActiveNavItem(item);
+    if (item === "home") {
+      navigate("/");
+    } else {
+      toast({
+        title: "Coming Soon",
+        description: `The ${item} feature is under development.`,
+      });
+    }
+  };
+
+  const handleCameraClick = () => {
+    toast({
+      title: "Camera",
+      description: "The camera feature is under development.",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-white flex flex-col">
       {/* Header */}
       <div className="bg-wayscanner-blue text-white p-4 relative">
         <div className="flex justify-between items-center mb-2">
-          {!isMobile && (
-            <button className="p-2" onClick={handleBackClick}>
-              <ArrowLeft size={24} />
-            </button>
-          )}
-          <h1 className="text-xl font-bold text-base" style={{ 
-            fontSize: '20px',
+          <button className="p-2" onClick={handleBackClick}>
+            <ArrowLeft size={24} />
+          </button>
+          <h1 className="text-base font-bold" style={{ 
+            fontSize: '16px',
             marginLeft: isMobile ? '0' : 'auto',
             marginRight: isMobile ? '0' : 'auto'
           }}>My Profile</h1>
-          <div className={isMobile ? "hidden" : "w-10"}></div> {/* Placeholder to maintain centering when not on mobile */}
+          <div className="w-10"></div> {/* Placeholder to maintain centering */}
         </div>
 
         {/* Profile Info */}
         <div className="flex flex-col items-center pb-3">
-          <Avatar className="w-20 h-20 border-4 border-white mb-1">
+          <Avatar className="w-16 h-16 border-4 border-white mb-1">
             <AvatarImage src="" />
             <AvatarFallback className="bg-white text-gray-400">
-              <User size={36} />
+              <User size={30} />
             </AvatarFallback>
           </Avatar>
           <h2 className="text-base font-bold mb-0">John Doe</h2>
           <p className="mb-1">johndoe@example.com</p>
-          {/* Removed the Edit Profile button below email */}
         </div>
       </div>
 
@@ -205,7 +223,7 @@ const ProfilePage = () => {
       </div>
 
       {/* Logout Button */}
-      <div className="px-4 pb-4 mt-4 flex flex-col">
+      <div className="px-4 pb-20 mt-4 flex flex-col"> {/* Added pb-20 to make room for bottom nav */}
         <Button 
           className="bg-wayscanner-blue hover:bg-blue-700 w-full py-6 rounded-lg flex items-center justify-center gap-2 mb-4"
           onClick={() => handleMenuItemClick("Logout")}
@@ -221,6 +239,13 @@ const ProfilePage = () => {
           Delete Account
         </button>
       </div>
+
+      {/* Bottom Navigation */}
+      <BottomNavigation
+        activeItem={activeNavItem}
+        onItemClick={handleNavItemClick}
+        onCameraClick={handleCameraClick}
+      />
     </div>
   );
 };
