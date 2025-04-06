@@ -1,5 +1,6 @@
+
 import React from "react";
-import { ChevronRight, AlertTriangle, PawPrint, Bird, Fish } from "lucide-react";
+import { ChevronRight, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface AnimalItem {
@@ -69,42 +70,27 @@ const AnimalScanTab = () => {
     return "border-green-200";
   };
 
-  const getAnimalIcon = (type: "mammal" | "bird" | "fish") => {
-    if (type === "bird") return <Bird size={14} className="mr-1" />;
-    if (type === "fish") return <Fish size={14} className="mr-1" />;
-    return <PawPrint size={14} className="mr-1" />;
-  };
-
   const handleAnimalClick = (id: string) => {
     navigate(`/animal/${id}`);
   };
 
   return (
-    <div className="space-y-3 mb-6">
+    <div className="space-y-3">
       {animalItems.map((item) => (
         <div 
           key={item.id} 
-          className={`rounded-xl overflow-hidden border-2 ${getBorderColor(item.riskLevel)} shadow-sm flex cursor-pointer`}
+          className={`p-3 rounded-xl border-2 ${getBorderColor(item.riskLevel)} shadow-sm bg-white flex items-center justify-between cursor-pointer`}
           onClick={() => handleAnimalClick(item.id)}
         >
-          <div className="flex items-center p-3 w-full">
-            <div className="w-14 h-14 rounded-lg overflow-hidden mr-3 border border-gray-300">
-              <img 
-                src={item.imageUrl} 
-                alt={item.name} 
-                className="w-full h-full object-cover"
-              />
+          <div className="flex-1">
+            <h3 className="text-lg font-bold text-gray-900">{item.name}</h3>
+            <p className="text-md text-blue-500">{item.scientificName}</p>
+            <div className={`${getRiskColor(item.riskLevel)} text-white px-2 py-1 rounded-full inline-flex items-center text-sm mt-2`}>
+              <AlertTriangle className="mr-1" size={14} />
+              <span>{item.riskLevel} Risk</span>
             </div>
-            <div className="flex-1">
-              <h3 className="text-sm font-bold mb-0.5">{item.name}</h3>
-              <p className="text-blue-500 text-xs font-medium mb-1">{item.scientificName}</p>
-              <div className={`${getRiskColor(item.riskLevel)} text-white px-2 py-0.5 rounded-full inline-flex items-center text-xs`}>
-                <AlertTriangle className="mr-1" size={10} />
-                <span>{item.riskLevel} Risk</span>
-              </div>
-            </div>
-            <ChevronRight className="text-gray-400 ml-2" size={18} />
           </div>
+          <ChevronRight className="text-gray-400 h-5 w-5" />
         </div>
       ))}
     </div>

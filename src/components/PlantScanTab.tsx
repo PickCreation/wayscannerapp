@@ -1,6 +1,7 @@
 
 import React from "react";
-import { ChevronRight, MoreVertical, Droplets, Sun, Flower } from "lucide-react";
+import { ChevronRight, Droplets, Sun, Flower } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface PlantItem {
   id: string;
@@ -42,39 +43,37 @@ const plantItems: PlantItem[] = [
 ];
 
 const PlantScanTab = () => {
+  const navigate = useNavigate();
+
+  const getBorderColor = (type: string) => {
+    if (type.includes("Ti Leaf")) return "border-green-200";
+    if (type.includes("Monstera")) return "border-blue-200";
+    if (type.includes("Pink")) return "border-purple-200";
+    return "border-teal-200";
+  };
+
+  const handlePlantClick = (id: string) => {
+    navigate(`/plant/${id}`);
+  };
+
   return (
-    <div className="space-y-3 mb-6">
+    <div className="space-y-3">
       {plantItems.map((item) => (
         <div 
           key={item.id} 
-          className={`rounded-xl overflow-hidden border ${item.borderColor} shadow-sm flex`}
+          className={`p-3 rounded-xl border shadow-sm bg-white flex items-center justify-between cursor-pointer ${getBorderColor(item.name)}`}
+          onClick={() => handlePlantClick(item.id)}
         >
-          <div className="flex items-center p-3 w-full">
-            <div className="w-16 h-16 rounded-lg overflow-hidden mr-3">
-              <img 
-                src={item.imageUrl} 
-                alt={item.name} 
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="flex-1">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="text-base font-bold mb-0.5 flex items-center">
-                    {item.name}
-                    <ChevronRight className="ml-1" size={16} />
-                  </h3>
-                  <p className="text-gray-600 text-xs font-medium mb-1">{item.scientificName}</p>
-                </div>
-                <MoreVertical className="text-gray-400" size={20} />
-              </div>
-              <div className="flex space-x-3 mt-1">
-                <Droplets className="text-blue-500" size={16} />
-                <Sun className="text-yellow-500" size={16} />
-                <Flower className="text-green-500" size={16} />
-              </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-bold text-gray-900">{item.name}</h3>
+            <p className="text-md text-blue-500">{item.scientificName}</p>
+            <div className="flex space-x-3 mt-2">
+              <Droplets className="text-blue-500" size={18} />
+              <Sun className="text-yellow-500" size={18} />
+              <Flower className="text-green-500" size={18} />
             </div>
           </div>
+          <ChevronRight className="text-gray-400 h-5 w-5" />
         </div>
       ))}
     </div>
