@@ -1,7 +1,7 @@
 
 import React from "react";
 import { 
-  ArrowLeft, Settings, Edit, Lock, Store, Bookmark, Heart, 
+  ArrowLeft, Edit, Lock, Store, Bookmark, Heart, 
   ShoppingCart, Truck, Ticket, Globe, HelpCircle, Info, 
   Shield, LogOut, Trash2, FileText, ChevronRight, User
 } from "lucide-react";
@@ -34,28 +34,26 @@ const ProfilePage = () => {
           <button className="p-2" onClick={handleBackClick}>
             <ArrowLeft size={24} />
           </button>
-          <h1 className="text-xl font-bold">My Profile</h1>
-          <button className="p-2" onClick={() => handleMenuItemClick("Settings")}>
-            <Settings size={24} />
-          </button>
+          <h1 className="text-xl font-bold text-base" style={{ fontSize: '20px' }}>My Profile</h1>
+          <div className="w-10"></div> {/* Placeholder to maintain centering */}
         </div>
 
         {/* Profile Info */}
-        <div className="flex flex-col items-center pb-8">
-          <Avatar className="w-24 h-24 border-4 border-white mb-4">
+        <div className="flex flex-col items-center pb-6">
+          <Avatar className="w-24 h-24 border-4 border-white mb-2">
             <AvatarImage src="" />
             <AvatarFallback className="bg-white text-gray-400">
               <User size={48} />
             </AvatarFallback>
           </Avatar>
           <h2 className="text-2xl font-bold mb-1">John Doe</h2>
-          <p className="mb-4">johndoe@example.com</p>
+          <p className="mb-2">johndoe@example.com</p>
           {/* Removed the Edit Profile button below email */}
         </div>
       </div>
 
       {/* Stats */}
-      <div className="flex justify-around py-6">
+      <div className="flex justify-around py-4">
         <div className="text-center">
           <p className="text-3xl font-bold text-wayscanner-blue">127</p>
           <p className="text-gray-500">Followers</p>
