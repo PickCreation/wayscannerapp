@@ -30,6 +30,11 @@ const CameraSheet: React.FC<CameraSheetProps> = ({ open, onOpenChange }) => {
       return;
     }
     
+    if (type === "Food") {
+      navigate("/food-scan-camera");
+      return;
+    }
+    
     const tabMap: Record<string, string> = {
       "Food": "food",
       "Plant": "plants",

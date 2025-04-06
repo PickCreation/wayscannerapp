@@ -6,10 +6,12 @@ import { useNavigate, useLocation } from "react-router-dom";
 import FoodScanTab from "@/components/FoodScanTab";
 import PlantScanTab from "@/components/PlantScanTab";
 import AnimalScanTab from "@/components/AnimalScanTab";
+import CameraSheet from "@/components/CameraSheet";
 
 const ScanPage = () => {
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("home");
   const [activeTab, setActiveTab] = useState("food");
+  const [cameraSheetOpen, setCameraSheetOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -35,8 +37,8 @@ const ScanPage = () => {
   };
 
   const handleCameraClick = () => {
-    // This opens the camera sheet for scanning
-    navigate("/scan-camera");
+    // Open the camera sheet instead of directly navigating
+    setCameraSheetOpen(true);
   };
 
   const handleTabChange = (value: string) => {
@@ -122,6 +124,9 @@ const ScanPage = () => {
         onItemClick={handleNavItemClick}
         onCameraClick={handleCameraClick}
       />
+
+      {/* Camera Sheet */}
+      <CameraSheet open={cameraSheetOpen} onOpenChange={setCameraSheetOpen} />
     </div>
   );
 };
