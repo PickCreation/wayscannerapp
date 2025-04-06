@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, Heart, Share2, Plus, Minus, Tag } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
@@ -277,7 +278,7 @@ const ProductDetailPage = () => {
         </button>
       </header>
 
-      <div className="w-full bg-gray-100 px-4 py-6">
+      <div className="w-full bg-gray-100 px-4 py-1">
         {product.images && product.images.length > 0 ? (
           <Carousel className="w-full">
             <CarouselContent>
@@ -339,8 +340,8 @@ const ProductDetailPage = () => {
         </div>
         
         <div className="mb-3">
-          <p className="text-sm text-gray-600">Category: {product.category}</p>
-          <p className="text-sm text-gray-600">Seller: {product.seller}</p>
+          <p className="text-sm text-gray-600"><span className="font-medium">Category:</span> {product.category}</p>
+          <p className="text-sm text-gray-600"><span className="font-medium">Seller:</span> {product.seller}</p>
         </div>
         
         <div className="flex items-center mb-3">
