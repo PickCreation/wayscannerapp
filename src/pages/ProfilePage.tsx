@@ -50,12 +50,7 @@ const ProfilePage = () => {
           </Avatar>
           <h2 className="text-2xl font-bold mb-1">John Doe</h2>
           <p className="mb-4">johndoe@example.com</p>
-          <button 
-            className="bg-transparent border border-white text-white rounded-full px-6 py-2"
-            onClick={() => handleMenuItemClick("Edit Profile")}
-          >
-            Edit Profile
-          </button>
+          {/* Removed the Edit Profile button below email */}
         </div>
       </div>
 
@@ -192,7 +187,7 @@ const ProfilePage = () => {
         </Button>
         
         <button 
-          className="text-red-500 text-center font-medium"
+          className="text-red-500 text-center font-medium pb-6"
           onClick={() => handleMenuItemClick("Delete Account")}
         >
           Delete Account
