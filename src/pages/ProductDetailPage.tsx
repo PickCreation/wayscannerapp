@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { ChevronLeft, ShoppingCart, Star, Heart, Share2, Plus, Minus } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -6,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 
-// Sample product data
 const products = [
   {
     id: 1,
@@ -94,7 +92,6 @@ const ProductDetailPage = () => {
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
   
-  // Find the product based on the ID from URL params
   const product = products.find(p => p.id === Number(productId));
   
   if (!product) {
@@ -112,13 +109,6 @@ const ProductDetailPage = () => {
     });
   };
 
-  const handleBuyNow = () => {
-    toast({
-      title: "Proceeding to Checkout",
-      description: "This feature is coming soon!",
-    });
-  };
-
   const handleIncreaseQuantity = () => {
     setQuantity(prev => prev + 1);
   };
@@ -131,7 +121,6 @@ const ProductDetailPage = () => {
 
   return (
     <div className="pb-24 bg-white min-h-screen">
-      {/* Header */}
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
         <button 
           className="p-2" 
@@ -145,7 +134,6 @@ const ProductDetailPage = () => {
         </button>
       </header>
 
-      {/* Product Image */}
       <div className="w-full h-72 bg-gray-100">
         <img 
           src={product.image} 
@@ -154,7 +142,6 @@ const ProductDetailPage = () => {
         />
       </div>
 
-      {/* Product Info */}
       <div className="p-4">
         <div className="flex justify-between items-start mb-2">
           <h2 className="text-xl font-bold">{product.title}</h2>
@@ -168,6 +155,11 @@ const ProductDetailPage = () => {
           </div>
         </div>
         
+        <div className="mb-3">
+          <p className="text-sm text-gray-600">Category: {product.category}</p>
+          <p className="text-sm text-gray-600">Seller: {product.seller}</p>
+        </div>
+        
         <div className="flex items-center mb-3">
           <Star size={18} className="text-yellow-500 fill-current" />
           <span className="text-sm ml-1">{product.rating}</span>
@@ -175,39 +167,8 @@ const ProductDetailPage = () => {
         </div>
         
         <p className="text-2xl font-bold text-wayscanner-blue mb-4">${product.price.toFixed(2)}</p>
-        
-        <div className="mb-4">
-          <p className="text-sm text-gray-600">{product.category}</p>
-          <p className="text-sm text-gray-600">Seller: {product.seller} ({product.sellerRating} ★)</p>
-        </div>
-        
-        {/* Quantity Selector */}
-        <div className="flex items-center mb-4">
-          <span className="text-sm font-medium mr-3">Quantity:</span>
-          <div className="flex items-center border rounded-md">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-8 w-8"
-              onClick={handleDecreaseQuantity}
-              disabled={quantity <= 1}
-            >
-              <Minus size={16} />
-            </Button>
-            <span className="w-8 text-center">{quantity}</span>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-8 w-8"
-              onClick={handleIncreaseQuantity}
-            >
-              <Plus size={16} />
-            </Button>
-          </div>
-        </div>
       </div>
       
-      {/* Tabs for Description */}
       <div className="px-4">
         <Tabs defaultValue="description">
           <TabsList className="grid grid-cols-2 mb-2">
@@ -241,21 +202,35 @@ const ProductDetailPage = () => {
         </Tabs>
       </div>
       
-      {/* Action Buttons */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex gap-2">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex items-center justify-between">
         <Button 
           variant="outline" 
-          className="flex-1 bg-white border-wayscanner-blue text-wayscanner-blue font-medium"
+          className="flex-1 bg-white border-wayscanner-blue text-wayscanner-blue font-medium mr-4"
           onClick={handleAddToCart}
         >
           Add to Cart
         </Button>
-        <Button 
-          className="flex-1 bg-wayscanner-blue hover:bg-blue-700 text-white font-medium"
-          onClick={handleBuyNow}
-        >
-          Buy Now
-        </Button>
+        
+        <div className="flex items-center border rounded-md">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-8 w-8"
+            onClick={handleDecreaseQuantity}
+            disabled={quantity <= 1}
+          >
+            <Minus size={16} />
+          </Button>
+          <span className="w-8 text-center">{quantity}</span>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-8 w-8"
+            onClick={handleIncreaseQuantity}
+          >
+            <Plus size={16} />
+          </Button>
+        </div>
       </div>
     </div>
   );
