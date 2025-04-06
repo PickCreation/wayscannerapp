@@ -22,6 +22,7 @@ const POSTS = [
     likes: 2,
     comments: 2,
     bookmarked: false,
+    liked: false, // Add the liked property
   },
   {
     id: "2",
@@ -35,6 +36,7 @@ const POSTS = [
     likes: 3,
     comments: 1,
     bookmarked: false,
+    liked: false, // Add the liked property
   },
   {
     id: "3",
@@ -48,6 +50,7 @@ const POSTS = [
     likes: 15,
     comments: 7,
     bookmarked: true,
+    liked: false, // Add the liked property
   }
 ];
 
