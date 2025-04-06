@@ -30,10 +30,10 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
       />
       <div className="relative -mt-10">
         <button
-          className="bg-wayscanner-blue text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg"
+          className="bg-wayscanner-blue text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg"
           onClick={onCameraClick}
         >
-          <Camera size={32} />
+          <Camera size={24} />
         </button>
       </div>
       <NavItem

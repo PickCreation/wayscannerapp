@@ -2,12 +2,14 @@
 import React, { useState } from "react";
 import ScannerCard from "@/components/ScannerCard";
 import BottomNavigation from "@/components/BottomNavigation";
+import CameraSheet from "@/components/CameraSheet";
 import { Bell, User, Utensils, Leaf, PawPrint, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("home");
+  const [showCameraSheet, setShowCameraSheet] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -20,10 +22,7 @@ const Index = () => {
   };
 
   const handleCameraClick = () => {
-    toast({
-      title: "Camera Activated",
-      description: "The camera feature is under development.",
-    });
+    setShowCameraSheet(true);
   };
 
   const handleScannerClick = (type: string) => {
@@ -95,6 +94,9 @@ const Index = () => {
           />
         </div>
       </div>
+
+      {/* Camera Sheet */}
+      <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
 
       {/* Bottom Navigation */}
       <BottomNavigation
