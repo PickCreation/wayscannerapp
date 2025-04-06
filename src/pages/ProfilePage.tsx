@@ -55,16 +55,16 @@ const ProfilePage = () => {
       {/* Stats */}
       <div className="flex justify-around py-3">
         <div className="text-center">
-          <p className="text-3xl font-bold text-wayscanner-blue">127</p>
-          <p className="text-gray-500">Followers</p>
+          <p className="text-base font-bold text-wayscanner-blue">127</p>
+          <p className="text-[13px] text-[#6E6E6E]">Followers</p>
         </div>
         <div className="text-center border-x border-gray-200 px-8">
-          <p className="text-3xl font-bold text-wayscanner-blue">15</p>
-          <p className="text-gray-500">Sales</p>
+          <p className="text-base font-bold text-wayscanner-blue">15</p>
+          <p className="text-[13px] text-[#6E6E6E]">Sales</p>
         </div>
         <div className="text-center">
-          <p className="text-3xl font-bold text-wayscanner-blue">32</p>
-          <p className="text-gray-500">Reviews</p>
+          <p className="text-base font-bold text-wayscanner-blue">32</p>
+          <p className="text-[13px] text-[#6E6E6E]">Reviews</p>
         </div>
       </div>
 
@@ -212,7 +212,7 @@ const ProfileMenuItem = ({ icon, title, description, onClick }: ProfileMenuItemP
         {icon}
       </div>
       <div className="flex-1 text-left">
-        <h4 className="font-bold text-base text-black">{title}</h4>
+        <h4 className="font-semibold text-base text-black">{title}</h4>
         <p className="text-[13px] text-[#6E6E6E]">{description}</p>
       </div>
       <div className="text-gray-400">
