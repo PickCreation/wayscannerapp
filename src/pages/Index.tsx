@@ -15,6 +15,12 @@ const Index = () => {
 
   const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop") => {
     setActiveNavItem(item);
+    
+    // Don't show toast for home when already on home page
+    if (item === "home") {
+      return;
+    }
+    
     toast({
       title: "Coming Soon",
       description: `The ${item} feature is under development.`,
