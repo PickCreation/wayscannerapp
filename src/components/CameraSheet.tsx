@@ -22,6 +22,11 @@ const CameraSheet: React.FC<CameraSheetProps> = ({ open, onOpenChange }) => {
     }, 100);
   };
 
+  const handleSellSomething = () => {
+    onOpenChange(false);
+    navigate("/add-listing");
+  };
+
   const handleScanOption = (type: string) => {
     onOpenChange(false);
     
@@ -91,7 +96,11 @@ const CameraSheet: React.FC<CameraSheetProps> = ({ open, onOpenChange }) => {
             <Pencil className="mr-4 h-6 w-6" />
             Create Post
           </Button>
-          <Button className="w-full h-14 bg-[#1E88E5] hover:bg-[#1976D2] justify-center px-6 py-4 text-lg rounded-xl" variant="default">
+          <Button 
+            className="w-full h-14 bg-[#1E88E5] hover:bg-[#1976D2] justify-center px-6 py-4 text-lg rounded-xl" 
+            variant="default"
+            onClick={handleSellSomething}
+          >
             <ShoppingCart className="mr-4 h-6 w-6" />
             Sell Something
           </Button>

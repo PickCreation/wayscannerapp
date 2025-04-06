@@ -33,7 +33,9 @@ const ScannerCard: React.FC<ScannerCardProps> = ({
     else if (title === "Plant Scan") tabValue = "plants";
     else if (title === "Animal Scan") tabValue = "animals";
     else if (title === "Marketplace") {
-      // For now, don't navigate for Marketplace (as per requirement)
+      navigate("/marketplace");
+      // Call the original onClick if provided
+      if (onClick) onClick();
       return;
     }
     

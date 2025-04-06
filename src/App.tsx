@@ -20,6 +20,9 @@ import AnimalDetailPage from "./pages/AnimalDetailPage";
 import ScanCameraPage from "./pages/ScanCameraPage";
 import FoodScanCameraPage from "./pages/FoodScanCameraPage";
 import FoodDetailPage from "./pages/FoodDetailPage";
+import MarketplacePage from "./pages/MarketplacePage";
+import ProductDetailPage from "./pages/ProductDetailPage";
+import AddListingPage from "./pages/AddListingPage";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +48,9 @@ const App = () => (
           <Route path="/food/:foodId" element={<FoodDetailPage />} />
           <Route path="/scan-camera" element={<ScanCameraPage />} />
           <Route path="/food-scan-camera" element={<FoodScanCameraPage />} />
+          <Route path="/marketplace" element={<MarketplacePage />} />
+          <Route path="/marketplace/product/:productId" element={<ProductDetailPage />} />
+          <Route path="/add-listing" element={<AddListingPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

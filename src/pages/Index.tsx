@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import ScannerCard from "@/components/ScannerCard";
 import BottomNavigation from "@/components/BottomNavigation";
@@ -43,12 +42,9 @@ const Index = () => {
       return;
     }
     
-    // Only show toast for shop which is under development
     if (item === "shop") {
-      toast({
-        title: "Coming Soon",
-        description: `The ${item} feature is under development.`,
-      });
+      navigate("/marketplace");
+      return;
     }
   };
 
@@ -62,6 +58,11 @@ const Index = () => {
       "Plant": "plants",
       "Animal": "animals"
     };
+    
+    if (type === "Marketplace") {
+      navigate("/marketplace");
+      return;
+    }
     
     navigate(`/scan?tab=${tabMap[type] || "food"}`);
   };

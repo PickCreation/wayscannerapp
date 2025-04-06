@@ -25,10 +25,16 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
   const navigate = useNavigate();
   const isProfilePage = location.pathname === "/profile";
   const isRecipesPage = location.pathname.includes("/recipes");
+  const isMarketplacePage = location.pathname.includes("/marketplace");
 
   const handleRecipesClick = () => {
     navigate("/recipes");
     onItemClick("recipes");
+  };
+
+  const handleShopClick = () => {
+    navigate("/marketplace");
+    onItemClick("shop");
   };
 
   return (
@@ -58,8 +64,8 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
         icon={<ShoppingBag size={24} />}
         activeIcon={<ShoppingBag size={24} fill="currentColor" />}
         label="Shop"
-        isActive={activeItem === "shop"}
-        onClick={() => onItemClick("shop")}
+        isActive={activeItem === "shop" || isMarketplacePage}
+        onClick={handleShopClick}
       />
       <button
         className="flex items-center justify-center"
