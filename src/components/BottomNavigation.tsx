@@ -1,6 +1,16 @@
 
 import React from "react";
-import { Home, MessageCircle, Utensils, ShoppingBag, Camera } from "lucide-react";
+import { 
+  Home, 
+  MessageCircle, 
+  Utensils, 
+  ShoppingBag, 
+  Camera,
+  HomeIcon,
+  MessageCircleIcon,
+  UtensilsIcon,
+  ShoppingBagIcon
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface BottomNavigationProps {
@@ -18,42 +28,50 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
     <div className="fixed bottom-0 left-0 right-0 h-16 bg-white border-t flex items-center justify-between px-4 z-10">
       <NavItem
         icon={<Home size={24} />}
+        activeIcon={<Home size={24} fill="currentColor" />}
         label="Home"
         isActive={activeItem === "home"}
         onClick={() => onItemClick("home")}
       />
       <NavItem
         icon={<MessageCircle size={24} />}
+        activeIcon={<MessageCircle size={24} fill="currentColor" />}
         label="Forum"
         isActive={activeItem === "forum"}
         onClick={() => onItemClick("forum")}
       />
-      <div className="relative -mt-10">
-        <button
-          className="bg-wayscanner-blue text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg"
-          onClick={onCameraClick}
-        >
-          <Camera size={24} />
-        </button>
-      </div>
       <NavItem
         icon={<Utensils size={24} />}
+        activeIcon={<Utensils size={24} fill="currentColor" />}
         label="Recipes"
         isActive={activeItem === "recipes"}
         onClick={() => onItemClick("recipes")}
       />
       <NavItem
         icon={<ShoppingBag size={24} />}
+        activeIcon={<ShoppingBag size={24} fill="currentColor" />}
         label="Shop"
         isActive={activeItem === "shop"}
         onClick={() => onItemClick("shop")}
       />
+      <button
+        className="flex flex-col items-center justify-center w-16"
+        onClick={onCameraClick}
+      >
+        <div className="mb-1 text-wayscanner-blue">
+          <Camera size={24} />
+        </div>
+        <span className="text-xs text-wayscanner-blue font-medium">
+          Camera
+        </span>
+      </button>
     </div>
   );
 };
 
 interface NavItemProps {
   icon: React.ReactNode;
+  activeIcon: React.ReactNode;
   label: string;
   isActive: boolean;
   onClick: () => void;
@@ -61,6 +79,7 @@ interface NavItemProps {
 
 const NavItem: React.FC<NavItemProps> = ({
   icon,
+  activeIcon,
   label,
   isActive,
   onClick,
@@ -76,7 +95,7 @@ const NavItem: React.FC<NavItemProps> = ({
           isActive ? "text-wayscanner-blue" : "text-gray-400"
         )}
       >
-        {icon}
+        {isActive ? activeIcon : icon}
       </div>
       <span
         className={cn(
