@@ -13,6 +13,8 @@ import ProfilePage from "./pages/ProfilePage";
 import BookmarksPage from "./pages/BookmarksPage";
 import RecipesPage from "./pages/RecipesPage";
 import RecipeDetailPage from "./pages/RecipeDetailPage";
+import RecipeSearchPage from "./pages/RecipeSearchPage";
+import AllRecipesPage from "./pages/AllRecipesPage";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +33,8 @@ const App = () => (
           <Route path="/forum/post/:postId" element={<PostDetailPage />} />
           <Route path="/recipes" element={<RecipesPage />} />
           <Route path="/recipes/:recipeId" element={<RecipeDetailPage />} />
+          <Route path="/recipes/search" element={<RecipeSearchPage />} />
+          <Route path="/recipes/all" element={<AllRecipesPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

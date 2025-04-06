@@ -1,24 +1,21 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   Search, 
-  ChevronRight, 
-  Coffee, 
-  Utensils, 
-  Soup,
-  Cookie,
-  Bell,
-  User
+  ArrowLeft, 
+  Bell, 
+  User,
+  Filter
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import BottomNavigation from "@/components/BottomNavigation";
-import CameraSheet from "@/components/CameraSheet";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { RecipeCard } from "@/components/RecipeCard";
 import { useToast } from "@/hooks/use-toast";
+import BottomNavigation from "@/components/BottomNavigation";
+import CameraSheet from "@/components/CameraSheet";
 
-const trendingRecipes = [
+// Mock recipe data for search results
+const allRecipes = [
   {
     id: "stir-fry-1",
     title: "Vegetable Stir Fry",
@@ -50,25 +47,66 @@ const trendingRecipes = [
     rating: 4.4,
     reviews: 86,
     image: "https://images.unsplash.com/photo-1603046891744-1f76eb10aec7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80"
+  },
+  {
+    id: "pasta-1",
+    title: "Creamy Garlic Parmesan Pasta",
+    time: "30 mins",
+    rating: 4.8,
+    reviews: 256,
+    image: "/lovable-uploads/1485fb6f-36f0-4eee-98e1-0a56eb978616.png"
+  },
+  {
+    id: "pancakes",
+    title: "Blueberry Pancakes",
+    time: "15 mins",
+    rating: 4.9,
+    reviews: 178,
+    image: "https://images.unsplash.com/photo-1528207776546-365bb710ee93?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80"
+  },
+  {
+    id: "salmon",
+    title: "Baked Salmon",
+    time: "25 mins",
+    rating: 4.7,
+    reviews: 145,
+    image: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80"
+  },
+  {
+    id: "tacos",
+    title: "Vegetarian Tacos",
+    time: "20 mins",
+    rating: 4.5,
+    reviews: 112,
+    image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80"
   }
 ];
 
-const categories = [
-  { id: "breakfast", name: "Breakfast", icon: <Coffee size={20} color="#FF9800" /> },
-  { id: "lunch", name: "Lunch", icon: <Utensils size={20} color="#4CAF50" /> },
-  { id: "dinner", name: "Dinner", icon: <Soup size={20} color="#9C27B0" /> },
-  { id: "dessert", name: "Dessert", icon: <Cookie size={20} color="#E91E63" /> }
-];
-
-const RecipesPage = () => {
+const RecipeSearchPage = () => {
+  const [searchParams] = useSearchParams();
+  const query = searchParams.get("q") || "";
+  const [searchQuery, setSearchQuery] = useState(query);
+  const [results, setResults] = useState<any[]>([]);
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("recipes");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
+  
+  useEffect(() => {
+    setSearchQuery(query);
+    if (query) {
+      // Filter recipes based on search query
+      const filtered = allRecipes.filter(recipe => 
+        recipe.title.toLowerCase().includes(query.toLowerCase())
+      );
+      setResults(filtered);
+    } else {
+      setResults(allRecipes);
+    }
+  }, [query]);
 
   const handleBack = () => {
-    navigate("/"); // Navigate to home page
+    navigate("/recipes");
   };
 
   const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop") => {
@@ -84,6 +122,11 @@ const RecipesPage = () => {
       return;
     }
     
+    if (item === "recipes") {
+      navigate("/recipes");
+      return;
+    }
+    
     if (item !== "recipes") {
       toast({
         title: "Coming Soon",
@@ -96,10 +139,6 @@ const RecipesPage = () => {
     setShowCameraSheet(true);
   };
 
-  const handleRecipeClick = (recipeId: string) => {
-    navigate(`/recipes/${recipeId}`);
-  };
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -107,28 +146,37 @@ const RecipesPage = () => {
     }
   };
 
+  const handleRecipeClick = (recipeId: string) => {
+    navigate(`/recipes/${recipeId}`);
+  };
+
+  const handleFilterClick = () => {
+    toast({
+      title: "Filter",
+      description: "Filtering functionality is coming soon.",
+    });
+  };
+
   const handleProfileClick = () => {
     navigate("/profile");
   };
 
-  const handleCategoryClick = (categoryId: string) => {
-    toast({
-      title: "Category Selected",
-      description: `Browsing the "${categoryId}" category.`,
-    });
-  };
-
-  const handleViewAll = () => {
-    navigate("/recipes/all");
-  };
+  const pageTitle = query ? `Results for "${query}"` : "All Recipes";
 
   return (
     <div className="pb-20 bg-white min-h-screen">
       {/* Header */}
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center fixed top-0 left-0 right-0 z-10" style={{ backgroundColor: "#034AFF" }}>
-        <div className="w-6"></div> {/* Empty div for spacing */}
+        <button 
+          onClick={handleBack}
+          className="p-2 text-white"
+        >
+          <ArrowLeft size={24} />
+        </button>
         <div className="flex justify-center">
-          <h1 className="text-lg font-semibold text-white">Recipes</h1>
+          <h1 className="text-lg font-semibold text-white">
+            {pageTitle}
+          </h1>
         </div>
         <div className="flex items-center space-x-3">
           <button className="p-2">
@@ -155,53 +203,38 @@ const RecipesPage = () => {
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <Search className="h-5 w-5 text-gray-400" />
               </div>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                <ChevronRight className="h-5 w-5 text-gray-400" />
-              </div>
+              <button 
+                type="button"
+                className="absolute inset-y-0 right-0 flex items-center pr-3"
+                onClick={handleFilterClick}
+              >
+                <Filter className="h-5 w-5 text-gray-400" />
+              </button>
             </div>
           </form>
         </div>
 
-        <div className="px-4 mt-6 mb-8">
-          <h2 className="text-base font-bold mb-4 text-gray-800 text-[16px] text-center">Categories</h2>
-          <div className="flex justify-center space-x-4 overflow-x-auto pb-2 no-scrollbar">
-            {categories.map((category) => (
-              <div
-                key={category.id}
-                className="flex flex-col items-center cursor-pointer"
-                onClick={() => handleCategoryClick(category.id)}
-              >
-                <div className="w-14 h-14 rounded-full flex items-center justify-center mb-2" 
-                  style={{ backgroundColor: category.id === "breakfast" ? "#FFF3E0" : 
-                                          category.id === "lunch" ? "#E8F5E9" :
-                                          category.id === "dinner" ? "#F3E5F5" : "#FCE4EC" }}>
-                  {category.icon}
-                </div>
-                <span className="text-xs text-gray-700">{category.name}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
         <div className="px-4 mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-base font-bold text-gray-800 text-[16px]">Trending Recipes</h2>
-            <button 
-              className="text-primary text-sm font-medium"
-              onClick={handleViewAll}
-            >
-              View All
-            </button>
-          </div>
-          <div className="grid grid-cols-1 gap-4">
-            {trendingRecipes.map((recipe) => (
-              <RecipeCard 
-                key={recipe.id}
-                recipe={recipe}
-                onClick={() => handleRecipeClick(recipe.id)}
-              />
-            ))}
-          </div>
+          <h2 className="text-base font-medium mb-4">
+            {results.length} {results.length === 1 ? 'Result' : 'Results'} Found
+          </h2>
+          
+          {results.length > 0 ? (
+            <div className="grid grid-cols-1 gap-4">
+              {results.map((recipe) => (
+                <RecipeCard 
+                  key={recipe.id}
+                  recipe={recipe}
+                  onClick={() => handleRecipeClick(recipe.id)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-gray-500">No recipes found for "{query}"</p>
+              <p className="text-gray-400 mt-2">Try a different search term</p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -216,4 +249,4 @@ const RecipesPage = () => {
   );
 };
 
-export default RecipesPage;
+export default RecipeSearchPage;
