@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, X, Apple, Flower, Dog, Star, Check } from "lucide-react";
+import { X, Apple, Flower, Dog, Star, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -11,13 +11,19 @@ const SubscriptionPage = () => {
   const { toast } = useToast();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [restoringPurchase, setRestoringPurchase] = useState(false);
 
   const handleBackClick = () => {
     navigate("/profile");
   };
 
   const handlePlanSelection = (plan: string) => {
-    setSelectedPlan(plan);
+    // If the plan is already selected, deselect it
+    if (selectedPlan === plan) {
+      setSelectedPlan(null);
+    } else {
+      setSelectedPlan(plan);
+    }
   };
 
   const handleGetStarted = () => {
@@ -41,12 +47,27 @@ const SubscriptionPage = () => {
     navigate("/profile");
   };
 
+  const handleRestorePurchase = () => {
+    setRestoringPurchase(true);
+    
+    // Simulate purchase restoration
+    setTimeout(() => {
+      setRestoringPurchase(false);
+      toast({
+        title: "Purchase Restored",
+        description: "Your previous subscription has been restored successfully.",
+      });
+    }, 2000);
+    
+    // In a real app, you would use platform-specific code:
+    // For iOS: StoreKit APIs
+    // For Android: Google Play Billing Library
+    // This would typically be handled through Capacitor plugins or similar
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-blue-600 to-blue-900 text-white">
-      <header className="relative p-4 flex items-center justify-between">
-        <button onClick={handleBackClick} className="p-2">
-          <ArrowLeft size={24} />
-        </button>
+      <header className="relative p-4 flex items-center justify-end">
         <div className="w-10"></div>
       </header>
 
@@ -56,9 +77,12 @@ const SubscriptionPage = () => {
         </button>
       </div>
 
-      <div className="flex-1 flex flex-col items-center px-4 pt-6 pb-8">
-        <div className="bg-black/20 text-white px-4 py-1 rounded-full text-sm mb-6">
-          Restored
+      <div className="flex-1 flex flex-col items-center px-4 pt-6 pb-8 overflow-auto">
+        <div 
+          className="bg-black/20 text-white px-4 py-1 rounded-full text-sm mb-6 cursor-pointer"
+          onClick={handleRestorePurchase}
+        >
+          {restoringPurchase ? "Restoring..." : "Restore Purchase"}
         </div>
 
         <h1 className="text-4xl font-bold mb-2">Go Premium</h1>
@@ -90,7 +114,7 @@ const SubscriptionPage = () => {
               </p>
               <p className="text-sm">Great for short-term or casual use.</p>
             </div>
-            <div className="w-6 h-6 border-2 border-white rounded-sm flex items-center justify-center">
+            <div className="w-6 h-6 border-2 border-white rounded-sm flex items-center justify-center bg-black/10">
               {selectedPlan === 'Weekly' && <Check className="w-5 h-5" />}
             </div>
           </div>
@@ -110,7 +134,7 @@ const SubscriptionPage = () => {
               </p>
               <p className="text-sm text-gray-700">Perfect for ongoing learners and explorers.</p>
             </div>
-            <div className="w-6 h-6 border-2 border-blue-900 rounded-sm flex items-center justify-center">
+            <div className="w-6 h-6 border-2 border-blue-900 rounded-sm flex items-center justify-center bg-black/5">
               {selectedPlan === 'Monthly' && <Check className="w-5 h-5" />}
             </div>
           </div>
@@ -135,7 +159,7 @@ const SubscriptionPage = () => {
                 <p className="text-lg font-bold">Save $100 annually!</p>
               </div>
             </div>
-            <div className="w-6 h-6 border-2 border-white rounded-sm flex items-center justify-center">
+            <div className="w-6 h-6 border-2 border-white rounded-sm flex items-center justify-center bg-black/10">
               {selectedPlan === 'Annual' && <Check className="w-5 h-5" />}
             </div>
           </div>
