@@ -56,16 +56,6 @@ const ScannerCard: React.FC<ScannerCardProps> = ({
         {icon}
       </div>
       
-      {/* Placeholder image in the middle */}
-      <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 bg-gray-700/50 p-1.5 rounded-md">
-        <div className="w-6 h-6 border-2 border-gray-500 rounded-md flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16" />
-          </svg>
-        </div>
-      </div>
-      
       {/* Text at the bottom */}
       <div className="absolute bottom-4 left-4 right-4 text-white">
         <h3 className="text-base font-semibold mb-1">{title}</h3>
