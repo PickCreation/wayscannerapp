@@ -9,7 +9,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
-import { Card, CardContent } from "@/components/ui/card";
+import { RecipeCard } from "@/components/RecipeCard";
 
 const BookmarksPage = () => {
   const navigate = useNavigate();
@@ -30,16 +30,38 @@ const BookmarksPage = () => {
       setBookmarkedPosts(bookmarkedItems);
     }
 
-    // For demonstration, we'll add some placeholder data for scans and recipes
-    // In a real app, you would load these from localStorage or an API
+    // Load bookmarked recipes
+    const savedRecipes = localStorage.getItem('bookmarkedRecipes');
+    if (savedRecipes) {
+      setBookmarkedRecipes(JSON.parse(savedRecipes));
+    } else {
+      // For demonstration only - this would be removed in production
+      setBookmarkedRecipes([
+        { 
+          id: 'r1', 
+          title: 'Vegetable Stir Fry', 
+          author: 'Chef Jamie', 
+          difficulty: 'Medium', 
+          time: '30 mins',
+          rating: 4.5,
+          image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80"
+        },
+        { 
+          id: 'r2', 
+          title: 'Chocolate Brownies', 
+          author: 'Baker Paul', 
+          difficulty: 'Easy', 
+          time: '45 mins',
+          rating: 4.8,
+          image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80"
+        }
+      ]);
+    }
+
+    // For demonstration, we'll add some placeholder data for scans
     setBookmarkedScans([
       { id: 's1', title: 'Organic Apple', date: '2025-04-01', category: 'Fruit', score: 87 },
       { id: 's2', title: 'Whole Grain Bread', date: '2025-04-02', category: 'Bakery', score: 92 },
-    ]);
-
-    setBookmarkedRecipes([
-      { id: 'r1', title: 'Vegetable Stir Fry', author: 'Chef Jamie', difficulty: 'Medium', time: '30 mins' },
-      { id: 'r2', title: 'Chocolate Brownies', author: 'Baker Paul', difficulty: 'Easy', time: '45 mins' },
     ]);
   }, []);
 
@@ -50,6 +72,10 @@ const BookmarksPage = () => {
   const handlePostClick = (postId: string) => {
     navigate(`/forum/post/${postId}`);
   };
+  
+  const handleRecipeClick = (recipeId: string) => {
+    navigate(`/recipes/${recipeId}`);
+  };
 
   const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop") => {
     setActiveNavItem(item);
@@ -57,6 +83,8 @@ const BookmarksPage = () => {
       navigate("/");
     } else if (item === "forum") {
       navigate("/forum");
+    } else if (item === "recipes") {
+      navigate("/recipes");
     } else {
       toast({
         title: "Coming Soon",
@@ -97,6 +125,24 @@ const BookmarksPage = () => {
     toast({
       title: "Post unbookmarked",
       description: "Removed from your bookmarks",
+    });
+  };
+  
+  const handleRemoveRecipeBookmark = (recipeId: string) => {
+    // Update the local state
+    setBookmarkedRecipes(bookmarkedRecipes.filter(recipe => recipe.id !== recipeId));
+    
+    // Update localStorage
+    const savedBookmarks = localStorage.getItem('bookmarkedRecipes');
+    if (savedBookmarks) {
+      const bookmarks = JSON.parse(savedBookmarks);
+      const updatedBookmarks = bookmarks.filter((recipe: any) => recipe.id !== recipeId);
+      localStorage.setItem('bookmarkedRecipes', JSON.stringify(updatedBookmarks));
+    }
+    
+    toast({
+      title: "Recipe unbookmarked",
+      description: "Recipe removed from your bookmarks",
     });
   };
 
@@ -271,30 +317,25 @@ const BookmarksPage = () => {
             <div className="space-y-4">
               {bookmarkedRecipes.length > 0 ? (
                 bookmarkedRecipes.map(recipe => (
-                  <Card key={recipe.id} className="overflow-hidden">
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium">{recipe.title}</h3>
-                        <span className={`px-2 py-1 rounded-full text-xs ${
-                          recipe.difficulty === 'Easy' ? "bg-green-100 text-green-700" :
-                          recipe.difficulty === 'Medium' ? "bg-yellow-100 text-yellow-700" :
-                          "bg-red-100 text-red-700"
-                        }`}>
-                          {recipe.difficulty}
-                        </span>
-                      </div>
-                      <div className="text-sm text-gray-500">By: {recipe.author}</div>
-                      <div className="text-sm text-gray-500">Time: {recipe.time}</div>
+                  <div key={recipe.id} className="bg-white rounded-lg shadow">
+                    <RecipeCard
+                      recipe={recipe}
+                      onClick={() => handleRecipeClick(recipe.id)}
+                    />
+                    <div className="px-4 pb-3">
                       <button 
-                        className="mt-4 flex items-center text-wayscanner-blue"
-                        onClick={() => setBookmarkedRecipes(prev => prev.filter(r => r.id !== recipe.id))}
+                        className="flex items-center text-blue-500 py-2"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemoveRecipeBookmark(recipe.id);
+                        }}
                         type="button"
                       >
-                        <Bookmark size={18} className="fill-wayscanner-blue mr-1" />
+                        <Bookmark size={18} className="fill-blue-500 mr-2" />
                         Remove from bookmarks
                       </button>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </div>
                 ))
               ) : (
                 <div className="flex flex-col items-center justify-center py-10 px-4 bg-white rounded-lg shadow">
@@ -321,4 +362,3 @@ const BookmarksPage = () => {
 };
 
 export default BookmarksPage;
-
