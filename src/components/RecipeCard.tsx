@@ -19,7 +19,7 @@ interface RecipeCardProps {
 
 export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onClick }) => {
   return (
-    <Card className="overflow-hidden cursor-pointer shadow-sm hover:shadow-md transition-shadow mb-2" onClick={onClick}>
+    <Card className="overflow-hidden cursor-pointer shadow-sm hover:shadow-md transition-shadow mb-3" onClick={onClick}>
       <div className="flex h-28">
         <div className="w-1/3">
           <img 

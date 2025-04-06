@@ -13,10 +13,14 @@ import {
   CircleCheck,
   Info,
   MessageSquare,
-  LightbulbIcon
+  LightbulbIcon,
+  Check
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 
 // Mock recipe data (in a real app this would come from an API)
@@ -63,7 +67,22 @@ const recipeData = {
       "Make the sauce ahead of time for quicker meal prep.",
       "If sauce becomes too thick, add a splash of milk or pasta water."
     ],
-    comments: 18
+    comments: [
+      {
+        id: 1,
+        author: "Sarah Johnson",
+        date: "2 days ago",
+        rating: 5,
+        text: "Made this last night and it was amazing! My family loved it. Will definitely make again."
+      },
+      {
+        id: 2,
+        author: "Mike Thompson",
+        date: "1 week ago",
+        rating: 4,
+        text: "Great recipe! I added some grilled chicken and it was perfect for dinner."
+      }
+    ]
   },
   "stir-fry-1": {
     id: "stir-fry-1",
@@ -111,7 +130,22 @@ const recipeData = {
       "Make the sauce ahead of time for even quicker preparation.",
       "If you like spice, add red pepper flakes or sriracha."
     ],
-    comments: 24
+    comments: [
+      {
+        id: 1,
+        author: "Emily Chen",
+        date: "3 days ago",
+        rating: 5,
+        text: "So fresh and healthy! I added tofu for protein and it was delicious."
+      },
+      {
+        id: 2,
+        author: "David Wilson",
+        date: "1 week ago",
+        rating: 4,
+        text: "Great weeknight dinner option. Quick and tasty, my kids even ate the veggies!"
+      }
+    ]
   }
 };
 
@@ -135,7 +169,7 @@ const getDefaultRecipe = (id: string) => ({
   },
   tags: [],
   tips: [],
-  comments: 0
+  comments: []
 });
 
 const RecipeDetailPage = () => {
@@ -145,6 +179,8 @@ const RecipeDetailPage = () => {
   const [activeTab, setActiveTab] = useState("ingredients");
   const [isSaved, setIsSaved] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+  const [comment, setComment] = useState("");
+  const [selectedRating, setSelectedRating] = useState<string | null>("delicious");
 
   // Get recipe data using the recipeId from URL params
   const recipe = recipeData[recipeId as keyof typeof recipeData] || getDefaultRecipe(recipeId || "unknown");
@@ -177,9 +213,10 @@ const RecipeDetailPage = () => {
         const bookmarkItem = {
           id: recipe.id,
           title: recipe.title,
-          author: "Chef Jamie", // Example author
-          difficulty: recipe.tags.includes("easy") ? "Easy" : "Medium",
-          time: recipe.time
+          time: recipe.time,
+          rating: recipe.rating,
+          reviews: recipe.reviews,
+          image: recipe.image
         };
         bookmarks.push(bookmarkItem);
       }
@@ -220,17 +257,21 @@ const RecipeDetailPage = () => {
     });
   };
 
-  // Determine recipe difficulty
-  const recipeDifficulty = recipe.tags.includes("easy") ? "Easy" : recipe.tags.includes("medium") ? "Medium" : "Hard";
-  
-  // Determine recipe category
-  const getRecipeCategory = () => {
-    if (recipe.tags.includes("breakfast")) return "Breakfast";
-    if (recipe.tags.includes("lunch")) return "Lunch";
-    if (recipe.tags.includes("dinner")) return "Dinner";
-    if (recipe.tags.includes("dessert")) return "Dessert";
-    if (recipe.tags.includes("snack")) return "Snack";
-    return "Meal";
+  const handlePostComment = () => {
+    if (!comment) {
+      toast({
+        title: "Empty Comment",
+        description: "Please enter a comment before posting.",
+      });
+      return;
+    }
+
+    toast({
+      title: "Comment Posted",
+      description: "Your comment has been posted successfully.",
+    });
+
+    setComment("");
   };
 
   return (
@@ -249,7 +290,7 @@ const RecipeDetailPage = () => {
             onClick={handleBack}
             className="bg-white/20 backdrop-blur-sm rounded-full p-2"
           >
-            <ArrowLeft size={16} color="white" />
+            <ArrowLeft size={14} color="white" />
           </button>
           
           <div className="flex space-x-2">
@@ -258,7 +299,7 @@ const RecipeDetailPage = () => {
               className="bg-white/20 backdrop-blur-sm rounded-full p-2"
             >
               <BookmarkPlus 
-                size={16} 
+                size={14} 
                 color="white"
                 fill={isSaved ? "white" : "none"}
               />
@@ -268,7 +309,7 @@ const RecipeDetailPage = () => {
               className="bg-white/20 backdrop-blur-sm rounded-full p-2"
             >
               <Heart 
-                size={16} 
+                size={14} 
                 color="white"
                 fill={isLiked ? "white" : "none"}
               />
@@ -277,7 +318,7 @@ const RecipeDetailPage = () => {
               onClick={handleShare}
               className="bg-white/20 backdrop-blur-sm rounded-full p-2"
             >
-              <Share2 size={16} color="white" />
+              <Share2 size={14} color="white" />
             </button>
           </div>
         </div>
@@ -285,59 +326,58 @@ const RecipeDetailPage = () => {
 
       {/* Recipe Title */}
       <div className="px-4 pt-4">
-        <h1 className="text-2xl font-semibold mb-3">{recipe.title}</h1>
-      </div>
-
-      {/* Recipe Info */}
-      <div className="px-4 pb-4 grid grid-cols-4 gap-2">
-        <div className="flex flex-col items-center">
-          <div className="bg-blue-100 w-14 h-14 rounded-full flex items-center justify-center mb-1">
-            <Clock size={20} className="text-blue-500" />
-          </div>
-          <p className="text-blue-500 font-medium text-sm">{recipe.time}</p>
-          <p className="text-xs text-gray-500">Cook Time</p>
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="bg-green-100 w-14 h-14 rounded-full flex items-center justify-center mb-1">
-            <svg width="20" height="20" viewBox="0 0 24 24" className="text-green-500">
-              <rect x="3" y="12" width="4" height="6" fill="currentColor" />
-              <rect x="10" y="8" width="4" height="10" fill="currentColor" />
-              <rect x="17" y="4" width="4" height="14" fill="currentColor" />
-            </svg>
-          </div>
-          <p className="text-green-500 font-medium text-sm">{recipeDifficulty}</p>
-          <p className="text-xs text-gray-500">Difficulty</p>
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="bg-orange-100 w-14 h-14 rounded-full flex items-center justify-center mb-1">
-            <Users size={20} className="text-orange-500" />
-          </div>
-          <p className="text-orange-500 font-medium text-sm">{recipe.servings} Servings</p>
-          <p className="text-xs text-gray-500">Yield</p>
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="bg-indigo-100 w-14 h-14 rounded-full flex items-center justify-center mb-1">
-            <svg width="20" height="20" viewBox="0 0 24 24" className="text-indigo-500">
-              <polygon points="12,2 22,12 18,12 18,22 6,22 6,12 2,12" fill="currentColor" />
-            </svg>
-          </div>
-          <p className="text-indigo-500 font-medium text-sm">{getRecipeCategory()}</p>
-          <p className="text-xs text-gray-500">Category</p>
-        </div>
-      </div>
-
-      {/* Description */}
-      <div className="px-4 py-2">
-        <h2 className="text-base font-semibold mb-2">Description</h2>
-        <p className="text-sm text-gray-700">{recipe.description}</p>
+        <h1 className="text-base font-semibold mb-3">{recipe.title}</h1>
         
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2 mt-4">
+        {/* Recipe Info */}
+        <div className="flex flex-wrap gap-2 mb-3">
           {recipe.tags.map(tag => (
             <Badge key={tag} variant="secondary" className="capitalize text-xs">
               {tag}
             </Badge>
           ))}
+        </div>
+      </div>
+
+      {/* Description */}
+      <div className="px-4 py-2">
+        <div className="border border-gray-200 bg-gray-50 rounded-lg p-3 mb-4">
+          <p className="text-sm text-gray-700">{recipe.description}</p>
+        </div>
+      </div>
+
+      {/* Recipe Info */}
+      <div className="px-4 grid grid-cols-4 gap-2 mb-4">
+        <div className="flex flex-col items-center">
+          <div className="bg-blue-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
+            <Clock size={16} className="text-blue-500" />
+          </div>
+          <p className="text-xs text-blue-500 font-medium">{recipe.time}</p>
+          <p className="text-[10px] text-gray-500">Cook Time</p>
+        </div>
+        <div className="flex flex-col items-center">
+          <div className="bg-green-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
+            <svg width="16" height="16" viewBox="0 0 24 24" className="text-green-500">
+              <rect x="3" y="12" width="4" height="6" fill="currentColor" />
+              <rect x="10" y="8" width="4" height="10" fill="currentColor" />
+              <rect x="17" y="4" width="4" height="14" fill="currentColor" />
+            </svg>
+          </div>
+          <p className="text-xs text-green-500 font-medium">Easy</p>
+          <p className="text-[10px] text-gray-500">Difficulty</p>
+        </div>
+        <div className="flex flex-col items-center">
+          <div className="bg-orange-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
+            <Users size={16} className="text-orange-500" />
+          </div>
+          <p className="text-xs text-orange-500 font-medium">{recipe.servings}</p>
+          <p className="text-[10px] text-gray-500">Servings</p>
+        </div>
+        <div className="flex flex-col items-center">
+          <div className="bg-yellow-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
+            <Star size={16} className="text-yellow-500" />
+          </div>
+          <p className="text-xs text-yellow-500 font-medium">{recipe.rating}</p>
+          <p className="text-[10px] text-gray-500">Rating</p>
         </div>
       </div>
 
@@ -351,7 +391,7 @@ const RecipeDetailPage = () => {
           
           <TabsContent value="ingredients" className="mt-4">
             <h3 className="text-base font-semibold mb-3 flex items-center">
-              <ChefHat className="mr-2" size={16} />
+              <ChefHat className="mr-2" size={14} />
               Ingredients
             </h3>
             <ul className="space-y-2">
@@ -368,13 +408,13 @@ const RecipeDetailPage = () => {
           
           <TabsContent value="instructions" className="mt-4">
             <h3 className="text-base font-semibold mb-3 flex items-center">
-              <CircleCheck className="mr-2" size={16} />
+              <CircleCheck className="mr-2" size={14} />
               Instructions
             </h3>
             <ol className="space-y-4">
               {recipe.instructions.map((instruction, index) => (
                 <li key={index} className="flex">
-                  <div className="h-6 w-6 bg-wayscanner-blue text-white rounded-full flex-shrink-0 flex items-center justify-center mr-3 mt-0.5">
+                  <div className="h-6 w-6 bg-primary text-white rounded-full flex-shrink-0 flex items-center justify-center mr-3 mt-0.5">
                     <span className="text-xs">{index + 1}</span>
                   </div>
                   <span className="text-sm text-gray-700">{instruction}</span>
@@ -390,33 +430,33 @@ const RecipeDetailPage = () => {
         <h3 className="text-base font-semibold mb-3">Nutrition Information</h3>
         <div className="flex justify-between mb-2">
           <div className="flex flex-col items-center">
-            <div className="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mb-1">
-              <span className="text-red-500 text-lg font-semibold">{recipe.nutrition.calories}</span>
+            <div className="bg-red-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
+              <span className="text-red-500 text-xs font-semibold">{recipe.nutrition.calories}</span>
             </div>
             <p className="text-xs text-gray-600">Calories</p>
           </div>
           <div className="flex flex-col items-center">
-            <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mb-1">
-              <span className="text-purple-600 text-lg font-semibold">{recipe.nutrition.protein}</span>
+            <div className="bg-purple-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
+              <span className="text-purple-600 text-xs font-semibold">{recipe.nutrition.protein}</span>
             </div>
             <p className="text-xs text-gray-600">Protein</p>
           </div>
           <div className="flex flex-col items-center">
-            <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mb-1">
-              <span className="text-green-500 text-lg font-semibold">{recipe.nutrition.carbs}</span>
+            <div className="bg-green-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
+              <span className="text-green-500 text-xs font-semibold">{recipe.nutrition.carbs}</span>
             </div>
             <p className="text-xs text-gray-600">Carbs</p>
           </div>
           <div className="flex flex-col items-center">
-            <div className="bg-yellow-100 w-16 h-16 rounded-full flex items-center justify-center mb-1">
-              <span className="text-yellow-600 text-lg font-semibold">{recipe.nutrition.fat}</span>
+            <div className="bg-yellow-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
+              <span className="text-yellow-600 text-xs font-semibold">{recipe.nutrition.fat}</span>
             </div>
             <p className="text-xs text-gray-600">Fat</p>
           </div>
         </div>
         <div className="bg-gray-100 p-2 rounded-lg text-center">
           <div className="flex items-center justify-center">
-            <Info size={14} className="mr-1 text-gray-500" />
+            <Info size={12} className="mr-1 text-gray-500" />
             <p className="text-xs text-gray-500">Values are per serving and are approximate.</p>
           </div>
         </div>
@@ -427,13 +467,13 @@ const RecipeDetailPage = () => {
         <h3 className="text-base font-semibold mb-3">Tips</h3>
         <div className="bg-yellow-50 border border-yellow-100 rounded-lg p-4">
           <div className="flex items-start mb-2">
-            <LightbulbIcon size={18} className="text-yellow-500 mr-2 mt-0.5" />
-            <h4 className="text-base font-semibold text-yellow-600">Chef Tips</h4>
+            <LightbulbIcon size={14} className="text-yellow-500 mr-2 mt-0.5" />
+            <h4 className="text-sm font-semibold text-yellow-600">Chef Tips</h4>
           </div>
           <ul className="space-y-2 ml-2">
             {recipe.tips && recipe.tips.map((tip, index) => (
               <li key={index} className="flex items-start">
-                <span className="text-gray-700 mr-2 mt-1">•</span>
+                <span className="text-gray-700 mr-2">•</span>
                 <span className="text-sm text-gray-700">{tip}</span>
               </li>
             ))}
@@ -445,8 +485,8 @@ const RecipeDetailPage = () => {
       <div className="px-4 mt-6">
         <div className="flex justify-between items-center mb-3">
           <div className="flex items-center">
-            <MessageSquare size={16} className="mr-2 text-blue-500" />
-            <h3 className="text-base font-semibold">Comments ({recipe.comments || 0})</h3>
+            <MessageSquare size={14} className="mr-2 text-blue-500" />
+            <h3 className="text-base font-semibold">Comments ({recipe.comments?.length || 0})</h3>
           </div>
           <button 
             className="text-blue-500 text-sm font-medium"
@@ -454,6 +494,132 @@ const RecipeDetailPage = () => {
           >
             View All
           </button>
+        </div>
+
+        {/* Display comments */}
+        <div className="space-y-4 mb-6">
+          {recipe.comments && recipe.comments.map((comment) => (
+            <div key={comment.id} className="bg-gray-50 p-3 rounded-lg">
+              <div className="flex justify-between mb-1">
+                <div className="font-medium text-sm">{comment.author}</div>
+                <div className="text-xs text-gray-500">{comment.date}</div>
+              </div>
+              <div className="flex items-center mb-2">
+                {[...Array(5)].map((_, i) => (
+                  <Star 
+                    key={i} 
+                    size={12} 
+                    className={i < comment.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"} 
+                  />
+                ))}
+              </div>
+              <p className="text-sm text-gray-700">{comment.text}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Add comment form */}
+        <div className="mt-6">
+          <h3 className="text-xl font-semibold mb-4">Add Your Comment</h3>
+          
+          <Textarea 
+            placeholder="Share your experience with this recipe..." 
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            className="mb-4 bg-gray-50"
+          />
+          
+          <div className="mb-4">
+            <h4 className="text-base text-gray-700 mb-2">Rate this recipe:</h4>
+            <div className="flex flex-wrap gap-2">
+              <div className={`flex items-center border ${selectedRating === 'delicious' ? 'bg-green-100 border-green-500' : 'bg-gray-50 border-gray-200'} rounded-full px-4 py-2`}>
+                <input
+                  type="radio"
+                  id="delicious"
+                  name="rating"
+                  value="delicious"
+                  checked={selectedRating === 'delicious'}
+                  onChange={() => setSelectedRating('delicious')}
+                  className="sr-only"
+                />
+                <label 
+                  htmlFor="delicious" 
+                  className="flex items-center cursor-pointer"
+                  onClick={() => setSelectedRating('delicious')}
+                >
+                  {selectedRating === 'delicious' && <Check size={16} className="mr-1 text-green-500" />}
+                  <span className={`text-sm ${selectedRating === 'delicious' ? 'text-green-700' : 'text-gray-700'}`}>Delicious</span>
+                </label>
+              </div>
+              
+              <div className={`flex items-center border ${selectedRating === 'tasty' ? 'bg-blue-100 border-blue-500' : 'bg-gray-50 border-gray-200'} rounded-full px-4 py-2`}>
+                <input
+                  type="radio"
+                  id="tasty"
+                  name="rating"
+                  value="tasty"
+                  checked={selectedRating === 'tasty'}
+                  onChange={() => setSelectedRating('tasty')}
+                  className="sr-only"
+                />
+                <label 
+                  htmlFor="tasty" 
+                  className="flex items-center cursor-pointer"
+                  onClick={() => setSelectedRating('tasty')}
+                >
+                  {selectedRating === 'tasty' && <Check size={16} className="mr-1 text-blue-500" />}
+                  <span className={`text-sm ${selectedRating === 'tasty' ? 'text-blue-700' : 'text-gray-700'}`}>Tasty</span>
+                </label>
+              </div>
+              
+              <div className={`flex items-center border ${selectedRating === 'just-okay' ? 'bg-yellow-100 border-yellow-500' : 'bg-gray-50 border-gray-200'} rounded-full px-4 py-2`}>
+                <input
+                  type="radio"
+                  id="just-okay"
+                  name="rating"
+                  value="just-okay"
+                  checked={selectedRating === 'just-okay'}
+                  onChange={() => setSelectedRating('just-okay')}
+                  className="sr-only"
+                />
+                <label 
+                  htmlFor="just-okay" 
+                  className="flex items-center cursor-pointer"
+                  onClick={() => setSelectedRating('just-okay')}
+                >
+                  {selectedRating === 'just-okay' && <Check size={16} className="mr-1 text-yellow-500" />}
+                  <span className={`text-sm ${selectedRating === 'just-okay' ? 'text-yellow-700' : 'text-gray-700'}`}>Just Okay</span>
+                </label>
+              </div>
+              
+              <div className={`flex items-center border ${selectedRating === 'not-great' ? 'bg-red-100 border-red-500' : 'bg-gray-50 border-gray-200'} rounded-full px-4 py-2`}>
+                <input
+                  type="radio"
+                  id="not-great"
+                  name="rating"
+                  value="not-great"
+                  checked={selectedRating === 'not-great'}
+                  onChange={() => setSelectedRating('not-great')}
+                  className="sr-only"
+                />
+                <label 
+                  htmlFor="not-great" 
+                  className="flex items-center cursor-pointer"
+                  onClick={() => setSelectedRating('not-great')}
+                >
+                  {selectedRating === 'not-great' && <Check size={16} className="mr-1 text-red-500" />}
+                  <span className={`text-sm ${selectedRating === 'not-great' ? 'text-red-700' : 'text-gray-700'}`}>Not Great</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <Button 
+            className="w-full bg-blue-500 hover:bg-blue-600"
+            onClick={handlePostComment}
+          >
+            Post Comment
+          </Button>
         </div>
       </div>
     </div>
