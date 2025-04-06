@@ -9,7 +9,7 @@ import CreatePostSheet from "@/components/CreatePostSheet";
 import CameraSheet from "@/components/CameraSheet";
 
 // Sample forum data
-const POSTS = [
+const INITIAL_POSTS = [
   {
     id: "1",
     author: {
@@ -65,16 +65,29 @@ export const ForumPage = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"all" | "my">("all");
   const [activeCategory, setActiveCategory] = useState("All");
-  const [posts, setPosts] = useState(POSTS);
+  const [posts, setPosts] = useState(() => {
+    // Try to get posts from localStorage
+    const savedPosts = localStorage.getItem('forumPosts');
+    return savedPosts ? JSON.parse(savedPosts) : INITIAL_POSTS;
+  });
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [showCameraSheet, setShowCameraSheet] = useState(false);
   const { toast } = useToast();
+
+  // Save posts to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('forumPosts', JSON.stringify(posts));
+  }, [posts]);
 
   // Listen for new posts from CreatePostSheet
   useEffect(() => {
     const handleAddNewPost = (event: CustomEvent) => {
       const newPost = event.detail;
-      setPosts(prevPosts => [newPost, ...prevPosts]);
+      setPosts(prevPosts => {
+        const updatedPosts = [newPost, ...prevPosts];
+        localStorage.setItem('forumPosts', JSON.stringify(updatedPosts));
+        return updatedPosts;
+      });
     };
 
     window.addEventListener('addNewPost', handleAddNewPost as EventListener);
@@ -250,6 +263,13 @@ export const ForumPage = () => {
               
               {/* Post Content */}
               <p className="text-[14px] text-gray-700 mb-4">{post.content}</p>
+              
+              {/* Post Image (if available) */}
+              {post.imageUrl && (
+                <div className="mb-4 border rounded-lg overflow-hidden">
+                  <img src={post.imageUrl} alt="Post" className="w-full h-auto" />
+                </div>
+              )}
               
               {/* Post Actions */}
               <div className="flex items-center border-t border-gray-100 pt-3">

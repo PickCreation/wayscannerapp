@@ -19,38 +19,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-// Sample my posts data
-const MY_POSTS = [
-  {
-    id: "4",
-    author: {
-      name: "You",
-      avatar: "/placeholder.svg",
-    },
-    timeAgo: "2h ago",
-    category: "Plants",
-    content: "Check out this plant I identified with WayScanner! Anyone have tips for caring for it?",
-    likes: 5,
-    comments: 3,
-    bookmarked: false,
-    liked: false,
-  },
-  {
-    id: "5",
-    author: {
-      name: "You",
-      avatar: "/placeholder.svg",
-    },
-    timeAgo: "1d ago",
-    category: "Gardening",
-    content: "My garden is starting to bloom! WayScanner helped me identify some of the weeds I needed to remove.",
-    likes: 12,
-    comments: 4,
-    bookmarked: false,
-    liked: false,
-  }
-];
-
 // Updated category options for filtering
 const CATEGORIES = [
   "All", "Plants", "Gardening", "Nature", "Food", "Healthy Recipes", 
@@ -62,16 +30,33 @@ const MyPostsPage = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"all" | "my">("my");
   const [activeCategory, setActiveCategory] = useState("All");
-  const [posts, setPosts] = useState(MY_POSTS);
+  const [posts, setPosts] = useState<any[]>([]);
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [showCameraSheet, setShowCameraSheet] = useState(false);
   const { toast } = useToast();
+  
+  // Load posts from localStorage on mount
+  useEffect(() => {
+    const savedPosts = localStorage.getItem('forumPosts');
+    if (savedPosts) {
+      const allPosts = JSON.parse(savedPosts);
+      // Filter to only show posts by "You"
+      const myPosts = allPosts.filter((post: any) => post.author.name === "You");
+      setPosts(myPosts);
+    }
+  }, []);
   
   // Listen for new posts from CreatePostSheet
   useEffect(() => {
     const handleAddNewPost = (event: CustomEvent) => {
       const newPost = event.detail;
-      setPosts(prevPosts => [newPost, ...prevPosts]);
+      setPosts(prevPosts => {
+        // Only add if it's your post
+        if (newPost.author.name === "You") {
+          return [newPost, ...prevPosts];
+        }
+        return prevPosts;
+      });
     };
 
     window.addEventListener('addNewPost', handleAddNewPost as EventListener);
@@ -109,6 +94,17 @@ const MyPostsPage = () => {
       return post;
     }));
     
+    // Also update in the main forum posts
+    const allPosts = JSON.parse(localStorage.getItem('forumPosts') || '[]');
+    const updatedAllPosts = allPosts.map((post: any) => {
+      if (post.id === postId) {
+        const newLikes = post.likes + (post.liked ? -1 : 1);
+        return { ...post, likes: newLikes, liked: !post.liked };
+      }
+      return post;
+    });
+    localStorage.setItem('forumPosts', JSON.stringify(updatedAllPosts));
+    
     toast({
       title: "Post liked",
       description: "The author has been notified",
@@ -123,6 +119,16 @@ const MyPostsPage = () => {
       return post;
     }));
     
+    // Also update in the main forum posts
+    const allPosts = JSON.parse(localStorage.getItem('forumPosts') || '[]');
+    const updatedAllPosts = allPosts.map((post: any) => {
+      if (post.id === postId) {
+        return { ...post, bookmarked: !post.bookmarked };
+      }
+      return post;
+    });
+    localStorage.setItem('forumPosts', JSON.stringify(updatedAllPosts));
+    
     toast({
       title: "Post bookmarked",
       description: "Saved to your profile",
@@ -134,7 +140,13 @@ const MyPostsPage = () => {
   };
   
   const handleDeletePost = (postId: string) => {
+    // Remove from my posts
     setPosts(posts.filter(post => post.id !== postId));
+    
+    // Also remove from all posts in localStorage
+    const allPosts = JSON.parse(localStorage.getItem('forumPosts') || '[]');
+    const updatedAllPosts = allPosts.filter((post: any) => post.id !== postId);
+    localStorage.setItem('forumPosts', JSON.stringify(updatedAllPosts));
     
     toast({
       title: "Post deleted",
@@ -284,6 +296,13 @@ const MyPostsPage = () => {
               
               {/* Post Content */}
               <p className="text-[14px] text-gray-700 mb-4">{post.content}</p>
+              
+              {/* Post Image (if available) */}
+              {post.imageUrl && (
+                <div className="mb-4 border rounded-lg overflow-hidden">
+                  <img src={post.imageUrl} alt="Post" className="w-full h-auto" />
+                </div>
+              )}
               
               {/* Post Actions */}
               <div className="flex items-center border-t border-gray-100 pt-3">

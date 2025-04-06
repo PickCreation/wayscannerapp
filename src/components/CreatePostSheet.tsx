@@ -73,6 +73,7 @@ const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange })
       comments: 0,
       bookmarked: false,
       liked: false,
+      imageUrl: imagePreview,
     };
     
     // Dispatch a custom event to add the post to both pages
