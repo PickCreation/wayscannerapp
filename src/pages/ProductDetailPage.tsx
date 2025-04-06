@@ -1,6 +1,7 @@
 
 import React, { useState } from "react";
-import { ChevronLeft, ShoppingCart, Star, Heart, Share2, Plus, Minus } from "lucide-react";
+import { ChevronLeft, Heart, Share2, Plus, Minus } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -167,10 +168,48 @@ const ProductDetailPage = () => {
   const totalPrice = (product.price * quantity).toFixed(2);
 
   const handleAddToCart = () => {
+    // Save to cart in localStorage
+    const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+    const existingItemIndex = cartItems.findIndex((item: any) => item.id === product.id);
+    
+    if (existingItemIndex >= 0) {
+      cartItems[existingItemIndex].quantity += quantity;
+    } else {
+      cartItems.push({
+        ...product,
+        quantity: quantity
+      });
+    }
+    
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    
     toast({
       title: "Added to Cart",
       description: `${quantity} × ${product.title} added to your cart`,
     });
+  };
+
+  const handleAddToFavorites = () => {
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    const isAlreadyFavorite = favorites.some((item: any) => item.id === product.id);
+    
+    if (!isAlreadyFavorite) {
+      favorites.push(product);
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+      
+      toast({
+        title: "Added to Favorites",
+        description: `${product.title} added to your favorites`,
+      });
+    } else {
+      const updatedFavorites = favorites.filter((item: any) => item.id !== product.id);
+      localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+      
+      toast({
+        title: "Removed from Favorites",
+        description: `${product.title} removed from your favorites`,
+      });
+    }
   };
 
   const handleIncreaseQuantity = () => {
@@ -193,8 +232,8 @@ const ProductDetailPage = () => {
           <ChevronLeft size={24} color="white" />
         </button>
         <h1 className="text-xl font-bold">Product Details</h1>
-        <button className="p-2">
-          <ShoppingCart size={24} color="white" />
+        <button className="p-2" onClick={() => navigate('/cart')}>
+          <ShoppingCart size={24} color="white" fill="white" />
         </button>
       </header>
 
@@ -228,7 +267,7 @@ const ProductDetailPage = () => {
         <div className="flex justify-between items-start mb-2">
           <h2 className="text-xl font-bold">{product.title}</h2>
           <div className="flex space-x-2">
-            <Button size="icon" variant="ghost" className="h-9 w-9">
+            <Button size="icon" variant="ghost" className="h-9 w-9" onClick={handleAddToFavorites}>
               <Heart size={20} />
             </Button>
             <Button size="icon" variant="ghost" className="h-9 w-9">
@@ -339,5 +378,22 @@ const ProductDetailPage = () => {
     </div>
   );
 };
+
+const Star = ({ size, className }: { size: number, className: string }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+  </svg>
+);
 
 export default ProductDetailPage;

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { 
   ArrowLeft, Edit, Lock, Store, Bookmark, Heart, 
@@ -44,6 +45,16 @@ const ProfilePage = () => {
   const handleMenuItemClick = (item: string) => {
     if (item === "Bookmarks") {
       navigate("/bookmarks");
+      return;
+    }
+    
+    if (item === "Favorites") {
+      navigate("/favorites");
+      return;
+    }
+    
+    if (item === "Cart") {
+      navigate("/cart");
       return;
     }
     

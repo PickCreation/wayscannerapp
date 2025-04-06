@@ -1,5 +1,7 @@
+
 import React, { useState } from "react";
-import { ChevronLeft, ShoppingCart, Search } from "lucide-react";
+import { ChevronLeft, Search } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -114,8 +116,8 @@ const MarketplacePage = () => {
           <ChevronLeft size={24} color="white" />
         </button>
         <h1 className="text-xl font-bold">Marketplace</h1>
-        <button className="p-2">
-          <ShoppingCart size={24} color="white" />
+        <button className="p-2" onClick={() => navigate('/cart')}>
+          <ShoppingCart size={24} color="white" fill="white" />
         </button>
       </header>
 
