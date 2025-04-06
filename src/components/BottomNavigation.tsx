@@ -23,6 +23,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
 }) => {
   const location = useLocation();
   const isProfilePage = location.pathname === "/profile";
+  const isRecipesPage = location.pathname.includes("/recipes");
 
   return (
     <div className="fixed bottom-0 left-0 right-0 h-16 bg-white border-t flex items-center justify-between px-4 z-10">
@@ -44,7 +45,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
         icon={isProfilePage ? <User size={24} /> : <Utensils size={24} />}
         activeIcon={isProfilePage ? <User size={24} fill="currentColor" /> : <Utensils size={24} fill="currentColor" />}
         label={isProfilePage ? "Profile" : "Recipes"}
-        isActive={activeItem === "recipes"}
+        isActive={activeItem === "recipes" || isRecipesPage}
         onClick={() => onItemClick("recipes")}
       />
       <NavItem

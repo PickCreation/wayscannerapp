@@ -1,0 +1,43 @@
+
+import React from "react";
+import { Clock, Star } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+
+interface Recipe {
+  id: string;
+  title: string;
+  time: string;
+  rating: number;
+  reviews: number;
+  image: string;
+}
+
+interface RecipeCardProps {
+  recipe: Recipe;
+  onClick: () => void;
+}
+
+export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onClick }) => {
+  return (
+    <Card className="overflow-hidden" onClick={onClick}>
+      <div className="flex h-24">
+        <div className="w-1/3">
+          <img 
+            src={recipe.image} 
+            alt={recipe.title} 
+            className="h-full w-full object-cover"
+          />
+        </div>
+        <CardContent className="w-2/3 p-3">
+          <h3 className="font-semibold text-base mb-1 line-clamp-1">{recipe.title}</h3>
+          <div className="flex items-center text-sm text-gray-600">
+            <Clock size={14} className="mr-1" />
+            <span className="mr-3">{recipe.time}</span>
+            <Star size={14} className="mr-1 text-yellow-400 fill-yellow-400" />
+            <span>{recipe.rating} ({recipe.reviews})</span>
+          </div>
+        </CardContent>
+      </div>
+    </Card>
+  );
+};
