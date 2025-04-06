@@ -198,7 +198,7 @@ const FoodDetailPage = () => {
         >
           <ChevronLeft className="h-5 w-5" color="white" />
         </button>
-        <h1 className="text-[20px] font-medium">Food Detail</h1>
+        <h1 className="text-[18px] font-medium">Food Detail</h1>
         <div className="w-8 h-8 flex items-center justify-center">
           {/* Placeholder for right side button */}
           <div className="w-5 h-5"></div>
@@ -236,10 +236,10 @@ const FoodDetailPage = () => {
         </div>
       </div>
 
-      {/* Per Serving */}
+      {/* Per Serving - Modified to remove dashes */}
       <div className="mx-3 mt-4 text-center">
-        <p className="text-gray-500 text-xs border-b border-dashed border-gray-300 pb-1.5">
-          -------------------------- per serving ({food.serving}) --------------------------
+        <p className="text-gray-500 text-xs pb-1.5">
+          per serving ({food.serving})
         </p>
       </div>
 
