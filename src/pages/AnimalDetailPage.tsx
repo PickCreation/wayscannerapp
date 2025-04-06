@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ChevronLeft, AlertTriangle, PawPrint, Utensils, Moon, PhoneCall, Info } from "lucide-react";
@@ -41,7 +40,7 @@ const animalDetailsData: AnimalDetails[] = [
     name: "Bengal Tiger",
     scientificName: "Panthera tigris tigris",
     riskLevel: "High",
-    imageUrl: "/lovable-uploads/69501614-b92c-43f9-89e5-85971b5b6ede.png",
+    imageUrl: "/lovable-uploads/a3386c5c-af28-42ee-96df-91008ff21cb5.png",
     type: "Mammal",
     dietary: "Carnivore",
     behavior: "Nocturnal",
@@ -63,9 +62,9 @@ const animalDetailsData: AnimalDetails[] = [
       { name: "Poison Control Center", phone: "+1-800-222-1222" }
     ],
     similarSpecies: [
-      { name: "Malayan Tiger", imageUrl: "/lovable-uploads/69501614-b92c-43f9-89e5-85971b5b6ede.png" },
-      { name: "South China Tiger", imageUrl: "/lovable-uploads/69501614-b92c-43f9-89e5-85971b5b6ede.png" },
-      { name: "Sumatran Tiger", imageUrl: "/lovable-uploads/69501614-b92c-43f9-89e5-85971b5b6ede.png" }
+      { name: "Malayan Tiger", imageUrl: "/lovable-uploads/a3386c5c-af28-42ee-96df-91008ff21cb5.png" },
+      { name: "South China Tiger", imageUrl: "/lovable-uploads/a3386c5c-af28-42ee-96df-91008ff21cb5.png" },
+      { name: "Sumatran Tiger", imageUrl: "/lovable-uploads/a3386c5c-af28-42ee-96df-91008ff21cb5.png" }
     ]
   },
   {
@@ -73,7 +72,7 @@ const animalDetailsData: AnimalDetails[] = [
     name: "Gray Wolf",
     scientificName: "Canis lupus",
     riskLevel: "Moderate",
-    imageUrl: "/lovable-uploads/b7a77845-a980-42f1-8b7e-eea9a8b822f8.png",
+    imageUrl: "/lovable-uploads/4c436a75-e04b-4265-8025-91e7bb146566.png",
     type: "Mammal",
     dietary: "Carnivore",
     behavior: "Crepuscular",
@@ -95,9 +94,9 @@ const animalDetailsData: AnimalDetails[] = [
       { name: "Animal Control", phone: "+1-800-555-ANIMAL" }
     ],
     similarSpecies: [
-      { name: "Eastern Wolf", imageUrl: "/lovable-uploads/b7a77845-a980-42f1-8b7e-eea9a8b822f8.png" },
-      { name: "Arctic Wolf", imageUrl: "/lovable-uploads/b7a77845-a980-42f1-8b7e-eea9a8b822f8.png" },
-      { name: "Coyote", imageUrl: "/lovable-uploads/b7a77845-a980-42f1-8b7e-eea9a8b822f8.png" }
+      { name: "Eastern Wolf", imageUrl: "/lovable-uploads/4c436a75-e04b-4265-8025-91e7bb146566.png" },
+      { name: "Arctic Wolf", imageUrl: "/lovable-uploads/8fdd5ac8-39b5-43e6-86de-c8b27715d7c8.png" },
+      { name: "Coyote", imageUrl: "/lovable-uploads/1485fb6f-36f0-4eee-98e1-0a56eb978616.png" }
     ]
   },
   {
@@ -105,7 +104,7 @@ const animalDetailsData: AnimalDetails[] = [
     name: "Labrador Retriever",
     scientificName: "Canis lupus familiaris",
     riskLevel: "Low",
-    imageUrl: "/lovable-uploads/b7a77845-a980-42f1-8b7e-eea9a8b822f8.png",
+    imageUrl: "/lovable-uploads/dc7e6fce-2b21-472e-99f7-7f20be83b76f.png",
     type: "Mammal",
     dietary: "Omnivore",
     behavior: "Diurnal",
@@ -127,9 +126,9 @@ const animalDetailsData: AnimalDetails[] = [
       { name: "Emergency Vet Hotline", phone: "+1-800-555-VETS" }
     ],
     similarSpecies: [
-      { name: "Golden Retriever", imageUrl: "/lovable-uploads/b7a77845-a980-42f1-8b7e-eea9a8b822f8.png" },
-      { name: "Chesapeake Bay Retriever", imageUrl: "/lovable-uploads/b7a77845-a980-42f1-8b7e-eea9a8b822f8.png" },
-      { name: "Flat-Coated Retriever", imageUrl: "/lovable-uploads/b7a77845-a980-42f1-8b7e-eea9a8b822f8.png" }
+      { name: "Golden Retriever", imageUrl: "/lovable-uploads/81f6d068-8c80-4e65-9ad0-2d3fe0a6f480.png" },
+      { name: "Chesapeake Bay Retriever", imageUrl: "/lovable-uploads/1044c752-2d75-49e0-836c-39ab8130a173.png" },
+      { name: "Flat-Coated Retriever", imageUrl: "/lovable-uploads/dc7e6fce-2b21-472e-99f7-7f20be83b76f.png" }
     ]
   }
 ];
@@ -146,7 +145,6 @@ const AnimalDetailPage = () => {
     if (foundAnimal) {
       setAnimal(foundAnimal);
     } else {
-      // If animal not found, redirect to scan page
       navigate("/scan?tab=animals");
     }
   }, [animalId, navigate]);
@@ -179,7 +177,6 @@ const AnimalDetailPage = () => {
 
   return (
     <div className="pb-20 bg-white min-h-screen">
-      {/* Header */}
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
         <button 
           className="p-2" 
@@ -191,7 +188,6 @@ const AnimalDetailPage = () => {
         <div className="w-10 h-10"></div>
       </header>
 
-      {/* Animal Image - Now full width and larger */}
       <div className="w-full h-[250px] overflow-hidden">
         <img 
           src={animal.imageUrl} 
@@ -200,12 +196,10 @@ const AnimalDetailPage = () => {
         />
       </div>
 
-      {/* Animal Name - Moved below image */}
       <div className="p-4 pb-2">
         <h2 className="text-xl font-bold">{animal.name}</h2>
       </div>
 
-      {/* Scientific Name and Risk Level */}
       <div className="px-4 pb-2">
         <h3 className="text-base text-green-600 font-medium">Scientific Name</h3>
         <p className="text-blue-600 text-sm font-medium mb-2">{animal.scientificName}</p>
@@ -218,7 +212,6 @@ const AnimalDetailPage = () => {
 
       <div className="border-t border-gray-200 my-2"></div>
 
-      {/* Key Characteristics */}
       <div className="px-4 pb-3 flex justify-around">
         <div className="border border-gray-300 rounded-lg p-2 flex flex-col items-center justify-center">
           <PawPrint className="text-blue-600 mb-1" size={20} />
@@ -237,55 +230,46 @@ const AnimalDetailPage = () => {
         </div>
       </div>
 
-      {/* Danger Level */}
       <div className="px-4 py-3 bg-red-100 mx-4 rounded-lg mb-3">
         <h3 className="text-base font-semibold mb-1">Danger Level</h3>
         <p className="text-xs">{animal.dangerText}</p>
       </div>
 
-      {/* Safety Measures */}
       <div className="px-4 py-3 bg-green-100 mx-4 rounded-lg mb-3">
         <h3 className="text-base font-semibold mb-1">Safety Measures</h3>
         <p className="text-xs">{animal.safetyMeasures}</p>
       </div>
 
-      {/* About */}
       <div className="px-4 py-3 border border-gray-300 mx-4 rounded-lg mb-3">
         <h3 className="text-base font-semibold mb-1">About</h3>
         <p className="text-xs">{animal.about}</p>
       </div>
 
-      {/* Habitat */}
       <div className="px-4 py-3 bg-purple-100 mx-4 rounded-lg mb-3">
         <h3 className="text-base font-semibold mb-1">Habitat</h3>
         <p className="text-xs">{animal.habitat}</p>
       </div>
 
-      {/* Health Advice */}
       <div className="px-4 py-3 bg-yellow-100 mx-4 rounded-lg mb-3">
         <h3 className="text-base font-semibold mb-1">Health Advice</h3>
         <p className="text-xs">{animal.healthAdvice}</p>
       </div>
 
-      {/* Diet */}
       <div className="px-4 py-3 bg-pink-100 mx-4 rounded-lg mb-3">
         <h3 className="text-base font-semibold mb-1">Diet</h3>
         <p className="text-xs">{animal.diet}</p>
       </div>
 
-      {/* Behavioral Traits */}
       <div className="px-4 py-3 bg-green-100 mx-4 rounded-lg mb-3">
         <h3 className="text-base font-semibold mb-1">Behavioral Traits</h3>
         <p className="text-xs">{animal.behavioralTraits}</p>
       </div>
 
-      {/* Legal Restrictions */}
       <div className="px-4 py-3 bg-blue-100 mx-4 rounded-lg mb-3">
         <h3 className="text-base font-semibold mb-1">Legal Restrictions</h3>
         <p className="text-xs">{animal.legalRestrictions}</p>
       </div>
 
-      {/* Interesting Facts */}
       <div className="px-4 py-3 border border-gray-300 mx-4 rounded-lg mb-3">
         <h3 className="text-base font-semibold mb-1">Interesting Facts</h3>
         <ul className="space-y-2">
@@ -300,7 +284,6 @@ const AnimalDetailPage = () => {
         </ul>
       </div>
 
-      {/* Emergency Contacts */}
       <div className="px-4 py-3 bg-red-100 mx-4 rounded-lg mb-3">
         <h3 className="text-base font-semibold mb-1">Emergency Contacts</h3>
         <ul className="space-y-2">
@@ -316,7 +299,6 @@ const AnimalDetailPage = () => {
         </ul>
       </div>
 
-      {/* Similar Species */}
       <div className="px-4 py-3 mx-4 mb-3">
         <h3 className="text-base font-semibold mb-2">Similar Species</h3>
         <div className="flex space-x-4 overflow-x-auto pb-2">
@@ -331,14 +313,12 @@ const AnimalDetailPage = () => {
         </div>
       </div>
 
-      {/* Bottom Navigation */}
       <BottomNavigation
         activeItem={activeNavItem}
         onItemClick={handleNavItemClick}
         onCameraClick={handleCameraClick}
       />
 
-      {/* Camera Sheet */}
       <CameraSheet 
         open={cameraSheetOpen} 
         onOpenChange={setCameraSheetOpen} 

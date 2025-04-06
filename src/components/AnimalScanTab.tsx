@@ -1,4 +1,3 @@
-
 import React from "react";
 import { ChevronRight, AlertTriangle, PawPrint, Bird, Fish } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -22,7 +21,7 @@ const animalItems: AnimalItem[] = [
     name: "Bengal Tiger",
     scientificName: "Panthera tigris tigris",
     riskLevel: "High",
-    imageUrl: "/lovable-uploads/69501614-b92c-43f9-89e5-85971b5b6ede.png",
+    imageUrl: "/lovable-uploads/a3386c5c-af28-42ee-96df-91008ff21cb5.png",
     borderColor: "border-red-200",
     icon: "mammal",
     type: "Mammal",
@@ -34,7 +33,7 @@ const animalItems: AnimalItem[] = [
     name: "Gray Wolf",
     scientificName: "Canis lupus",
     riskLevel: "Moderate",
-    imageUrl: "/lovable-uploads/b7a77845-a980-42f1-8b7e-eea9a8b822f8.png",
+    imageUrl: "/lovable-uploads/4c436a75-e04b-4265-8025-91e7bb146566.png",
     borderColor: "border-orange-200",
     icon: "mammal",
     type: "Mammal",
@@ -46,7 +45,7 @@ const animalItems: AnimalItem[] = [
     name: "Labrador Retriever",
     scientificName: "Canis lupus familiaris",
     riskLevel: "Low",
-    imageUrl: "/lovable-uploads/b7a77845-a980-42f1-8b7e-eea9a8b822f8.png",
+    imageUrl: "/lovable-uploads/dc7e6fce-2b21-472e-99f7-7f20be83b76f.png",
     borderColor: "border-green-200",
     icon: "mammal",
     type: "Mammal",
