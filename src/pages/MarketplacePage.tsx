@@ -67,12 +67,12 @@ const products = [
 ];
 
 const categories = [
-  { id: "all", name: "All", color: "#2196F3", bgColor: "#E3F2FD" },
-  { id: "decor", name: "Decor", color: "#FF9800", bgColor: "#FFF3E0" },
-  { id: "animal-accessories", name: "Animal Accessories", color: "#4CAF50", bgColor: "#E8F5E9" },
-  { id: "plants", name: "Plants", color: "#9C27B0", bgColor: "#F3E5F5" },
-  { id: "plants-accessories", name: "Plants Accessories", color: "#E91E63", bgColor: "#FCE4EC" },
-  { id: "kitchen-essentials", name: "Kitchen Essentials", color: "#3F51B5", bgColor: "#E8EAF6" },
+  { id: "all", name: "All", color: "#2196F3", bgColor: "#E3F2FD", icon: "📦" },
+  { id: "decor", name: "Decor", color: "#FF9800", bgColor: "#FFF3E0", icon: "🏠" },
+  { id: "animal-accessories", name: "Animal Accessories", color: "#4CAF50", bgColor: "#E8F5E9", icon: "🐾" },
+  { id: "plants", name: "Plants", color: "#9C27B0", bgColor: "#F3E5F5", icon: "🌿" },
+  { id: "plants-accessories", name: "Plants Accessories", color: "#E91E63", bgColor: "#FCE4EC", icon: "🪴" },
+  { id: "kitchen-essentials", name: "Kitchen Essentials", color: "#3F51B5", bgColor: "#E8EAF6", icon: "🍽️" },
 ];
 
 const MarketplacePage = () => {
@@ -150,7 +150,7 @@ const MarketplacePage = () => {
         <div className="relative mb-4">
           <Input
             placeholder="Search products..."
-            className="pl-10 pr-10 py-2 bg-gray-100 rounded-full focus:border-wayscanner-blue focus:ring-1 focus:ring-wayscanner-blue"
+            className="pl-10 pr-10 py-3 bg-white border border-gray-200 rounded-xl focus:border-wayscanner-blue focus:ring-1 focus:ring-wayscanner-blue shadow-sm"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -167,8 +167,8 @@ const MarketplacePage = () => {
         </div>
         
         <div className="mt-4">
-          <h2 className="text-base font-bold mb-3 text-gray-800 text-[16px] text-center">Categories</h2>
-          <div className="flex justify-center space-x-3 overflow-x-auto py-2 px-2 no-scrollbar">
+          <h2 className="text-base font-bold mb-3 text-gray-800 text-[16px]">Categories</h2>
+          <div className="flex space-x-3 overflow-x-auto py-2 px-2 no-scrollbar">
             {categories.map((category) => (
               <div
                 key={category.id}
@@ -176,10 +176,10 @@ const MarketplacePage = () => {
                 onClick={() => handleCategoryClick(category.id)}
               >
                 <div 
-                  className={`w-10 h-10 rounded-full flex items-center justify-center mb-1 ${activeCategory === category.id ? 'ring-2 ring-offset-1 ring-blue-500' : ''}`} 
+                  className={`w-12 h-12 rounded-full flex items-center justify-center mb-1 ${activeCategory === category.id ? 'ring-2 ring-offset-1 ring-blue-500' : ''}`} 
                   style={{ backgroundColor: category.bgColor }}
                 >
-                  <div style={{ color: category.color, width: '20px', height: '20px' }} />
+                  <span className="text-lg" style={{ color: category.color }}>{category.icon}</span>
                 </div>
                 <span className={`text-xs ${activeCategory === category.id ? 'font-bold text-blue-500' : 'text-gray-700'}`}>
                   {category.name}
