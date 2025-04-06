@@ -223,7 +223,7 @@ const ProfilePage = () => {
       </div>
 
       {/* Logout Button */}
-      <div className="px-4 pb-20 mt-4 flex flex-col"> {/* Added pb-20 to make room for bottom nav */}
+      <div className="px-4 pb-40 mt-4 flex flex-col"> {/* Changed pb-20 to pb-40 to add more padding */}
         <Button 
           className="bg-wayscanner-blue hover:bg-blue-700 w-full py-6 rounded-lg flex items-center justify-center gap-2 mb-4"
           onClick={() => handleMenuItemClick("Logout")}
