@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, Trash2, Plus, Minus, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +6,8 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
+import { useAuth } from "@/hooks/use-auth";
+import LoginDialog from "@/components/LoginDialog";
 
 const CartPage = () => {
   const navigate = useNavigate();
@@ -15,6 +16,8 @@ const CartPage = () => {
   const [loading, setLoading] = useState(true);
   const [activeItem, setActiveItem] = useState<"home" | "forum" | "recipes" | "shop">("shop");
   const [cameraSheetOpen, setCameraSheetOpen] = useState(false);
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const items = JSON.parse(localStorage.getItem('cartItems') || '[]');
@@ -56,10 +59,21 @@ const CartPage = () => {
   };
 
   const handleCheckout = () => {
-    toast({
-      title: "Checkout",
-      description: "Checkout functionality coming soon",
-    });
+    if (!isAuthenticated) {
+      setShowLoginDialog(true);
+      return;
+    }
+    
+    if (cartItems.length === 0) {
+      toast({
+        title: "Empty Cart",
+        description: "Add items to your cart before checking out",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    navigate("/checkout");
   };
 
   const handleItemClick = (item: "home" | "forum" | "recipes" | "shop") => {
@@ -207,6 +221,7 @@ const CartPage = () => {
         </div>
       )}
 
+      <LoginDialog open={showLoginDialog} onOpenChange={setShowLoginDialog} />
       <BottomNavigation
         activeItem={activeItem}
         onItemClick={handleItemClick}

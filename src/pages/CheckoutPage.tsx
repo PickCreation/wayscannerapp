@@ -127,7 +127,10 @@ enum CheckoutStep {
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [cartItems] = useState<CartItem[]>(mockCartItems);
+  const [cartItems] = useState<CartItem[]>(() => {
+    const storedItems = localStorage.getItem('cartItems');
+    return storedItems ? JSON.parse(storedItems) : mockCartItems;
+  });
   const [addresses, setAddresses] = useState<Address[]>(mockAddresses);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>(mockPaymentMethods);
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(mockAddresses.find(a => a.isDefault) || null);
@@ -219,6 +222,9 @@ const CheckoutPage = () => {
   };
 
   const handlePlaceOrder = () => {
+    // Clear cart items from localStorage
+    localStorage.setItem('cartItems', JSON.stringify([]));
+    
     toast({
       title: "Order Placed!",
       description: "Your order has been successfully placed."
