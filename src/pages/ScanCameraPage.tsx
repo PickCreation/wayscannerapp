@@ -73,6 +73,10 @@ const ScanCameraPage = () => {
           <div className="relative w-full h-full flex items-center justify-center">
             {captureMode === "camera" ? (
               <div className="text-center">
+                {/* Camera Frame Guide */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="w-64 h-64 border-2 border-white rounded-lg opacity-70"></div>
+                </div>
                 <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center mb-4 mx-auto">
                   <Camera size={48} className="text-white" />
                 </div>
@@ -119,12 +123,14 @@ const ScanCameraPage = () => {
           </div>
           
           {captureMode === "camera" && (
-            <Button 
-              className="w-16 h-16 rounded-full bg-white hover:bg-gray-200 mx-auto flex items-center justify-center border-4 border-gray-800"
-              onClick={handleCapture}
-            >
-              <div className="w-12 h-12 rounded-full bg-red-500"></div>
-            </Button>
+            <div className="w-full flex justify-center">
+              <Button 
+                className="w-16 h-16 rounded-full bg-white hover:bg-gray-200 mx-auto flex items-center justify-center border-4 border-gray-800"
+                onClick={handleCapture}
+              >
+                <div className="w-12 h-12 rounded-full bg-red-500"></div>
+              </Button>
+            </div>
           )}
         </div>
       )}

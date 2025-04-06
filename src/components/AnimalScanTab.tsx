@@ -79,11 +79,11 @@ const AnimalScanTab = () => {
       {animalItems.map((item) => (
         <div 
           key={item.id} 
-          className={`rounded-xl overflow-hidden border border-black ${item.borderColor} shadow-sm flex`}
+          className={`rounded-xl overflow-hidden border border-black ${item.borderColor} shadow-sm flex cursor-pointer`}
           onClick={() => handleAnimalClick(item.id)}
         >
           <div className="flex items-center p-3 w-full">
-            <div className="w-14 h-14 rounded-lg overflow-hidden mr-3">
+            <div className="w-14 h-14 rounded-lg overflow-hidden mr-3 border border-gray-300">
               <img 
                 src={item.imageUrl} 
                 alt={item.name} 

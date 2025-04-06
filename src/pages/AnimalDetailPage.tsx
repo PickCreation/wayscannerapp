@@ -106,7 +106,7 @@ const AnimalDetailPage = () => {
   };
 
   const handleCameraClick = () => {
-    // This opens the camera sheet for scanning
+    navigate("/scan-camera");
   };
 
   const getRiskColor = (risk: "High" | "Moderate" | "Low") => {
@@ -129,7 +129,7 @@ const AnimalDetailPage = () => {
         >
           <ChevronLeft className="h-6 w-6" color="white" />
         </button>
-        <h1 className="text-[20px] font-medium">Animal Details</h1>
+        <h1 className="text-[20px] font-semibold">Animal Details</h1>
         <div className="w-10 h-10"></div>
       </header>
 
@@ -144,80 +144,80 @@ const AnimalDetailPage = () => {
 
       {/* Animal Name and Risk Level */}
       <div className="p-4 flex justify-between items-center">
-        <h2 className="text-2xl font-bold">{animal.name}</h2>
-        <div className={`${getRiskColor(animal.riskLevel)} text-white px-4 py-1.5 rounded-full inline-flex items-center text-sm`}>
-          <AlertTriangle className="mr-1" size={16} />
+        <h2 className="text-xl font-bold">{animal.name}</h2>
+        <div className={`${getRiskColor(animal.riskLevel)} text-white px-3 py-1 rounded-full inline-flex items-center text-xs`}>
+          <AlertTriangle className="mr-1" size={12} />
           <span className="font-medium">{animal.riskLevel} Risk</span>
         </div>
       </div>
 
       {/* Scientific Name */}
       <div className="px-4 pb-2">
-        <h3 className="text-lg text-green-600 font-medium">Scientific Name</h3>
-        <p className="text-blue-600 font-medium">{animal.scientificName}</p>
+        <h3 className="text-base text-green-600 font-medium">Scientific Name</h3>
+        <p className="text-blue-600 text-sm font-medium">{animal.scientificName}</p>
       </div>
 
-      <div className="border-t border-gray-200 my-3"></div>
+      <div className="border-t border-gray-200 my-2"></div>
 
       {/* Key Characteristics */}
-      <div className="px-4 pb-4 flex justify-around">
-        <div className="border border-black rounded-lg p-3 flex flex-col items-center justify-center">
-          <PawPrint className="text-blue-600 mb-1" size={24} />
-          <p className="text-black font-medium">Type</p>
-          <p className="text-blue-600 font-medium">{animal.type}</p>
+      <div className="px-4 pb-3 flex justify-around">
+        <div className="border border-black rounded-lg p-2 flex flex-col items-center justify-center">
+          <PawPrint className="text-blue-600 mb-1" size={20} />
+          <p className="text-black text-xs font-medium">Type</p>
+          <p className="text-blue-600 text-xs font-medium">{animal.type}</p>
         </div>
-        <div className="border border-black rounded-lg p-3 flex flex-col items-center justify-center">
-          <Utensils className="text-blue-600 mb-1" size={24} />
-          <p className="text-black font-medium">Dietary</p>
-          <p className="text-blue-600 font-medium">{animal.dietary}</p>
+        <div className="border border-black rounded-lg p-2 flex flex-col items-center justify-center">
+          <Utensils className="text-blue-600 mb-1" size={20} />
+          <p className="text-black text-xs font-medium">Dietary</p>
+          <p className="text-blue-600 text-xs font-medium">{animal.dietary}</p>
         </div>
-        <div className="border border-black rounded-lg p-3 flex flex-col items-center justify-center">
-          <Moon className="text-blue-600 mb-1" size={24} />
-          <p className="text-black font-medium">Behavior</p>
-          <p className="text-blue-600 font-medium">{animal.behavior}</p>
+        <div className="border border-black rounded-lg p-2 flex flex-col items-center justify-center">
+          <Moon className="text-blue-600 mb-1" size={20} />
+          <p className="text-black text-xs font-medium">Behavior</p>
+          <p className="text-blue-600 text-xs font-medium">{animal.behavior}</p>
         </div>
       </div>
 
       {/* Danger Level */}
-      <div className="px-4 py-3 bg-red-100 mx-4 rounded-lg mb-4">
-        <h3 className="text-lg font-semibold mb-1">Danger Level</h3>
-        <p className="text-sm">{animal.dangerText}</p>
+      <div className="px-4 py-3 bg-red-100 mx-4 rounded-lg mb-3">
+        <h3 className="text-base font-semibold mb-1">Danger Level</h3>
+        <p className="text-xs">{animal.dangerText}</p>
       </div>
 
       {/* Safety Measures */}
-      <div className="px-4 py-3 bg-green-100 mx-4 rounded-lg mb-4">
-        <h3 className="text-lg font-semibold mb-1">Safety Measures</h3>
-        <p className="text-sm">{animal.safetyMeasures}</p>
+      <div className="px-4 py-3 bg-green-100 mx-4 rounded-lg mb-3">
+        <h3 className="text-base font-semibold mb-1">Safety Measures</h3>
+        <p className="text-xs">{animal.safetyMeasures}</p>
       </div>
 
       {/* About */}
-      <div className="px-4 py-3 border border-gray-300 mx-4 rounded-lg mb-4">
-        <h3 className="text-lg font-semibold mb-1">About</h3>
-        <p className="text-sm">{animal.about}</p>
+      <div className="px-4 py-3 border border-gray-300 mx-4 rounded-lg mb-3">
+        <h3 className="text-base font-semibold mb-1">About</h3>
+        <p className="text-xs">{animal.about}</p>
       </div>
 
       {/* Habitat */}
-      <div className="px-4 py-3 bg-purple-100 mx-4 rounded-lg mb-4">
-        <h3 className="text-lg font-semibold mb-1">Habitat</h3>
-        <p className="text-sm">{animal.habitat}</p>
+      <div className="px-4 py-3 bg-purple-100 mx-4 rounded-lg mb-3">
+        <h3 className="text-base font-semibold mb-1">Habitat</h3>
+        <p className="text-xs">{animal.habitat}</p>
       </div>
 
       {/* Health Advice */}
-      <div className="px-4 py-3 bg-yellow-100 mx-4 rounded-lg mb-4">
-        <h3 className="text-lg font-semibold mb-1">Health Advice</h3>
-        <p className="text-sm">{animal.healthAdvice}</p>
+      <div className="px-4 py-3 bg-yellow-100 mx-4 rounded-lg mb-3">
+        <h3 className="text-base font-semibold mb-1">Health Advice</h3>
+        <p className="text-xs">{animal.healthAdvice}</p>
       </div>
 
       {/* Diet */}
-      <div className="px-4 py-3 bg-pink-100 mx-4 rounded-lg mb-4">
-        <h3 className="text-lg font-semibold mb-1">Diet</h3>
-        <p className="text-sm">{animal.diet}</p>
+      <div className="px-4 py-3 bg-pink-100 mx-4 rounded-lg mb-3">
+        <h3 className="text-base font-semibold mb-1">Diet</h3>
+        <p className="text-xs">{animal.diet}</p>
       </div>
 
       {/* Behavioral Traits */}
       <div className="px-4 py-3 bg-green-100 mx-4 rounded-lg mb-10">
-        <h3 className="text-lg font-semibold mb-1">Behavioral Traits</h3>
-        <p className="text-sm">{animal.behavioralTraits}</p>
+        <h3 className="text-base font-semibold mb-1">Behavioral Traits</h3>
+        <p className="text-xs">{animal.behavioralTraits}</p>
       </div>
 
       {/* Bottom Navigation */}
