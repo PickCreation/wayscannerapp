@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { ChevronLeft, ShoppingCart, Star, Heart, Share2, Plus, Minus } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -12,12 +13,21 @@ const products = [
     price: 29.99,
     category: "Plants Accessories",
     image: "/lovable-uploads/5cf63fd0-114b-490f-96f9-b6b8dcc0b573.png",
+    images: [
+      "/lovable-uploads/5cf63fd0-114b-490f-96f9-b6b8dcc0b573.png",
+      "/lovable-uploads/4c436a75-e04b-4265-8025-91e7bb146566.png",
+      "/lovable-uploads/f2fb63ae-cc4d-4d46-ba4f-c70225d6d564.png",
+    ],
     rating: 4.5,
     reviews: 124,
     description: "A beautiful modern plant pot perfect for your indoor plants. Made with high-quality ceramic and designed to complement any interior decor.",
     seller: "Green Thumb Co.",
     sellerRating: 4.8,
     available: true,
+    condition: "New",
+    weight: "2.5 kg",
+    brand: "EcoPlant",
+    country: "United States",
   },
   {
     id: 2,
@@ -25,12 +35,21 @@ const products = [
     price: 19.99,
     category: "Animal Accessories",
     image: "/lovable-uploads/1044c752-2d75-49e0-836c-39ab8130a173.png",
+    images: [
+      "/lovable-uploads/1044c752-2d75-49e0-836c-39ab8130a173.png",
+      "/lovable-uploads/1485fb6f-36f0-4eee-98e1-0a56eb978616.png",
+      "/lovable-uploads/5cf63fd0-114b-490f-96f9-b6b8dcc0b573.png",
+    ],
     rating: 4.2,
     reviews: 89,
     description: "A durable ceramic dog bowl that's easy to clean and perfect for your furry friend. Designed with a non-slip base to prevent spills.",
     seller: "Pet Haven",
     sellerRating: 4.6,
     available: true,
+    condition: "New",
+    weight: "1.2 kg",
+    brand: "PetCare",
+    country: "Canada",
   },
   {
     id: 3,
@@ -38,12 +57,21 @@ const products = [
     price: 34.99,
     category: "Plants",
     image: "/lovable-uploads/4c436a75-e04b-4265-8025-91e7bb146566.png",
+    images: [
+      "/lovable-uploads/4c436a75-e04b-4265-8025-91e7bb146566.png",
+      "/lovable-uploads/5cf63fd0-114b-490f-96f9-b6b8dcc0b573.png",
+      "/lovable-uploads/81f6d068-8c80-4e65-9ad0-2d3fe0a6f480.png",
+    ],
     rating: 4.8,
     reviews: 215,
     description: "A healthy Monstera Deliciosa plant, perfect for adding a touch of nature to your home. Comes in a stylish pot and is easy to care for.",
     seller: "Urban Jungle",
     sellerRating: 4.9,
     available: true,
+    condition: "New",
+    weight: "3.5 kg",
+    brand: "GreenLife",
+    country: "Brazil",
   },
   {
     id: 4,
@@ -51,12 +79,21 @@ const products = [
     price: 24.99,
     category: "Kitchen Essentials",
     image: "/lovable-uploads/f2fb63ae-cc4d-4d46-ba4f-c70225d6d564.png",
+    images: [
+      "/lovable-uploads/f2fb63ae-cc4d-4d46-ba4f-c70225d6d564.png",
+      "/lovable-uploads/81f6d068-8c80-4e65-9ad0-2d3fe0a6f480.png",
+      "/lovable-uploads/1044c752-2d75-49e0-836c-39ab8130a173.png",
+    ],
     rating: 4.6,
     reviews: 178,
     description: "A premium bamboo cutting board, perfect for all your kitchen needs. Durable, eco-friendly, and designed with a juice groove to prevent spills.",
     seller: "Kitchen Pros",
     sellerRating: 4.7,
     available: true,
+    condition: "New",
+    weight: "0.8 kg",
+    brand: "EcoKitchen",
+    country: "Japan",
   },
   {
     id: 5,
@@ -64,12 +101,21 @@ const products = [
     price: 39.99,
     category: "Decor",
     image: "/lovable-uploads/81f6d068-8c80-4e65-9ad0-2d3fe0a6f480.png",
+    images: [
+      "/lovable-uploads/81f6d068-8c80-4e65-9ad0-2d3fe0a6f480.png",
+      "/lovable-uploads/f2fb63ae-cc4d-4d46-ba4f-c70225d6d564.png",
+      "/lovable-uploads/4c436a75-e04b-4265-8025-91e7bb146566.png",
+    ],
     rating: 4.7,
     reviews: 156,
     description: "A handcrafted macrame wall hanging that adds texture and style to any room. Made with 100% cotton rope and natural wooden beads.",
     seller: "Artisan Crafts",
     sellerRating: 4.8,
     available: true,
+    condition: "New",
+    weight: "0.5 kg",
+    brand: "HandMade",
+    country: "Mexico",
   },
   {
     id: 6,
@@ -77,12 +123,21 @@ const products = [
     price: 89.99,
     category: "Animal Accessories",
     image: "/lovable-uploads/1485fb6f-36f0-4eee-98e1-0a56eb978616.png",
+    images: [
+      "/lovable-uploads/1485fb6f-36f0-4eee-98e1-0a56eb978616.png",
+      "/lovable-uploads/1044c752-2d75-49e0-836c-39ab8130a173.png",
+      "/lovable-uploads/81f6d068-8c80-4e65-9ad0-2d3fe0a6f480.png",
+    ],
     rating: 4.3,
     reviews: 92,
     description: "A multi-level cat climbing tree with scratching posts, platforms, and cozy hideaways. Perfect for keeping your feline friend entertained and active.",
     seller: "Pet Palace",
     sellerRating: 4.5,
     available: true,
+    condition: "New",
+    weight: "12 kg",
+    brand: "CatHaven",
+    country: "Germany",
   }
 ];
 
@@ -91,6 +146,7 @@ const ProductDetailPage = () => {
   const { productId } = useParams();
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
+  const [selectedImage, setSelectedImage] = useState(0);
   
   const product = products.find(p => p.id === Number(productId));
   
@@ -136,11 +192,29 @@ const ProductDetailPage = () => {
 
       <div className="w-full h-72 bg-gray-100">
         <img 
-          src={product.image} 
+          src={product.images ? product.images[selectedImage] : product.image} 
           alt={product.title} 
           className="w-full h-full object-contain"
         />
       </div>
+
+      {product.images && product.images.length > 1 && (
+        <div className="px-4 py-2 flex space-x-2 overflow-x-auto">
+          {product.images.slice(0, 6).map((img, index) => (
+            <button 
+              key={index} 
+              className={`w-16 h-16 border ${selectedImage === index ? 'border-wayscanner-blue' : 'border-gray-300'}`}
+              onClick={() => setSelectedImage(index)}
+            >
+              <img 
+                src={img} 
+                alt={`${product.title} - view ${index + 1}`} 
+                className="w-full h-full object-cover"
+              />
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="p-4">
         <div className="flex justify-between items-start mb-2">
@@ -176,7 +250,26 @@ const ProductDetailPage = () => {
             <TabsTrigger value="reviews">Reviews ({product.reviews})</TabsTrigger>
           </TabsList>
           <TabsContent value="description" className="pt-2">
-            <p className="text-gray-700">{product.description}</p>
+            <p className="text-gray-700 mb-4">{product.description}</p>
+            
+            {/* Product additional details */}
+            <div className="mt-6 space-y-4 border-t pt-4">
+              <h3 className="font-medium text-lg">Product Details</h3>
+              
+              <div className="grid grid-cols-2 gap-y-3">
+                <div className="text-gray-600">Condition:</div>
+                <div className="font-medium">{product.condition || "New"}</div>
+                
+                <div className="text-gray-600">Weight:</div>
+                <div className="font-medium">{product.weight || "Not specified"}</div>
+                
+                <div className="text-gray-600">Brand:</div>
+                <div className="font-medium">{product.brand || "Not specified"}</div>
+                
+                <div className="text-gray-600">Country:</div>
+                <div className="font-medium">{product.country || "Not specified"}</div>
+              </div>
+            </div>
           </TabsContent>
           <TabsContent value="reviews" className="pt-2">
             <div className="flex items-center mb-4">
