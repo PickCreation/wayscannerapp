@@ -37,7 +37,14 @@ const Index = () => {
     <div className="pb-20 bg-white min-h-screen">
       {/* Header */}
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
-        <h1 className="text-2xl font-bold">WayScanner</h1>
+        <div className="w-6"></div> {/* Empty div for spacing */}
+        <div className="flex justify-center">
+          <img 
+            src="/lovable-uploads/8fdd5ac8-39b5-43e6-86de-c8b27715d7c8.png" 
+            alt="WayScanner Logo" 
+            className="h-8" 
+          />
+        </div>
         <button className="p-2">
           <Bell size={24} />
         </button>
