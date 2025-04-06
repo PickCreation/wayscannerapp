@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Star, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -57,11 +58,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
     // Dispatch custom event to update cart count
     window.dispatchEvent(new Event('cartUpdated'));
     
+    // Show brief toast notification
     toast({
-      title: "Added to Cart",
-      description: `${title} added to your cart`,
+      title: "Added",
+      description: title,
     });
     
+    // Reset adding state after a short delay
     setTimeout(() => {
       setIsAddingToCart(false);
     }, 500);

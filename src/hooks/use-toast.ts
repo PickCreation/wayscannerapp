@@ -7,7 +7,7 @@ import type {
 } from "@/components/ui/toast"
 
 const TOAST_LIMIT = 1
-const TOAST_REMOVE_DELAY = 3000 // 3 seconds for DOM removal after toast is closed
+const TOAST_REMOVE_DELAY = 1500 // Reduced to 1.5 seconds for DOM removal after toast is closed
 
 type ToasterToast = ToastProps & {
   id: string
@@ -151,10 +151,10 @@ function toast({ ...props }: Toast) {
     
   const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id })
 
-  // Automatically dismiss toast after a short duration
+  // Immediately set up auto-dismiss with a very short time
   const autoDismissTimeout = setTimeout(() => {
     dismiss();
-  }, 1500); // Auto-dismiss after 1.5 seconds (reduced from 2s)
+  }, 800); // Auto-dismiss after just 0.8 seconds
 
   dispatch({
     type: "ADD_TOAST",
@@ -164,7 +164,7 @@ function toast({ ...props }: Toast) {
       open: true,
       onOpenChange: (open) => {
         if (!open) {
-          clearTimeout(autoDismissTimeout); // Clear the timeout if manually dismissed
+          clearTimeout(autoDismissTimeout);
           dismiss();
         }
       },
