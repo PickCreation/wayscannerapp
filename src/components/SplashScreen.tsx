@@ -10,10 +10,10 @@ interface SplashScreenProps {
 
 const SplashScreen: React.FC<SplashScreenProps> = ({ onClose }) => {
   useEffect(() => {
-    // Automatically close after 3 seconds
+    // Automatically close after 10 seconds (changed from 3 seconds)
     const timer = setTimeout(() => {
       onClose();
-    }, 3000);
+    }, 10000);
 
     // Clear timeout if component unmounts
     return () => clearTimeout(timer);
@@ -26,11 +26,15 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onClose }) => {
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 bg-wayscanner-blue flex flex-col items-center justify-center p-6"
       style={{ backgroundColor: "#034AFF" }}
+      onClick={onClose}
     >
       <Button 
         variant="ghost" 
         className="absolute top-4 right-4 text-white hover:bg-blue-600" 
-        onClick={onClose}
+        onClick={(e) => {
+          e.stopPropagation(); // Prevent triggering the parent's onClick
+          onClose();
+        }}
       >
         <X size={24} />
       </Button>
