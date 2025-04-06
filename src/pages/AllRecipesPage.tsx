@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { 
   Search, 
@@ -12,8 +13,8 @@ import { RecipeCard } from "@/components/RecipeCard";
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
-import CameraActionSheet from "@/components/CameraActionSheet";
 
+// Mock recipe data for all recipes
 const allRecipes = [
   {
     id: "stir-fry-1",
@@ -102,7 +103,6 @@ const AllRecipesPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("recipes");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
-  const [showCameraActionSheet, setShowCameraActionSheet] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -137,18 +137,7 @@ const AllRecipesPage = () => {
   };
 
   const handleCameraClick = () => {
-    setShowCameraActionSheet(true);
-  };
-
-  const handleScanClick = (type: "food" | "plant" | "animal") => {
-    const tabMap: Record<string, string> = {
-      "food": "food",
-      "plant": "plants",
-      "animal": "animals"
-    };
-    
-    navigate(`/scan?tab=${tabMap[type]}`);
-    setShowCameraActionSheet(false);
+    setShowCameraSheet(true);
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -230,11 +219,6 @@ const AllRecipesPage = () => {
       </div>
 
       <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
-      <CameraActionSheet 
-        open={showCameraActionSheet} 
-        onOpenChange={setShowCameraActionSheet} 
-        onScanClick={handleScanClick}
-      />
 
       <BottomNavigation
         activeItem={activeNavItem}

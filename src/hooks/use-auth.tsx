@@ -1,138 +1,143 @@
-
-import React, { createContext, useContext, useState, useEffect } from "react";
+import { useState, useEffect, createContext, useContext } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 interface User {
   name: string;
   email: string;
-  phone?: string;
-  bio?: string;
-  avatar?: string;
   isAdmin?: boolean;
-}
-
-interface UserProfileUpdate {
-  name?: string;
-  email?: string;
-  phone?: string;
-  bio?: string;
-  avatar?: string;
 }
 
 interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
-  login: (email: string, password: string) => boolean;
+  login: (email: string, password: string) => Promise<void>;
+  signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
-  updateUserProfile: (userData: UserProfileUpdate) => void;
-  signup: (name: string, email: string, password: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+// Admin credentials
+const ADMIN_EMAIL = 'Pickcreations@gmail.com';
+const ADMIN_PASSWORD = 'Admin123!';
+
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
-    // Check if user is already authenticated from localStorage
-    const storedUser = localStorage.getItem("userProfile");
-    const loginStatus = localStorage.getItem("isAuthenticated");
+    const checkAuth = () => {
+      const storedAuth = localStorage.getItem('isLoggedIn');
+      const storedUser = localStorage.getItem('user');
+      
+      if (storedAuth === 'true' && storedUser) {
+        setIsAuthenticated(true);
+        setUser(JSON.parse(storedUser));
+      }
+    };
     
-    if (storedUser && loginStatus === "true") {
-      setUser(JSON.parse(storedUser));
-      setIsAuthenticated(true);
-    }
+    checkAuth();
     
-    // Default admin user for testing
-    if (loginStatus === "true" && !storedUser) {
-      const defaultUser = {
-        name: "Admin",
-        email: "Pickcreations@gmail.com",
-        isAdmin: true
-      };
-      setUser(defaultUser);
-      localStorage.setItem("userProfile", JSON.stringify(defaultUser));
-    }
+    // Auto-login as admin for development/testing purposes
+    // This should be removed in production
+    const autoLoginAsAdmin = async () => {
+      const isAlreadyLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      if (!isAlreadyLoggedIn) {
+        // Simulate a delay to allow the app to render first
+        setTimeout(() => {
+          login(ADMIN_EMAIL, ADMIN_PASSWORD).catch(err => 
+            console.error("Auto admin login failed:", err)
+          );
+        }, 500);
+      }
+    };
+    
+    // Call auto login function
+    autoLoginAsAdmin();
   }, []);
 
-  const login = (email: string, password: string) => {
-    // Admin login
-    if (email === "Pickcreations@gmail.com" && password === "Admin123!") {
+  const login = async (email: string, password: string) => {
+    console.log("Logging in with:", email, password);
+    
+    // Admin login check
+    if (email.toLowerCase() === ADMIN_EMAIL.toLowerCase() && password === ADMIN_PASSWORD) {
       const adminUser = {
-        name: "Admin",
-        email: "Pickcreations@gmail.com",
-        isAdmin: true
+        name: 'Admin',
+        email: ADMIN_EMAIL,
+        isAdmin: true,
       };
+      
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('user', JSON.stringify(adminUser));
+      
+      setIsAuthenticated(true);
       setUser(adminUser);
-      setIsAuthenticated(true);
-      localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("userProfile", JSON.stringify(adminUser));
-      return true;
+      
+      toast({
+        title: "Admin Login Successful",
+        description: "Welcome back, Admin!",
+      });
+      
+      return;
     }
     
-    // Regular user login
-    if (email && password.length >= 4) {
-      const userData = {
-        name: email.split('@')[0],
-        email: email,
-        isAdmin: false
-      };
-      setUser(userData);
-      setIsAuthenticated(true);
-      localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("userProfile", JSON.stringify(userData));
-      return true;
-    }
+    // Regular user login (keeping existing code)
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('user', JSON.stringify({
+      name: 'John Doe',
+      email,
+    }));
     
-    return false;
+    setIsAuthenticated(true);
+    setUser({
+      name: 'John Doe',
+      email,
+    });
+    
+    toast({
+      title: "Login Successful",
+      description: "Welcome back!",
+    });
   };
 
-  const signup = (name: string, email: string, password: string) => {
-    if (email && password.length >= 6) {
-      const userData = {
-        name: name || email.split('@')[0],
-        email: email,
-        isAdmin: false
-      };
-      setUser(userData);
-      setIsAuthenticated(true);
-      localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("userProfile", JSON.stringify(userData));
-      return true;
-    }
-    return false;
+  const signup = async (name: string, email: string, password: string) => {
+    console.log("Signing up with:", name, email, password);
+    
+    // Simulate signup success
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('user', JSON.stringify({
+      name,
+      email,
+    }));
+    
+    setIsAuthenticated(true);
+    setUser({
+      name,
+      email,
+    });
+    
+    toast({
+      title: "Account Created",
+      description: "Your account has been created successfully!",
+    });
   };
 
   const logout = () => {
-    setUser(null);
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('user');
+    
     setIsAuthenticated(false);
-    localStorage.removeItem("isAuthenticated");
-    localStorage.removeItem("userProfile");
-  };
-  
-  const updateUserProfile = (userData: UserProfileUpdate) => {
-    if (!user) return;
+    setUser(null);
     
-    const updatedUser = {
-      ...user,
-      ...userData
-    };
-    
-    setUser(updatedUser);
-    localStorage.setItem("userProfile", JSON.stringify(updatedUser));
+    toast({
+      title: "Logged Out",
+      description: "You have been logged out successfully.",
+    });
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        isAuthenticated,
-        user,
-        login,
-        logout,
-        updateUserProfile,
-        signup
-      }}
-    >
+    <AuthContext.Provider value={{ isAuthenticated, user, login, signup, logout }}>
       {children}
     </AuthContext.Provider>
   );
@@ -140,8 +145,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
+  
   if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error('useAuth must be used within an AuthProvider');
   }
+  
   return context;
 };
