@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ChevronLeft, AlertTriangle, PawPrint, Utensils, Moon, PhoneCall, Info } from "lucide-react";
@@ -82,7 +83,22 @@ const animalDetailsData: AnimalDetails[] = [
     habitat: "Gray wolves adapt to many habitats including forests, mountains, tundra, taiga, and grasslands. They typically establish territories of 80-300 square miles depending on prey availability.",
     healthAdvice: "If an animal appears sick, immediately contact a wildlife veterinarian or local animal rescue. Avoid handling wild animals yourself. For pets, consult a specialized veterinarian, describe the symptoms accurately, and follow their advice carefully.",
     diet: "Wolves are carnivores that primarily hunt ungulates like deer, elk, and moose. A pack can consume 20 pounds of meat in a single feeding. They also eat smaller mammals, birds, and sometimes berries.",
-    behavioralTraits: "Wolves are highly social animals that live in family groups. They communicate through howling, body language, and scent marking. They're intelligent problem-solvers with strong family bonds and cooperative hunting strategies."
+    behavioralTraits: "Wolves are highly social animals that live in family groups. They communicate through howling, body language, and scent marking. They're intelligent problem-solvers with strong family bonds and cooperative hunting strategies.",
+    legalRestrictions: "Gray wolves are protected under the Endangered Species Act in many regions. Hunting and trapping regulations vary by location, with some areas allowing controlled hunting. Keeping wolves as pets is illegal in most jurisdictions.",
+    interestingFacts: [
+      { fact: "Wolf packs have a complex social hierarchy led by an alpha pair." },
+      { fact: "Wolves can travel up to 30 miles a day when hunting." },
+      { fact: "A wolf's howl can be heard up to 6 miles away in open terrain." }
+    ],
+    emergencyContacts: [
+      { name: "Wildlife Emergency Hotline", phone: "+1-800-WILDLIFE" },
+      { name: "Animal Control", phone: "+1-800-555-ANIMAL" }
+    ],
+    similarSpecies: [
+      { name: "Eastern Wolf", imageUrl: "/lovable-uploads/b7a77845-a980-42f1-8b7e-eea9a8b822f8.png" },
+      { name: "Arctic Wolf", imageUrl: "/lovable-uploads/b7a77845-a980-42f1-8b7e-eea9a8b822f8.png" },
+      { name: "Coyote", imageUrl: "/lovable-uploads/b7a77845-a980-42f1-8b7e-eea9a8b822f8.png" }
+    ]
   },
   {
     id: "3",
@@ -99,7 +115,22 @@ const animalDetailsData: AnimalDetails[] = [
     habitat: "As domesticated animals, Labradors adapt well to various living environments from apartments to rural settings, though they thrive with adequate space and exercise opportunities. They enjoy water and are natural swimmers.",
     healthAdvice: "Regular veterinary check-ups are essential for Labradors. They're prone to hip and elbow dysplasia, obesity, and eye conditions. Maintain a healthy diet, regular exercise, and weight management. Contact your vet immediately if your Labrador shows signs of illness.",
     diet: "Labradors should eat high-quality commercial dog food appropriate for their age, size, and activity level. They require about 2-3 cups of dry food daily, divided into two meals. Always provide fresh water and limit treats to prevent obesity.",
-    behavioralTraits: "Labradors are intelligent, friendly, and outgoing dogs with a strong desire to please. They're energetic, especially in youth, requiring regular exercise and mental stimulation. They get along well with children and other pets, making them excellent family companions."
+    behavioralTraits: "Labradors are intelligent, friendly, and outgoing dogs with a strong desire to please. They're energetic, especially in youth, requiring regular exercise and mental stimulation. They get along well with children and other pets, making them excellent family companions.",
+    legalRestrictions: "Unlike wild animals, Labradors have few legal restrictions. However, local leash laws, licensing requirements, and breed-specific legislation may apply in some areas. Always follow responsible pet ownership guidelines.",
+    interestingFacts: [
+      { fact: "Labradors were originally bred to help fishermen retrieve nets and catch." },
+      { fact: "They come in three recognized colors: black, yellow, and chocolate." },
+      { fact: "Labrador Retrievers have been the most popular dog breed in the US for over 30 years." }
+    ],
+    emergencyContacts: [
+      { name: "Animal Poison Control", phone: "+1-888-426-4435" },
+      { name: "Emergency Vet Hotline", phone: "+1-800-555-VETS" }
+    ],
+    similarSpecies: [
+      { name: "Golden Retriever", imageUrl: "/lovable-uploads/b7a77845-a980-42f1-8b7e-eea9a8b822f8.png" },
+      { name: "Chesapeake Bay Retriever", imageUrl: "/lovable-uploads/b7a77845-a980-42f1-8b7e-eea9a8b822f8.png" },
+      { name: "Flat-Coated Retriever", imageUrl: "/lovable-uploads/b7a77845-a980-42f1-8b7e-eea9a8b822f8.png" }
+    ]
   }
 ];
 
