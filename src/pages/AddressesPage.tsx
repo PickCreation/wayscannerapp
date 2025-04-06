@@ -1,7 +1,6 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Plus, Edit, Trash2, MapPin, Camera } from "lucide-react";
+import { ArrowLeft, Plus, Edit, Trash2, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
@@ -14,6 +13,7 @@ import {
   DrawerTitle,
   DrawerDescription
 } from "@/components/ui/drawer";
+import CameraSheet from "@/components/CameraSheet";
 
 interface Address {
   id: string;
@@ -45,6 +45,7 @@ const AddressesPage = () => {
   ]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
+  const [showCameraSheet, setShowCameraSheet] = useState(false);
   const [currentAddress, setCurrentAddress] = useState<Address | null>(null);
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("recipes");
 
@@ -63,6 +64,10 @@ const AddressesPage = () => {
     } else if (item === "shop") {
       navigate("/marketplace");
     }
+  };
+
+  const handleCameraClick = () => {
+    setShowCameraSheet(true);
   };
 
   const handleAddAddress = () => {
@@ -96,7 +101,6 @@ const AddressesPage = () => {
 
   const handleSaveAddress = (address: Omit<Address, "id" | "isDefault">) => {
     if (currentAddress) {
-      // Edit existing address
       setAddresses(addresses.map(a => 
         a.id === currentAddress.id 
           ? { ...a, ...address } 
@@ -108,7 +112,6 @@ const AddressesPage = () => {
         description: "Your address has been updated successfully."
       });
     } else {
-      // Add new address
       const newAddress: Address = {
         id: Date.now().toString(),
         ...address,
@@ -210,7 +213,6 @@ const AddressesPage = () => {
         )}
       </div>
 
-      {/* Bottom drawer for adding new address */}
       <Drawer open={showAddForm} onOpenChange={setShowAddForm}>
         <DrawerContent className="px-4">
           <DrawerHeader className="text-left">
@@ -222,7 +224,6 @@ const AddressesPage = () => {
         </DrawerContent>
       </Drawer>
 
-      {/* Bottom drawer for editing address */}
       <Drawer open={showEditForm} onOpenChange={setShowEditForm}>
         <DrawerContent className="px-4">
           <DrawerHeader className="text-left">
@@ -240,10 +241,12 @@ const AddressesPage = () => {
         </DrawerContent>
       </Drawer>
 
+      <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
+
       <BottomNavigation
-        activeItem="recipes"
+        activeItem="profile"
         onItemClick={handleNavItemClick}
-        onCameraClick={() => {}}
+        onCameraClick={handleCameraClick}
       />
     </div>
   );

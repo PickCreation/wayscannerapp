@@ -1,9 +1,8 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, Plus, Edit, Trash2, CreditCard, 
-  CheckCircle2, DollarSign, CircleDollarSign, Camera
+  CheckCircle2, DollarSign, CircleDollarSign
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -18,6 +17,7 @@ import {
   DrawerDescription
 } from "@/components/ui/drawer";
 import PaymentMethodForm from "@/components/PaymentMethodForm";
+import CameraSheet from "@/components/CameraSheet";
 
 interface PaymentMethod {
   id: string;
@@ -271,7 +271,6 @@ const PaymentMethodsPage = () => {
         )}
       </div>
 
-      {/* Bottom drawer for payment method form */}
       <Drawer open={showAddForm} onOpenChange={setShowAddForm}>
         <DrawerContent className="px-4">
           <DrawerHeader className="text-left">
@@ -287,34 +286,10 @@ const PaymentMethodsPage = () => {
         </DrawerContent>
       </Drawer>
 
-      {/* Camera sheet for scanning card */}
-      <Drawer open={showCameraSheet} onOpenChange={setShowCameraSheet}>
-        <DrawerContent className="px-4">
-          <DrawerHeader className="text-left">
-            <DrawerTitle>Scan Your Card</DrawerTitle>
-            <DrawerDescription>Position your card in the camera frame</DrawerDescription>
-          </DrawerHeader>
-          <div className="px-4 pb-10">
-            <div className="bg-gray-100 rounded-lg p-4 aspect-video flex items-center justify-center mb-4">
-              <Camera size={48} className="text-gray-400" />
-              <p className="text-gray-500 text-sm mt-2">Camera preview would appear here</p>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <Button variant="outline" onClick={() => setShowCameraSheet(false)}>Cancel</Button>
-              <Button onClick={() => {
-                setShowCameraSheet(false);
-                toast({
-                  title: "Card Detected",
-                  description: "Your card information has been captured successfully."
-                });
-              }}>Capture</Button>
-            </div>
-          </div>
-        </DrawerContent>
-      </Drawer>
+      <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
 
       <BottomNavigation
-        activeItem="recipes"
+        activeItem="profile"
         onItemClick={handleNavItemClick}
         onCameraClick={handleCameraClick}
       />
