@@ -1,7 +1,4 @@
 
-// We need to modify the CameraSheet component to emit an event when an image is captured
-// Let's assume this component already exists and update it for our use case
-
 import React, { useState, useRef, useEffect } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -22,42 +19,60 @@ const CameraSheet = ({ open, onOpenChange }: CameraSheetProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   
+  // Determine if we're on the profile page by checking the current URL
+  const isProfilePage = () => {
+    return window.location.pathname.includes('/profile') || 
+           window.location.pathname.includes('/edit-profile');
+  };
+  
   useEffect(() => {
-    let stream: MediaStream | null = null;
-    
-    const startCamera = async () => {
-      try {
-        if (open && !isCameraActive) {
-          stream = await navigator.mediaDevices.getUserMedia({ 
-            video: { facingMode: 'environment' } 
-          });
-          
-          if (videoRef.current) {
-            videoRef.current.srcObject = stream;
-            setIsCameraActive(true);
-          }
-        }
-      } catch (error) {
-        console.error("Error accessing camera:", error);
-        toast({
-          title: "Camera Error",
-          description: "Could not access the camera. Please allow camera permissions or use file upload instead.",
-          variant: "destructive",
-        });
-      }
-    };
-    
-    if (open) {
+    // If on profile page, automatically trigger file selection when sheet opens
+    if (open && isProfilePage()) {
+      // Short delay to ensure the sheet is visible first
+      setTimeout(() => {
+        handleFileSelect();
+      }, 300);
+    } else if (open && !isCameraActive && !isProfilePage()) {
+      // Only start camera for non-profile pages
       startCamera();
     }
     
     return () => {
+      if (isCameraActive) {
+        stopCamera();
+      }
+    };
+  }, [open]);
+  
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'environment' } 
+      });
+      
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        setIsCameraActive(true);
+      }
+    } catch (error) {
+      console.error("Error accessing camera:", error);
+      toast({
+        title: "Camera Error",
+        description: "Could not access the camera. Please use file upload instead.",
+        variant: "destructive",
+      });
+    }
+  };
+  
+  const stopCamera = () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream;
       if (stream) {
         stream.getTracks().forEach(track => track.stop());
         setIsCameraActive(false);
       }
-    };
-  }, [open, toast]);
+    }
+  };
   
   const handleCapture = () => {
     if (videoRef.current && canvasRef.current) {
@@ -74,11 +89,7 @@ const CameraSheet = ({ open, onOpenChange }: CameraSheetProps) => {
         setCapturedImage(imageUrl);
         
         // Stop the camera after capturing
-        const stream = video.srcObject as MediaStream;
-        if (stream) {
-          stream.getTracks().forEach(track => track.stop());
-          setIsCameraActive(false);
-        }
+        stopCamera();
       }
     }
   };
@@ -87,22 +98,11 @@ const CameraSheet = ({ open, onOpenChange }: CameraSheetProps) => {
     setCapturedImage(null);
     setSelectedFile(null);
     
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'environment' } 
-      });
-      
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        setIsCameraActive(true);
-      }
-    } catch (error) {
-      console.error("Error restarting camera:", error);
-      toast({
-        title: "Camera Error",
-        description: "Could not restart the camera.",
-        variant: "destructive",
-      });
+    // If on profile page, go back to file selection
+    if (isProfilePage()) {
+      handleFileSelect();
+    } else {
+      startCamera();
     }
   };
   
@@ -125,12 +125,8 @@ const CameraSheet = ({ open, onOpenChange }: CameraSheetProps) => {
       reader.readAsDataURL(file);
       
       // Stop camera if it's active
-      if (isCameraActive && videoRef.current) {
-        const stream = videoRef.current.srcObject as MediaStream;
-        if (stream) {
-          stream.getTracks().forEach(track => track.stop());
-          setIsCameraActive(false);
-        }
+      if (isCameraActive) {
+        stopCamera();
       }
     }
   };
@@ -154,7 +150,7 @@ const CameraSheet = ({ open, onOpenChange }: CameraSheetProps) => {
       onOpenChange(false);
       
       toast({
-        title: "Image Captured",
+        title: "Image Added",
         description: "Image has been successfully saved.",
       });
     }
@@ -165,7 +161,9 @@ const CameraSheet = ({ open, onOpenChange }: CameraSheetProps) => {
       <SheetContent side="bottom" className="h-[90%] p-0 overflow-hidden rounded-t-xl">
         <SheetHeader className="px-4 pt-4">
           <div className="flex justify-between items-center">
-            <SheetTitle>Take a Photo</SheetTitle>
+            <SheetTitle>
+              {isProfilePage() ? "Choose Profile Photo" : "Take a Photo"}
+            </SheetTitle>
             <Button 
               variant="ghost" 
               size="icon" 
@@ -190,8 +188,11 @@ const CameraSheet = ({ open, onOpenChange }: CameraSheetProps) => {
                   />
                 ) : (
                   <div className="text-white text-center p-8">
-                    <Camera size={48} className="mx-auto mb-4" />
-                    <p>Camera inactive. Please allow camera access or upload a photo.</p>
+                    <Image size={48} className="mx-auto mb-4" />
+                    <p>{isProfilePage() 
+                      ? "Select an image from your device" 
+                      : "Camera inactive. Please allow camera access or upload a photo."}
+                    </p>
                   </div>
                 )}
               </div>
@@ -207,14 +208,16 @@ const CameraSheet = ({ open, onOpenChange }: CameraSheetProps) => {
                     Gallery
                   </Button>
                   
-                  <Button 
-                    className="flex-1 bg-wayscanner-blue"
-                    onClick={handleCapture}
-                    disabled={!isCameraActive}
-                  >
-                    <Camera size={18} className="mr-2" />
-                    Capture
-                  </Button>
+                  {!isProfilePage() && (
+                    <Button 
+                      className="flex-1 bg-wayscanner-blue"
+                      onClick={handleCapture}
+                      disabled={!isCameraActive}
+                    >
+                      <Camera size={18} className="mr-2" />
+                      Capture
+                    </Button>
+                  )}
                 </div>
               </div>
             </>
@@ -235,8 +238,17 @@ const CameraSheet = ({ open, onOpenChange }: CameraSheetProps) => {
                     onClick={handleRetake}
                     className="flex-1"
                   >
-                    <Camera size={18} className="mr-2" />
-                    Retake
+                    {isProfilePage() ? (
+                      <>
+                        <Image size={18} className="mr-2" />
+                        Choose Another
+                      </>
+                    ) : (
+                      <>
+                        <Camera size={18} className="mr-2" />
+                        Retake
+                      </>
+                    )}
                   </Button>
                   
                   <Button 
