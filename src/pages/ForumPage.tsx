@@ -146,6 +146,7 @@ export const ForumPage = () => {
   };
   
   const handleCommentClick = (postId: string) => {
+    console.log("Navigating to post detail:", postId);
     navigate(`/forum/post/${postId}`);
   };
 

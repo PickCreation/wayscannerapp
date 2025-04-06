@@ -136,6 +136,7 @@ const MyPostsPage = () => {
   };
   
   const handleCommentClick = (postId: string) => {
+    console.log("Navigating to post detail from My Posts:", postId);
     navigate(`/forum/post/${postId}`);
   };
   

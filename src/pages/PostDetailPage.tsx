@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronLeft, Heart, Bookmark, Send, Bell, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -9,55 +9,61 @@ import BottomNavigation from "@/components/BottomNavigation";
 import { useToast } from "@/hooks/use-toast";
 import CameraSheet from "@/components/CameraSheet";
 
-// Sample post data
-const POST = {
-  id: "1",
-  author: {
-    name: "John D.",
-    avatar: "/placeholder.svg",
-  },
-  timeAgo: "12h ago",
-  category: "Plants",
-  content: "Just found this amazing plant in my backyard. Anyone know what it is?",
-  likes: 2,
-  comments: [
-    {
-      id: "c1",
-      author: {
-        name: "Sarah M.",
-        avatar: "/placeholder.svg",
-      },
-      timeAgo: "10h ago",
-      content: "Looks like a peace lily! They're great indoor plants.",
-    },
-    {
-      id: "c2",
-      author: {
-        name: "Robert J.",
-        avatar: "/placeholder.svg",
-      },
-      timeAgo: "8h ago",
-      content: "I agree with Sarah, definitely a peace lily. They like indirect light and regular watering.",
-    }
-  ],
-  bookmarked: false,
-  liked: false
-};
-
 const PostDetailPage = () => {
   const navigate = useNavigate();
   const params = useParams();
   const { toast } = useToast();
-  const [post, setPost] = useState(POST);
-  const [comments, setComments] = useState(post.comments);
+  const [post, setPost] = useState<any>(null);
+  const [comments, setComments] = useState<any[]>([]);
   const [newComment, setNewComment] = useState("");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
+  const [loading, setLoading] = useState(true);
+  
+  // Load post data from localStorage
+  useEffect(() => {
+    const postId = params.postId;
+    console.log("Loading post with ID:", postId);
+    
+    const savedPosts = localStorage.getItem('forumPosts');
+    if (savedPosts && postId) {
+      const allPosts = JSON.parse(savedPosts);
+      const foundPost = allPosts.find((p: any) => p.id === postId);
+      
+      if (foundPost) {
+        setPost(foundPost);
+        // Initialize comments array if not present
+        if (!foundPost.comments || !Array.isArray(foundPost.comments)) {
+          foundPost.comments = [];
+        }
+        setComments(foundPost.comments);
+      }
+    }
+    setLoading(false);
+  }, [params.postId]);
   
   const handleLikePost = () => {
-    setPost((prev) => {
+    if (!post) return;
+    
+    // Update post in state
+    setPost((prev: any) => {
       const newLikes = prev.likes + (prev.liked ? -1 : 1);
       return { ...prev, likes: newLikes, liked: !prev.liked };
     });
+    
+    // Also update in localStorage
+    const savedPosts = localStorage.getItem('forumPosts');
+    if (savedPosts) {
+      const allPosts = JSON.parse(savedPosts);
+      const updatedPosts = allPosts.map((p: any) => {
+        if (p.id === post.id) {
+          const newLikes = p.likes + (p.liked ? -1 : 1);
+          return { ...p, likes: newLikes, liked: !p.liked };
+        }
+        return p;
+      });
+      
+      localStorage.setItem('forumPosts', JSON.stringify(updatedPosts));
+    }
     
     if (!post.liked) {
       toast({
@@ -68,7 +74,24 @@ const PostDetailPage = () => {
   };
   
   const handleBookmarkPost = () => {
-    setPost((prev) => ({ ...prev, bookmarked: !prev.bookmarked }));
+    if (!post) return;
+    
+    // Update post in state
+    setPost((prev: any) => ({ ...prev, bookmarked: !prev.bookmarked }));
+    
+    // Also update in localStorage
+    const savedPosts = localStorage.getItem('forumPosts');
+    if (savedPosts) {
+      const allPosts = JSON.parse(savedPosts);
+      const updatedPosts = allPosts.map((p: any) => {
+        if (p.id === post.id) {
+          return { ...p, bookmarked: !p.bookmarked };
+        }
+        return p;
+      });
+      
+      localStorage.setItem('forumPosts', JSON.stringify(updatedPosts));
+    }
     
     toast({
       title: post.bookmarked ? "Bookmark removed" : "Post bookmarked",
@@ -77,10 +100,10 @@ const PostDetailPage = () => {
   };
 
   const handleSubmitComment = () => {
-    if (!newComment.trim()) return;
+    if (!newComment.trim() || !post) return;
 
     const newCommentObj = {
-      id: `c${comments.length + 1}`,
+      id: `c${Date.now()}`,
       author: {
         name: "You",
         avatar: "/placeholder.svg",
@@ -89,7 +112,38 @@ const PostDetailPage = () => {
       content: newComment.trim(),
     };
 
-    setComments([...comments, newCommentObj]);
+    // Update comments in state
+    const updatedComments = [...comments, newCommentObj];
+    setComments(updatedComments);
+    
+    // Also update the post's comment count and comments array in localStorage
+    const savedPosts = localStorage.getItem('forumPosts');
+    if (savedPosts) {
+      const allPosts = JSON.parse(savedPosts);
+      const updatedPosts = allPosts.map((p: any) => {
+        if (p.id === post.id) {
+          // Initialize comments array if it doesn't exist
+          if (!p.comments) {
+            p.comments = [];
+          }
+          return { 
+            ...p, 
+            comments: p.comments + 1,
+            commentsArray: [...(p.commentsArray || []), newCommentObj]
+          };
+        }
+        return p;
+      });
+      
+      localStorage.setItem('forumPosts', JSON.stringify(updatedPosts));
+    }
+    
+    // Update local post state too
+    setPost({
+      ...post,
+      comments: post.comments + 1
+    });
+    
     setNewComment("");
     
     toast({
@@ -106,11 +160,31 @@ const PostDetailPage = () => {
     setShowCameraSheet(true);
   };
   
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <p>Loading post...</p>
+      </div>
+    );
+  }
+  
+  if (!post) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
+        <h2 className="text-xl font-semibold mb-2">Post Not Found</h2>
+        <p className="text-gray-500 mb-4">The post you're looking for doesn't exist or has been removed.</p>
+        <Button onClick={() => navigate('/forum')} type="button">
+          Back to Forum
+        </Button>
+      </div>
+    );
+  }
+  
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 pb-20">
-      {/* Header - Using the same header as home page */}
+      {/* Header */}
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2">
+        <button onClick={() => navigate(-1)} className="p-2 -ml-2" type="button">
           <ChevronLeft size={24} color="white" />
         </button>
         <div className="flex justify-center">
@@ -121,10 +195,10 @@ const PostDetailPage = () => {
           />
         </div>
         <div className="flex items-center space-x-3">
-          <button className="p-2">
+          <button className="p-2" type="button">
             <Bell size={24} fill="white" strokeWidth={1.5} />
           </button>
-          <button className="p-2" onClick={handleProfileClick}>
+          <button className="p-2" onClick={handleProfileClick} type="button">
             <User size={24} fill="white" strokeWidth={1.5} />
           </button>
         </div>
@@ -145,7 +219,15 @@ const PostDetailPage = () => {
               <h3 className="font-medium text-lg text-gray-800">{post.author.name}</h3>
               <div className="flex items-center">
                 <span className="text-gray-500 text-sm">{post.timeAgo}</span>
-                <span className="ml-2 px-3 py-1 rounded-full text-xs bg-green-100 text-green-700">
+                <span className={`ml-2 px-3 py-1 rounded-full text-xs ${
+                  post.category === "Plants" ? "bg-green-100 text-green-700" : 
+                  post.category.includes("Food") || post.category.includes("Recipe") || post.category.includes("Cooking") || post.category.includes("Kitchen") || post.category.includes("Nutrition") ? "bg-red-100 text-red-700" : 
+                  post.category.includes("Animals") || post.category.includes("Pets") ? "bg-yellow-100 text-yellow-700" :
+                  post.category === "Travel" ? "bg-purple-100 text-purple-700" :
+                  post.category.includes("DIY") || post.category.includes("Home") || post.category.includes("Decor") ? "bg-orange-100 text-orange-700" :
+                  post.category.includes("Question") ? "bg-blue-100 text-blue-700" :
+                  "bg-blue-100 text-blue-700"
+                }`}>
                   {post.category}
                 </span>
               </div>
@@ -155,32 +237,42 @@ const PostDetailPage = () => {
           {/* Post Content */}
           <p className="text-gray-700 mb-4">{post.content}</p>
           
+          {/* Post Image (if available) */}
+          {post.imageUrl && (
+            <div className="mb-4 border rounded-lg overflow-hidden">
+              <img src={post.imageUrl} alt="Post" className="w-full h-auto" />
+            </div>
+          )}
+          
           {/* Post Actions */}
           <div className="flex items-center border-t border-gray-100 pt-3">
             <button 
               className="flex items-center mr-5"
               onClick={handleLikePost}
+              type="button"
             >
               <Heart 
                 size={22} 
-                className={post.liked ? "fill-red-500 text-red-500" : "text-gray-500"}
+                className={post.liked ? "fill-red-500 text-red-500" : "text-black"}
               />
               <span className="ml-1 text-gray-600">{post.likes}</span>
             </button>
             <button 
               className="flex items-center mr-5"
+              type="button"
             >
               <div className="text-blue-600 font-medium">
-                {comments.length} Comments
+                {post.comments} Comments
               </div>
             </button>
             <button 
               className="flex items-center ml-auto"
               onClick={handleBookmarkPost}
+              type="button"
             >
               <Bookmark 
                 size={22} 
-                className={post.bookmarked ? "fill-gray-700 text-gray-700" : "text-gray-500"}
+                className={post.bookmarked ? "fill-wayscanner-blue text-wayscanner-blue" : "text-black"}
               />
             </button>
           </div>
@@ -191,25 +283,31 @@ const PostDetailPage = () => {
           <h4 className="font-medium text-lg mb-4">Comments</h4>
           
           <div className="space-y-4 mb-4">
-            {comments.map(comment => (
-              <div key={comment.id} className="flex">
-                <Avatar className="h-10 w-10 mr-3 mt-1">
-                  <AvatarImage src={comment.author.avatar} alt={comment.author.name} />
-                  <AvatarFallback>
-                    {comment.author.name.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <div className="flex justify-between mb-1">
-                      <span className="font-medium">{comment.author.name}</span>
-                      <span className="text-gray-500 text-xs">{comment.timeAgo}</span>
+            {comments.length > 0 ? (
+              comments.map(comment => (
+                <div key={comment.id} className="flex">
+                  <Avatar className="h-10 w-10 mr-3 mt-1">
+                    <AvatarImage src={comment.author.avatar} alt={comment.author.name} />
+                    <AvatarFallback>
+                      {comment.author.name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <div className="flex justify-between mb-1">
+                        <span className="font-medium">{comment.author.name}</span>
+                        <span className="text-gray-500 text-xs">{comment.timeAgo}</span>
+                      </div>
+                      <p className="text-gray-700">{comment.content}</p>
                     </div>
-                    <p className="text-gray-700">{comment.content}</p>
                   </div>
                 </div>
+              ))
+            ) : (
+              <div className="text-center py-6 text-gray-500">
+                <p>No comments yet. Be the first to comment!</p>
               </div>
-            ))}
+            )}
           </div>
           
           {/* Add Comment */}
@@ -220,7 +318,7 @@ const PostDetailPage = () => {
               placeholder="Add a comment..."
               className="flex-1"
             />
-            <Button onClick={handleSubmitComment} size="icon">
+            <Button onClick={handleSubmitComment} size="icon" type="button">
               <Send size={18} />
             </Button>
           </div>
