@@ -1,8 +1,10 @@
+
 import React, { useEffect, useState } from "react";
 import { 
   ArrowLeft, Edit, Lock, Store, Bookmark, Heart, 
   ShoppingCart, Truck, Ticket, Globe, HelpCircle, Info, 
-  Shield, LogOut, FileText, ChevronRight, User
+  Shield, LogOut, FileText, ChevronRight, User,
+  CreditCard, MapPin, Package
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
@@ -54,6 +56,26 @@ const ProfilePage = () => {
     
     if (item === "Cart") {
       navigate("/cart");
+      return;
+    }
+    
+    if (item === "Orders") {
+      navigate("/orders");
+      return;
+    }
+
+    if (item === "Purchases") {
+      navigate("/purchases");
+      return;
+    }
+
+    if (item === "Addresses") {
+      navigate("/addresses");
+      return;
+    }
+
+    if (item === "Payment Methods") {
+      navigate("/payment-methods");
       return;
     }
     
@@ -177,12 +199,37 @@ const ProfilePage = () => {
           description="Track your orders"
           onClick={() => handleMenuItemClick("Orders")}
         />
+
+        <ProfileMenuItem 
+          icon={<Package className="h-5 w-5 text-wayscanner-blue" />} 
+          title="My Purchases" 
+          description="View your purchase history"
+          onClick={() => handleMenuItemClick("Purchases")}
+        />
         
         <ProfileMenuItem 
           icon={<Ticket className="h-5 w-5 text-wayscanner-blue" />} 
           title="My Coupons" 
           description="Discount coupons and offers"
           onClick={() => handleMenuItemClick("Coupons")}
+        />
+      </div>
+
+      <div className="px-4 pb-2">
+        <h3 className="text-base font-semibold mb-3">Payment & Shipping</h3>
+        
+        <ProfileMenuItem 
+          icon={<MapPin className="h-5 w-5 text-wayscanner-blue" />} 
+          title="My Addresses" 
+          description="Manage your shipping addresses"
+          onClick={() => handleMenuItemClick("Addresses")}
+        />
+        
+        <ProfileMenuItem 
+          icon={<CreditCard className="h-5 w-5 text-wayscanner-blue" />} 
+          title="Payment Methods" 
+          description="Manage your payment options"
+          onClick={() => handleMenuItemClick("Payment Methods")}
         />
       </div>
 
