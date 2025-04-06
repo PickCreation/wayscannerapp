@@ -197,7 +197,7 @@ const ProfilePage = () => {
         >
           <div className="flex items-center">
             <div className="bg-white rounded-full p-2 mr-3">
-              <Crown className="h-5 w-5 text-blue-600" />
+              <Crown className="h-5 w-5 text-red-500" />
             </div>
             <div className="text-left">
               <h3 className="font-bold text-lg">Upgrade Now!</h3>
