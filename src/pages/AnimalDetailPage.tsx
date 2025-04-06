@@ -204,12 +204,12 @@ const AnimalDetailPage = () => {
         <h2 className="text-xl font-bold">{animal.name}</h2>
       </div>
 
-      {/* Scientific Name and Risk Level - Moved risk level here */}
+      {/* Scientific Name and Risk Level - Moved risk level below scientific name */}
       <div className="px-4 pb-2">
         <h3 className="text-base text-green-600 font-medium">Scientific Name</h3>
         <p className="text-blue-600 text-sm font-medium mb-2">{animal.scientificName}</p>
         
-        <div className={`${getRiskColor(animal.riskLevel)} text-white px-3 py-1 rounded-full inline-flex items-center text-xs`}>
+        <div className={`${getRiskColor(animal.riskLevel)} text-white px-3 py-1 rounded-full inline-flex items-center text-xs mb-2`}>
           <AlertTriangle className="mr-1" size={12} />
           <span className="font-medium">{animal.riskLevel} Risk</span>
         </div>
@@ -248,58 +248,6 @@ const AnimalDetailPage = () => {
         <p className="text-xs">{animal.safetyMeasures}</p>
       </div>
 
-      {/* Legal Restrictions - New section */}
-      <div className="px-4 py-3 bg-blue-100 mx-4 rounded-lg mb-3">
-        <h3 className="text-base font-semibold mb-1">Legal Restrictions</h3>
-        <p className="text-xs">{animal.legalRestrictions}</p>
-      </div>
-
-      {/* Interesting Facts - New section */}
-      <div className="px-4 py-3 border border-gray-300 mx-4 rounded-lg mb-3">
-        <h3 className="text-base font-semibold mb-1">Interesting Facts</h3>
-        <ul className="space-y-2">
-          {animal.interestingFacts.map((item, index) => (
-            <li key={index} className="flex items-start">
-              <div className="flex-shrink-0 h-5 w-5 rounded-full bg-blue-500 flex items-center justify-center mr-2 mt-0.5">
-                <Info className="h-3 w-3 text-white" />
-              </div>
-              <p className="text-xs">{item.fact}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Emergency Contacts - New section */}
-      <div className="px-4 py-3 bg-red-100 mx-4 rounded-lg mb-3">
-        <h3 className="text-base font-semibold mb-1">Emergency Contacts</h3>
-        <ul className="space-y-2">
-          {animal.emergencyContacts.map((contact, index) => (
-            <li key={index} className="flex items-center">
-              <PhoneCall className="h-4 w-4 text-red-600 mr-2" />
-              <div>
-                <p className="text-xs font-semibold">{contact.name}</p>
-                <p className="text-xs">{contact.phone}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Similar Species - New section */}
-      <div className="px-4 py-3 mx-4 mb-3">
-        <h3 className="text-base font-semibold mb-2">Similar Species</h3>
-        <div className="flex space-x-4 overflow-x-auto pb-2">
-          {animal.similarSpecies.map((species, index) => (
-            <div key={index} className="flex flex-col items-center">
-              <div className="w-16 h-16 rounded-full overflow-hidden">
-                <img src={species.imageUrl} alt={species.name} className="w-full h-full object-cover" />
-              </div>
-              <p className="text-xs text-center mt-1">{species.name}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* About */}
       <div className="px-4 py-3 border border-gray-300 mx-4 rounded-lg mb-3">
         <h3 className="text-base font-semibold mb-1">About</h3>
@@ -325,9 +273,61 @@ const AnimalDetailPage = () => {
       </div>
 
       {/* Behavioral Traits */}
-      <div className="px-4 py-3 bg-green-100 mx-4 rounded-lg mb-10">
+      <div className="px-4 py-3 bg-green-100 mx-4 rounded-lg mb-3">
         <h3 className="text-base font-semibold mb-1">Behavioral Traits</h3>
         <p className="text-xs">{animal.behavioralTraits}</p>
+      </div>
+
+      {/* Legal Restrictions - Moved from before to after Behavioral Traits */}
+      <div className="px-4 py-3 bg-blue-100 mx-4 rounded-lg mb-3">
+        <h3 className="text-base font-semibold mb-1">Legal Restrictions</h3>
+        <p className="text-xs">{animal.legalRestrictions}</p>
+      </div>
+
+      {/* Interesting Facts - Moved to the end */}
+      <div className="px-4 py-3 border border-gray-300 mx-4 rounded-lg mb-3">
+        <h3 className="text-base font-semibold mb-1">Interesting Facts</h3>
+        <ul className="space-y-2">
+          {animal.interestingFacts.map((item, index) => (
+            <li key={index} className="flex items-start">
+              <div className="flex-shrink-0 h-5 w-5 rounded-full bg-blue-500 flex items-center justify-center mr-2 mt-0.5">
+                <Info className="h-3 w-3 text-white" />
+              </div>
+              <p className="text-xs">{item.fact}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Emergency Contacts - Moved to the end */}
+      <div className="px-4 py-3 bg-red-100 mx-4 rounded-lg mb-3">
+        <h3 className="text-base font-semibold mb-1">Emergency Contacts</h3>
+        <ul className="space-y-2">
+          {animal.emergencyContacts.map((contact, index) => (
+            <li key={index} className="flex items-center">
+              <PhoneCall className="h-4 w-4 text-red-600 mr-2" />
+              <div>
+                <p className="text-xs font-semibold">{contact.name}</p>
+                <p className="text-xs">{contact.phone}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Similar Species - Moved to the end */}
+      <div className="px-4 py-3 mx-4 mb-3">
+        <h3 className="text-base font-semibold mb-2">Similar Species</h3>
+        <div className="flex space-x-4 overflow-x-auto pb-2">
+          {animal.similarSpecies.map((species, index) => (
+            <div key={index} className="flex flex-col items-center">
+              <div className="w-16 h-16 rounded-full overflow-hidden">
+                <img src={species.imageUrl} alt={species.name} className="w-full h-full object-cover" />
+              </div>
+              <p className="text-xs text-center mt-1">{species.name}</p>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Bottom Navigation */}

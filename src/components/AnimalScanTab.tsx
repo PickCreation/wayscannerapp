@@ -23,7 +23,7 @@ const animalItems: AnimalItem[] = [
     scientificName: "Panthera tigris tigris",
     riskLevel: "High",
     imageUrl: "/lovable-uploads/69501614-b92c-43f9-89e5-85971b5b6ede.png",
-    borderColor: "border-red-100",
+    borderColor: "border-red-200",
     icon: "mammal",
     type: "Mammal",
     dietary: "Carnivore",
@@ -35,7 +35,7 @@ const animalItems: AnimalItem[] = [
     scientificName: "Canis lupus",
     riskLevel: "Moderate",
     imageUrl: "/lovable-uploads/b7a77845-a980-42f1-8b7e-eea9a8b822f8.png",
-    borderColor: "border-yellow-100",
+    borderColor: "border-orange-200",
     icon: "mammal",
     type: "Mammal",
     dietary: "Carnivore",
@@ -47,7 +47,7 @@ const animalItems: AnimalItem[] = [
     scientificName: "Canis lupus familiaris",
     riskLevel: "Low",
     imageUrl: "/lovable-uploads/b7a77845-a980-42f1-8b7e-eea9a8b822f8.png",
-    borderColor: "border-green-100",
+    borderColor: "border-green-200",
     icon: "mammal",
     type: "Mammal",
     dietary: "Omnivore",
@@ -62,6 +62,12 @@ const AnimalScanTab = () => {
     if (risk === "High") return "bg-red-500";
     if (risk === "Moderate") return "bg-yellow-500";
     return "bg-green-500";
+  };
+
+  const getBorderColor = (risk: "High" | "Moderate" | "Low") => {
+    if (risk === "High") return "border-red-200";
+    if (risk === "Moderate") return "border-orange-200";
+    return "border-green-200";
   };
 
   const getAnimalIcon = (type: "mammal" | "bird" | "fish") => {
@@ -79,7 +85,7 @@ const AnimalScanTab = () => {
       {animalItems.map((item) => (
         <div 
           key={item.id} 
-          className={`rounded-xl overflow-hidden border border-gray-300 ${item.borderColor} shadow-sm flex cursor-pointer`}
+          className={`rounded-xl overflow-hidden border-2 ${getBorderColor(item.riskLevel)} shadow-sm flex cursor-pointer`}
           onClick={() => handleAnimalClick(item.id)}
         >
           <div className="flex items-center p-3 w-full">
