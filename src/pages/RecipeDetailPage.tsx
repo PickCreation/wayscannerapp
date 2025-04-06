@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { 
@@ -22,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Drawer,
   DrawerContent,
@@ -207,6 +209,7 @@ const RecipeDetailPage = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [userComments, setUserComments] = useState<any[]>([]);
+  const isMobile = useIsMobile();
 
   const recipe = recipeData[recipeId as keyof typeof recipeData] || getDefaultRecipe(recipeId || "unknown");
 
@@ -386,7 +389,7 @@ const RecipeDetailPage = () => {
                   <Share2 size={16} color="white" />
                 </button>
               </PopoverTrigger>
-              <PopoverContent className="w-48 p-0">
+              <PopoverContent className="w-48 p-0" align={isMobile ? "end" : "center"} sideOffset={5}>
                 <div className="flex flex-col">
                   <button 
                     onClick={handleCopyLink}
