@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Camera, UserCircle, Mail, Phone } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -15,6 +14,8 @@ const EditProfilePage = () => {
   const { toast } = useToast();
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("profile");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
     fullName: "John Doe",
@@ -42,7 +43,22 @@ const EditProfilePage = () => {
   };
 
   const handleProfilePhotoChange = () => {
-    setShowCameraSheet(true);
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setProfileImage(imageUrl);
+      
+      toast({
+        title: "Profile Photo Updated",
+        description: "Your profile photo has been changed successfully.",
+      });
+    }
   };
 
   const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop" | "profile") => {
@@ -80,10 +96,13 @@ const EditProfilePage = () => {
         <div className="flex flex-col items-center mb-6">
           <div className="relative mb-4">
             <Avatar className="w-24 h-24 border-4 border-white">
-              <AvatarImage src="" />
-              <AvatarFallback className="bg-gray-200 text-gray-400">
-                <UserCircle size={60} />
-              </AvatarFallback>
+              {profileImage ? (
+                <AvatarImage src={profileImage} />
+              ) : (
+                <AvatarFallback className="bg-gray-200 text-gray-400">
+                  <UserCircle size={60} />
+                </AvatarFallback>
+              )}
             </Avatar>
             <button 
               type="button"
@@ -92,6 +111,14 @@ const EditProfilePage = () => {
             >
               <Camera size={18} />
             </button>
+            
+            <input 
+              type="file" 
+              ref={fileInputRef}
+              className="hidden"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
           </div>
           <p className="text-sm text-gray-500">Tap to change profile photo</p>
         </div>

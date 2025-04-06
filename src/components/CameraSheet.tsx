@@ -3,17 +3,25 @@ import React, { useState } from "react";
 import { Drawer, DrawerContent, DrawerClose } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { X, Utensils, Flower, PawPrint, Pencil, ShoppingCart } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import LoginDialog from "@/components/LoginDialog";
 
 interface CameraSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onProfilePhotoSelect?: (file: File) => void;
+  isProfilePhoto?: boolean;
 }
 
-const CameraSheet: React.FC<CameraSheetProps> = ({ open, onOpenChange }) => {
+const CameraSheet: React.FC<CameraSheetProps> = ({ 
+  open, 
+  onOpenChange, 
+  onProfilePhotoSelect,
+  isProfilePhoto = false
+}) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated } = useAuth();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
 
