@@ -49,6 +49,13 @@ const FoodScanTab: React.FC<FoodScanTabProps> = ({ onEditPreferences, onHowWeSco
     if (score >= 40) return "bg-orange-500";
     return "bg-red-500";
   };
+  
+  const getScoreBorderColor = (score: number) => {
+    if (score >= 80) return "border-teal-300";
+    if (score >= 60) return "border-purple-300";
+    if (score >= 40) return "border-orange-300";
+    return "border-red-300";
+  };
 
   const getScoreText = (score: number) => {
     if (score >= 80) return "Excellent";
@@ -58,22 +65,22 @@ const FoodScanTab: React.FC<FoodScanTabProps> = ({ onEditPreferences, onHowWeSco
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {scanResults.map((item) => (
         <div 
           key={item.id} 
-          className="p-4 rounded-xl border border-gray-100 shadow-sm bg-white flex items-center justify-between"
+          className="p-3 rounded-xl border border-gray-100 shadow-sm bg-white flex items-center justify-between cursor-pointer"
           onClick={() => navigate(`/food/${item.id}`)}
         >
           <div className="flex-1">
-            <h3 className="text-xl font-bold text-gray-900">{item.name}</h3>
-            <p className="text-lg text-blue-500">{item.brand}</p>
-            <div className={`${getScoreColor(item.score)} text-white px-5 py-1.5 rounded-full text-lg inline-flex items-center mt-2`}>
+            <h3 className="text-lg font-bold text-gray-900">{item.name}</h3>
+            <p className="text-md text-blue-500">{item.brand}</p>
+            <div className={`${getScoreColor(item.score)} text-white px-4 py-1 rounded-full text-md inline-flex items-center mt-2 border ${getScoreBorderColor(item.score)}`}>
               <span className="font-bold mr-1">{item.score}</span>
               <span>{getScoreText(item.score)}</span>
             </div>
           </div>
-          <ChevronRight className="text-gray-400 h-6 w-6" />
+          <ChevronRight className="text-gray-400 h-5 w-5" />
         </div>
       ))}
     </div>
