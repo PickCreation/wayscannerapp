@@ -123,7 +123,7 @@ const EditPreferencesSheet: React.FC<EditPreferencesSheetProps> = ({
             </div>
           </div>
 
-          <div className="pt-4 pb-10">
+          <div className="pt-4">
             <button
               className="w-full py-3 bg-wayscanner-blue text-white rounded-lg font-semibold"
               onClick={handleSave}
