@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ChevronLeft, Bookmark, CircleCheck, Vegan, Fish, Edit, Info, ChevronRight } from "lucide-react";
@@ -7,6 +6,9 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
+import EditPreferencesSheet from "@/components/EditPreferencesSheet";
+import HowWeScoreSheet from "@/components/HowWeScoreSheet";
+import { toast } from "sonner";
 
 // Sample food data to simulate fetching from API
 const foodItems = [
@@ -144,14 +146,20 @@ const foodItems = [
   }
 ];
 
+type Diet = "Vegan" | "Vegetarian" | null;
+type Allergy = "Sesame" | "Peanuts" | "Eggs" | "Shellfish" | "Lactose" | "Soy" | "Nuts" | "Fish" | "Milk" | "Gluten";
+
 const FoodDetailPage = () => {
   const { foodId } = useParams();
   const navigate = useNavigate();
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("home");
   const [cameraSheetOpen, setCameraSheetOpen] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [editPreferencesOpen, setEditPreferencesOpen] = useState(false);
+  const [howWeScoreOpen, setHowWeScoreOpen] = useState(false);
+  const [userDiet, setUserDiet] = useState<Diet>(null);
+  const [userAllergies, setUserAllergies] = useState<Allergy[]>([]);
   
-  // Find the food item based on the ID from URL params
   const food = foodItems.find(item => item.id === foodId);
   
   if (!food) {
@@ -187,10 +195,31 @@ const FoodDetailPage = () => {
     if (score >= 40) return "Not great";
     return "Bad";
   };
+  
+  const handleSavePreferences = (diet: Diet, allergies: Allergy[]) => {
+    setUserDiet(diet);
+    setUserAllergies(allergies);
+    toast.success("Preferences saved successfully!");
+  };
+
+  const getAllergyIcon = (allergy: Allergy) => {
+    switch(allergy) {
+      case "Sesame": return "🌰";
+      case "Peanuts": return "🥜";
+      case "Eggs": return "🥚";
+      case "Shellfish": return "🦞";
+      case "Lactose": return "🧀";
+      case "Soy": return "🌱";
+      case "Nuts": return "🌰";
+      case "Fish": return "🐟";
+      case "Milk": return "🥛";
+      case "Gluten": return "🌾";
+      default: return "⚠️";
+    }
+  };
 
   return (
     <div className="pb-20 bg-gray-50 min-h-screen">
-      {/* Header */}
       <header className="bg-wayscanner-blue text-white py-3 px-3 flex justify-between items-center">
         <button 
           className="p-1.5" 
@@ -200,12 +229,10 @@ const FoodDetailPage = () => {
         </button>
         <h1 className="text-[18px] font-medium">Food Detail</h1>
         <div className="w-8 h-8 flex items-center justify-center">
-          {/* Placeholder for right side button */}
           <div className="w-5 h-5"></div>
         </div>
       </header>
 
-      {/* Food Summary Card */}
       <div className="bg-white rounded-lg shadow-sm mx-3 mt-3 overflow-hidden">
         <div className="flex p-3 items-center">
           <div className="mr-3 w-16 h-16 rounded-lg overflow-hidden">
@@ -236,14 +263,12 @@ const FoodDetailPage = () => {
         </div>
       </div>
 
-      {/* Per Serving - Modified to remove dashes */}
       <div className="mx-3 mt-4 text-center">
         <p className="text-gray-500 text-xs pb-1.5">
           per serving ({food.serving})
         </p>
       </div>
 
-      {/* Negatives Section */}
       <div className="bg-white rounded-lg shadow-sm mx-3 mt-4 p-3">
         <h3 className="text-[16px] font-bold mb-3">Negatives</h3>
         <div className="space-y-3">
@@ -269,7 +294,6 @@ const FoodDetailPage = () => {
         </div>
       </div>
 
-      {/* Positives (Highlights) Section */}
       <div className="mx-3 mt-4">
         <h3 className="text-[16px] font-bold mb-3">Positives</h3>
         <div className="grid grid-cols-3 gap-2 mb-4">
@@ -308,7 +332,6 @@ const FoodDetailPage = () => {
         </div>
       </div>
 
-      {/* Ingredients Section */}
       <div className="bg-white rounded-lg shadow-sm mx-3 mt-4 p-3">
         <h3 className="text-[16px] font-bold mb-3">Ingredients</h3>
         <p className="text-gray-800 text-[14px] mb-3">{food.ingredients}</p>
@@ -323,7 +346,6 @@ const FoodDetailPage = () => {
         </div>
       </div>
 
-      {/* Allergy & Diet Info */}
       <div className="bg-white rounded-lg shadow-sm mx-3 mt-4 p-3">
         <h3 className="text-[16px] font-bold mb-3">Allergy & Diet Info</h3>
         <Separator className="my-3" />
@@ -353,14 +375,31 @@ const FoodDetailPage = () => {
               <span className="text-[14px]">Contains Soy</span>
             </Badge>
           )}
+          
+          {userDiet && !food.dietInfo.includes(userDiet) && (
+            <Badge variant="outline" className="py-1 px-3 flex items-center gap-1.5 rounded-full border-2 border-blue-500 bg-blue-50">
+              {userDiet === "Vegan" && <span>🌱</span>}
+              {userDiet === "Vegetarian" && <span>🥦</span>}
+              <span className="text-[14px] text-blue-800">{userDiet}</span>
+            </Badge>
+          )}
+          
+          {userAllergies.map(allergy => (
+            <Badge key={allergy} variant="outline" className="py-1 px-3 flex items-center gap-1.5 rounded-full border-2 border-red-400 bg-red-50">
+              <span>{getAllergyIcon(allergy)}</span>
+              <span className="text-[14px] text-red-800">{allergy}</span>
+            </Badge>
+          ))}
         </div>
       </div>
 
-      {/* Other Section */}
       <div className="bg-white rounded-lg shadow-sm mx-3 mt-4 p-3 mb-6">
         <h3 className="text-[16px] font-bold mb-3">Other</h3>
         
-        <button className="w-full py-2.5 flex items-center justify-between bg-gray-100 rounded-lg mb-2.5">
+        <button 
+          className="w-full py-2.5 flex items-center justify-between bg-gray-100 rounded-lg mb-2.5"
+          onClick={() => setEditPreferencesOpen(true)}
+        >
           <div className="flex items-center">
             <Edit className="h-4 w-4 mx-2.5" />
             <span className="font-medium text-[14px]">Edit Preferences</span>
@@ -368,7 +407,10 @@ const FoodDetailPage = () => {
           <ChevronRight className="h-4 w-4 mx-2.5 text-gray-400" />
         </button>
         
-        <button className="w-full py-2.5 flex items-center justify-between bg-gray-100 rounded-lg mb-4">
+        <button 
+          className="w-full py-2.5 flex items-center justify-between bg-gray-100 rounded-lg mb-4"
+          onClick={() => setHowWeScoreOpen(true)}
+        >
           <div className="flex items-center">
             <Info className="h-4 w-4 mx-2.5" />
             <span className="font-medium text-[14px]">How do we score food?</span>
@@ -383,15 +425,26 @@ const FoodDetailPage = () => {
         </p>
       </div>
 
-      {/* Bottom Navigation */}
       <BottomNavigation
         activeItem={activeNavItem}
         onItemClick={handleNavItemClick}
         onCameraClick={handleCameraClick}
       />
 
-      {/* Camera Sheet */}
       <CameraSheet open={cameraSheetOpen} onOpenChange={setCameraSheetOpen} />
+      
+      <EditPreferencesSheet 
+        open={editPreferencesOpen} 
+        onOpenChange={setEditPreferencesOpen} 
+        onSave={handleSavePreferences}
+        initialDiet={userDiet}
+        initialAllergies={userAllergies}
+      />
+      
+      <HowWeScoreSheet
+        open={howWeScoreOpen}
+        onOpenChange={setHowWeScoreOpen}
+      />
     </div>
   );
 };
