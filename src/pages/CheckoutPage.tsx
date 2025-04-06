@@ -3,7 +3,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, CreditCard, MapPin, Package, 
-  Check, Edit2, Plus, ChevronRight, ShoppingBag 
+  Check, Edit2, Plus, ChevronRight, ShoppingBag,
+  CircleDollarSign, DollarSign
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -248,7 +249,7 @@ const CheckoutPage = () => {
       return (
         <div className="flex items-center">
           <div className="rounded-md bg-white p-1 mr-3">
-            <CreditCard className="h-5 w-5 text-[#0070BA]" />
+            <CircleDollarSign className="h-5 w-5 text-[#0070BA]" />
           </div>
           <div>
             <p className="font-medium">PayPal</p>
@@ -260,7 +261,7 @@ const CheckoutPage = () => {
       return (
         <div className="flex items-center">
           <div className="rounded-md bg-white p-1 mr-3">
-            <CreditCard className="h-5 w-5 text-[#FF4800]" />
+            <DollarSign className="h-5 w-5 text-[#FF4800]" />
           </div>
           <div>
             <p className="font-medium">Payoneer</p>

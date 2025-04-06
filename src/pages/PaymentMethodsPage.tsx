@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, Plus, Edit, Trash2, CreditCard, 
-  Paypal, CheckCircle2, DollarSign
+  CheckCircle2, DollarSign, CircleDollarSign
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -143,7 +143,7 @@ const PaymentMethodsPage = () => {
       return (
         <div className="flex items-center mb-2">
           <div className="rounded-md bg-white p-1 mr-3">
-            <Paypal className="h-5 w-5 text-[#0070BA]" />
+            <CircleDollarSign className="h-5 w-5 text-[#0070BA]" />
           </div>
           <div>
             <p className="font-semibold text-sm">PayPal</p>
