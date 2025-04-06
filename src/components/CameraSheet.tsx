@@ -20,7 +20,7 @@ const CameraSheet: React.FC<CameraSheetProps> = ({ open, onOpenChange }) => {
         </div>
         
         <div className="text-center mb-8 mt-6">
-          <h2 className="text-2xl font-bold">What would you like to do?</h2>
+          <h2 className="text-xl font-semibold">What would you like to do?</h2>
         </div>
         
         <div className="mb-8">
@@ -34,23 +34,13 @@ const CameraSheet: React.FC<CameraSheetProps> = ({ open, onOpenChange }) => {
         
         <div className="space-y-4">
           <h3 className="text-xl text-gray-600 mb-4">Other Actions</h3>
-          <Button className="w-full h-14 bg-[#7C5DC7] hover:bg-[#6B4DB3] justify-start px-6 py-4 text-lg" variant="default">
+          <Button className="w-full h-14 bg-[#7C5DC7] hover:bg-[#6B4DB3] justify-center px-6 py-4 text-lg rounded-xl" variant="default">
             <Pencil className="mr-4 h-6 w-6" />
             Create Post
           </Button>
-          <Button className="w-full h-14 bg-[#1E88E5] hover:bg-[#1976D2] justify-start px-6 py-4 text-lg" variant="default">
+          <Button className="w-full h-14 bg-[#1E88E5] hover:bg-[#1976D2] justify-center px-6 py-4 text-lg rounded-xl" variant="default">
             <ShoppingCart className="mr-4 h-6 w-6" />
             Sell Something
-          </Button>
-        </div>
-        
-        <div className="mt-6">
-          <Button 
-            variant="ghost" 
-            className="w-full text-gray-500 font-medium text-lg" 
-            onClick={() => onOpenChange(false)}
-          >
-            Cancel
           </Button>
         </div>
       </DrawerContent>
