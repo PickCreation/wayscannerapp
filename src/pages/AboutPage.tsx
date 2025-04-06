@@ -1,14 +1,13 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, 
   Info, 
   Globe, 
-  Mail, 
   Facebook, 
   Twitter, 
-  Instagram, 
-  Github,
+  Instagram,
   Star,
   Share2
 } from "lucide-react";
@@ -149,14 +148,6 @@ const AboutPage = () => {
             <Button 
               variant="outline" 
               className="flex items-center justify-center"
-              onClick={() => handleSocialClick("Email")}
-            >
-              <Mail className="h-5 w-5 mr-2 text-wayscanner-blue" />
-              Email
-            </Button>
-            <Button 
-              variant="outline" 
-              className="flex items-center justify-center"
               onClick={() => handleSocialClick("Facebook")}
             >
               <Facebook className="h-5 w-5 mr-2 text-wayscanner-blue" />
@@ -177,14 +168,6 @@ const AboutPage = () => {
             >
               <Instagram className="h-5 w-5 mr-2 text-wayscanner-blue" />
               Instagram
-            </Button>
-            <Button 
-              variant="outline" 
-              className="flex items-center justify-center"
-              onClick={() => handleSocialClick("GitHub")}
-            >
-              <Github className="h-5 w-5 mr-2 text-wayscanner-blue" />
-              GitHub
             </Button>
           </div>
         </div>

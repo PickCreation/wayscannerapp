@@ -137,7 +137,7 @@ const HelpCenterPage = () => {
   };
 
   const handleContactSupport = () => {
-    window.location.href = "https://wayscanner.com/contact";
+    window.open("https://wayscanner.com/contact", "_blank", "noopener,noreferrer");
   };
 
   const filteredCategories = searchQuery

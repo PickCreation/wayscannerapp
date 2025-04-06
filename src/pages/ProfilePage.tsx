@@ -4,7 +4,7 @@ import {
   ArrowLeft, Edit, Lock, Store, Bookmark, Heart, 
   ShoppingCart, Truck, Ticket, Globe, HelpCircle, Info, 
   Shield, LogOut, FileText, ChevronRight, User,
-  CreditCard, MapPin, Package
+  CreditCard, MapPin, Package, MessageSquare
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
@@ -111,6 +111,11 @@ const ProfilePage = () => {
     
     if (item === "Terms") {
       navigate("/terms-of-use");
+      return;
+    }
+
+    if (item === "Submit Ticket") {
+      navigate("/submit-ticket");
       return;
     }
 
@@ -285,6 +290,13 @@ const ProfilePage = () => {
           title="Help Center" 
           description="Get support and assistance"
           onClick={() => handleMenuItemClick("Help")}
+        />
+
+        <ProfileMenuItem 
+          icon={<MessageSquare className="h-5 w-5 text-wayscanner-blue" />} 
+          title="Submit Ticket" 
+          description="Contact our support team directly"
+          onClick={() => handleMenuItemClick("Submit Ticket")}
         />
         
         <ProfileMenuItem 
