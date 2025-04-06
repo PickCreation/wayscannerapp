@@ -1,3 +1,4 @@
+
 import React from "react";
 import { 
   ArrowLeft, Edit, Lock, Store, Bookmark, Heart, 
@@ -69,7 +70,7 @@ const ProfilePage = () => {
 
       {/* Account Settings */}
       <div className="px-4 pb-2">
-        <h3 className="text-2xl font-semibold mb-4">Account Settings</h3>
+        <h3 className="text-xl font-semibold mb-3">Account Settings</h3>
         
         <ProfileMenuItem 
           icon={<Edit className="h-5 w-5 text-wayscanner-blue" />} 
@@ -95,7 +96,7 @@ const ProfilePage = () => {
 
       {/* Content */}
       <div className="px-4 pb-2">
-        <h3 className="text-2xl font-semibold mb-4">Content</h3>
+        <h3 className="text-xl font-semibold mb-3">Content</h3>
         
         <ProfileMenuItem 
           icon={<Bookmark className="h-5 w-5 text-wayscanner-blue" />} 
@@ -135,7 +136,7 @@ const ProfilePage = () => {
 
       {/* Preferences & Support */}
       <div className="px-4 pb-2">
-        <h3 className="text-2xl font-semibold mb-4">Preferences & Support</h3>
+        <h3 className="text-xl font-semibold mb-3">Preferences & Support</h3>
         
         <ProfileMenuItem 
           icon={<Globe className="h-5 w-5 text-wayscanner-blue" />} 
@@ -204,15 +205,15 @@ interface ProfileMenuItemProps {
 const ProfileMenuItem = ({ icon, title, description, onClick }: ProfileMenuItemProps) => {
   return (
     <button 
-      className="flex items-center w-full mb-5"
+      className="flex items-center w-full py-3"
       onClick={onClick}
     >
-      <div className="bg-blue-50 rounded-full p-3 mr-4">
+      <div className="bg-blue-50 rounded-full p-3 mr-3">
         {icon}
       </div>
       <div className="flex-1 text-left">
-        <h4 className="font-medium text-lg">{title}</h4>
-        <p className="text-gray-500">{description}</p>
+        <h4 className="font-bold text-base text-black">{title}</h4>
+        <p className="text-[13px] text-[#6E6E6E]">{description}</p>
       </div>
       <div className="text-gray-400">
         <ChevronRight size={20} />
