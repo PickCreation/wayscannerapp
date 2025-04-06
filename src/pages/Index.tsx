@@ -79,7 +79,7 @@ const Index = () => {
           <img 
             src="/lovable-uploads/8fdd5ac8-39b5-43e6-86de-c8b27715d7c8.png" 
             alt="WayScanner Logo" 
-            className="h-8" 
+            className="h-10" 
           />
         </div>
         <div className="flex items-center space-x-3">
@@ -93,17 +93,17 @@ const Index = () => {
       </header>
 
       {/* Greeting */}
-      <div className="px-4 py-4 flex justify-between items-center">
+      <div className="px-4 py-5 flex justify-between items-center">
         <div>
-          <h2 className="text-xl font-bold">Hello Explorer! 👋</h2>
-          <p className="text-gray-600 mt-1">What would you like to discover today?</p>
+          <h2 className="text-2xl font-bold">Hello Explorer! 👋</h2>
+          <p className="text-gray-600 mt-2 text-base">What would you like to discover today?</p>
         </div>
       </div>
 
       {/* Scanner Options */}
-      <div className="px-4 mb-6 flex flex-col flex-grow justify-center">
-        <h3 className="text-base font-medium mb-3">Start Exploring</h3>
-        <div className="grid grid-cols-2 gap-3">
+      <div className="px-4 mb-8 flex flex-col justify-center mt-4">
+        <h3 className="text-lg font-medium mb-4">Start Exploring</h3>
+        <div className="grid grid-cols-2 gap-4">
           <ScannerCard
             title="Food Scan"
             description="Get nutritional info"

@@ -48,11 +48,11 @@ const ScannerCard: React.FC<ScannerCardProps> = ({
 
   return (
     <div 
-      className="relative rounded-xl p-4 bg-gray-800 cursor-pointer shadow-md h-32"
+      className="relative rounded-xl p-4 bg-gray-800 cursor-pointer shadow-md h-36"
       onClick={handleClick}
     >
       {/* Icon container at top-left */}
-      <div className={cn("absolute top-3 left-3 rounded-lg p-2 w-9 h-9 flex items-center justify-center", colorMap[color])}>
+      <div className={cn("absolute top-4 left-4 rounded-2xl p-3 w-10 h-10 flex items-center justify-center", colorMap[color])}>
         {icon}
       </div>
       
@@ -67,8 +67,8 @@ const ScannerCard: React.FC<ScannerCardProps> = ({
       </div>
       
       {/* Text at the bottom */}
-      <div className="absolute bottom-3 left-3 right-3 text-white">
-        <h3 className="text-base font-semibold mb-0.5">{title}</h3>
+      <div className="absolute bottom-4 left-4 right-4 text-white">
+        <h3 className="text-base font-semibold mb-1">{title}</h3>
         <p className="text-xs">{description}</p>
       </div>
     </div>
