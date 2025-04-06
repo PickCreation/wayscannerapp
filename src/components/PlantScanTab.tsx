@@ -42,8 +42,8 @@ const plantItems: PlantItem[] = [
   },
 ];
 
-// Set this to true to show welcome screen, false to show plant items
-const SHOW_WELCOME_SCREEN = true;
+// Set this to false to show plant items for testing
+const SHOW_WELCOME_SCREEN = false;
 
 const PlantScanTab = () => {
   const navigate = useNavigate();
@@ -95,7 +95,7 @@ const PlantScanTab = () => {
             <img 
               src={item.imageUrl} 
               alt={item.name} 
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover rounded-[12px]"
             />
           </div>
           <div className="flex-1">

@@ -2,16 +2,14 @@
 import React from 'react';
 import { ChevronRight, Camera, Apple } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 interface FoodScanTabProps {
   onEditPreferences?: () => void;
   onHowWeScore?: () => void;
 }
 
-// Set this to true to show welcome screen, false to show food items
-const SHOW_WELCOME_SCREEN = true;
+// Set this to false to show food items for testing
+const SHOW_WELCOME_SCREEN = false;
 
 const FoodScanTab: React.FC<FoodScanTabProps> = ({ onEditPreferences, onHowWeScore }) => {
   const navigate = useNavigate();
@@ -112,7 +110,7 @@ const FoodScanTab: React.FC<FoodScanTabProps> = ({ onEditPreferences, onHowWeSco
             <img 
               src={item.imageUrl} 
               alt={item.name} 
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover rounded-[12px]"
             />
           </div>
           <div className="flex-1">

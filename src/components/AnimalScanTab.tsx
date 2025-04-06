@@ -55,8 +55,8 @@ const animalItems: AnimalItem[] = [
   },
 ];
 
-// Set this to true to show welcome screen, false to show animal items
-const SHOW_WELCOME_SCREEN = true;
+// Set this to false to show animal items for testing
+const SHOW_WELCOME_SCREEN = false;
 
 const AnimalScanTab = () => {
   const navigate = useNavigate();
@@ -113,7 +113,7 @@ const AnimalScanTab = () => {
             <img 
               src={item.imageUrl} 
               alt={item.name} 
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover rounded-[12px]"
             />
           </div>
           <div className="flex-1">
