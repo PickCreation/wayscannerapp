@@ -47,6 +47,10 @@ const CartPage = () => {
     localStorage.setItem('cartItems', JSON.stringify(updatedCart));
   };
 
+  const navigateToProduct = (id: number) => {
+    navigate(`/marketplace/product/${id}`);
+  };
+
   const calculateSubtotal = () => {
     return cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2);
   };
@@ -102,7 +106,10 @@ const CartPage = () => {
             {cartItems.map((item) => (
               <div key={item.id} className="bg-white rounded-lg shadow p-4">
                 <div className="flex gap-3">
-                  <div className="w-20 h-20 bg-gray-100 rounded-md overflow-hidden">
+                  <div 
+                    className="w-20 h-20 bg-gray-100 rounded-md overflow-hidden cursor-pointer"
+                    onClick={() => navigateToProduct(item.id)}
+                  >
                     <img 
                       src={item.image}
                       alt={item.title}
@@ -112,7 +119,12 @@ const CartPage = () => {
                   
                   <div className="flex-1">
                     <div className="flex justify-between">
-                      <h3 className="font-medium">{item.title}</h3>
+                      <h3 
+                        className="font-medium cursor-pointer hover:text-wayscanner-blue"
+                        onClick={() => navigateToProduct(item.id)}
+                      >
+                        {item.title}
+                      </h3>
                       <button 
                         onClick={() => handleRemoveItem(item.id)}
                         className="text-gray-400 hover:text-red-500"
@@ -121,7 +133,7 @@ const CartPage = () => {
                       </button>
                     </div>
                     
-                    <p className="text-gray-500 text-sm">${item.price.toFixed(2)}</p>
+                    <p className="text-sm text-gray-500">${item.price.toFixed(2)}</p>
                     
                     <div className="flex justify-between items-center mt-2">
                       <div className="flex items-center border rounded-md">
