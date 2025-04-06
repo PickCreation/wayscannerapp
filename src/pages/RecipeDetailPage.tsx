@@ -171,7 +171,7 @@ const RecipeDetailPage = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
         
-        <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center">
+        <div className="absolute top-0 left-0 right-0 bg-primary/20 backdrop-blur-sm p-4 flex justify-between items-center">
           <button 
             onClick={handleBack}
             className="bg-white/20 backdrop-blur-sm rounded-full p-2"
