@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { ChevronLeft, ShoppingCart, Star, Heart, Share2, Plus, Minus } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -27,6 +28,7 @@ const products = [
     weight: "2.5 kg",
     brand: "EcoPlant",
     country: "United States",
+    color: "White",
   },
   {
     id: 2,
@@ -49,6 +51,7 @@ const products = [
     weight: "1.2 kg",
     brand: "PetCare",
     country: "Canada",
+    color: "Blue",
   },
   {
     id: 3,
@@ -71,6 +74,7 @@ const products = [
     weight: "3.5 kg",
     brand: "GreenLife",
     country: "Brazil",
+    color: "Green",
   },
   {
     id: 4,
@@ -93,6 +97,7 @@ const products = [
     weight: "0.8 kg",
     brand: "EcoKitchen",
     country: "Japan",
+    color: "Natural",
   },
   {
     id: 5,
@@ -115,6 +120,7 @@ const products = [
     weight: "0.5 kg",
     brand: "HandMade",
     country: "Mexico",
+    color: "Beige",
   },
   {
     id: 6,
@@ -137,6 +143,7 @@ const products = [
     weight: "12 kg",
     brand: "CatHaven",
     country: "Germany",
+    color: "Gray",
   }
 ];
 
