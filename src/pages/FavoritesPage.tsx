@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
+import CameraSheet from "@/components/CameraSheet";
 
 const FavoritesPage = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ const FavoritesPage = () => {
   const [favorites, setFavorites] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeItem, setActiveItem] = useState<"home" | "forum" | "recipes" | "shop">("shop");
+  const [cameraSheetOpen, setCameraSheetOpen] = useState(false);
 
   useEffect(() => {
     const items = JSON.parse(localStorage.getItem('favorites') || '[]');
@@ -65,7 +67,7 @@ const FavoritesPage = () => {
   };
 
   const handleCameraClick = () => {
-    navigate("/scan");
+    setCameraSheetOpen(true);
   };
 
   if (loading) {
@@ -161,6 +163,8 @@ const FavoritesPage = () => {
         onItemClick={handleItemClick}
         onCameraClick={handleCameraClick}
       />
+      
+      <CameraSheet open={cameraSheetOpen} onOpenChange={setCameraSheetOpen} />
     </div>
   );
 };

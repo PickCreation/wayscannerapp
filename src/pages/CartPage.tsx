@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
+import CameraSheet from "@/components/CameraSheet";
 
 const CartPage = () => {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ const CartPage = () => {
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeItem, setActiveItem] = useState<"home" | "forum" | "recipes" | "shop">("shop");
+  const [cameraSheetOpen, setCameraSheetOpen] = useState(false);
 
   useEffect(() => {
     const items = JSON.parse(localStorage.getItem('cartItems') || '[]');
@@ -70,7 +72,7 @@ const CartPage = () => {
   };
 
   const handleCameraClick = () => {
-    navigate("/scan");
+    setCameraSheetOpen(true);
   };
 
   if (loading) {
@@ -198,6 +200,8 @@ const CartPage = () => {
         onItemClick={handleItemClick}
         onCameraClick={handleCameraClick}
       />
+      
+      <CameraSheet open={cameraSheetOpen} onOpenChange={setCameraSheetOpen} />
     </div>
   );
 };
