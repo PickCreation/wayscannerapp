@@ -233,7 +233,7 @@ const ProfilePage = () => {
         </Button>
         
         <button 
-          className="text-red-500 text-center font-semibold text-base"
+          className="text-red-500 text-center font-semibold text-base py-2 mb-8"
           onClick={() => handleMenuItemClick("Delete Account")}
         >
           Delete Account
