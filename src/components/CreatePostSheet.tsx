@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Drawer, DrawerContent, DrawerClose, DrawerHeader, DrawerTitle, DrawerDescription } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -30,6 +30,15 @@ const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange })
   const { toast } = useToast();
   const { isAuthenticated, user } = useAuth();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  
+  // Load profile image from localStorage
+  useEffect(() => {
+    const savedProfileImage = localStorage.getItem('profileImage');
+    if (savedProfileImage) {
+      setProfileImage(savedProfileImage);
+    }
+  }, []);
   
   // Check authentication on mount
   React.useEffect(() => {
@@ -81,7 +90,7 @@ const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange })
       id: `post-${Date.now()}`,
       author: {
         name: "You",
-        avatar: "/placeholder.svg",
+        avatar: profileImage || "/placeholder.svg",
       },
       timeAgo: "Just now",
       category: category,
@@ -128,8 +137,11 @@ const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange })
             {/* User info */}
             <div className="flex items-center mb-4">
               <Avatar className="h-10 w-10 mr-3">
-                <AvatarImage src="/placeholder.svg" alt="User" />
-                <AvatarFallback>{user?.name?.charAt(0) || "U"}</AvatarFallback>
+                {profileImage ? (
+                  <AvatarImage src={profileImage} alt="User" />
+                ) : (
+                  <AvatarFallback>{user?.name?.charAt(0) || "U"}</AvatarFallback>
+                )}
               </Avatar>
               <div>
                 <h3 className="font-medium">{user?.name || "Your Name"}</h3>

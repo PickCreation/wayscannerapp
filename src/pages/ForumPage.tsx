@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Heart, MessageSquare, Bookmark, Bell, User, LogIn } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -76,7 +77,16 @@ export const ForumPage = () => {
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [showCameraSheet, setShowCameraSheet] = useState(false);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
   const { toast } = useToast();
+
+  // Load profile image
+  useEffect(() => {
+    const savedProfileImage = localStorage.getItem('profileImage');
+    if (savedProfileImage) {
+      setProfileImage(savedProfileImage);
+    }
+  }, []);
 
   // Save posts to localStorage whenever they change
   useEffect(() => {

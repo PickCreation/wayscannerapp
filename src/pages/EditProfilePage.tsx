@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Camera, UserCircle, Mail, Phone } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -8,10 +8,12 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
+import { useAuth } from "@/hooks/use-auth";
 
 const EditProfilePage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("profile");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -24,6 +26,24 @@ const EditProfilePage = () => {
     bio: "Nature enthusiast and eco-friendly lifestyle advocate.",
   });
 
+  useEffect(() => {
+    const savedProfileImage = localStorage.getItem('profileImage');
+    if (savedProfileImage) {
+      setProfileImage(savedProfileImage);
+    }
+    
+    const savedProfileData = localStorage.getItem('profileData');
+    if (savedProfileData) {
+      setFormData(JSON.parse(savedProfileData));
+    } else if (user) {
+      setFormData(prev => ({
+        ...prev,
+        fullName: user.name || prev.fullName,
+        email: user.email || prev.email
+      }));
+    }
+  }, [user]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -35,6 +55,9 @@ const EditProfilePage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    localStorage.setItem('profileData', JSON.stringify(formData));
+    
     toast({
       title: "Profile Updated",
       description: "Your profile has been successfully updated.",
@@ -51,8 +74,13 @@ const EditProfilePage = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setProfileImage(imageUrl);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setProfileImage(base64String);
+        localStorage.setItem('profileImage', base64String);
+      };
+      reader.readAsDataURL(file);
       
       toast({
         title: "Profile Photo Updated",

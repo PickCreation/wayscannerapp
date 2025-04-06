@@ -25,23 +25,23 @@ const ProfilePage = () => {
   const [showCameraSheet, setShowCameraSheet] = useState(false);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [profileData, setProfileData] = useState({
+    fullName: "John Doe",
+    email: "johndoe@example.com"
+  });
 
   useEffect(() => {
-    const handleBackButton = () => {
-      navigate("/");
-      return true;
-    };
-
-    if (isMobile) {
-      document.addEventListener('backbutton', handleBackButton);
+    const savedProfileImage = localStorage.getItem('profileImage');
+    if (savedProfileImage) {
+      setProfileImage(savedProfileImage);
     }
 
-    return () => {
-      if (isMobile) {
-        document.removeEventListener('backbutton', handleBackButton);
-      }
-    };
-  }, [navigate, isMobile]);
+    const savedProfileData = localStorage.getItem('profileData');
+    if (savedProfileData) {
+      setProfileData(JSON.parse(savedProfileData));
+    }
+  }, []);
 
   const handleBackClick = () => {
     navigate("/");
@@ -187,15 +187,18 @@ const ProfilePage = () => {
 
         <div className="flex flex-col items-center pb-3">
           <Avatar className="w-16 h-16 border-4 border-white mb-1">
-            <AvatarImage src="" />
-            <AvatarFallback className="bg-white text-gray-400">
-              <User size={30} />
-            </AvatarFallback>
+            {profileImage ? (
+              <AvatarImage src={profileImage} />
+            ) : (
+              <AvatarFallback className="bg-white text-gray-400">
+                <User size={30} />
+              </AvatarFallback>
+            )}
           </Avatar>
           {isAuthenticated ? (
             <>
-              <h2 className="text-base font-bold mb-0">{user?.name || "User"}</h2>
-              <p className="mb-1">{user?.email || "user@example.com"}</p>
+              <h2 className="text-base font-bold mb-0">{profileData.fullName || user?.name || "User"}</h2>
+              <p className="mb-1">{profileData.email || user?.email || "user@example.com"}</p>
               {user?.isAdmin && (
                 <span className="bg-yellow-400 text-black px-2 py-0.5 rounded-full text-xs font-medium">
                   Admin

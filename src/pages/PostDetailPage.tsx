@@ -19,8 +19,14 @@ const PostDetailPage = () => {
   const [newComment, setNewComment] = useState("");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
   
   useEffect(() => {
+    const savedProfileImage = localStorage.getItem('profileImage');
+    if (savedProfileImage) {
+      setProfileImage(savedProfileImage);
+    }
+    
     const postId = params.postId;
     console.log("Loading post with ID:", postId);
     
@@ -116,7 +122,7 @@ const PostDetailPage = () => {
       id: `c${Date.now()}`,
       author: {
         name: "You",
-        avatar: "/placeholder.svg",
+        avatar: profileImage || "/placeholder.svg",
       },
       timeAgo: "Just now",
       content: newComment.trim(),

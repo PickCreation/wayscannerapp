@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Heart, MessageSquare, Bookmark, Bell, User, ChevronLeft, Trash2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -19,7 +18,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-// Updated category options for filtering
 const CATEGORIES = [
   "All", "Plants", "Gardening", "Nature", "Food", "Healthy Recipes", 
   "Nutrition Tips", "Cooking", "Kitchen", "Animals & Pets", "DIY", 
@@ -33,25 +31,27 @@ const MyPostsPage = () => {
   const [posts, setPosts] = useState<any[]>([]);
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [showCameraSheet, setShowCameraSheet] = useState(false);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
   const { toast } = useToast();
   
-  // Load posts from localStorage on mount
   useEffect(() => {
+    const savedProfileImage = localStorage.getItem('profileImage');
+    if (savedProfileImage) {
+      setProfileImage(savedProfileImage);
+    }
+    
     const savedPosts = localStorage.getItem('forumPosts');
     if (savedPosts) {
       const allPosts = JSON.parse(savedPosts);
-      // Filter to only show posts by "You"
       const myPosts = allPosts.filter((post: any) => post.author.name === "You");
       setPosts(myPosts);
     }
   }, []);
   
-  // Listen for new posts from CreatePostSheet
   useEffect(() => {
     const handleAddNewPost = (event: CustomEvent) => {
       const newPost = event.detail;
       setPosts(prevPosts => {
-        // Only add if it's your post
         if (newPost.author.name === "You") {
           return [newPost, ...prevPosts];
         }
@@ -66,7 +66,6 @@ const MyPostsPage = () => {
     };
   }, []);
   
-  // Listen for openCreatePost event from CameraSheet
   useEffect(() => {
     const handleOpenCreatePost = () => {
       setShowCreatePost(true);
@@ -79,12 +78,10 @@ const MyPostsPage = () => {
     };
   }, []);
   
-  // Filter posts by category
   const filteredPosts = activeCategory === "All" 
     ? posts 
     : posts.filter(post => post.category === activeCategory);
   
-  // Handle post interactions
   const handleLikePost = (postId: string) => {
     setPosts(posts.map(post => {
       if (post.id === postId) {
@@ -94,7 +91,6 @@ const MyPostsPage = () => {
       return post;
     }));
     
-    // Also update in the main forum posts
     const allPosts = JSON.parse(localStorage.getItem('forumPosts') || '[]');
     const updatedAllPosts = allPosts.map((post: any) => {
       if (post.id === postId) {
@@ -119,7 +115,6 @@ const MyPostsPage = () => {
       return post;
     }));
     
-    // Also update in the main forum posts
     const allPosts = JSON.parse(localStorage.getItem('forumPosts') || '[]');
     const updatedAllPosts = allPosts.map((post: any) => {
       if (post.id === postId) {
@@ -141,10 +136,8 @@ const MyPostsPage = () => {
   };
   
   const handleDeletePost = (postId: string) => {
-    // Remove from my posts
     setPosts(posts.filter(post => post.id !== postId));
     
-    // Also remove from all posts in localStorage
     const allPosts = JSON.parse(localStorage.getItem('forumPosts') || '[]');
     const updatedAllPosts = allPosts.filter((post: any) => post.id !== postId);
     localStorage.setItem('forumPosts', JSON.stringify(updatedAllPosts));
@@ -163,7 +156,6 @@ const MyPostsPage = () => {
     setShowCameraSheet(true);
   };
   
-  // Navigate to All Posts page
   const handleTabChange = (tab: "all" | "my") => {
     if (tab === "all") {
       navigate('/forum');
@@ -174,7 +166,6 @@ const MyPostsPage = () => {
   
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 pb-20">
-      {/* Header - Using the same header as home page */}
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
         <button onClick={() => navigate('/forum')} className="p-2 -ml-2" type="button">
           <ChevronLeft size={24} color="white" />
@@ -196,7 +187,6 @@ const MyPostsPage = () => {
         </div>
       </header>
       
-      {/* Tab Navigation */}
       <div className="flex border-b border-gray-200 bg-white">
         <button
           className={`flex-1 py-3 font-medium ${activeTab === "all" ? "text-wayscanner-blue border-b-2 border-wayscanner-blue" : "text-gray-500"}`}
@@ -214,7 +204,6 @@ const MyPostsPage = () => {
         </button>
       </div>
       
-      {/* Category Filter */}
       <div className="p-3 overflow-x-auto flex space-x-2 bg-white">
         {CATEGORIES.map(category => (
           <button
@@ -237,12 +226,10 @@ const MyPostsPage = () => {
         ))}
       </div>
       
-      {/* Posts List */}
       <div className="flex-1 p-3 space-y-4">
         {filteredPosts.length > 0 ? (
           filteredPosts.map(post => (
             <div key={post.id} className="bg-white rounded-lg shadow p-4 border border-gray-200">
-              {/* Post Header - Author & Time */}
               <div className="flex items-center mb-3">
                 <Avatar className="h-12 w-12 mr-3">
                   <AvatarImage src={post.author.avatar} alt={post.author.name} />
@@ -295,17 +282,14 @@ const MyPostsPage = () => {
                 </div>
               </div>
               
-              {/* Post Content */}
               <p className="text-[14px] text-gray-700 mb-4">{post.content}</p>
               
-              {/* Post Image (if available) */}
               {post.imageUrl && (
                 <div className="mb-4 border rounded-lg overflow-hidden">
                   <img src={post.imageUrl} alt="Post" className="w-full h-auto" />
                 </div>
               )}
               
-              {/* Post Actions */}
               <div className="flex items-center border-t border-gray-100 pt-3">
                 <button 
                   className="flex items-center mr-5"
@@ -357,17 +341,10 @@ const MyPostsPage = () => {
         )}
       </div>
       
-      {/* Create Post Sheet */}
-      {showCreatePost && (
-        <CreatePostSheet open={showCreatePost} onOpenChange={setShowCreatePost} />
-      )}
+      <CreatePostSheet open={showCreatePost} onOpenChange={setShowCreatePost} />
       
-      {/* Camera Sheet */}
-      {showCameraSheet && (
-        <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
-      )}
+      <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
       
-      {/* Bottom Navigation */}
       <BottomNavigation
         activeItem="forum"
         onItemClick={(item) => {
