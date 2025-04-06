@@ -156,16 +156,17 @@ const AddressForm = ({ initialValues, onSubmit, onCancel }: AddressFormProps) =>
 
       <div className="space-y-2">
         <Label htmlFor="country">Country</Label>
-        <Select value={country} onValueChange={setCountry}>
-          <SelectTrigger id="country">
-            <SelectValue placeholder="Select a country" />
-          </SelectTrigger>
-          <SelectContent className="max-h-[200px]">
-            {countries.map(c => (
-              <SelectItem key={c} value={c}>{c}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <select
+          id="country"
+          value={country}
+          onChange={(e) => setCountry(e.target.value)}
+          className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          required
+        >
+          {countries.map(c => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
       </div>
 
       <div className="space-y-2">

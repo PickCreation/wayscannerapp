@@ -67,13 +67,13 @@ const PaymentMethodsPage = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [showCameraSheet, setShowCameraSheet] = useState(false);
   const [currentType, setCurrentType] = useState<"card" | "paypal" | "payoneer">("card");
-  const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("recipes");
+  const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("profile");
 
   const handleBackClick = () => {
     navigate("/profile");
   };
 
-  const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop") => {
+  const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop" | "profile") => {
     setActiveNavItem(item);
     if (item === "home") {
       navigate("/");
