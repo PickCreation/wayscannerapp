@@ -8,7 +8,9 @@ import {
   Soup,
   Cookie,
   Bell,
-  User
+  User,
+  ArrowLeft,
+  Grid
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
@@ -93,6 +95,7 @@ const allRecipes = [
 ];
 
 const categories = [
+  { id: "all", name: "All", icon: <Grid size={20} color="#2196F3" /> },
   { id: "breakfast", name: "Breakfast", icon: <Coffee size={20} color="#FF9800" /> },
   { id: "lunch", name: "Lunch", icon: <Utensils size={20} color="#4CAF50" /> },
   { id: "dinner", name: "Dinner", icon: <Soup size={20} color="#9C27B0" /> },
@@ -107,9 +110,11 @@ const RecipesPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const filteredRecipes = selectedCategory 
+  const filteredRecipes = selectedCategory && selectedCategory !== "all"
     ? allRecipes.filter(recipe => recipe.category === selectedCategory)
-    : allRecipes.slice(0, 4);
+    : allRecipes;
+  
+  const displayedRecipes = selectedCategory ? filteredRecipes : allRecipes.slice(0, 4);
 
   const handleBack = () => {
     navigate("/");
@@ -170,7 +175,12 @@ const RecipesPage = () => {
   return (
     <div className="pb-20 bg-white min-h-screen">
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center fixed top-0 left-0 right-0 z-10" style={{ backgroundColor: "#034AFF" }}>
-        <div className="w-6"></div>
+        <button 
+          onClick={handleBack}
+          className="p-2 text-white"
+        >
+          <ArrowLeft size={24} />
+        </button>
         <div className="flex justify-center">
           <h1 className="text-lg font-semibold text-white">Recipes</h1>
         </div>
@@ -205,17 +215,18 @@ const RecipesPage = () => {
           </form>
         </div>
 
-        <div className="px-4 mt-6 mb-8">
-          <h2 className="text-base font-bold mb-4 text-gray-800 text-[16px] text-center">Categories</h2>
-          <div className="flex justify-center space-x-4 overflow-x-auto pb-2 no-scrollbar">
+        <div className="px-4 mt-4 mb-6">
+          <h2 className="text-base font-bold mb-3 text-gray-800 text-[16px] text-center">Categories</h2>
+          <div className="flex justify-center space-x-3 overflow-x-auto py-2 px-2 no-scrollbar">
             {categories.map((category) => (
               <div
                 key={category.id}
                 className={`flex flex-col items-center cursor-pointer transition-transform duration-200 ${selectedCategory === category.id ? 'scale-105' : ''}`}
                 onClick={() => handleCategoryClick(category.id)}
               >
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 ${selectedCategory === category.id ? 'ring-2 ring-offset-1 ring-blue-500' : ''}`} 
-                  style={{ backgroundColor: category.id === "breakfast" ? "#FFF3E0" : 
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-1 ${selectedCategory === category.id ? 'ring-2 ring-offset-1 ring-blue-500' : ''}`} 
+                  style={{ backgroundColor: category.id === "all" ? "#E3F2FD" :
+                                          category.id === "breakfast" ? "#FFF3E0" : 
                                           category.id === "lunch" ? "#E8F5E9" :
                                           category.id === "dinner" ? "#F3E5F5" : "#FCE4EC" }}>
                   {category.icon}
@@ -231,9 +242,9 @@ const RecipesPage = () => {
         <div className="px-4 mb-8">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-base font-bold text-gray-800 text-[16px]">
-              {selectedCategory 
+              {selectedCategory && selectedCategory !== "all"
                 ? `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Recipes` 
-                : "Trending Recipes"}
+                : "All Recipes"}
             </h2>
             <button 
               className="text-primary text-sm font-medium"
@@ -243,9 +254,9 @@ const RecipesPage = () => {
             </button>
           </div>
           
-          {filteredRecipes.length > 0 ? (
-            <div className="grid grid-cols-1 gap-4">
-              {filteredRecipes.map((recipe) => (
+          {displayedRecipes.length > 0 ? (
+            <div className="grid grid-cols-1 gap-6">
+              {displayedRecipes.map((recipe) => (
                 <RecipeCard 
                   key={recipe.id}
                   recipe={recipe}
