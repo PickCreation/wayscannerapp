@@ -1,9 +1,9 @@
+
 import React, { useState, useEffect } from "react";
-import { Search, ShoppingCart } from "lucide-react";
+import { Search, ShoppingCart, Filter } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProductCard from "@/components/ProductCard";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
@@ -67,16 +67,16 @@ const products = [
 ];
 
 const categories = [
-  "All",
-  "Decor",
-  "Animal Accessories",
-  "Plants",
-  "Plants Accessories",
-  "Kitchen Essentials",
+  { id: "all", name: "All", color: "#2196F3", bgColor: "#E3F2FD" },
+  { id: "decor", name: "Decor", color: "#FF9800", bgColor: "#FFF3E0" },
+  { id: "animal-accessories", name: "Animal Accessories", color: "#4CAF50", bgColor: "#E8F5E9" },
+  { id: "plants", name: "Plants", color: "#9C27B0", bgColor: "#F3E5F5" },
+  { id: "plants-accessories", name: "Plants Accessories", color: "#E91E63", bgColor: "#FCE4EC" },
+  { id: "kitchen-essentials", name: "Kitchen Essentials", color: "#3F51B5", bgColor: "#E8EAF6" },
 ];
 
 const MarketplacePage = () => {
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [activeCategory, setActiveCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("shop");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
@@ -117,8 +117,17 @@ const MarketplacePage = () => {
     setShowCameraSheet(true);
   };
 
+  const handleCategoryClick = (categoryId: string) => {
+    setActiveCategory(categoryId);
+  };
+
+  const handleFilterClick = () => {
+    // Filter functionality can be implemented here
+  };
+
   const filteredProducts = products.filter(product => {
-    const matchesCategory = activeCategory === "All" || product.category === activeCategory;
+    const matchesCategory = activeCategory === "all" || 
+                           product.category.toLowerCase() === activeCategory.replace("-", " ");
     const matchesSearch = product.title.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCategory && matchesSearch;
   });
@@ -138,41 +147,53 @@ const MarketplacePage = () => {
       </header>
 
       <div className="px-4 py-4 bg-gray-50">
-        <div className="relative">
-          <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+        <div className="relative mb-4">
           <Input
             placeholder="Search products..."
-            className="pl-10 bg-white rounded-lg"
+            className="pl-10 pr-10 py-2 bg-gray-100 rounded-full focus:border-wayscanner-blue focus:ring-1 focus:ring-wayscanner-blue"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <Search className="h-5 w-5 text-gray-400" />
+          </div>
+          <button 
+            type="button"
+            className="absolute inset-y-0 right-0 flex items-center pr-3"
+            onClick={handleFilterClick}
+          >
+            <Filter className="h-5 w-5 text-gray-400" />
+          </button>
         </div>
         
-        <div className="mt-4 overflow-x-auto no-scrollbar">
-          <Tabs defaultValue="All" className="w-full">
-            <TabsList className="bg-transparent h-auto p-0 w-max">
-              {categories.map(category => (
-                <TabsTrigger
-                  key={category}
-                  value={category}
-                  onClick={() => setActiveCategory(category)}
-                  className={`px-4 py-2 rounded-full text-sm ${
-                    activeCategory === category
-                      ? "bg-wayscanner-blue text-white"
-                      : "bg-white text-gray-600"
-                  } mr-2 whitespace-nowrap`}
+        <div className="mt-4">
+          <h2 className="text-base font-bold mb-3 text-gray-800 text-[16px] text-center">Categories</h2>
+          <div className="flex justify-center space-x-3 overflow-x-auto py-2 px-2 no-scrollbar">
+            {categories.map((category) => (
+              <div
+                key={category.id}
+                className={`flex flex-col items-center cursor-pointer transition-transform duration-200 ${activeCategory === category.id ? 'scale-105' : ''}`}
+                onClick={() => handleCategoryClick(category.id)}
+              >
+                <div 
+                  className={`w-10 h-10 rounded-full flex items-center justify-center mb-1 ${activeCategory === category.id ? 'ring-2 ring-offset-1 ring-blue-500' : ''}`} 
+                  style={{ backgroundColor: category.bgColor }}
                 >
-                  {category}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
+                  <div style={{ color: category.color, width: '20px', height: '20px' }} />
+                </div>
+                <span className={`text-xs ${activeCategory === category.id ? 'font-bold text-blue-500' : 'text-gray-700'}`}>
+                  {category.name}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
       <div className="p-4">
         <h2 className="text-xl font-semibold mb-4">
-          {activeCategory === "All" ? "All Products" : activeCategory}
+          {activeCategory === "all" ? "All Products" : 
+            categories.find(cat => cat.id === activeCategory)?.name || "Products"}
         </h2>
         <div className="grid grid-cols-2 gap-4">
           {filteredProducts.map(product => (
