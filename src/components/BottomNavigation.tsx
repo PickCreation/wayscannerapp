@@ -1,3 +1,4 @@
+
 import React from "react";
 import { 
   MessageCircle, 
@@ -56,6 +57,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
       <button
         className="flex items-center justify-center"
         onClick={onCameraClick}
+        type="button"
       >
         <div className="bg-wayscanner-blue text-white rounded-full w-12 h-12 flex items-center justify-center">
           <Camera size={24} color="white" />

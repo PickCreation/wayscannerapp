@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { 
   ArrowLeft, Edit, Lock, Store, Bookmark, Heart, 
@@ -12,12 +11,14 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import BottomNavigation from "@/components/BottomNavigation";
+import CameraSheet from "@/components/CameraSheet";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("recipes");
+  const [showCameraSheet, setShowCameraSheet] = useState(false);
 
   useEffect(() => {
     const handleBackButton = () => {
@@ -56,6 +57,8 @@ const ProfilePage = () => {
     setActiveNavItem(item);
     if (item === "home") {
       navigate("/");
+    } else if (item === "forum") {
+      navigate("/forum");
     } else {
       toast({
         title: "Coming Soon",
@@ -65,10 +68,7 @@ const ProfilePage = () => {
   };
 
   const handleCameraClick = () => {
-    toast({
-      title: "Camera",
-      description: "The camera feature is under development.",
-    });
+    setShowCameraSheet(true);
   };
 
   return (
@@ -232,6 +232,8 @@ const ProfilePage = () => {
           Delete Account
         </button>
       </div>
+
+      <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
 
       <BottomNavigation
         activeItem={activeNavItem}
