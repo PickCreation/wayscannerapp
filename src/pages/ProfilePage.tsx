@@ -236,7 +236,6 @@ const ProfilePage = () => {
         </div>
       )}
 
-      {/* Upgrade Button */}
       <div className="px-4 my-3">
         <button 
           onClick={handleUpgradeClick}
@@ -255,7 +254,6 @@ const ProfilePage = () => {
         </button>
       </div>
 
-      {/* Account Settings - Only show certain items when logged in */}
       <div className="px-4 pb-2">
         <h3 className="text-base font-semibold mb-3">Account Settings</h3>
         
@@ -282,6 +280,10 @@ const ProfilePage = () => {
               onClick={() => handleMenuItemClick("Seller Dashboard")}
             />
           </>
+        ) : (
+          <div className="py-2 text-center text-gray-500">
+            Login to access account settings
+          </div>
         )}
       </div>
 
