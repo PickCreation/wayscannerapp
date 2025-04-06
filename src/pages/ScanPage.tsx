@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from "react";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ChevronLeft, Search, Utensils, Flower, PawPrint } from "lucide-react";
 import BottomNavigation from "@/components/BottomNavigation";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -37,6 +36,7 @@ const ScanPage = () => {
 
   const handleCameraClick = () => {
     // This opens the camera sheet for scanning
+    navigate("/scan-camera");
   };
 
   const handleTabChange = (value: string) => {
@@ -55,7 +55,7 @@ const ScanPage = () => {
         >
           <ChevronLeft className="h-6 w-6" color="white" />
         </button>
-        <h1 className="text-lg font-medium text-[20px]">Scan Results</h1>
+        <h1 className="text-[20px] font-medium">Scan Results</h1>
         <div className="w-10 h-10 flex items-center justify-center">
           <Search size={24} color="white" />
         </div>

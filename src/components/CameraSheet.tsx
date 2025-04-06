@@ -25,6 +25,11 @@ const CameraSheet: React.FC<CameraSheetProps> = ({ open, onOpenChange }) => {
   const handleScanOption = (type: string) => {
     onOpenChange(false);
     
+    if (type === "Animal") {
+      navigate("/scan-camera");
+      return;
+    }
+    
     const tabMap: Record<string, string> = {
       "Food": "food",
       "Plant": "plants",

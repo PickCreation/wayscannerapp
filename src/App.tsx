@@ -16,6 +16,8 @@ import RecipeDetailPage from "./pages/RecipeDetailPage";
 import RecipeSearchPage from "./pages/RecipeSearchPage";
 import AllRecipesPage from "./pages/AllRecipesPage";
 import ScanPage from "./pages/ScanPage";
+import AnimalDetailPage from "./pages/AnimalDetailPage";
+import ScanCameraPage from "./pages/ScanCameraPage";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +39,8 @@ const App = () => (
           <Route path="/recipes/search" element={<RecipeSearchPage />} />
           <Route path="/recipes/all" element={<AllRecipesPage />} />
           <Route path="/scan" element={<ScanPage />} />
+          <Route path="/animal/:animalId" element={<AnimalDetailPage />} />
+          <Route path="/scan-camera" element={<ScanCameraPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
