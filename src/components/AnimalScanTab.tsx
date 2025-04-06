@@ -1,6 +1,6 @@
 
 import React from "react";
-import { ChevronRight, AlertTriangle } from "lucide-react";
+import { ChevronRight, AlertTriangle, Camera, PawPrint } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface AnimalItem {
@@ -55,6 +55,9 @@ const animalItems: AnimalItem[] = [
   },
 ];
 
+// Set this to true to show welcome screen, false to show animal items
+const SHOW_WELCOME_SCREEN = true;
+
 const AnimalScanTab = () => {
   const navigate = useNavigate();
   
@@ -73,6 +76,30 @@ const AnimalScanTab = () => {
   const handleAnimalClick = (id: string) => {
     navigate(`/animal/${id}`);
   };
+
+  if (SHOW_WELCOME_SCREEN) {
+    return (
+      <div className="flex flex-col items-center justify-center py-8 px-4 text-center h-[70vh]">
+        <h2 className="text-2xl font-medium text-gray-400 mb-2">Welcome to WayScanner</h2>
+        <p className="text-lg text-gray-400 mb-8">Scan an item to learn more!</p>
+        
+        <div className="border-2 border-gray-300 rounded-3xl p-8 mb-12 w-full max-w-xs flex flex-col items-center">
+          <p className="text-3xl text-gray-400 mb-4">Tap</p>
+          <Camera size={64} className="text-gray-400 mb-4" />
+          <p className="text-3xl text-gray-400">to scan</p>
+        </div>
+        
+        <div className="flex w-full justify-around items-center">
+          <div className="flex flex-col items-center">
+            <div className="bg-gray-200 p-4 rounded-full">
+              <PawPrint size={32} className="text-gray-400" />
+            </div>
+            <p className="mt-2 text-gray-400">Animals</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-3">
