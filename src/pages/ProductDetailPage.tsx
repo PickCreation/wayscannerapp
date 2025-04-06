@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { ChevronLeft, ShoppingCart, Star, Heart, Share2, Plus, Minus } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -257,6 +256,9 @@ const ProductDetailPage = () => {
               <h3 className="font-medium text-lg">Product Details</h3>
               
               <div className="grid grid-cols-2 gap-y-3">
+                <div className="text-gray-600">Color:</div>
+                <div className="font-medium">{product.color || "Not specified"}</div>
+                
                 <div className="text-gray-600">Condition:</div>
                 <div className="font-medium">{product.condition || "New"}</div>
                 
@@ -296,14 +298,6 @@ const ProductDetailPage = () => {
       </div>
       
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex items-center justify-between">
-        <Button 
-          variant="outline" 
-          className="flex-1 bg-white border-wayscanner-blue text-wayscanner-blue font-medium mr-4"
-          onClick={handleAddToCart}
-        >
-          Add to Cart
-        </Button>
-        
         <div className="flex items-center border rounded-md">
           <Button 
             variant="ghost" 
@@ -324,6 +318,14 @@ const ProductDetailPage = () => {
             <Plus size={16} />
           </Button>
         </div>
+        
+        <Button 
+          variant="default" 
+          className="flex-1 ml-4 bg-wayscanner-blue text-white hover:bg-blue-700"
+          onClick={handleAddToCart}
+        >
+          Add to Cart
+        </Button>
       </div>
     </div>
   );
