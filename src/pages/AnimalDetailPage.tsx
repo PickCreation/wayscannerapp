@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ChevronLeft, AlertTriangle, PawPrint, Utensils, Moon } from "lucide-react";
+import { ChevronLeft, AlertTriangle, PawPrint, Utensils, Moon, PhoneCall, Info } from "lucide-react";
 import BottomNavigation from "@/components/BottomNavigation";
 
 interface AnimalDetails {
@@ -20,6 +19,18 @@ interface AnimalDetails {
   healthAdvice: string;
   diet: string;
   behavioralTraits: string;
+  legalRestrictions: string;
+  interestingFacts: {
+    fact: string;
+  }[];
+  emergencyContacts: {
+    name: string;
+    phone: string;
+  }[];
+  similarSpecies: {
+    name: string;
+    imageUrl: string;
+  }[];
 }
 
 // Mock data for animal details
@@ -39,7 +50,22 @@ const animalDetailsData: AnimalDetails[] = [
     habitat: "Tigers inhabit a wide range of habitats including tropical rainforests, mangrove swamps, grasslands, and taiga. They require access to water, sufficient cover, and abundant prey.",
     healthAdvice: "If an animal appears sick, immediately contact a wildlife veterinarian or local animal rescue. Avoid handling wild animals yourself. For pets, consult a specialized veterinarian, describe the symptoms accurately, and follow their advice carefully. Prioritize professional care to ensure proper treatment and safety.",
     diet: "Bengal tigers are apex predators and primarily hunt large mammals such as deer, wild boar, and water buffalo. They can consume up to 40 kg of meat in a single meal and may hunt every 2-3 days.",
-    behavioralTraits: "Tigers are solitary animals that mark and defend territories. They are excellent swimmers and climbers. While typically avoiding humans, they may become aggressive if threatened, injured, or protecting cubs."
+    behavioralTraits: "Tigers are solitary animals that mark and defend territories. They are excellent swimmers and climbers. While typically avoiding humans, they may become aggressive if threatened, injured, or protecting cubs.",
+    legalRestrictions: "Bengal tigers are protected under CITES Appendix I, prohibiting international trade. National laws in range countries provide additional protection. Keeping tigers as pets is illegal in most jurisdictions without proper permits and facilities.",
+    interestingFacts: [
+      { fact: "Each tiger has a unique stripe pattern, like human fingerprints." },
+      { fact: "Tigers can leap distances of up to 6 meters and jump up to 5 meters vertically." },
+      { fact: "A tiger's roar can be heard up to 3 kilometers away." }
+    ],
+    emergencyContacts: [
+      { name: "Wildlife Emergency Hotline", phone: "+1-800-WILDLIFE" },
+      { name: "Poison Control Center", phone: "+1-800-222-1222" }
+    ],
+    similarSpecies: [
+      { name: "Malayan Tiger", imageUrl: "/lovable-uploads/69501614-b92c-43f9-89e5-85971b5b6ede.png" },
+      { name: "South China Tiger", imageUrl: "/lovable-uploads/69501614-b92c-43f9-89e5-85971b5b6ede.png" },
+      { name: "Sumatran Tiger", imageUrl: "/lovable-uploads/69501614-b92c-43f9-89e5-85971b5b6ede.png" }
+    ]
   },
   {
     id: "2",
@@ -142,36 +168,37 @@ const AnimalDetailPage = () => {
         />
       </div>
 
-      {/* Animal Name and Risk Level */}
-      <div className="p-4 flex justify-between items-center">
+      {/* Animal Name */}
+      <div className="p-4">
         <h2 className="text-xl font-bold">{animal.name}</h2>
+      </div>
+
+      {/* Scientific Name and Risk Level - Moved risk level here */}
+      <div className="px-4 pb-2">
+        <h3 className="text-base text-green-600 font-medium">Scientific Name</h3>
+        <p className="text-blue-600 text-sm font-medium mb-2">{animal.scientificName}</p>
+        
         <div className={`${getRiskColor(animal.riskLevel)} text-white px-3 py-1 rounded-full inline-flex items-center text-xs`}>
           <AlertTriangle className="mr-1" size={12} />
           <span className="font-medium">{animal.riskLevel} Risk</span>
         </div>
       </div>
 
-      {/* Scientific Name */}
-      <div className="px-4 pb-2">
-        <h3 className="text-base text-green-600 font-medium">Scientific Name</h3>
-        <p className="text-blue-600 text-sm font-medium">{animal.scientificName}</p>
-      </div>
-
       <div className="border-t border-gray-200 my-2"></div>
 
       {/* Key Characteristics */}
       <div className="px-4 pb-3 flex justify-around">
-        <div className="border border-black rounded-lg p-2 flex flex-col items-center justify-center">
+        <div className="border border-gray-300 rounded-lg p-2 flex flex-col items-center justify-center">
           <PawPrint className="text-blue-600 mb-1" size={20} />
           <p className="text-black text-xs font-medium">Type</p>
           <p className="text-blue-600 text-xs font-medium">{animal.type}</p>
         </div>
-        <div className="border border-black rounded-lg p-2 flex flex-col items-center justify-center">
+        <div className="border border-gray-300 rounded-lg p-2 flex flex-col items-center justify-center">
           <Utensils className="text-blue-600 mb-1" size={20} />
           <p className="text-black text-xs font-medium">Dietary</p>
           <p className="text-blue-600 text-xs font-medium">{animal.dietary}</p>
         </div>
-        <div className="border border-black rounded-lg p-2 flex flex-col items-center justify-center">
+        <div className="border border-gray-300 rounded-lg p-2 flex flex-col items-center justify-center">
           <Moon className="text-blue-600 mb-1" size={20} />
           <p className="text-black text-xs font-medium">Behavior</p>
           <p className="text-blue-600 text-xs font-medium">{animal.behavior}</p>
@@ -188,6 +215,58 @@ const AnimalDetailPage = () => {
       <div className="px-4 py-3 bg-green-100 mx-4 rounded-lg mb-3">
         <h3 className="text-base font-semibold mb-1">Safety Measures</h3>
         <p className="text-xs">{animal.safetyMeasures}</p>
+      </div>
+
+      {/* Legal Restrictions - New section */}
+      <div className="px-4 py-3 bg-blue-100 mx-4 rounded-lg mb-3">
+        <h3 className="text-base font-semibold mb-1">Legal Restrictions</h3>
+        <p className="text-xs">{animal.legalRestrictions}</p>
+      </div>
+
+      {/* Interesting Facts - New section */}
+      <div className="px-4 py-3 border border-gray-300 mx-4 rounded-lg mb-3">
+        <h3 className="text-base font-semibold mb-1">Interesting Facts</h3>
+        <ul className="space-y-2">
+          {animal.interestingFacts.map((item, index) => (
+            <li key={index} className="flex items-start">
+              <div className="flex-shrink-0 h-5 w-5 rounded-full bg-blue-500 flex items-center justify-center mr-2 mt-0.5">
+                <Info className="h-3 w-3 text-white" />
+              </div>
+              <p className="text-xs">{item.fact}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Emergency Contacts - New section */}
+      <div className="px-4 py-3 bg-red-100 mx-4 rounded-lg mb-3">
+        <h3 className="text-base font-semibold mb-1">Emergency Contacts</h3>
+        <ul className="space-y-2">
+          {animal.emergencyContacts.map((contact, index) => (
+            <li key={index} className="flex items-center">
+              <PhoneCall className="h-4 w-4 text-red-600 mr-2" />
+              <div>
+                <p className="text-xs font-semibold">{contact.name}</p>
+                <p className="text-xs">{contact.phone}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Similar Species - New section */}
+      <div className="px-4 py-3 mx-4 mb-3">
+        <h3 className="text-base font-semibold mb-2">Similar Species</h3>
+        <div className="flex space-x-4 overflow-x-auto pb-2">
+          {animal.similarSpecies.map((species, index) => (
+            <div key={index} className="flex flex-col items-center">
+              <div className="w-16 h-16 rounded-full overflow-hidden">
+                <img src={species.imageUrl} alt={species.name} className="w-full h-full object-cover" />
+              </div>
+              <p className="text-xs text-center mt-1">{species.name}</p>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* About */}
