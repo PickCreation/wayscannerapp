@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { 
   Search, 
@@ -210,10 +211,10 @@ const RecipesPage = () => {
             {categories.map((category) => (
               <div
                 key={category.id}
-                className={`flex flex-col items-center cursor-pointer ${selectedCategory === category.id ? 'scale-110' : ''}`}
+                className={`flex flex-col items-center cursor-pointer transition-transform duration-200 ${selectedCategory === category.id ? 'scale-105' : ''}`}
                 onClick={() => handleCategoryClick(category.id)}
               >
-                <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-2 ${selectedCategory === category.id ? 'ring-2 ring-offset-2 ring-blue-500' : ''}`} 
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 ${selectedCategory === category.id ? 'ring-2 ring-offset-1 ring-blue-500' : ''}`} 
                   style={{ backgroundColor: category.id === "breakfast" ? "#FFF3E0" : 
                                           category.id === "lunch" ? "#E8F5E9" :
                                           category.id === "dinner" ? "#F3E5F5" : "#FCE4EC" }}>
