@@ -1,6 +1,7 @@
 
 import React from "react";
-import { ChevronRight, Utensils, Banana, Apple } from "lucide-react";
+import { ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface FoodItem {
   id: string;
@@ -17,7 +18,7 @@ const foodItems: FoodItem[] = [
     name: "Whole Wheat Bread",
     brand: "Nature's Own",
     score: 81,
-    imageUrl: "/lovable-uploads/dc7e6fce-2b21-472e-99f7-7f20be83b76f.png",
+    imageUrl: "/lovable-uploads/5cf63fd0-114b-490f-96f9-b6b8dcc0b573.png",
     borderColor: "border-teal-100",
   },
   {
@@ -25,7 +26,7 @@ const foodItems: FoodItem[] = [
     name: "Doritos Chips",
     brand: "Frito-Lay",
     score: 74,
-    imageUrl: "/lovable-uploads/dc7e6fce-2b21-472e-99f7-7f20be83b76f.png",
+    imageUrl: "/lovable-uploads/f2fb63ae-cc4d-4d46-ba4f-c70225d6d564.png",
     borderColor: "border-purple-100",
   },
   {
@@ -47,6 +48,8 @@ const foodItems: FoodItem[] = [
 ];
 
 const FoodScanTab = () => {
+  const navigate = useNavigate();
+
   const getScoreColor = (score: number) => {
     if (score >= 80) return "bg-teal-500";
     if (score >= 60) return "bg-purple-500";
@@ -61,12 +64,17 @@ const FoodScanTab = () => {
     return "Bad";
   };
 
+  const handleFoodClick = (id: string) => {
+    navigate(`/food/${id}`);
+  };
+
   return (
     <div className="space-y-3 mb-6">
       {foodItems.map((item) => (
         <div 
           key={item.id} 
-          className={`rounded-xl overflow-hidden border ${item.borderColor} shadow-sm flex`}
+          className={`rounded-xl overflow-hidden border ${item.borderColor} shadow-sm flex cursor-pointer`}
+          onClick={() => handleFoodClick(item.id)}
         >
           <div className="flex items-center p-3 w-full">
             <div className="w-16 h-16 rounded-lg overflow-hidden mr-3">
