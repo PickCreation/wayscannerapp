@@ -278,7 +278,7 @@ const ProductDetailPage = () => {
         </button>
       </header>
 
-      <div className="w-full bg-gray-100 px-4 py-1">
+      <div className="w-full bg-gray-100 px-4 py-0">
         {product.images && product.images.length > 0 ? (
           <Carousel className="w-full">
             <CarouselContent>
