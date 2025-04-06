@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { 
   Search, 
@@ -21,7 +20,6 @@ import CameraSheet from "@/components/CameraSheet";
 import { RecipeCard } from "@/components/RecipeCard";
 import { useToast } from "@/hooks/use-toast";
 
-// Mock recipe data
 const featuredRecipe = {
   id: "pasta-1",
   title: "Creamy Garlic Parmesan Pasta",
@@ -81,6 +79,10 @@ const RecipesPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop") => {
     setActiveNavItem(item);
     
@@ -134,7 +136,6 @@ const RecipesPage = () => {
 
   return (
     <div className="pb-20 bg-white min-h-screen">
-      {/* Header */}
       <div className="fixed top-0 left-0 right-0 bg-primary text-white z-10">
         <div className="flex items-center justify-between h-14 px-4">
           <button 
@@ -144,12 +145,11 @@ const RecipesPage = () => {
             <ArrowLeft size={24} />
           </button>
           <h1 className="text-lg font-semibold">Recipes</h1>
-          <div className="w-10"></div> {/* Empty div for balanced spacing */}
+          <div className="w-10"></div>
         </div>
       </div>
       
       <div className="pt-14">
-        {/* Featured Recipe */}
         <div 
           className="relative h-60 bg-gradient-to-br from-gray-100 to-gray-200 cursor-pointer rounded-md mx-4 mt-3 shadow-md overflow-hidden" 
           onClick={() => handleRecipeClick(featuredRecipe.id)}
@@ -180,7 +180,6 @@ const RecipesPage = () => {
           </div>
         </div>
 
-        {/* Search Bar */}
         <div className="px-4 my-4">
           <form onSubmit={handleSearch}>
             <div className="relative">
@@ -201,7 +200,6 @@ const RecipesPage = () => {
           </form>
         </div>
 
-        {/* Categories */}
         <div className="px-4 mt-6 mb-8">
           <h2 className="text-base font-bold mb-4 text-gray-800 text-[16px]">Categories</h2>
           <div className="flex space-x-4 overflow-x-auto pb-2 no-scrollbar">
@@ -223,7 +221,6 @@ const RecipesPage = () => {
           </div>
         </div>
 
-        {/* Trending Recipes */}
         <div className="px-4 mb-8">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-base font-bold text-gray-800 text-[16px]">Trending Recipes</h2>
@@ -246,10 +243,8 @@ const RecipesPage = () => {
         </div>
       </div>
 
-      {/* Camera Sheet */}
       <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
 
-      {/* Bottom Navigation */}
       <BottomNavigation
         activeItem={activeNavItem}
         onItemClick={handleNavItemClick}
