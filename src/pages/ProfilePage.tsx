@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { 
   ArrowLeft, Edit, Lock, Store, Bookmark, Heart, 
@@ -19,21 +18,16 @@ const ProfilePage = () => {
   const isMobile = useIsMobile();
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("home");
 
-  // Handle native back functionality
   useEffect(() => {
-    // Function to handle hardware back button press
     const handleBackButton = () => {
       navigate("/");
-      return true; // Prevent default behavior
+      return true;
     };
 
-    // Only add listeners on mobile devices
     if (isMobile) {
-      // For Android, add event listener for hardware back button
       document.addEventListener('backbutton', handleBackButton);
     }
 
-    // Cleanup
     return () => {
       if (isMobile) {
         document.removeEventListener('backbutton', handleBackButton);
@@ -73,7 +67,6 @@ const ProfilePage = () => {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* Header */}
       <div className="bg-wayscanner-blue text-white p-4 relative">
         <div className="flex justify-between items-center mb-2">
           <button className="p-2" onClick={handleBackClick}>
@@ -84,10 +77,9 @@ const ProfilePage = () => {
             marginLeft: isMobile ? '0' : 'auto',
             marginRight: isMobile ? '0' : 'auto'
           }}>My Profile</h1>
-          <div className="w-10"></div> {/* Placeholder to maintain centering */}
+          <div className="w-10"></div>
         </div>
 
-        {/* Profile Info */}
         <div className="flex flex-col items-center pb-3">
           <Avatar className="w-16 h-16 border-4 border-white mb-1">
             <AvatarImage src="" />
@@ -100,7 +92,6 @@ const ProfilePage = () => {
         </div>
       </div>
 
-      {/* Stats */}
       <div className="flex justify-around py-3">
         <div className="text-center">
           <p className="text-base font-bold text-wayscanner-blue">127</p>
@@ -116,7 +107,6 @@ const ProfilePage = () => {
         </div>
       </div>
 
-      {/* Account Settings */}
       <div className="px-4 pb-2">
         <h3 className="text-base font-semibold mb-3">Account Settings</h3>
         
@@ -142,7 +132,6 @@ const ProfilePage = () => {
         />
       </div>
 
-      {/* Content */}
       <div className="px-4 pb-2">
         <h3 className="text-base font-semibold mb-3">Content</h3>
         
@@ -182,7 +171,6 @@ const ProfilePage = () => {
         />
       </div>
 
-      {/* Preferences & Support */}
       <div className="px-4 pb-2">
         <h3 className="text-base font-semibold mb-3">Preferences & Support</h3>
         
@@ -222,8 +210,7 @@ const ProfilePage = () => {
         />
       </div>
 
-      {/* Logout Button */}
-      <div className="px-4 pb-20 mt-4 flex flex-col"> {/* Added pb-20 to make room for bottom nav */}
+      <div className="px-4 pb-28 mt-4 flex flex-col">
         <Button 
           className="bg-wayscanner-blue hover:bg-blue-700 w-full py-6 rounded-lg flex items-center justify-center gap-2 mb-4"
           onClick={() => handleMenuItemClick("Logout")}
@@ -233,14 +220,13 @@ const ProfilePage = () => {
         </Button>
         
         <button 
-          className="text-red-500 text-center font-semibold text-base"
+          className="text-red-500 text-center font-semibold text-base mt-2 pb-2"
           onClick={() => handleMenuItemClick("Delete Account")}
         >
           Delete Account
         </button>
       </div>
 
-      {/* Bottom Navigation */}
       <BottomNavigation
         activeItem={activeNavItem}
         onItemClick={handleNavItemClick}
