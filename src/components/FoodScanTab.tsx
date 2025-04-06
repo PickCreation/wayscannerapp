@@ -69,15 +69,15 @@ const FoodScanTab = () => {
   };
 
   return (
-    <div className="space-y-3 mb-6">
+    <div className="space-y-2.5 mb-5">
       {foodItems.map((item) => (
         <div 
           key={item.id} 
           className={`rounded-xl overflow-hidden border ${item.borderColor} shadow-sm flex cursor-pointer`}
           onClick={() => handleFoodClick(item.id)}
         >
-          <div className="flex items-center p-3 w-full">
-            <div className="w-16 h-16 rounded-lg overflow-hidden mr-3">
+          <div className="flex items-center p-2.5 w-full">
+            <div className="w-14 h-14 rounded-lg overflow-hidden mr-2.5">
               <img 
                 src={item.imageUrl} 
                 alt={item.name} 
@@ -85,14 +85,14 @@ const FoodScanTab = () => {
               />
             </div>
             <div className="flex-1">
-              <h3 className="text-base font-bold mb-0.5">{item.name}</h3>
+              <h3 className="text-sm font-bold mb-0.5">{item.name}</h3>
               <p className="text-blue-500 text-xs font-medium mb-1">{item.brand}</p>
-              <div className={`${getScoreColor(item.score)} text-white px-3 py-1 rounded-full inline-flex items-center text-xs`}>
-                <span className="font-bold mr-1">{item.score}</span>
+              <div className={`${getScoreColor(item.score)} text-white px-2.5 py-0.5 rounded-full inline-flex items-center text-xs`}>
+                <span className="font-bold mr-0.5">{item.score}</span>
                 <span>{getScoreText(item.score)}</span>
               </div>
             </div>
-            <ChevronRight className="text-gray-400 ml-2" size={20} />
+            <ChevronRight className="text-gray-400 ml-1.5" size={18} />
           </div>
         </div>
       ))}

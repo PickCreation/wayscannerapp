@@ -124,24 +124,24 @@ const FoodDetailPage = () => {
   return (
     <div className="pb-20 bg-gray-50 min-h-screen">
       {/* Header */}
-      <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
+      <header className="bg-wayscanner-blue text-white py-3 px-3 flex justify-between items-center">
         <button 
-          className="p-2" 
+          className="p-1.5" 
           onClick={() => navigate(-1)}
         >
-          <ChevronLeft className="h-6 w-6" color="white" />
+          <ChevronLeft className="h-5 w-5" color="white" />
         </button>
         <h1 className="text-[20px] font-medium">Food Detail</h1>
-        <div className="w-10 h-10 flex items-center justify-center">
+        <div className="w-8 h-8 flex items-center justify-center">
           {/* Placeholder for right side button */}
-          <div className="w-6 h-6"></div>
+          <div className="w-5 h-5"></div>
         </div>
       </header>
 
       {/* Food Summary Card */}
-      <div className="bg-white rounded-lg shadow-sm mx-4 mt-4 overflow-hidden">
-        <div className="flex p-4 items-center">
-          <div className="mr-4 w-20 h-20 rounded-lg overflow-hidden">
+      <div className="bg-white rounded-lg shadow-sm mx-3 mt-3 overflow-hidden">
+        <div className="flex p-3 items-center">
+          <div className="mr-3 w-16 h-16 rounded-lg overflow-hidden">
             <img 
               src={food.imageUrl} 
               alt={food.name} 
@@ -149,92 +149,92 @@ const FoodDetailPage = () => {
             />
           </div>
           <div className="flex-1">
-            <h2 className="text-xl font-bold">{food.name}</h2>
-            <p className="text-blue-500 text-sm font-medium">{food.brand}</p>
-            <div className="flex items-center mt-2">
-              <div className={`${getScoreColor(food.score)} text-white px-3 py-1 rounded-full inline-flex items-center text-sm`}>
-                <span className="font-bold mr-1">{food.score}</span>
+            <h2 className="text-[16px] font-bold">{food.name}</h2>
+            <p className="text-blue-500 text-xs font-medium">{food.brand}</p>
+            <div className="flex items-center mt-1.5">
+              <div className={`${getScoreColor(food.score)} text-white px-2 py-0.5 rounded-full inline-flex items-center text-xs`}>
+                <span className="font-bold mr-0.5">{food.score}</span>
                 <span>{getScoreText(food.score)}</span>
               </div>
             </div>
           </div>
           <button 
-            className="p-2 text-red-500"
+            className="p-1.5 text-red-500"
             onClick={() => setIsBookmarked(!isBookmarked)}
           >
             <Bookmark 
-              className={`h-6 w-6 ${isBookmarked ? 'fill-red-500' : ''}`} 
+              className={`h-5 w-5 ${isBookmarked ? 'fill-red-500' : ''}`} 
             />
           </button>
         </div>
       </div>
 
       {/* Per Serving */}
-      <div className="mx-4 mt-6 text-center">
-        <p className="text-gray-500 text-sm border-b border-dashed border-gray-300 pb-2">
+      <div className="mx-3 mt-4 text-center">
+        <p className="text-gray-500 text-xs border-b border-dashed border-gray-300 pb-1.5">
           -------------------------- per serving ({food.serving}) --------------------------
         </p>
       </div>
 
       {/* Negatives Section */}
-      <div className="bg-white rounded-lg shadow-sm mx-4 mt-6 p-4">
-        <h3 className="text-xl font-bold mb-4">Negatives</h3>
-        <div className="space-y-4">
+      <div className="bg-white rounded-lg shadow-sm mx-3 mt-4 p-3">
+        <h3 className="text-[16px] font-bold mb-3">Negatives</h3>
+        <div className="space-y-3">
           {food.nutrients.negatives.map((nutrient, index) => (
             <div key={index} className="flex items-center">
-              <div className="w-24 flex items-center">
+              <div className="w-20 flex items-center">
                 {nutrient.name === "Sodium" ? (
-                  <span className="text-teal-600 mr-2">🧂</span>
+                  <span className="text-teal-600 mr-1.5 text-[14px]">🧂</span>
                 ) : (
-                  <span className="text-purple-600 mr-2">🍬</span>
+                  <span className="text-purple-600 mr-1.5 text-[14px]">🍬</span>
                 )}
-                <span className="font-medium">{nutrient.name}</span>
+                <span className="font-medium text-[14px]">{nutrient.name}</span>
               </div>
-              <div className="flex-1 mx-4">
+              <div className="flex-1 mx-3">
                 <Progress 
                   value={nutrient.progress} 
-                  className="h-2 bg-gray-200" 
+                  className="h-1.5 bg-gray-200" 
                 />
               </div>
-              <div className="w-16 text-right font-medium">{nutrient.value}</div>
+              <div className="w-14 text-right font-medium text-[14px]">{nutrient.value}</div>
             </div>
           ))}
         </div>
       </div>
 
       {/* Positives (Highlights) Section */}
-      <div className="mx-4 mt-6">
-        <h3 className="text-xl font-bold mb-4">Positives</h3>
-        <div className="grid grid-cols-3 gap-3 mb-6">
+      <div className="mx-3 mt-4">
+        <h3 className="text-[16px] font-bold mb-3">Positives</h3>
+        <div className="grid grid-cols-3 gap-2 mb-4">
           {food.nutrients.highlights.map((highlight, index) => (
-            <div key={index} className={`${highlight.color} p-4 rounded-lg text-center`}>
-              <div className="text-3xl mb-1">{highlight.icon}</div>
-              <div className="text-xl font-bold">{highlight.value}</div>
-              <div className={`text-sm ${highlight.textColor}`}>{highlight.name}</div>
+            <div key={index} className={`${highlight.color} p-2.5 rounded-lg text-center`}>
+              <div className="text-2xl mb-0.5">{highlight.icon}</div>
+              <div className="text-[14px] font-bold">{highlight.value}</div>
+              <div className={`text-xs ${highlight.textColor}`}>{highlight.name}</div>
             </div>
           ))}
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm p-4">
-          <div className="space-y-4">
+        <div className="bg-white rounded-lg shadow-sm p-3">
+          <div className="space-y-3">
             {food.nutrients.positives.map((nutrient, index) => (
               <div key={index} className="flex items-center">
-                <div className="w-32 flex items-center">
-                  {nutrient.name === "Fiber" && <span className="text-teal-600 mr-2">🌿</span>}
-                  {nutrient.name === "Sugar" && <span className="text-purple-600 mr-2">🍬</span>}
-                  {nutrient.name === "Saturated Fat" && <span className="text-blue-600 mr-2">🧈</span>}
-                  {nutrient.name === "Calcium" && <span className="text-teal-600 mr-2">🥛</span>}
-                  {nutrient.name === "Vitamin D" && <span className="text-yellow-600 mr-2">☀️</span>}
-                  {nutrient.name === "Potassium" && <span className="text-red-700 mr-2">🍌</span>}
-                  <span className="font-medium">{nutrient.name}</span>
+                <div className="w-28 flex items-center">
+                  {nutrient.name === "Fiber" && <span className="text-teal-600 mr-1.5 text-[14px]">🌿</span>}
+                  {nutrient.name === "Sugar" && <span className="text-purple-600 mr-1.5 text-[14px]">🍬</span>}
+                  {nutrient.name === "Saturated Fat" && <span className="text-blue-600 mr-1.5 text-[14px]">🧈</span>}
+                  {nutrient.name === "Calcium" && <span className="text-teal-600 mr-1.5 text-[14px]">🥛</span>}
+                  {nutrient.name === "Vitamin D" && <span className="text-yellow-600 mr-1.5 text-[14px]">☀️</span>}
+                  {nutrient.name === "Potassium" && <span className="text-red-700 mr-1.5 text-[14px]">🍌</span>}
+                  <span className="font-medium text-[14px]">{nutrient.name}</span>
                 </div>
-                <div className="flex-1 mx-4">
+                <div className="flex-1 mx-3">
                   <Progress 
                     value={nutrient.progress} 
-                    className="h-2 bg-gray-200" 
+                    className="h-1.5 bg-gray-200" 
                   />
                 </div>
-                <div className="w-16 text-right font-medium">{nutrient.value}</div>
+                <div className="w-14 text-right font-medium text-[14px]">{nutrient.value}</div>
               </div>
             ))}
           </div>
@@ -242,70 +242,70 @@ const FoodDetailPage = () => {
       </div>
 
       {/* Ingredients Section */}
-      <div className="bg-white rounded-lg shadow-sm mx-4 mt-6 p-4">
-        <h3 className="text-xl font-bold mb-4">Ingredients</h3>
-        <p className="text-gray-800 mb-4">{food.ingredients}</p>
+      <div className="bg-white rounded-lg shadow-sm mx-3 mt-4 p-3">
+        <h3 className="text-[16px] font-bold mb-3">Ingredients</h3>
+        <p className="text-gray-800 text-[14px] mb-3">{food.ingredients}</p>
         
-        <div className="space-y-3">
+        <div className="space-y-2">
           {food.certifications.map((certification, index) => (
-            <div key={index} className="bg-gray-100 p-3 rounded-lg flex items-center">
-              <CircleCheck className="h-6 w-6 text-teal-500 mr-2" />
-              <span>{certification}</span>
+            <div key={index} className="bg-gray-100 p-2.5 rounded-lg flex items-center">
+              <CircleCheck className="h-4 w-4 text-teal-500 mr-1.5" />
+              <span className="text-[14px]">{certification}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* Allergy & Diet Info */}
-      <div className="bg-white rounded-lg shadow-sm mx-4 mt-6 p-4">
-        <h3 className="text-xl font-bold mb-4">Allergy & Diet Info</h3>
-        <Separator className="my-4" />
+      <div className="bg-white rounded-lg shadow-sm mx-3 mt-4 p-3">
+        <h3 className="text-[16px] font-bold mb-3">Allergy & Diet Info</h3>
+        <Separator className="my-3" />
         
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-2">
           {food.dietInfo.includes("Vegan") && (
-            <Badge variant="outline" className="py-1.5 px-4 flex items-center gap-2 rounded-full border-2">
-              <Vegan className="h-4 w-4" />
-              <span>Vegan</span>
+            <Badge variant="outline" className="py-1 px-3 flex items-center gap-1.5 rounded-full border-2">
+              <Vegan className="h-3.5 w-3.5" />
+              <span className="text-[14px]">Vegan</span>
             </Badge>
           )}
           {food.dietInfo.includes("Fish") && (
-            <Badge variant="outline" className="py-1.5 px-4 flex items-center gap-2 rounded-full border-2">
-              <Fish className="h-4 w-4" />
-              <span>Fish</span>
+            <Badge variant="outline" className="py-1 px-3 flex items-center gap-1.5 rounded-full border-2">
+              <Fish className="h-3.5 w-3.5" />
+              <span className="text-[14px]">Fish</span>
             </Badge>
           )}
           {food.dietInfo.includes("Contains Milk") && (
-            <Badge variant="outline" className="py-1.5 px-4 flex items-center gap-2 rounded-full border-2">
+            <Badge variant="outline" className="py-1 px-3 flex items-center gap-1.5 rounded-full border-2">
               <span>🥛</span>
-              <span>Contains Milk</span>
+              <span className="text-[14px]">Contains Milk</span>
             </Badge>
           )}
         </div>
       </div>
 
       {/* Other Section */}
-      <div className="bg-white rounded-lg shadow-sm mx-4 mt-6 p-4 mb-8">
-        <h3 className="text-xl font-bold mb-4">Other</h3>
+      <div className="bg-white rounded-lg shadow-sm mx-3 mt-4 p-3 mb-6">
+        <h3 className="text-[16px] font-bold mb-3">Other</h3>
         
-        <button className="w-full py-3 flex items-center justify-between bg-gray-100 rounded-lg mb-3">
+        <button className="w-full py-2.5 flex items-center justify-between bg-gray-100 rounded-lg mb-2.5">
           <div className="flex items-center">
-            <Edit className="h-6 w-6 mx-3" />
-            <span className="font-medium">Edit Preferences</span>
+            <Edit className="h-4 w-4 mx-2.5" />
+            <span className="font-medium text-[14px]">Edit Preferences</span>
           </div>
-          <ChevronRight className="h-6 w-6 mx-3 text-gray-400" />
+          <ChevronRight className="h-4 w-4 mx-2.5 text-gray-400" />
         </button>
         
-        <button className="w-full py-3 flex items-center justify-between bg-gray-100 rounded-lg mb-6">
+        <button className="w-full py-2.5 flex items-center justify-between bg-gray-100 rounded-lg mb-4">
           <div className="flex items-center">
-            <Info className="h-6 w-6 mx-3" />
-            <span className="font-medium">How do we score food?</span>
+            <Info className="h-4 w-4 mx-2.5" />
+            <span className="font-medium text-[14px]">How do we score food?</span>
           </div>
-          <ChevronRight className="h-6 w-6 mx-3 text-gray-400" />
+          <ChevronRight className="h-4 w-4 mx-2.5 text-gray-400" />
         </button>
         
-        <Separator className="my-4" />
+        <Separator className="my-3" />
         
-        <p className="text-center text-sm text-gray-600 px-4">
+        <p className="text-center text-xs text-gray-600 px-3">
           We don't partner with any brand or product, so the scores we provide are unbiased.
         </p>
       </div>
