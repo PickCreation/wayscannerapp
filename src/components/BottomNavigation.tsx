@@ -3,9 +3,11 @@ import {
   MessageCircle, 
   Utensils, 
   ShoppingBag, 
-  Camera
+  Camera,
+  User
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLocation } from "react-router-dom";
 
 interface BottomNavigationProps {
   activeItem: "home" | "forum" | "recipes" | "shop";
@@ -18,6 +20,9 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
   onItemClick,
   onCameraClick,
 }) => {
+  const location = useLocation();
+  const isProfilePage = location.pathname === "/profile";
+
   return (
     <div className="fixed bottom-0 left-0 right-0 h-16 bg-white border-t flex items-center justify-between px-4 z-10">
       <NavItem
@@ -35,9 +40,9 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
         onClick={() => onItemClick("forum")}
       />
       <NavItem
-        icon={<Utensils size={24} />}
-        activeIcon={<Utensils size={24} fill="currentColor" />}
-        label="Recipes"
+        icon={isProfilePage ? <User size={24} /> : <Utensils size={24} />}
+        activeIcon={isProfilePage ? <User size={24} fill="currentColor" /> : <Utensils size={24} fill="currentColor" />}
+        label={isProfilePage ? "Profile" : "Recipes"}
         isActive={activeItem === "recipes"}
         onClick={() => onItemClick("recipes")}
       />
@@ -100,7 +105,6 @@ const NavItem: React.FC<NavItemProps> = ({
   );
 };
 
-// Custom Home icon component that matches the uploaded image
 const HomeIcon = ({ filled, size = 24 }: { filled: boolean; size?: number }) => {
   return (
     <svg
