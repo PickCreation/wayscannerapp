@@ -211,11 +211,11 @@ const ProfilePage = () => {
           onClick={() => handleMenuItemClick("Logout")}
         >
           <LogOut className="h-5 w-5" />
-          <span className="text-lg">Log Out</span>
+          <span className="text-base font-semibold">Log Out</span>
         </Button>
         
         <button 
-          className="text-red-500 text-center font-medium pb-6"
+          className="text-red-500 text-center font-semibold text-base"
           onClick={() => handleMenuItemClick("Delete Account")}
         >
           Delete Account
