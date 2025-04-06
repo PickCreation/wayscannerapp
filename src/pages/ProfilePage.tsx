@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { 
   ArrowLeft, Edit, Lock, Store, Bookmark, Heart, 
@@ -78,6 +79,41 @@ const ProfilePage = () => {
       return;
     }
     
+    if (item === "Edit Profile") {
+      navigate("/edit-profile");
+      return;
+    }
+    
+    if (item === "Change Password") {
+      navigate("/change-password");
+      return;
+    }
+    
+    if (item === "Language") {
+      navigate("/language-settings");
+      return;
+    }
+    
+    if (item === "Help") {
+      navigate("/help-center");
+      return;
+    }
+    
+    if (item === "About") {
+      navigate("/about");
+      return;
+    }
+    
+    if (item === "Privacy") {
+      navigate("/privacy-policy");
+      return;
+    }
+    
+    if (item === "Terms") {
+      navigate("/terms-of-use");
+      return;
+    }
+
     toast({
       title: "Coming Soon",
       description: `The ${item} feature is under development.`,

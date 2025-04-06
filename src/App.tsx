@@ -29,6 +29,14 @@ import AddressesPage from "./pages/AddressesPage";
 import PaymentMethodsPage from "./pages/PaymentMethodsPage";
 import PurchasesPage from "./pages/PurchasesPage";
 import CheckoutPage from "./pages/CheckoutPage";
+import EditProfilePage from "./pages/EditProfilePage";
+import ChangePasswordPage from "./pages/ChangePasswordPage";
+import OrdersPage from "./pages/OrdersPage";
+import LanguageSettingsPage from "./pages/LanguageSettingsPage";
+import HelpCenterPage from "./pages/HelpCenterPage";
+import AboutPage from "./pages/AboutPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import TermsOfUsePage from "./pages/TermsOfUsePage";
 
 const queryClient = new QueryClient();
 
@@ -63,6 +71,14 @@ const App = () => (
           <Route path="/payment-methods" element={<PaymentMethodsPage />} />
           <Route path="/purchases" element={<PurchasesPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/edit-profile" element={<EditProfilePage />} />
+          <Route path="/change-password" element={<ChangePasswordPage />} />
+          <Route path="/orders" element={<OrdersPage />} />
+          <Route path="/language-settings" element={<LanguageSettingsPage />} />
+          <Route path="/help-center" element={<HelpCenterPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms-of-use" element={<TermsOfUsePage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
