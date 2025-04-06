@@ -137,10 +137,7 @@ const HelpCenterPage = () => {
   };
 
   const handleContactSupport = () => {
-    toast({
-      title: "Support Request Sent",
-      description: "Our team will get back to you shortly.",
-    });
+    window.location.href = "https://wayscanner.com/contact";
   };
 
   const filteredCategories = searchQuery
@@ -239,7 +236,7 @@ const HelpCenterPage = () => {
           ))}
         </div>
 
-        <div className="bg-blue-50 rounded-lg p-4 mb-16">
+        <div className="bg-blue-50 rounded-lg p-4 mb-26">
           <h3 className="font-semibold mb-2 flex items-center">
             <MessageCircle className="h-5 w-5 text-wayscanner-blue mr-2" />
             Can't find what you're looking for?
@@ -247,7 +244,7 @@ const HelpCenterPage = () => {
           <p className="text-sm text-gray-600 mb-4">
             Our support team is here to help with any questions or issues you may have.
           </p>
-          <div className="flex space-x-3">
+          <div className="flex space-x-3 mb-10">
             <Button
               className="flex-1 bg-wayscanner-blue hover:bg-blue-700"
               onClick={handleContactSupport}
