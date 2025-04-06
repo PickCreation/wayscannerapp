@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, Heart, Share2, Plus, Minus, Tag } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
@@ -14,11 +13,11 @@ const products = [
     title: "Modern Plant Pot",
     price: 29.99,
     category: "Plants Accessories",
-    image: "/lovable-uploads/5cf63fd0-114b-490f-96f9-b6b8dcc0b573.png",
+    image: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&q=80&w=600",
     images: [
-      "/lovable-uploads/5cf63fd0-114b-490f-96f9-b6b8dcc0b573.png",
-      "/lovable-uploads/4c436a75-e04b-4265-8025-91e7bb146566.png",
-      "/lovable-uploads/f2fb63ae-cc4d-4d46-ba4f-c70225d6d564.png",
+      "https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&q=80&w=600",
+      "https://images.unsplash.com/photo-1581504803078-889aa7a2a3c4?auto=format&fit=crop&q=80&w=600",
+      "https://images.unsplash.com/photo-1582139329109-c10441b6db1c?auto=format&fit=crop&q=80&w=600",
     ],
     rating: 4.5,
     reviews: 124,
@@ -38,11 +37,11 @@ const products = [
     title: "Ceramic Dog Bowl",
     price: 19.99,
     category: "Animal Accessories",
-    image: "/lovable-uploads/1044c752-2d75-49e0-836c-39ab8130a173.png",
+    image: "https://images.unsplash.com/photo-1601758174499-203dda8ffc92?auto=format&fit=crop&q=80&w=600",
     images: [
-      "/lovable-uploads/1044c752-2d75-49e0-836c-39ab8130a173.png",
-      "/lovable-uploads/1485fb6f-36f0-4eee-98e1-0a56eb978616.png",
-      "/lovable-uploads/5cf63fd0-114b-490f-96f9-b6b8dcc0b573.png",
+      "https://images.unsplash.com/photo-1601758174499-203dda8ffc92?auto=format&fit=crop&q=80&w=600",
+      "https://images.unsplash.com/photo-1581456569631-873d308ba72c?auto=format&fit=crop&q=80&w=600",
+      "https://images.unsplash.com/photo-1546421845-6471bdcf3edf?auto=format&fit=crop&q=80&w=600",
     ],
     rating: 4.2,
     reviews: 89,
@@ -62,11 +61,11 @@ const products = [
     title: "Monstera Plant",
     price: 34.99,
     category: "Plants",
-    image: "/lovable-uploads/4c436a75-e04b-4265-8025-91e7bb146566.png",
+    image: "https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&q=80&w=600",
     images: [
-      "/lovable-uploads/4c436a75-e04b-4265-8025-91e7bb146566.png",
-      "/lovable-uploads/5cf63fd0-114b-490f-96f9-b6b8dcc0b573.png",
-      "/lovable-uploads/81f6d068-8c80-4e65-9ad0-2d3fe0a6f480.png",
+      "https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&q=80&w=600",
+      "https://images.unsplash.com/photo-1545239705-1564e58b9e4d?auto=format&fit=crop&q=80&w=600",
+      "https://images.unsplash.com/photo-1598880940639-7f443a26fe2a?auto=format&fit=crop&q=80&w=600",
     ],
     rating: 4.8,
     reviews: 215,
@@ -86,11 +85,11 @@ const products = [
     title: "Bamboo Cutting Board",
     price: 24.99,
     category: "Kitchen Essentials",
-    image: "/lovable-uploads/f2fb63ae-cc4d-4d46-ba4f-c70225d6d564.png",
+    image: "https://images.unsplash.com/photo-1594662322686-8db3bad1d279?auto=format&fit=crop&q=80&w=600",
     images: [
-      "/lovable-uploads/f2fb63ae-cc4d-4d46-ba4f-c70225d6d564.png",
-      "/lovable-uploads/81f6d068-8c80-4e65-9ad0-2d3fe0a6f480.png",
-      "/lovable-uploads/1044c752-2d75-49e0-836c-39ab8130a173.png",
+      "https://images.unsplash.com/photo-1594662322686-8db3bad1d279?auto=format&fit=crop&q=80&w=600",
+      "https://images.unsplash.com/photo-1619108915702-31ee00a0a6bd?auto=format&fit=crop&q=80&w=600",
+      "https://images.unsplash.com/photo-1668456186589-8c6af46226e0?auto=format&fit=crop&q=80&w=600",
     ],
     rating: 4.6,
     reviews: 178,
@@ -110,11 +109,11 @@ const products = [
     title: "Macrame Wall Hanging",
     price: 39.99,
     category: "Decor",
-    image: "/lovable-uploads/81f6d068-8c80-4e65-9ad0-2d3fe0a6f480.png",
+    image: "https://images.unsplash.com/photo-1594130139005-3f0c0f0e7c5e?auto=format&fit=crop&q=80&w=600",
     images: [
-      "/lovable-uploads/81f6d068-8c80-4e65-9ad0-2d3fe0a6f480.png",
-      "/lovable-uploads/f2fb63ae-cc4d-4d46-ba4f-c70225d6d564.png",
-      "/lovable-uploads/4c436a75-e04b-4265-8025-91e7bb146566.png",
+      "https://images.unsplash.com/photo-1594130139005-3f0c0f0e7c5e?auto=format&fit=crop&q=80&w=600",
+      "https://images.unsplash.com/photo-1582582494705-f8ce0b0c24f2?auto=format&fit=crop&q=80&w=600",
+      "https://images.unsplash.com/photo-1617870952348-760d43bae46f?auto=format&fit=crop&q=80&w=600",
     ],
     rating: 4.7,
     reviews: 156,
@@ -134,11 +133,11 @@ const products = [
     title: "Cat Climbing Tree",
     price: 89.99,
     category: "Animal Accessories",
-    image: "/lovable-uploads/1485fb6f-36f0-4eee-98e1-0a56eb978616.png",
+    image: "https://images.unsplash.com/photo-1603314585442-ee3b3c16fbcf?auto=format&fit=crop&q=80&w=600",
     images: [
-      "/lovable-uploads/1485fb6f-36f0-4eee-98e1-0a56eb978616.png",
-      "/lovable-uploads/1044c752-2d75-49e0-836c-39ab8130a173.png",
-      "/lovable-uploads/81f6d068-8c80-4e65-9ad0-2d3fe0a6f480.png",
+      "https://images.unsplash.com/photo-1603314585442-ee3b3c16fbcf?auto=format&fit=crop&q=80&w=600",
+      "https://images.unsplash.com/photo-1605433274522-da77eecb7088?auto=format&fit=crop&q=80&w=600",
+      "https://images.unsplash.com/photo-1545033131-485ea67fd7c3?auto=format&fit=crop&q=80&w=600",
     ],
     rating: 4.3,
     reviews: 92,
@@ -166,7 +165,6 @@ const ProductDetailPage = () => {
   const product = products.find(p => p.id === Number(productId));
   
   useEffect(() => {
-    // Update cart count whenever the component mounts or localStorage changes
     const updateCartCount = () => {
       const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
       const count = cartItems.reduce((total: number, item: any) => total + item.quantity, 0);
@@ -175,10 +173,7 @@ const ProductDetailPage = () => {
     
     updateCartCount();
     
-    // Set up event listener for storage changes
     window.addEventListener('storage', updateCartCount);
-    
-    // Custom event for cart updates within the same page
     window.addEventListener('cartUpdated', updateCartCount);
     
     return () => {
@@ -198,7 +193,6 @@ const ProductDetailPage = () => {
   const totalPrice = (product.price * quantity).toFixed(2);
 
   const handleAddToCart = () => {
-    // Save to cart in localStorage
     const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
     const existingItemIndex = cartItems.findIndex((item: any) => item.id === product.id);
     
@@ -213,7 +207,6 @@ const ProductDetailPage = () => {
     
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
     
-    // Dispatch custom event to update cart count
     window.dispatchEvent(new Event('cartUpdated'));
     
     toast({
@@ -285,7 +278,7 @@ const ProductDetailPage = () => {
 
       {product.images && product.images.length > 1 && (
         <div className="px-4 py-2 flex space-x-2 overflow-x-auto">
-          {product.images.slice(0, 6).map((img, index) => (
+          {product.images.map((img, index) => (
             <button 
               key={index} 
               className={`w-14 h-14 border ${selectedImage === index ? 'border-wayscanner-blue' : 'border-gray-300'}`}
@@ -337,7 +330,6 @@ const ProductDetailPage = () => {
           <TabsContent value="description" className="pt-2">
             <p className="text-gray-700 mb-4">{product.description}</p>
             
-            {/* Product additional details */}
             <div className="mt-6 space-y-4 border-t pt-4">
               <h3 className="font-medium text-lg">Product Details</h3>
               
@@ -357,7 +349,6 @@ const ProductDetailPage = () => {
                 <div className="text-gray-600">Country:</div>
                 <div className="font-medium">{product.country || "Not specified"}</div>
                 
-                {/* Tags section */}
                 <div className="text-gray-600">Tags:</div>
                 <div className="font-medium">
                   {product.tags && product.tags.length > 0 ? (
