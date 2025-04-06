@@ -40,13 +40,13 @@ const ProfilePage = () => {
 
         {/* Profile Info */}
         <div className="flex flex-col items-center pb-3">
-          <Avatar className="w-24 h-24 border-4 border-white mb-1">
+          <Avatar className="w-20 h-20 border-4 border-white mb-1">
             <AvatarImage src="" />
             <AvatarFallback className="bg-white text-gray-400">
-              <User size={48} />
+              <User size={36} />
             </AvatarFallback>
           </Avatar>
-          <h2 className="text-2xl font-bold mb-0">John Doe</h2>
+          <h2 className="text-base font-bold mb-0">John Doe</h2>
           <p className="mb-1">johndoe@example.com</p>
           {/* Removed the Edit Profile button below email */}
         </div>
@@ -70,7 +70,7 @@ const ProfilePage = () => {
 
       {/* Account Settings */}
       <div className="px-4 pb-2">
-        <h3 className="text-xl font-semibold mb-3">Account Settings</h3>
+        <h3 className="text-base font-semibold mb-3">Account Settings</h3>
         
         <ProfileMenuItem 
           icon={<Edit className="h-5 w-5 text-wayscanner-blue" />} 
@@ -96,7 +96,7 @@ const ProfilePage = () => {
 
       {/* Content */}
       <div className="px-4 pb-2">
-        <h3 className="text-xl font-semibold mb-3">Content</h3>
+        <h3 className="text-base font-semibold mb-3">Content</h3>
         
         <ProfileMenuItem 
           icon={<Bookmark className="h-5 w-5 text-wayscanner-blue" />} 
@@ -136,7 +136,7 @@ const ProfilePage = () => {
 
       {/* Preferences & Support */}
       <div className="px-4 pb-2">
-        <h3 className="text-xl font-semibold mb-3">Preferences & Support</h3>
+        <h3 className="text-base font-semibold mb-3">Preferences & Support</h3>
         
         <ProfileMenuItem 
           icon={<Globe className="h-5 w-5 text-wayscanner-blue" />} 
