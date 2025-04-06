@@ -59,22 +59,22 @@ const Index = () => {
         <h3 className="text-2xl font-bold mb-4">Start Exploring</h3>
         <div className="grid grid-cols-2 gap-4">
           <ScannerCard
-            title="Food Scanner"
-            description="Get nutritional info & health rating"
+            title="Food Scan"
+            description="Get nutritional info"
             color="red"
             icon={<Utensils size={24} color="white" />}
             onClick={() => handleScannerClick("Food")}
           />
           <ScannerCard
-            title="Plant Scanner"
-            description="Identify plants & care instructions"
+            title="Plant Scan"
+            description="Identify plants"
             color="green"
             icon={<Leaf size={24} color="white" />}
             onClick={() => handleScannerClick("Plant")}
           />
           <ScannerCard
-            title="Animal Scanner"
-            description="Learn about animals & safety"
+            title="Animal Scan"
+            description="Learn about animals"
             color="yellow"
             icon={<PawPrint size={24} color="white" />}
             onClick={() => handleScannerClick("Animal")}
