@@ -195,9 +195,12 @@ const PostDetailPage = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 pb-20">
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2" type="button">
-          <ChevronLeft size={24} color="white" />
-        </button>
+        <div className="flex items-center">
+          <button onClick={() => navigate(-1)} className="p-2 -ml-2 mr-2" type="button">
+            <ChevronLeft size={24} color="white" />
+          </button>
+          <h1 className="text-xl font-bold">Forum</h1>
+        </div>
         <div className="flex justify-center">
           <img 
             src="/lovable-uploads/8fdd5ac8-39b5-43e6-86de-c8b27715d7c8.png" 
@@ -219,33 +222,33 @@ const PostDetailPage = () => {
         <div className="bg-white rounded-lg shadow p-4 mb-4 border border-gray-100">
           <div className="flex items-center mb-3">
             <Avatar className="h-12 w-12 mr-3">
-              <AvatarImage src={post.author.avatar} alt={post.author.name} />
+              <AvatarImage src={post?.author?.avatar} alt={post?.author?.name} />
               <AvatarFallback>
-                {post.author.name.charAt(0)}
+                {post?.author?.name?.charAt(0)}
               </AvatarFallback>
             </Avatar>
             <div>
-              <h3 className="font-medium text-lg text-gray-800">{post.author.name}</h3>
+              <h3 className="font-medium text-lg text-gray-800">{post?.author?.name}</h3>
               <div className="flex items-center">
-                <span className="text-gray-500 text-sm">{post.timeAgo}</span>
+                <span className="text-gray-500 text-sm">{post?.timeAgo}</span>
                 <span className={`ml-2 px-3 py-1 rounded-full text-xs ${
-                  post.category === "Plants" ? "bg-green-100 text-green-700" : 
-                  post.category.includes("Food") || post.category.includes("Recipe") || post.category.includes("Cooking") || post.category.includes("Kitchen") || post.category.includes("Nutrition") ? "bg-red-100 text-red-700" : 
-                  post.category.includes("Animals") || post.category.includes("Pets") ? "bg-yellow-100 text-yellow-700" :
-                  post.category === "Travel" ? "bg-purple-100 text-purple-700" :
-                  post.category.includes("DIY") || post.category.includes("Home") || post.category.includes("Decor") ? "bg-orange-100 text-orange-700" :
-                  post.category.includes("Question") ? "bg-blue-100 text-blue-700" :
+                  post?.category === "Plants" ? "bg-green-100 text-green-700" : 
+                  post?.category?.includes("Food") || post?.category?.includes("Recipe") || post?.category?.includes("Cooking") || post?.category?.includes("Kitchen") || post?.category?.includes("Nutrition") ? "bg-red-100 text-red-700" : 
+                  post?.category?.includes("Animals") || post?.category?.includes("Pets") ? "bg-yellow-100 text-yellow-700" :
+                  post?.category === "Travel" ? "bg-purple-100 text-purple-700" :
+                  post?.category?.includes("DIY") || post?.category?.includes("Home") || post?.category?.includes("Decor") ? "bg-orange-100 text-orange-700" :
+                  post?.category?.includes("Question") ? "bg-blue-100 text-blue-700" :
                   "bg-blue-100 text-blue-700"
                 }`}>
-                  {post.category}
+                  {post?.category}
                 </span>
               </div>
             </div>
           </div>
           
-          <p className="text-gray-700 mb-4">{post.content}</p>
+          <p className="text-gray-700 mb-4">{post?.content}</p>
           
-          {post.imageUrl && (
+          {post?.imageUrl && (
             <div className="mb-4 border rounded-lg overflow-hidden">
               <img src={post.imageUrl} alt="Post" className="w-full h-auto" />
             </div>
@@ -259,16 +262,16 @@ const PostDetailPage = () => {
             >
               <Heart 
                 size={22} 
-                className={post.liked ? "fill-red-500 text-red-500" : "text-black"}
+                className={post?.liked ? "fill-red-500 text-red-500" : "text-black"}
               />
-              <span className="ml-1 text-gray-600">{post.likes}</span>
+              <span className="ml-1 text-gray-600">{post?.likes}</span>
             </button>
             <button 
               className="flex items-center mr-5"
               type="button"
             >
               <div className="text-blue-600 font-medium">
-                {post.comments} Comments
+                {post?.comments} Comments
               </div>
             </button>
             <button 
@@ -278,7 +281,7 @@ const PostDetailPage = () => {
             >
               <Bookmark 
                 size={22} 
-                className={post.bookmarked ? "fill-wayscanner-blue text-wayscanner-blue" : "text-black"}
+                className={post?.bookmarked ? "fill-wayscanner-blue text-wayscanner-blue" : "text-black"}
               />
             </button>
           </div>
@@ -329,8 +332,7 @@ const PostDetailPage = () => {
             </div>
           ) : (
             <div className="text-center py-2">
-              <Button onClick={handleLoginClick} className="gap-2" type="button">
-                <LogIn size={16} />
+              <Button onClick={handleProfileClick} className="gap-2" type="button">
                 Login to comment
               </Button>
             </div>
@@ -338,7 +340,6 @@ const PostDetailPage = () => {
         </div>
       </div>
       
-      <LoginDialog open={showLoginDialog} onOpenChange={setShowLoginDialog} />
       <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
       
       <BottomNavigation
