@@ -27,13 +27,20 @@ const ScannerCard: React.FC<ScannerCardProps> = ({
   };
 
   const handleClick = () => {
-    // Navigate to the scan page with the appropriate tab selected
-    let tabValue = "food";
+    // Map titles to tab values
+    let tabValue = "";
     if (title === "Food Scan") tabValue = "food";
     else if (title === "Plant Scan") tabValue = "plants";
     else if (title === "Animal Scan") tabValue = "animals";
+    else if (title === "Marketplace") {
+      // For now, don't navigate for Marketplace (as per requirement)
+      return;
+    }
     
-    navigate(`/scan?tab=${tabValue}`);
+    // Only navigate if we have a valid tab
+    if (tabValue) {
+      navigate(`/scan?tab=${tabValue}`);
+    }
     
     // Also call the original onClick if provided
     if (onClick) onClick();
@@ -41,11 +48,11 @@ const ScannerCard: React.FC<ScannerCardProps> = ({
 
   return (
     <div 
-      className="relative rounded-xl p-4 bg-gray-300 cursor-pointer shadow-md h-40"
+      className="relative rounded-xl p-4 bg-gray-300 cursor-pointer shadow-md h-36"
       onClick={handleClick}
     >
       {/* Icon container at top-left */}
-      <div className={cn("absolute top-4 left-4 rounded-2xl p-3 w-12 h-12 flex items-center justify-center", colorMap[color])}>
+      <div className={cn("absolute top-4 left-4 rounded-2xl p-3 w-10 h-10 flex items-center justify-center", colorMap[color])}>
         {icon}
       </div>
       
@@ -61,7 +68,7 @@ const ScannerCard: React.FC<ScannerCardProps> = ({
       
       {/* Text at the bottom */}
       <div className="absolute bottom-4 left-4 right-4 text-white">
-        <h3 className="text-lg font-semibold mb-0.5">{title}</h3>
+        <h3 className="text-base font-semibold mb-0.5">{title}</h3>
         <p className="text-xs">{description}</p>
       </div>
     </div>

@@ -1,6 +1,6 @@
 
 import React from "react";
-import { ChevronRight, AlertTriangle } from "lucide-react";
+import { ChevronRight, AlertTriangle, PawPrint, Bird, Fish } from "lucide-react";
 
 interface AnimalItem {
   id: string;
@@ -46,14 +46,14 @@ const AnimalScanTab = () => {
   };
 
   return (
-    <div className="space-y-4 mb-8">
+    <div className="space-y-3 mb-6">
       {animalItems.map((item) => (
         <div 
           key={item.id} 
-          className={`rounded-2xl overflow-hidden border ${item.borderColor} shadow-sm flex`}
+          className={`rounded-xl overflow-hidden border ${item.borderColor} shadow-sm flex`}
         >
-          <div className="flex items-center p-4 w-full">
-            <div className="w-24 h-24 rounded-lg overflow-hidden mr-4">
+          <div className="flex items-center p-3 w-full">
+            <div className="w-16 h-16 rounded-lg overflow-hidden mr-3">
               <img 
                 src={item.imageUrl} 
                 alt={item.name} 
@@ -61,14 +61,14 @@ const AnimalScanTab = () => {
               />
             </div>
             <div className="flex-1">
-              <h3 className="text-xl font-bold mb-1">{item.name}</h3>
-              <p className="text-blue-500 font-medium mb-2">{item.scientificName}</p>
-              <div className={`${getRiskColor(item.riskLevel)} text-white px-4 py-2 rounded-full inline-flex items-center`}>
-                <AlertTriangle className="mr-2" size={16} />
+              <h3 className="text-base font-bold mb-0.5">{item.name}</h3>
+              <p className="text-blue-500 text-xs font-medium mb-1">{item.scientificName}</p>
+              <div className={`${getRiskColor(item.riskLevel)} text-white px-3 py-1 rounded-full inline-flex items-center text-xs`}>
+                <AlertTriangle className="mr-1" size={12} />
                 <span>{item.riskLevel} Risk</span>
               </div>
             </div>
-            <ChevronRight className="text-gray-400 ml-2" size={24} />
+            <ChevronRight className="text-gray-400 ml-2" size={20} />
           </div>
         </div>
       ))}

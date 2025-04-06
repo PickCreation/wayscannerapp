@@ -1,6 +1,6 @@
 
 import React from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Utensils, Banana, Apple } from "lucide-react";
 
 interface FoodItem {
   id: string;
@@ -22,24 +22,24 @@ const foodItems: FoodItem[] = [
   },
   {
     id: "2",
-    name: "Doritos",
-    brand: "Doritos",
+    name: "Doritos Chips",
+    brand: "Frito-Lay",
     score: 74,
     imageUrl: "/lovable-uploads/dc7e6fce-2b21-472e-99f7-7f20be83b76f.png",
     borderColor: "border-purple-100",
   },
   {
     id: "3",
-    name: "Doritos",
-    brand: "Doritos",
+    name: "Greek Yogurt",
+    brand: "Chobani",
     score: 50,
     imageUrl: "/lovable-uploads/dc7e6fce-2b21-472e-99f7-7f20be83b76f.png",
     borderColor: "border-orange-100",
   },
   {
     id: "4",
-    name: "Doritos",
-    brand: "Doritos",
+    name: "Chocolate Bar",
+    brand: "Hershey's",
     score: 23,
     imageUrl: "/lovable-uploads/dc7e6fce-2b21-472e-99f7-7f20be83b76f.png",
     borderColor: "border-red-100",
@@ -62,14 +62,14 @@ const FoodScanTab = () => {
   };
 
   return (
-    <div className="space-y-4 mb-8">
+    <div className="space-y-3 mb-6">
       {foodItems.map((item) => (
         <div 
           key={item.id} 
-          className={`rounded-2xl overflow-hidden border ${item.borderColor} shadow-sm flex`}
+          className={`rounded-xl overflow-hidden border ${item.borderColor} shadow-sm flex`}
         >
-          <div className="flex items-center p-4 w-full">
-            <div className="w-24 h-24 rounded-lg overflow-hidden mr-4">
+          <div className="flex items-center p-3 w-full">
+            <div className="w-16 h-16 rounded-lg overflow-hidden mr-3">
               <img 
                 src={item.imageUrl} 
                 alt={item.name} 
@@ -77,14 +77,14 @@ const FoodScanTab = () => {
               />
             </div>
             <div className="flex-1">
-              <h3 className="text-xl font-bold mb-1">{item.name}</h3>
-              <p className="text-blue-500 font-medium mb-2">{item.brand}</p>
-              <div className={`${getScoreColor(item.score)} text-white px-4 py-2 rounded-full inline-flex items-center`}>
-                <span className="font-bold mr-2">{item.score}</span>
+              <h3 className="text-base font-bold mb-0.5">{item.name}</h3>
+              <p className="text-blue-500 text-xs font-medium mb-1">{item.brand}</p>
+              <div className={`${getScoreColor(item.score)} text-white px-3 py-1 rounded-full inline-flex items-center text-xs`}>
+                <span className="font-bold mr-1">{item.score}</span>
                 <span>{getScoreText(item.score)}</span>
               </div>
             </div>
-            <ChevronRight className="text-gray-400 ml-2" size={24} />
+            <ChevronRight className="text-gray-400 ml-2" size={20} />
           </div>
         </div>
       ))}
