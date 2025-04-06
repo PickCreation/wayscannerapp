@@ -4,7 +4,7 @@ import {
   ArrowLeft, Edit, Lock, Store, Bookmark, Heart, 
   ShoppingCart, Truck, Ticket, Globe, HelpCircle, Info, 
   Shield, LogOut, FileText, ChevronRight, User,
-  CreditCard, MapPin, Package, MessageSquare
+  CreditCard, MapPin, Package, MessageSquare, Crown
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
@@ -144,6 +144,10 @@ const ProfilePage = () => {
     setShowCameraSheet(true);
   };
 
+  const handleUpgradeClick = () => {
+    navigate("/subscription");
+  };
+
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <div className="bg-wayscanner-blue text-white p-4 relative">
@@ -184,6 +188,25 @@ const ProfilePage = () => {
           <p className="text-base font-bold text-wayscanner-blue">32</p>
           <p className="text-[13px] text-[#6E6E6E]">Reviews</p>
         </div>
+      </div>
+
+      {/* Upgrade Button */}
+      <div className="px-4 my-3">
+        <button 
+          onClick={handleUpgradeClick}
+          className="w-full bg-gradient-to-b from-blue-500 to-blue-900 text-white py-3 px-4 rounded-lg flex items-center justify-between"
+        >
+          <div className="flex items-center">
+            <div className="bg-white rounded-full p-2 mr-3">
+              <Crown className="h-5 w-5 text-red-500" />
+            </div>
+            <div className="text-left">
+              <h3 className="font-bold text-lg">Upgrade Now!</h3>
+              <p className="text-sm">Unlock full benefits with Pro!</p>
+            </div>
+          </div>
+          <ChevronRight className="h-5 w-5" />
+        </button>
       </div>
 
       <div className="px-4 pb-2">
