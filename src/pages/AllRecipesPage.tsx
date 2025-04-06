@@ -163,17 +163,8 @@ const AllRecipesPage = () => {
 
   return (
     <div className="pb-20 bg-white min-h-screen">
-      {/* Header */}
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center fixed top-0 left-0 right-0 z-10" style={{ backgroundColor: "#034AFF" }}>
-        <button 
-          onClick={handleBack}
-          className="p-2 text-white"
-        >
-          <ArrowLeft size={24} />
-        </button>
-        <div className="flex justify-center">
-          <h1 className="text-lg font-semibold text-white">All Recipes</h1>
-        </div>
+        <h1 className="text-lg font-semibold text-white">All Recipes</h1>
         <div className="flex items-center space-x-3">
           <button className="p-2">
             <Bell size={24} fill="white" strokeWidth={1.5} />

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { 
   Search, 
@@ -9,7 +8,6 @@ import {
   Cookie,
   Bell,
   User,
-  ArrowLeft,
   Grid
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -72,7 +70,7 @@ const allRecipes = [
     rating: 4.9,
     reviews: 178,
     category: "breakfast",
-    image: "https://images.unsplash.com/photo-1528207776546-365bb710ee93?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80"
+    image: "https://images.unsplash.com/photo-1528207776418-c8fd9a32b7a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80"
   },
   {
     id: "salmon",
@@ -115,10 +113,6 @@ const RecipesPage = () => {
     : allRecipes;
   
   const displayedRecipes = selectedCategory ? filteredRecipes : allRecipes.slice(0, 4);
-
-  const handleBack = () => {
-    navigate("/");
-  };
 
   const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop") => {
     setActiveNavItem(item);
@@ -175,15 +169,7 @@ const RecipesPage = () => {
   return (
     <div className="pb-20 bg-white min-h-screen">
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center fixed top-0 left-0 right-0 z-10" style={{ backgroundColor: "#034AFF" }}>
-        <button 
-          onClick={handleBack}
-          className="p-2 text-white"
-        >
-          <ArrowLeft size={24} />
-        </button>
-        <div className="flex justify-center">
-          <h1 className="text-lg font-semibold text-white">Recipes</h1>
-        </div>
+        <h1 className="text-lg font-semibold text-white">Recipes</h1>
         <div className="flex items-center space-x-3">
           <button className="p-2">
             <Bell size={24} fill="white" strokeWidth={1.5} />

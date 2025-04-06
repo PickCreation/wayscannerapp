@@ -1,6 +1,5 @@
-
 import React, { useState } from "react";
-import { ChevronLeft, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -107,21 +106,13 @@ const MarketplacePage = () => {
 
   return (
     <div className="pb-20 bg-white min-h-screen">
-      {/* Header */}
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
-        <button 
-          className="p-2" 
-          onClick={() => navigate(-1)}
-        >
-          <ChevronLeft size={24} color="white" />
-        </button>
         <h1 className="text-xl font-bold">Marketplace</h1>
         <button className="p-2" onClick={() => navigate('/cart')}>
           <ShoppingCart size={24} color="white" fill="white" />
         </button>
       </header>
 
-      {/* Search and Categories */}
       <div className="px-4 py-4 bg-wayscanner-blue bg-opacity-10">
         <div className="relative">
           <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
@@ -155,7 +146,6 @@ const MarketplacePage = () => {
         </div>
       </div>
 
-      {/* Products Grid */}
       <div className="p-4">
         <h2 className="text-xl font-semibold mb-4">
           {activeCategory === "All" ? "All Products" : activeCategory}
@@ -181,14 +171,12 @@ const MarketplacePage = () => {
         )}
       </div>
 
-      {/* Bottom Navigation */}
       <BottomNavigation
         activeItem={activeNavItem}
         onItemClick={handleNavItemClick}
         onCameraClick={handleCameraClick}
       />
       
-      {/* Camera Options Sheet */}
       <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
     </div>
   );

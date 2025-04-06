@@ -192,12 +192,9 @@ export const ForumPage = () => {
   
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 pb-20">
-      {/* Header - Updated to show "Forum" text instead of logo */}
+      {/* Header - Updated with Forum text on the left */}
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
-        <div className="w-6"></div> {/* Empty div for spacing */}
-        <div className="flex justify-center">
-          <h1 className="text-xl font-bold">Forum</h1>
-        </div>
+        <h1 className="text-xl font-bold">Forum</h1>
         <div className="flex items-center space-x-3">
           <button className="p-2" type="button">
             <Bell size={24} fill="white" strokeWidth={1.5} />
@@ -351,11 +348,14 @@ export const ForumPage = () => {
             navigate("/");
             return;
           }
-          
-          toast({
-            title: "Coming Soon",
-            description: `The ${item} feature is under development.`,
-          });
+          if (item === "recipes") {
+            navigate("/recipes");
+            return;
+          }
+          if (item === "shop") {
+            navigate("/marketplace");
+            return;
+          }
         }}
         onCameraClick={handleCameraClick}
       />

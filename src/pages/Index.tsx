@@ -13,7 +13,6 @@ const Index = () => {
   const location = useLocation();
   const { toast } = useToast();
 
-  // Check if redirected from a scanner card click
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const tab = searchParams.get("tab");
@@ -26,12 +25,10 @@ const Index = () => {
   const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop") => {
     setActiveNavItem(item);
     
-    // Don't show toast for home when already on home page
     if (item === "home") {
       return;
     }
     
-    // Redirect to appropriate page
     if (item === "forum") {
       navigate("/forum");
       return;
@@ -73,16 +70,12 @@ const Index = () => {
 
   return (
     <div className="pb-20 bg-white min-h-screen">
-      {/* Header */}
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
-        <div className="w-6"></div> {/* Empty div for spacing */}
-        <div className="flex justify-center">
-          <img 
-            src="/lovable-uploads/8fdd5ac8-39b5-43e6-86de-c8b27715d7c8.png" 
-            alt="WayScanner Logo" 
-            className="h-10" 
-          />
-        </div>
+        <img 
+          src="/lovable-uploads/8fdd5ac8-39b5-43e6-86de-c8b27715d7c8.png" 
+          alt="WayScanner Logo" 
+          className="h-10" 
+        />
         <div className="flex items-center space-x-3">
           <button className="p-2">
             <Bell size={24} fill="white" strokeWidth={1.5} />
@@ -93,7 +86,6 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Greeting */}
       <div className="px-4 py-5 flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold">Hello Explorer! 👋</h2>
@@ -101,7 +93,6 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Scanner Options */}
       <div className="px-4 mb-8 flex flex-col justify-center mt-4">
         <h3 className="text-lg font-medium mb-4">Start Exploring</h3>
         <div className="grid grid-cols-2 gap-4">
@@ -136,10 +127,8 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Camera Sheet */}
       <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
 
-      {/* Bottom Navigation */}
       <BottomNavigation
         activeItem={activeNavItem}
         onItemClick={handleNavItemClick}
