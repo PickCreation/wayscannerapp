@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ChevronLeft, Bookmark, CircleCheck, Vegan, Fish, Edit, Info, ChevronRight } from "lucide-react";
@@ -47,7 +48,7 @@ const foodItems = [
     id: "2",
     name: "Doritos Chips",
     brand: "Frito-Lay",
-    score: 50,
+    score: 74,
     imageUrl: "/lovable-uploads/f2fb63ae-cc4d-4d46-ba4f-c70225d6d564.png",
     serving: "30g",
     nutrients: {
@@ -74,6 +75,72 @@ const foodItems = [
       "Contains artificial flavors, colors and preservatives"
     ],
     dietInfo: ["Contains Milk"]
+  },
+  {
+    id: "3",
+    name: "Greek Yogurt",
+    brand: "Chobani",
+    score: 50,
+    imageUrl: "/lovable-uploads/dc7e6fce-2b21-472e-99f7-7f20be83b76f.png",
+    serving: "150g",
+    nutrients: {
+      negatives: [
+        { name: "Sodium", value: "65mg", progress: 25, color: "bg-red-500" },
+        { name: "Sugar", value: "7g", progress: 32, color: "bg-purple-500" },
+      ],
+      positives: [
+        { name: "Fiber", value: "0g", progress: 0, color: "bg-teal-500" },
+        { name: "Protein", value: "15g", progress: 60, color: "bg-green-500" },
+        { name: "Saturated Fat", value: "3g", progress: 40, color: "bg-blue-500" },
+        { name: "Calcium", value: "15%", progress: 35, color: "bg-teal-500" },
+        { name: "Vitamin D", value: "10%", progress: 25, color: "bg-yellow-500" },
+        { name: "Potassium", value: "8%", progress: 20, color: "bg-red-700" },
+      ],
+      highlights: [
+        { name: "Calories", value: "130", icon: "🔥", color: "bg-blue-50", textColor: "text-blue-800" },
+        { name: "Protein", value: "15g", icon: "⚡", color: "bg-green-50", textColor: "text-green-800" },
+        { name: "Water", value: "0.12L", icon: "💧", color: "bg-orange-50", textColor: "text-orange-600" },
+      ]
+    },
+    ingredients: "Cultured Grade A Non-Fat Milk, Cream, Live and Active Cultures: S. Thermophilus, L. Bulgaricus, L. Acidophilus, Bifidus, and L. Casei.",
+    certifications: [
+      "No artificial flavors",
+      "No artificial preservatives",
+      "Grade A"
+    ],
+    dietInfo: ["Contains Milk"]
+  },
+  {
+    id: "4",
+    name: "Chocolate Bar",
+    brand: "Hershey's",
+    score: 23,
+    imageUrl: "/lovable-uploads/dc7e6fce-2b21-472e-99f7-7f20be83b76f.png",
+    serving: "43g",
+    nutrients: {
+      negatives: [
+        { name: "Sodium", value: "35mg", progress: 15, color: "bg-red-500" },
+        { name: "Sugar", value: "24g", progress: 85, color: "bg-purple-500" },
+      ],
+      positives: [
+        { name: "Fiber", value: "2g", progress: 20, color: "bg-teal-500" },
+        { name: "Protein", value: "3g", progress: 15, color: "bg-green-500" },
+        { name: "Saturated Fat", value: "8g", progress: 75, color: "bg-blue-500" },
+        { name: "Calcium", value: "8%", progress: 20, color: "bg-teal-500" },
+        { name: "Vitamin D", value: "0%", progress: 0, color: "bg-yellow-500" },
+        { name: "Potassium", value: "4%", progress: 10, color: "bg-red-700" },
+      ],
+      highlights: [
+        { name: "Calories", value: "210", icon: "🔥", color: "bg-blue-50", textColor: "text-blue-800" },
+        { name: "Protein", value: "3g", icon: "⚡", color: "bg-green-50", textColor: "text-green-800" },
+        { name: "Water", value: "0L", icon: "💧", color: "bg-orange-50", textColor: "text-orange-600" },
+      ]
+    },
+    ingredients: "Sugar, Milk, Chocolate, Cocoa Butter, Lactose, Milk Fat, Soy Lecithin, PGPR, Emulsifier, Vanillin, Artificial Flavor.",
+    certifications: [
+      "Contains artificial flavors"
+    ],
+    dietInfo: ["Contains Milk", "Contains Soy"]
   }
 ];
 
@@ -278,6 +345,12 @@ const FoodDetailPage = () => {
             <Badge variant="outline" className="py-1 px-3 flex items-center gap-1.5 rounded-full border-2">
               <span>🥛</span>
               <span className="text-[14px]">Contains Milk</span>
+            </Badge>
+          )}
+          {food.dietInfo.includes("Contains Soy") && (
+            <Badge variant="outline" className="py-1 px-3 flex items-center gap-1.5 rounded-full border-2">
+              <span>🌱</span>
+              <span className="text-[14px]">Contains Soy</span>
             </Badge>
           )}
         </div>
