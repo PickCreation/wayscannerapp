@@ -6,6 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { 
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const products = [
   {
@@ -42,6 +49,7 @@ const products = [
       "https://images.unsplash.com/photo-1601758174499-203dda8ffc92?auto=format&fit=crop&q=80&w=600",
       "https://images.unsplash.com/photo-1581456569631-873d308ba72c?auto=format&fit=crop&q=80&w=600",
       "https://images.unsplash.com/photo-1546421845-6471bdcf3edf?auto=format&fit=crop&q=80&w=600",
+      "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=600",
     ],
     rating: 4.2,
     reviews: 89,
@@ -90,6 +98,8 @@ const products = [
       "https://images.unsplash.com/photo-1594662322686-8db3bad1d279?auto=format&fit=crop&q=80&w=600",
       "https://images.unsplash.com/photo-1619108915702-31ee00a0a6bd?auto=format&fit=crop&q=80&w=600",
       "https://images.unsplash.com/photo-1668456186589-8c6af46226e0?auto=format&fit=crop&q=80&w=600",
+      "https://images.unsplash.com/photo-1623632897768-7ff5604765ec?auto=format&fit=crop&q=80&w=600",
+      "https://images.unsplash.com/photo-1625944526866-84b8898d1669?auto=format&fit=crop&q=80&w=600",
     ],
     rating: 4.6,
     reviews: 178,
@@ -159,7 +169,6 @@ const ProductDetailPage = () => {
   const { productId } = useParams();
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
-  const [selectedImage, setSelectedImage] = useState(0);
   const [cartCount, setCartCount] = useState(0);
   
   const product = products.find(p => p.id === Number(productId));
@@ -268,12 +277,34 @@ const ProductDetailPage = () => {
         </button>
       </header>
 
-      <div className="w-full h-64 bg-gray-100">
-        <img 
-          src={product.images ? product.images[selectedImage] : product.image} 
-          alt={product.title} 
-          className="w-full h-full object-contain"
-        />
+      <div className="w-full bg-gray-100 px-4 py-6">
+        {product.images && product.images.length > 0 ? (
+          <Carousel className="w-full">
+            <CarouselContent>
+              {product.images.map((image, index) => (
+                <CarouselItem key={index}>
+                  <div className="h-64 flex items-center justify-center">
+                    <img 
+                      src={image} 
+                      alt={`${product.title} - view ${index + 1}`} 
+                      className="h-full object-contain"
+                    />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="left-2" />
+            <CarouselNext className="right-2" />
+          </Carousel>
+        ) : (
+          <div className="w-full h-64">
+            <img 
+              src={product.image} 
+              alt={product.title} 
+              className="w-full h-full object-contain"
+            />
+          </div>
+        )}
       </div>
 
       {product.images && product.images.length > 1 && (
@@ -281,12 +312,12 @@ const ProductDetailPage = () => {
           {product.images.map((img, index) => (
             <button 
               key={index} 
-              className={`w-14 h-14 border ${selectedImage === index ? 'border-wayscanner-blue' : 'border-gray-300'}`}
-              onClick={() => setSelectedImage(index)}
+              className="w-14 h-14 border border-gray-300 rounded-md overflow-hidden flex-shrink-0"
+              aria-label={`View image ${index + 1}`}
             >
               <img 
                 src={img} 
-                alt={`${product.title} - view ${index + 1}`} 
+                alt={`${product.title} - thumbnail ${index + 1}`} 
                 className="w-full h-full object-cover"
               />
             </button>
