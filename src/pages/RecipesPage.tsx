@@ -67,7 +67,7 @@ const RecipesPage = () => {
   const { toast } = useToast();
 
   const handleBack = () => {
-    navigate(-1);
+    navigate("/"); // Navigate to home page
   };
 
   const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop") => {
@@ -143,7 +143,7 @@ const RecipesPage = () => {
               <Input
                 type="text"
                 placeholder="Search for recipes..."
-                className="pl-10 pr-10 py-2 bg-gray-100 border-0 rounded-full"
+                className="pl-10 pr-10 py-2 bg-gray-100 border border-gray-200 rounded-full focus:border-wayscanner-blue focus:border-[1px]"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />

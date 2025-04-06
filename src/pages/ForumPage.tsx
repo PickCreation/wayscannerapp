@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Heart, MessageSquare, Bookmark, Bell, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -165,6 +164,27 @@ export const ForumPage = () => {
       return;
     }
     setActiveTab(tab);
+  };
+  
+  const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop") => {
+    setActiveNavItem(item);
+    
+    if (item === "home") {
+      navigate("/");
+      return;
+    }
+    
+    if (item === "recipes") {
+      navigate("/recipes");
+      return;
+    }
+    
+    if (item === "shop") {
+      toast({
+        title: "Coming Soon",
+        description: `The ${item} feature is under development.`,
+      });
+    }
   };
   
   return (
