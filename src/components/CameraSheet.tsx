@@ -27,17 +27,14 @@ const CameraSheet = ({ open, onOpenChange }: CameraSheetProps) => {
   useEffect(() => {
     if (open) {
       if (isProfilePage()) {
-        // For profile pages, immediately trigger file selection when sheet opens
-        // We directly click the file input to use the native file picker without extra permissions
-        if (fileInputRef.current) {
-          // Immediately trigger file input click to avoid any visual sheet appearance
-          fileInputRef.current.click();
-          
-          // Close the sheet if we're on profile to avoid showing it at all
-          if (!capturedImage) {
-            onOpenChange(false);
+        // For profile pages, immediately trigger file selection without showing sheet
+        setTimeout(() => {
+          if (fileInputRef.current) {
+            fileInputRef.current.click();
           }
-        }
+          // Immediately close the sheet to prevent it from showing at all
+          onOpenChange(false);
+        }, 0);
       } else if (!isCameraActive) {
         // Only start camera for non-profile pages
         startCamera();
@@ -110,6 +107,7 @@ const CameraSheet = ({ open, onOpenChange }: CameraSheetProps) => {
       if (fileInputRef.current) {
         fileInputRef.current.click();
       }
+      onOpenChange(false);
     } else {
       startCamera();
     }
@@ -125,8 +123,26 @@ const CameraSheet = ({ open, onOpenChange }: CameraSheetProps) => {
       reader.onloadend = () => {
         setCapturedImage(reader.result as string);
         
-        // For profile page, now show the sheet with the image preview
+        // If on profile page and we have an image, dispatch the event directly
         if (isProfilePage()) {
+          // Dispatch event with image
+          const event = new CustomEvent('imageCaptured', {
+            detail: { imageUrl: reader.result }
+          });
+          window.dispatchEvent(event);
+          
+          // Show success toast
+          toast({
+            title: "Image Added",
+            description: "Profile image has been successfully updated.",
+          });
+          
+          // Reset for next use
+          setTimeout(() => {
+            setCapturedImage(null);
+          }, 100);
+        } else {
+          // For non-profile pages, show the sheet with the image
           onOpenChange(true);
         }
       };
@@ -167,123 +183,138 @@ const CameraSheet = ({ open, onOpenChange }: CameraSheetProps) => {
     }
   };
 
+  // Only render the sheet if we're not on a profile page or if we have a captured image
+  if (isProfilePage() && !capturedImage) {
+    return (
+      <input 
+        type="file" 
+        ref={fileInputRef} 
+        onChange={handleFileChange} 
+        accept="image/*" 
+        className="hidden"
+      />
+    );
+  }
+
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="h-[90%] p-0 overflow-hidden rounded-t-xl" hideCloseButton={isProfilePage()}>
-        <SheetHeader className="px-4 pt-4">
-          <div className="flex justify-between items-center">
-            <SheetTitle>
-              {isProfilePage() ? "Choose Profile Photo" : "Take a Photo"}
-            </SheetTitle>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => onOpenChange(false)}
-              className="rounded-full h-8 w-8"
-            >
-              <X size={18} />
-            </Button>
-          </div>
-        </SheetHeader>
-        
-        <div className="flex flex-col h-full">
-          {!capturedImage ? (
-            <>
-              <div className="relative flex-1 bg-black flex items-center justify-center">
-                {isCameraActive ? (
-                  <video 
-                    ref={videoRef} 
-                    autoPlay 
-                    playsInline 
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="text-white text-center p-8">
-                    <Image size={48} className="mx-auto mb-4" />
-                    <p>{isProfilePage() 
-                      ? "Select an image from your device" 
-                      : "Camera inactive. Please allow camera access or upload a photo."}
-                    </p>
-                  </div>
-                )}
-              </div>
-              
-              <div className="p-4 bg-white">
-                <div className="flex justify-center space-x-4">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => fileInputRef.current?.click()}
-                    className="flex-1"
-                  >
-                    <Image size={18} className="mr-2" />
-                    Gallery
-                  </Button>
-                  
-                  {!isProfilePage() && (
-                    <Button 
-                      className="flex-1 bg-wayscanner-blue"
-                      onClick={handleCapture}
-                      disabled={!isCameraActive}
-                    >
-                      <Camera size={18} className="mr-2" />
-                      Capture
-                    </Button>
+    <>
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent side="bottom" className="h-[90%] p-0 overflow-hidden rounded-t-xl">
+          <SheetHeader className="px-4 pt-4">
+            <div className="flex justify-between items-center">
+              <SheetTitle>
+                {isProfilePage() ? "Choose Profile Photo" : "Take a Photo"}
+              </SheetTitle>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => onOpenChange(false)}
+                className="rounded-full h-8 w-8"
+              >
+                <X size={18} />
+              </Button>
+            </div>
+          </SheetHeader>
+          
+          <div className="flex flex-col h-full">
+            {!capturedImage ? (
+              <>
+                <div className="relative flex-1 bg-black flex items-center justify-center">
+                  {isCameraActive ? (
+                    <video 
+                      ref={videoRef} 
+                      autoPlay 
+                      playsInline 
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="text-white text-center p-8">
+                      <Image size={48} className="mx-auto mb-4" />
+                      <p>{isProfilePage() 
+                        ? "Select an image from your device" 
+                        : "Camera inactive. Please allow camera access or upload a photo."}
+                      </p>
+                    </div>
                   )}
                 </div>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="flex-1 bg-black flex items-center justify-center">
-                <img 
-                  src={capturedImage} 
-                  alt="Captured" 
-                  className="max-h-full max-w-full object-contain"
-                />
-              </div>
-              
-              <div className="p-4 bg-white">
-                <div className="flex justify-center space-x-4">
-                  <Button 
-                    variant="outline" 
-                    onClick={handleRetake}
-                    className="flex-1"
-                  >
-                    {isProfilePage() ? (
-                      <>
-                        <Image size={18} className="mr-2" />
-                        Choose Another
-                      </>
-                    ) : (
-                      <>
+                
+                <div className="p-4 bg-white">
+                  <div className="flex justify-center space-x-4">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => fileInputRef.current?.click()}
+                      className="flex-1"
+                    >
+                      <Image size={18} className="mr-2" />
+                      Gallery
+                    </Button>
+                    
+                    {!isProfilePage() && (
+                      <Button 
+                        className="flex-1 bg-wayscanner-blue"
+                        onClick={handleCapture}
+                        disabled={!isCameraActive}
+                      >
                         <Camera size={18} className="mr-2" />
-                        Retake
-                      </>
+                        Capture
+                      </Button>
                     )}
-                  </Button>
-                  
-                  <Button 
-                    className="flex-1 bg-wayscanner-blue"
-                    onClick={handleUseImage}
-                  >
-                    Use Photo
-                  </Button>
+                  </div>
                 </div>
-              </div>
-            </>
-          )}
-        </div>
-        
-        <canvas ref={canvasRef} className="hidden" />
-        <input 
-          type="file" 
-          ref={fileInputRef} 
-          onChange={handleFileChange} 
-          accept="image/*" 
-          className="hidden"
-        />
-      </SheetContent>
-    </Sheet>
+              </>
+            ) : (
+              <>
+                <div className="flex-1 bg-black flex items-center justify-center">
+                  <img 
+                    src={capturedImage} 
+                    alt="Captured" 
+                    className="max-h-full max-w-full object-contain"
+                  />
+                </div>
+                
+                <div className="p-4 bg-white">
+                  <div className="flex justify-center space-x-4">
+                    <Button 
+                      variant="outline" 
+                      onClick={handleRetake}
+                      className="flex-1"
+                    >
+                      {isProfilePage() ? (
+                        <>
+                          <Image size={18} className="mr-2" />
+                          Choose Another
+                        </>
+                      ) : (
+                        <>
+                          <Camera size={18} className="mr-2" />
+                          Retake
+                        </>
+                      )}
+                    </Button>
+                    
+                    <Button 
+                      className="flex-1 bg-wayscanner-blue"
+                      onClick={handleUseImage}
+                    >
+                      Use Photo
+                    </Button>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+          
+          <canvas ref={canvasRef} className="hidden" />
+          <input 
+            type="file" 
+            ref={fileInputRef} 
+            onChange={handleFileChange} 
+            accept="image/*" 
+            className="hidden"
+          />
+        </SheetContent>
+      </Sheet>
+    </>
   );
 };
 

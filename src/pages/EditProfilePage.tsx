@@ -55,7 +55,7 @@ const EditProfilePage = () => {
   };
 
   const handleProfilePhotoChange = () => {
-    // Directly open the camera sheet which will immediately trigger the file picker
+    // Open camera sheet which will directly trigger the file picker without showing UI
     setShowCameraSheet(true);
   };
 
