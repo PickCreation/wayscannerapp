@@ -1,16 +1,16 @@
 
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription } from "@/components/ui/drawer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
 import { LogIn, User, Lock, Mail } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 interface LoginDialogProps {
   open: boolean;
@@ -31,6 +31,7 @@ const signupSchema = z.object({
 const LoginDialog: React.FC<LoginDialogProps> = ({ open, onOpenChange }) => {
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
   const { toast } = useToast();
+  const { login, signup } = useAuth();
   
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -49,65 +50,39 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, onOpenChange }) => {
     },
   });
 
-  const onLoginSubmit = (values: z.infer<typeof loginSchema>) => {
-    // Here you would typically call your auth service
-    console.log("Login values:", values);
-    
-    // Simulate login success
-    setTimeout(() => {
-      localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("user", JSON.stringify({
-        name: "John Doe",
-        email: values.email,
-      }));
-      
-      toast({
-        title: "Login Successful",
-        description: "Welcome back!",
-      });
-      
+  const onLoginSubmit = async (values: z.infer<typeof loginSchema>) => {
+    try {
+      await login(values.email, values.password);
       onOpenChange(false);
-      window.location.reload(); // Reload to update auth state
-    }, 1000);
+    } catch (error) {
+      console.error("Login error:", error);
+    }
   };
 
-  const onSignupSubmit = (values: z.infer<typeof signupSchema>) => {
-    // Here you would typically call your auth service
-    console.log("Signup values:", values);
-    
-    // Simulate signup success
-    setTimeout(() => {
-      localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("user", JSON.stringify({
-        name: values.name,
-        email: values.email,
-      }));
-      
-      toast({
-        title: "Account Created",
-        description: "Your account has been created successfully!",
-      });
-      
+  const onSignupSubmit = async (values: z.infer<typeof signupSchema>) => {
+    try {
+      await signup(values.name, values.email, values.password);
       onOpenChange(false);
-      window.location.reload(); // Reload to update auth state
-    }, 1000);
+    } catch (error) {
+      console.error("Signup error:", error);
+    }
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="text-center text-xl">Welcome to WayScanner</DialogTitle>
-          <DialogDescription className="text-center">
+    <Drawer open={open} onOpenChange={onOpenChange}>
+      <DrawerContent className="px-4 pb-8">
+        <DrawerHeader className="px-0 pb-0">
+          <DrawerTitle className="text-center text-xl">Welcome to WayScanner</DrawerTitle>
+          <DrawerDescription className="text-center">
             Login or create an account to access all features
-          </DialogDescription>
-        </DialogHeader>
+          </DrawerDescription>
+        </DrawerHeader>
         
         <Tabs 
           defaultValue="login" 
           value={activeTab} 
           onValueChange={(value) => setActiveTab(value as "login" | "signup")}
-          className="w-full"
+          className="w-full mt-2"
         >
           <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger value="login">Login</TabsTrigger>
@@ -255,8 +230,8 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, onOpenChange }) => {
             </div>
           </TabsContent>
         </Tabs>
-      </DialogContent>
-    </Dialog>
+      </DrawerContent>
+    </Drawer>
   );
 };
 
