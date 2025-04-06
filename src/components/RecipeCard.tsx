@@ -19,7 +19,7 @@ interface RecipeCardProps {
 
 export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onClick }) => {
   return (
-    <Card className="overflow-hidden" onClick={onClick}>
+    <Card className="overflow-hidden cursor-pointer" onClick={onClick}>
       <div className="flex h-24">
         <div className="w-1/3">
           <img 
@@ -29,8 +29,8 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onClick }) => {
           />
         </div>
         <CardContent className="w-2/3 p-3">
-          <h3 className="font-semibold text-base mb-1 line-clamp-1">{recipe.title}</h3>
-          <div className="flex items-center text-sm text-gray-600">
+          <h3 className="font-semibold text-sm mb-1 line-clamp-1">{recipe.title}</h3>
+          <div className="flex items-center text-xs text-gray-600">
             <Clock size={14} className="mr-1" />
             <span className="mr-3">{recipe.time}</span>
             <Star size={14} className="mr-1 text-yellow-400 fill-yellow-400" />

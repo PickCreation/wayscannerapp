@@ -7,7 +7,8 @@ import {
   ChevronRight, 
   Coffee, 
   Utensils, 
-  Soup
+  Soup,
+  Cookie
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
@@ -69,7 +70,7 @@ const categories = [
   { id: "breakfast", name: "Breakfast", icon: <Coffee size={24} color="#FF9800" /> },
   { id: "lunch", name: "Lunch", icon: <Utensils size={24} color="#4CAF50" /> },
   { id: "dinner", name: "Dinner", icon: <Soup size={24} color="#9C27B0" /> },
-  { id: "dessert", name: "Dessert", icon: <Coffee size={24} color="#E91E63" /> }
+  { id: "dessert", name: "Dessert", icon: <Cookie size={24} color="#E91E63" /> }
 ];
 
 const RecipesPage = () => {
@@ -132,105 +133,108 @@ const RecipesPage = () => {
 
   return (
     <div className="pb-20 bg-white min-h-screen">
-      {/* Featured Recipe */}
-      <div 
-        className="relative h-60 bg-gray-200 cursor-pointer" 
-        onClick={() => handleRecipeClick(featuredRecipe.id)}
-      >
-        {featuredRecipe.image ? (
+      {/* Header */}
+      <div className="fixed top-0 left-0 right-0 bg-white border-b z-10">
+        <div className="flex items-center justify-center h-14 px-4 relative">
+          <h1 className="text-lg font-semibold">Recipes</h1>
+        </div>
+      </div>
+      
+      <div className="pt-14">
+        {/* Featured Recipe */}
+        <div 
+          className="relative h-60 bg-gray-200 cursor-pointer" 
+          onClick={() => handleRecipeClick(featuredRecipe.id)}
+        >
           <img 
             src={featuredRecipe.image}
             alt={featuredRecipe.title}
             className="w-full h-full object-cover"
           />
-        ) : (
-          <div className="flex items-center justify-center h-full">
-            <span className="text-gray-400">Image unavailable</span>
-          </div>
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-        <div className="absolute top-6 left-6">
-          <div className="bg-yellow-400 text-white font-semibold px-4 py-1 rounded-full text-sm">
-            Featured
-          </div>
-        </div>
-        <div className="absolute bottom-6 left-6 right-6 text-white">
-          <h2 className="text-2xl font-bold mb-2">{featuredRecipe.title}</h2>
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center">
-              <Clock size={16} className="mr-1" />
-              <span>{featuredRecipe.time}</span>
-            </div>
-            <div className="flex items-center">
-              <Star size={16} className="mr-1 text-yellow-400 fill-yellow-400" />
-              <span>{featuredRecipe.rating} ({featuredRecipe.reviews})</span>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+          <div className="absolute top-6 left-6">
+            <div className="bg-yellow-400 text-white font-semibold px-4 py-1 rounded-full text-sm">
+              Featured
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Search Bar */}
-      <div className="px-4 my-4">
-        <form onSubmit={handleSearch}>
-          <div className="relative">
-            <Input
-              type="text"
-              placeholder="Search for recipes..."
-              className="pl-10 pr-10 py-2 bg-gray-100 border-0 rounded-full"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400" />
-            </div>
-            <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-              <ChevronRight className="h-5 w-5 text-gray-400" />
-            </div>
-          </div>
-        </form>
-      </div>
-
-      {/* Categories */}
-      <div className="px-4 mt-6 mb-8">
-        <h2 className="text-2xl font-bold mb-4">Categories</h2>
-        <div className="flex space-x-4 overflow-x-auto pb-2 no-scrollbar">
-          {categories.map((category) => (
-            <div
-              key={category.id}
-              className="flex flex-col items-center"
-              onClick={() => handleCategoryClick(category.id)}
-            >
-              <div className="w-16 h-16 rounded-full flex items-center justify-center mb-2" 
-                style={{ backgroundColor: category.id === "breakfast" ? "#FFF3E0" : 
-                                         category.id === "lunch" ? "#E8F5E9" :
-                                         category.id === "dinner" ? "#F3E5F5" : "#FCE4EC" }}>
-                {category.icon}
+          <div className="absolute bottom-6 left-6 right-6 text-white">
+            <h2 className="text-xl font-bold mb-2">{featuredRecipe.title}</h2>
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center">
+                <Clock size={14} className="mr-1" />
+                <span className="text-sm">{featuredRecipe.time}</span>
               </div>
-              <span className="text-sm text-gray-700">{category.name}</span>
+              <div className="flex items-center">
+                <Star size={14} className="mr-1 text-yellow-400 fill-yellow-400" />
+                <span className="text-sm">{featuredRecipe.rating} ({featuredRecipe.reviews})</span>
+              </div>
             </div>
-          ))}
+          </div>
         </div>
-      </div>
 
-      {/* Trending Recipes */}
-      <div className="px-4 mb-8">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">Trending Recipes</h2>
-          <button 
-            className="text-blue-600 font-medium"
-            onClick={handleViewAll}
-          >
-            View All
-          </button>
+        {/* Search Bar */}
+        <div className="px-4 my-4">
+          <form onSubmit={handleSearch}>
+            <div className="relative">
+              <Input
+                type="text"
+                placeholder="Search for recipes..."
+                className="pl-10 pr-10 py-2 bg-gray-100 border-0 rounded-full"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <Search className="h-5 w-5 text-gray-400" />
+              </div>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                <ChevronRight className="h-5 w-5 text-gray-400" />
+              </div>
+            </div>
+          </form>
         </div>
-        <div className="grid grid-cols-1 gap-4">
-          {trendingRecipes.map((recipe) => (
-            <RecipeCard 
-              key={recipe.id}
-              recipe={recipe}
-              onClick={() => handleRecipeClick(recipe.id)}
-            />
-          ))}
+
+        {/* Categories */}
+        <div className="px-4 mt-6 mb-8">
+          <h2 className="text-base font-bold mb-4">Categories</h2>
+          <div className="flex space-x-4 overflow-x-auto pb-2 no-scrollbar">
+            {categories.map((category) => (
+              <div
+                key={category.id}
+                className="flex flex-col items-center cursor-pointer"
+                onClick={() => handleCategoryClick(category.id)}
+              >
+                <div className="w-16 h-16 rounded-full flex items-center justify-center mb-2" 
+                  style={{ backgroundColor: category.id === "breakfast" ? "#FFF3E0" : 
+                                          category.id === "lunch" ? "#E8F5E9" :
+                                          category.id === "dinner" ? "#F3E5F5" : "#FCE4EC" }}>
+                  {category.icon}
+                </div>
+                <span className="text-sm text-gray-700">{category.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Trending Recipes */}
+        <div className="px-4 mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-base font-bold">Trending Recipes</h2>
+            <button 
+              className="text-blue-600 text-sm font-medium"
+              onClick={handleViewAll}
+            >
+              View All
+            </button>
+          </div>
+          <div className="grid grid-cols-1 gap-4">
+            {trendingRecipes.map((recipe) => (
+              <RecipeCard 
+                key={recipe.id}
+                recipe={recipe}
+                onClick={() => handleRecipeClick(recipe.id)}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
