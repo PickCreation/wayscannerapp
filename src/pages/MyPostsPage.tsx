@@ -67,6 +67,20 @@ const MyPostsPage = () => {
   const [showCameraSheet, setShowCameraSheet] = useState(false);
   const { toast } = useToast();
   
+  // Listen for new posts from CreatePostSheet
+  useEffect(() => {
+    const handleAddNewPost = (event: CustomEvent) => {
+      const newPost = event.detail;
+      setPosts(prevPosts => [newPost, ...prevPosts]);
+    };
+
+    window.addEventListener('addNewPost', handleAddNewPost as EventListener);
+    
+    return () => {
+      window.removeEventListener('addNewPost', handleAddNewPost as EventListener);
+    };
+  }, []);
+  
   // Listen for openCreatePost event from CameraSheet
   useEffect(() => {
     const handleOpenCreatePost = () => {
@@ -79,6 +93,11 @@ const MyPostsPage = () => {
       window.removeEventListener('openCreatePost', handleOpenCreatePost);
     };
   }, []);
+  
+  // Filter posts by category
+  const filteredPosts = activeCategory === "All" 
+    ? posts 
+    : posts.filter(post => post.category === activeCategory);
   
   // Handle post interactions
   const handleLikePost = (postId: string) => {
@@ -144,7 +163,7 @@ const MyPostsPage = () => {
     <div className="flex flex-col min-h-screen bg-gray-100 pb-20">
       {/* Header - Using the same header as home page */}
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
-        <button onClick={() => navigate('/forum')} className="p-2 -ml-2">
+        <button onClick={() => navigate('/forum')} className="p-2 -ml-2" type="button">
           <ChevronLeft size={24} color="white" />
         </button>
         <div className="flex justify-center">
@@ -155,10 +174,10 @@ const MyPostsPage = () => {
           />
         </div>
         <div className="flex items-center space-x-3">
-          <button className="p-2">
+          <button className="p-2" type="button">
             <Bell size={24} fill="white" strokeWidth={1.5} />
           </button>
-          <button className="p-2" onClick={handleProfileClick}>
+          <button className="p-2" onClick={handleProfileClick} type="button">
             <User size={24} fill="white" strokeWidth={1.5} />
           </button>
         </div>
@@ -169,12 +188,14 @@ const MyPostsPage = () => {
         <button
           className={`flex-1 py-3 font-medium ${activeTab === "all" ? "text-wayscanner-blue border-b-2 border-wayscanner-blue" : "text-gray-500"}`}
           onClick={() => handleTabChange("all")}
+          type="button"
         >
           <span className="text-[18px]">All Posts</span>
         </button>
         <button
           className={`flex-1 py-3 font-medium ${activeTab === "my" ? "text-wayscanner-blue border-b-2 border-wayscanner-blue" : "text-gray-500"}`}
           onClick={() => handleTabChange("my")}
+          type="button"
         >
           <span className="text-[18px]">My Posts</span>
         </button>
@@ -191,6 +212,7 @@ const MyPostsPage = () => {
                 ? "bg-blue-100 text-blue-600 border border-blue-300"
                 : "bg-white border border-gray-300"
             }`}
+            type="button"
           >
             {activeCategory === category && category === "All" && (
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="mr-1">
@@ -204,8 +226,8 @@ const MyPostsPage = () => {
       
       {/* Posts List */}
       <div className="flex-1 p-3 space-y-4">
-        {posts.length > 0 ? (
-          posts.map(post => (
+        {filteredPosts.length > 0 ? (
+          filteredPosts.map(post => (
             <div key={post.id} className="bg-white rounded-lg shadow p-4 border border-gray-200">
               {/* Post Header - Author & Time */}
               <div className="flex items-center mb-3">

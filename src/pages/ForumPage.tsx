@@ -69,6 +69,20 @@ export const ForumPage = () => {
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [showCameraSheet, setShowCameraSheet] = useState(false);
   const { toast } = useToast();
+
+  // Listen for new posts from CreatePostSheet
+  useEffect(() => {
+    const handleAddNewPost = (event: CustomEvent) => {
+      const newPost = event.detail;
+      setPosts(prevPosts => [newPost, ...prevPosts]);
+    };
+
+    window.addEventListener('addNewPost', handleAddNewPost as EventListener);
+    
+    return () => {
+      window.removeEventListener('addNewPost', handleAddNewPost as EventListener);
+    };
+  }, []);
   
   // Listen for openCreatePost event from CameraSheet
   useEffect(() => {
@@ -82,6 +96,11 @@ export const ForumPage = () => {
       window.removeEventListener('openCreatePost', handleOpenCreatePost);
     };
   }, []);
+  
+  // Filter posts by category
+  const filteredPosts = activeCategory === "All" 
+    ? posts 
+    : posts.filter(post => post.category === activeCategory);
   
   // Handle post interactions
   const handleLikePost = (postId: string) => {
@@ -147,10 +166,10 @@ export const ForumPage = () => {
           />
         </div>
         <div className="flex items-center space-x-3">
-          <button className="p-2">
+          <button className="p-2" type="button">
             <Bell size={24} fill="white" strokeWidth={1.5} />
           </button>
-          <button className="p-2" onClick={handleProfileClick}>
+          <button className="p-2" onClick={handleProfileClick} type="button">
             <User size={24} fill="white" strokeWidth={1.5} />
           </button>
         </div>
@@ -161,12 +180,14 @@ export const ForumPage = () => {
         <button
           className={`flex-1 py-3 font-medium ${activeTab === "all" ? "text-wayscanner-blue border-b-2 border-wayscanner-blue" : "text-gray-500"}`}
           onClick={() => handleTabChange("all")}
+          type="button"
         >
           <span className="text-[18px]">All Posts</span>
         </button>
         <button
           className={`flex-1 py-3 font-medium ${activeTab === "my" ? "text-wayscanner-blue border-b-2 border-wayscanner-blue" : "text-gray-500"}`}
           onClick={() => handleTabChange("my")}
+          type="button"
         >
           <span className="text-[18px]">My Posts</span>
         </button>
@@ -183,6 +204,7 @@ export const ForumPage = () => {
                 ? "bg-blue-100 text-blue-600 border border-blue-300"
                 : "bg-white border border-gray-300"
             }`}
+            type="button"
           >
             {activeCategory === category && category === "All" && (
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="mr-1">
@@ -196,69 +218,78 @@ export const ForumPage = () => {
       
       {/* Posts List */}
       <div className="flex-1 p-3 space-y-4">
-        {posts.map(post => (
-          <div key={post.id} className="bg-white rounded-lg shadow p-4 border border-gray-200">
-            {/* Post Header - Author & Time */}
-            <div className="flex items-center mb-3">
-              <Avatar className="h-12 w-12 mr-3">
-                <AvatarImage src={post.author.avatar} alt={post.author.name} />
-                <AvatarFallback>
-                  {post.author.name.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <h3 className="font-medium text-[16px] text-gray-800">{post.author.name}</h3>
-                <div className="flex items-center">
-                  <span className="text-gray-500 text-sm">{post.timeAgo}</span>
-                  <span className={`ml-2 px-3 py-1 rounded-full text-xs ${
-                    post.category === "Plants" ? "bg-green-100 text-green-700" : 
-                    post.category.includes("Food") || post.category.includes("Recipe") || post.category.includes("Cooking") || post.category.includes("Kitchen") || post.category.includes("Nutrition") ? "bg-red-100 text-red-700" : 
-                    post.category.includes("Animals") || post.category.includes("Pets") ? "bg-yellow-100 text-yellow-700" :
-                    post.category === "Travel" ? "bg-purple-100 text-purple-700" :
-                    post.category.includes("DIY") || post.category.includes("Home") || post.category.includes("Decor") ? "bg-orange-100 text-orange-700" :
-                    post.category.includes("Question") ? "bg-blue-100 text-blue-700" :
-                    "bg-blue-100 text-blue-700"
-                  }`}>
-                    {post.category}
-                  </span>
+        {filteredPosts.length > 0 ? (
+          filteredPosts.map(post => (
+            <div key={post.id} className="bg-white rounded-lg shadow p-4 border border-gray-200">
+              {/* Post Header - Author & Time */}
+              <div className="flex items-center mb-3">
+                <Avatar className="h-12 w-12 mr-3">
+                  <AvatarImage src={post.author.avatar} alt={post.author.name} />
+                  <AvatarFallback>
+                    {post.author.name.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <h3 className="font-medium text-[16px] text-gray-800">{post.author.name}</h3>
+                  <div className="flex items-center">
+                    <span className="text-gray-500 text-sm">{post.timeAgo}</span>
+                    <span className={`ml-2 px-3 py-1 rounded-full text-xs ${
+                      post.category === "Plants" ? "bg-green-100 text-green-700" : 
+                      post.category.includes("Food") || post.category.includes("Recipe") || post.category.includes("Cooking") || post.category.includes("Kitchen") || post.category.includes("Nutrition") ? "bg-red-100 text-red-700" : 
+                      post.category.includes("Animals") || post.category.includes("Pets") ? "bg-yellow-100 text-yellow-700" :
+                      post.category === "Travel" ? "bg-purple-100 text-purple-700" :
+                      post.category.includes("DIY") || post.category.includes("Home") || post.category.includes("Decor") ? "bg-orange-100 text-orange-700" :
+                      post.category.includes("Question") ? "bg-blue-100 text-blue-700" :
+                      "bg-blue-100 text-blue-700"
+                    }`}>
+                      {post.category}
+                    </span>
+                  </div>
                 </div>
               </div>
+              
+              {/* Post Content */}
+              <p className="text-[14px] text-gray-700 mb-4">{post.content}</p>
+              
+              {/* Post Actions */}
+              <div className="flex items-center border-t border-gray-100 pt-3">
+                <button 
+                  className="flex items-center mr-5"
+                  onClick={() => handleLikePost(post.id)}
+                  type="button"
+                >
+                  <Heart 
+                    size={22} 
+                    className={post.liked ? "fill-red-500 text-red-500" : "text-black"}
+                  />
+                  <span className="ml-1 text-gray-600">{post.likes}</span>
+                </button>
+                <button 
+                  className="flex items-center mr-5"
+                  onClick={() => handleCommentClick(post.id)}
+                  type="button"
+                >
+                  <MessageSquare size={22} className="text-black" />
+                  <span className="ml-1 text-gray-600">{post.comments}</span>
+                </button>
+                <button 
+                  className="flex items-center"
+                  onClick={() => handleBookmarkPost(post.id)}
+                  type="button"
+                >
+                  <Bookmark 
+                    size={22} 
+                    className={post.bookmarked ? "fill-wayscanner-blue text-wayscanner-blue" : "text-black"}
+                  />
+                </button>
+              </div>
             </div>
-            
-            {/* Post Content */}
-            <p className="text-[14px] text-gray-700 mb-4">{post.content}</p>
-            
-            {/* Post Actions */}
-            <div className="flex items-center border-t border-gray-100 pt-3">
-              <button 
-                className="flex items-center mr-5"
-                onClick={() => handleLikePost(post.id)}
-              >
-                <Heart 
-                  size={22} 
-                  className={post.liked ? "fill-red-500 text-red-500" : "text-black"}
-                />
-                <span className="ml-1 text-gray-600">{post.likes}</span>
-              </button>
-              <button 
-                className="flex items-center mr-5"
-                onClick={() => handleCommentClick(post.id)}
-              >
-                <MessageSquare size={22} className="text-black" />
-                <span className="ml-1 text-gray-600">{post.comments}</span>
-              </button>
-              <button 
-                className="flex items-center"
-                onClick={() => handleBookmarkPost(post.id)}
-              >
-                <Bookmark 
-                  size={22} 
-                  className={post.bookmarked ? "fill-wayscanner-blue text-wayscanner-blue" : "text-black"}
-                />
-              </button>
-            </div>
+          ))
+        ) : (
+          <div className="bg-white rounded-lg shadow p-8 border border-gray-200 text-center">
+            <p className="text-gray-500">No posts found in this category.</p>
           </div>
-        ))}
+        )}
       </div>
       
       {/* Create Post Sheet */}

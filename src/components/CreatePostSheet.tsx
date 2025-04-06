@@ -59,7 +59,25 @@ const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange })
       return;
     }
     
-    // Here you would typically send the post to an API
+    // Create the new post object
+    const newPost = {
+      id: `post-${Date.now()}`,
+      author: {
+        name: "You",
+        avatar: "/placeholder.svg",
+      },
+      timeAgo: "Just now",
+      category: category,
+      content: content,
+      likes: 0,
+      comments: 0,
+      bookmarked: false,
+      liked: false,
+    };
+    
+    // Dispatch a custom event to add the post to both pages
+    const addPostEvent = new CustomEvent('addNewPost', { detail: newPost });
+    window.dispatchEvent(addPostEvent);
     
     toast({
       title: "Post Created",
