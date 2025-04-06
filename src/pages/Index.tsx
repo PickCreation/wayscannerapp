@@ -21,6 +21,12 @@ const Index = () => {
       return;
     }
     
+    // Redirect to Forum page
+    if (item === "forum") {
+      navigate("/forum");
+      return;
+    }
+    
     toast({
       title: "Coming Soon",
       description: `The ${item} feature is under development.`,

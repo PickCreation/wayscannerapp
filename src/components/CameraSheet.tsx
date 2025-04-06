@@ -3,6 +3,7 @@ import React from "react";
 import { Drawer, DrawerContent, DrawerClose } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { X, Utensils, Flower, PawPrint, Pencil, ShoppingCart } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface CameraSheetProps {
   open: boolean;
@@ -10,6 +11,17 @@ interface CameraSheetProps {
 }
 
 const CameraSheet: React.FC<CameraSheetProps> = ({ open, onOpenChange }) => {
+  const navigate = useNavigate();
+
+  const handleCreatePost = () => {
+    onOpenChange(false);
+    navigate("/forum");
+    // This will trigger CreatePostSheet directly when forum page loads
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('openCreatePost'));
+    }, 100);
+  };
+
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="p-6 pt-0 max-h-[90vh]">
@@ -34,7 +46,11 @@ const CameraSheet: React.FC<CameraSheetProps> = ({ open, onOpenChange }) => {
         
         <div className="space-y-4 mb-8">
           <h3 className="text-base text-gray-600 mb-4">Other Actions</h3>
-          <Button className="w-full h-14 bg-black hover:bg-gray-800 justify-center px-6 py-4 text-lg rounded-xl" variant="default">
+          <Button 
+            className="w-full h-14 bg-black hover:bg-gray-800 justify-center px-6 py-4 text-lg rounded-xl" 
+            variant="default"
+            onClick={handleCreatePost}
+          >
             <Pencil className="mr-4 h-6 w-6" />
             Create Post
           </Button>
