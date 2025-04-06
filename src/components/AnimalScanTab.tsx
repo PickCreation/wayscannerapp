@@ -2,7 +2,6 @@
 import React from "react";
 import { ChevronRight, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 interface AnimalItem {
   id: string;
@@ -83,11 +82,12 @@ const AnimalScanTab = () => {
           className={`p-3 rounded-xl border-2 ${getBorderColor(item.riskLevel)} shadow-sm bg-white flex items-center justify-between cursor-pointer`}
           onClick={() => handleAnimalClick(item.id)}
         >
-          <div className="h-14 w-14 rounded-full overflow-hidden mr-3 flex-shrink-0">
-            <Avatar className="h-full w-full">
-              <AvatarImage src={item.imageUrl} alt={item.name} className="object-cover" />
-              <AvatarFallback>{item.name.substring(0, 2)}</AvatarFallback>
-            </Avatar>
+          <div className="h-14 w-14 mr-3 flex-shrink-0 rounded-xl overflow-hidden">
+            <img 
+              src={item.imageUrl} 
+              alt={item.name} 
+              className="h-full w-full object-cover"
+            />
           </div>
           <div className="flex-1">
             <h3 className="text-lg font-bold text-gray-900">{item.name}</h3>
