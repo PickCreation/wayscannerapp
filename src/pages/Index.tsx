@@ -93,7 +93,7 @@ const Index = () => {
       </header>
 
       {/* Greeting */}
-      <div className="px-4 py-6 flex justify-between items-center">
+      <div className="px-4 py-4 flex justify-between items-center">
         <div>
           <h2 className="text-xl font-bold">Hello Explorer! 👋</h2>
           <p className="text-gray-600 mt-1">What would you like to discover today?</p>
@@ -101,9 +101,9 @@ const Index = () => {
       </div>
 
       {/* Scanner Options */}
-      <div className="px-4 mb-8 flex flex-col h-[calc(100vh-380px)] justify-center mt-2">
-        <h3 className="text-base font-medium mb-4">Start Exploring</h3>
-        <div className="grid grid-cols-2 gap-4">
+      <div className="px-4 mb-6 flex flex-col flex-grow justify-center">
+        <h3 className="text-base font-medium mb-3">Start Exploring</h3>
+        <div className="grid grid-cols-2 gap-3">
           <ScannerCard
             title="Food Scan"
             description="Get nutritional info"
