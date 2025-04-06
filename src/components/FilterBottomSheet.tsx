@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface FilterBottomSheetProps {
   open: boolean;
@@ -82,113 +83,126 @@ const FilterBottomSheet: React.FC<FilterBottomSheetProps> = ({ open, onOpenChang
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="p-4 max-h-[90vh] overflow-y-auto">
-        <DrawerHeader className="flex items-center justify-between px-0">
-          <DrawerTitle className="text-xl font-semibold">Filters</DrawerTitle>
-          <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)}>
-            <X className="h-5 w-5" />
-          </Button>
-        </DrawerHeader>
-        
-        <div className="space-y-6 my-4">
-          {/* Price Range Section */}
-          <div>
-            <h3 className="font-medium mb-3">Price Range</h3>
-            <Slider 
-              defaultValue={[priceRange[0], priceRange[1]]} 
-              max={100} 
-              step={1} 
-              value={[priceRange[0], priceRange[1]]}
-              onValueChange={handlePriceChange}
-              className="mb-2"
-            />
-            <div className="flex justify-between text-sm text-gray-500">
-              <span>${priceRange[0]}</span>
-              <span>${priceRange[1]}+</span>
-            </div>
-          </div>
-
-          {/* Sort By Section */}
-          <div>
-            <h3 className="font-medium mb-3">Sort By</h3>
-            <div className="grid grid-cols-2 gap-2">
-              {sortOptions.map((option) => (
-                <Button
-                  key={option}
-                  variant={sortBy === option ? "default" : "outline"}
-                  className="justify-start text-sm h-auto py-2"
-                  onClick={() => setSortBy(option)}
-                >
-                  {option}
-                </Button>
-              ))}
-            </div>
-          </div>
-
-          {/* Condition Section */}
-          <div>
-            <h3 className="font-medium mb-3">Condition</h3>
-            <div className="grid grid-cols-2 gap-2">
-              {conditions.map((c) => (
-                <Button
-                  key={c}
-                  variant={condition === c ? "default" : "outline"}
-                  className="justify-start text-sm h-auto py-2"
-                  onClick={() => setCondition(c)}
-                >
-                  {c}
-                </Button>
-              ))}
-            </div>
-          </div>
-
-          {/* In Stock Section */}
-          <div className="flex items-center justify-between">
-            <Label htmlFor="in-stock" className="font-medium">In Stock Only</Label>
-            <Switch 
-              id="in-stock" 
-              checked={inStock} 
-              onCheckedChange={setInStock} 
-            />
-          </div>
+      <DrawerContent className="max-h-[85vh]">
+        <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />
+        <ScrollArea className="h-full max-h-[calc(85vh-130px)] overflow-y-auto">
+          <DrawerHeader className="flex items-center justify-between px-4">
+            <DrawerTitle className="text-xl font-semibold">Filters</DrawerTitle>
+            <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)}>
+              <X className="h-5 w-5" />
+            </Button>
+          </DrawerHeader>
           
-          {/* Color Section */}
-          <div>
-            <h3 className="font-medium mb-3">Color</h3>
-            <div className="flex flex-wrap gap-2">
-              {colors.map((c) => (
-                <button
-                  key={c.value}
-                  onClick={() => setColor(c.value)}
-                  className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                    color === c.value ? "ring-2 ring-wayscanner-blue ring-offset-2" : ""
-                  } ${c.value === "white" ? "border border-gray-200" : ""}`}
-                  style={{ backgroundColor: c.color }}
-                  title={c.label}
-                />
-              ))}
+          <div className="space-y-6 px-4 pb-2">
+            {/* Price Range Section */}
+            <div>
+              <h3 className="font-medium mb-3">Price Range</h3>
+              <Slider 
+                defaultValue={[priceRange[0], priceRange[1]]} 
+                max={100} 
+                step={1} 
+                value={[priceRange[0], priceRange[1]]}
+                onValueChange={handlePriceChange}
+                className="mb-2"
+              />
+              <div className="flex justify-between text-sm text-gray-500">
+                <span>${priceRange[0]}</span>
+                <span>${priceRange[1]}+</span>
+              </div>
             </div>
-          </div>
-          
-          {/* Country Section */}
-          <div>
-            <h3 className="font-medium mb-3">Ship From</h3>
-            <div className="grid grid-cols-2 gap-2">
-              {countries.map((c) => (
-                <Button
-                  key={c}
-                  variant={country === c ? "default" : "outline"}
-                  className="justify-start text-sm h-auto py-2"
-                  onClick={() => setCountry(c)}
-                >
-                  {c}
-                </Button>
-              ))}
-            </div>
-          </div>
-        </div>
 
-        <DrawerFooter className="px-0 pt-2">
+            {/* Sort By Section */}
+            <div>
+              <h3 className="font-medium mb-3">Sort By</h3>
+              <div className="grid grid-cols-2 gap-2">
+                {sortOptions.map((option) => (
+                  <Button
+                    key={option}
+                    variant={sortBy === option ? "default" : "outline"}
+                    className="justify-start text-sm h-auto py-2"
+                    onClick={() => setSortBy(option)}
+                  >
+                    {option}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {/* Condition Section */}
+            <div>
+              <h3 className="font-medium mb-3">Condition</h3>
+              <div className="grid grid-cols-2 gap-2">
+                {conditions.map((c) => (
+                  <Button
+                    key={c}
+                    variant={condition === c ? "default" : "outline"}
+                    className="justify-start text-sm h-auto py-2"
+                    onClick={() => setCondition(c)}
+                  >
+                    {c}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {/* In Stock Section */}
+            <div className="flex items-center justify-between">
+              <Label htmlFor="in-stock" className="font-medium">In Stock Only</Label>
+              <Switch 
+                id="in-stock" 
+                checked={inStock} 
+                onCheckedChange={setInStock} 
+              />
+            </div>
+            
+            {/* Color Section - Now using dropdown */}
+            <div>
+              <h3 className="font-medium mb-3">Color</h3>
+              <Select value={color} onValueChange={setColor}>
+                <SelectTrigger className="w-full">
+                  <SelectValue>
+                    <div className="flex items-center">
+                      {color !== "any" && (
+                        <span className="h-4 w-4 rounded-full mr-2" style={{ backgroundColor: colors.find(c => c.value === color)?.color }}></span>
+                      )}
+                      {colors.find(c => c.value === color)?.label || "Any"}
+                    </div>
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {colors.map((c) => (
+                    <SelectItem key={c.value} value={c.value}>
+                      <div className="flex items-center">
+                        <span 
+                          className={`h-4 w-4 rounded-full mr-2 ${c.value === "white" ? "border border-gray-200" : ""}`} 
+                          style={{ backgroundColor: c.color }}
+                        ></span>
+                        {c.label}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            {/* Country Section */}
+            <div>
+              <h3 className="font-medium mb-3">Ship From</h3>
+              <Select value={country} onValueChange={setCountry}>
+                <SelectTrigger className="w-full">
+                  <SelectValue>{country}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {countries.map((c) => (
+                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </ScrollArea>
+
+        <DrawerFooter className="px-4 pt-2 pb-4">
           <div className="flex gap-2">
             <Button variant="outline" className="flex-1" onClick={handleReset}>
               Reset
