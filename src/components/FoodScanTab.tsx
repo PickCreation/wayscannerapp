@@ -75,7 +75,7 @@ const FoodScanTab: React.FC<FoodScanTabProps> = ({ onEditPreferences, onHowWeSco
           <div className="flex-1">
             <h3 className="text-lg font-bold text-gray-900">{item.name}</h3>
             <p className="text-md text-blue-500">{item.brand}</p>
-            <div className={`${getScoreColor(item.score)} text-white px-4 py-1 rounded-full text-md inline-flex items-center mt-2 border ${getScoreBorderColor(item.score)}`}>
+            <div className={`${getScoreColor(item.score)} text-white px-4 py-1 rounded-full text-md inline-flex items-center mt-2 border-2 ${getScoreBorderColor(item.score)}`}>
               <span className="font-bold mr-1">{item.score}</span>
               <span>{getScoreText(item.score)}</span>
             </div>
