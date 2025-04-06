@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +9,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProductCard from "@/components/ProductCard";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
+import { Badge } from "@/components/ui/badge";
 
 const products = [
   {
@@ -80,7 +82,30 @@ const MarketplacePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("shop");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Update cart count whenever the component mounts or localStorage changes
+    const updateCartCount = () => {
+      const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      const count = cartItems.reduce((total: number, item: any) => total + item.quantity, 0);
+      setCartCount(count);
+    };
+    
+    updateCartCount();
+    
+    // Set up event listener for storage changes
+    window.addEventListener('storage', updateCartCount);
+    
+    // Custom event for cart updates within the same page
+    window.addEventListener('cartUpdated', updateCartCount);
+    
+    return () => {
+      window.removeEventListener('storage', updateCartCount);
+      window.removeEventListener('cartUpdated', updateCartCount);
+    };
+  }, []);
 
   const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop") => {
     setActiveNavItem(item);
@@ -106,14 +131,19 @@ const MarketplacePage = () => {
 
   return (
     <div className="pb-20 bg-white min-h-screen">
-      <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
+      <header className="bg-white text-black py-4 px-4 flex justify-between items-center border-b">
         <h1 className="text-xl font-bold">Marketplace</h1>
-        <button className="p-2" onClick={() => navigate('/cart')}>
-          <ShoppingCart size={24} color="white" fill="white" />
+        <button className="p-2 relative" onClick={() => navigate('/cart')}>
+          <ShoppingCart size={24} className="text-gray-800" />
+          {cartCount > 0 && (
+            <Badge variant="destructive" className="absolute -top-1 -right-1 px-1.5 py-0.5 min-w-5 h-5 flex items-center justify-center">
+              {cartCount}
+            </Badge>
+          )}
         </button>
       </header>
 
-      <div className="px-4 py-4 bg-wayscanner-blue bg-opacity-10">
+      <div className="px-4 py-4 bg-gray-50">
         <div className="relative">
           <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
           <Input

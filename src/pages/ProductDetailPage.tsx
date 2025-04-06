@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { ChevronLeft, Heart, Share2, Plus, Minus, Tag } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { Badge } from "@/components/ui/badge";
 
 const products = [
   {
@@ -159,8 +161,31 @@ const ProductDetailPage = () => {
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [cartCount, setCartCount] = useState(0);
   
   const product = products.find(p => p.id === Number(productId));
+  
+  useEffect(() => {
+    // Update cart count whenever the component mounts or localStorage changes
+    const updateCartCount = () => {
+      const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      const count = cartItems.reduce((total: number, item: any) => total + item.quantity, 0);
+      setCartCount(count);
+    };
+    
+    updateCartCount();
+    
+    // Set up event listener for storage changes
+    window.addEventListener('storage', updateCartCount);
+    
+    // Custom event for cart updates within the same page
+    window.addEventListener('cartUpdated', updateCartCount);
+    
+    return () => {
+      window.removeEventListener('storage', updateCartCount);
+      window.removeEventListener('cartUpdated', updateCartCount);
+    };
+  }, []);
   
   if (!product) {
     return (
@@ -187,6 +212,9 @@ const ProductDetailPage = () => {
     }
     
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    
+    // Dispatch custom event to update cart count
+    window.dispatchEvent(new Event('cartUpdated'));
     
     toast({
       title: "Added to Cart",
@@ -237,8 +265,13 @@ const ProductDetailPage = () => {
           <ChevronLeft size={24} color="white" />
         </button>
         <h1 className="text-xl font-bold">Product Details</h1>
-        <button className="p-2" onClick={() => navigate('/cart')}>
+        <button className="p-2 relative" onClick={() => navigate('/cart')}>
           <ShoppingCart size={24} color="white" fill="white" />
+          {cartCount > 0 && (
+            <Badge variant="destructive" className="absolute -top-1 -right-1 px-1.5 py-0.5 min-w-5 h-5 flex items-center justify-center">
+              {cartCount}
+            </Badge>
+          )}
         </button>
       </header>
 
