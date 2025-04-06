@@ -44,9 +44,14 @@ const Index = () => {
             className="h-8" 
           />
         </div>
-        <button className="p-2">
-          <Bell size={24} />
-        </button>
+        <div className="flex items-center space-x-3">
+          <button className="p-2">
+            <Bell size={24} />
+          </button>
+          <button className="p-2">
+            <User size={24} stroke="white" strokeWidth={2.5} />
+          </button>
+        </div>
       </header>
 
       {/* Greeting */}
@@ -54,9 +59,6 @@ const Index = () => {
         <div>
           <h2 className="text-xl font-bold">Hello Explorer! 👋</h2>
           <p className="text-gray-600 mt-1">What would you like to discover today?</p>
-        </div>
-        <div className="bg-gray-100 rounded-full p-4">
-          <User size={28} className="text-wayscanner-blue" />
         </div>
       </div>
 
