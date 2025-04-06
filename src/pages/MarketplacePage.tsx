@@ -131,10 +131,10 @@ const MarketplacePage = () => {
 
   return (
     <div className="pb-20 bg-white min-h-screen">
-      <header className="bg-white text-black py-4 px-4 flex justify-between items-center border-b">
+      <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
         <h1 className="text-xl font-bold">Marketplace</h1>
         <button className="p-2 relative" onClick={() => navigate('/cart')}>
-          <ShoppingCart size={24} className="text-gray-800" />
+          <ShoppingCart size={24} className="text-white" />
           {cartCount > 0 && (
             <Badge variant="destructive" className="absolute -top-1 -right-1 px-1.5 py-0.5 min-w-5 h-5 flex items-center justify-center">
               {cartCount}
