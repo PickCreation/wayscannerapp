@@ -2,6 +2,8 @@
 import React from 'react';
 import { ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 interface FoodScanTabProps {
   onEditPreferences?: () => void;
@@ -79,6 +81,12 @@ const FoodScanTab: React.FC<FoodScanTabProps> = ({ onEditPreferences, onHowWeSco
           className={`p-3 rounded-xl border shadow-sm bg-white flex items-center justify-between cursor-pointer ${getCardBorderColor(item.score)}`}
           onClick={() => navigate(`/food/${item.id}`)}
         >
+          <div className="h-14 w-14 rounded-full overflow-hidden mr-3 flex-shrink-0">
+            <Avatar className="h-full w-full">
+              <AvatarImage src={item.imageUrl} alt={item.name} className="object-cover" />
+              <AvatarFallback>{item.name.substring(0, 2)}</AvatarFallback>
+            </Avatar>
+          </div>
           <div className="flex-1">
             <h3 className="text-lg font-bold text-gray-900">{item.name}</h3>
             <p className="text-md text-blue-500">{item.brand}</p>
