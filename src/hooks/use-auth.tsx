@@ -38,23 +38,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
     
     checkAuth();
-    
-    // Auto-login as admin for development/testing purposes
-    // This should be removed in production
-    const autoLoginAsAdmin = async () => {
-      const isAlreadyLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-      if (!isAlreadyLoggedIn) {
-        // Simulate a delay to allow the app to render first
-        setTimeout(() => {
-          login(ADMIN_EMAIL, ADMIN_PASSWORD).catch(err => 
-            console.error("Auto admin login failed:", err)
-          );
-        }, 500);
-      }
-    };
-    
-    // Call auto login function
-    autoLoginAsAdmin();
   }, []);
 
   const login = async (email: string, password: string) => {
