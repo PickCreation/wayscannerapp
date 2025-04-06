@@ -4,12 +4,14 @@ import { ChevronLeft, Heart, ShoppingCart, ExternalLink } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import BottomNavigation from "@/components/BottomNavigation";
 
 const FavoritesPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [favorites, setFavorites] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeItem, setActiveItem] = useState<"home" | "forum" | "recipes" | "shop">("shop");
 
   useEffect(() => {
     const items = JSON.parse(localStorage.getItem('favorites') || '[]');
@@ -47,6 +49,23 @@ const FavoritesPage = () => {
       title: "Added to Cart",
       description: `${product.title} added to your cart`,
     });
+  };
+
+  const handleItemClick = (item: "home" | "forum" | "recipes" | "shop") => {
+    setActiveItem(item);
+    if (item === "home") {
+      navigate("/");
+    } else if (item === "forum") {
+      navigate("/forum");
+    } else if (item === "recipes") {
+      navigate("/recipes");
+    } else if (item === "shop") {
+      navigate("/marketplace");
+    }
+  };
+
+  const handleCameraClick = () => {
+    navigate("/scan");
   };
 
   if (loading) {
@@ -136,6 +155,12 @@ const FavoritesPage = () => {
           </Button>
         </div>
       )}
+
+      <BottomNavigation
+        activeItem={activeItem}
+        onItemClick={handleItemClick}
+        onCameraClick={handleCameraClick}
+      />
     </div>
   );
 };

@@ -5,12 +5,14 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import BottomNavigation from "@/components/BottomNavigation";
 
 const CartPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeItem, setActiveItem] = useState<"home" | "forum" | "recipes" | "shop">("shop");
 
   useEffect(() => {
     const items = JSON.parse(localStorage.getItem('cartItems') || '[]');
@@ -52,6 +54,23 @@ const CartPage = () => {
       title: "Checkout",
       description: "Checkout functionality coming soon",
     });
+  };
+
+  const handleItemClick = (item: "home" | "forum" | "recipes" | "shop") => {
+    setActiveItem(item);
+    if (item === "home") {
+      navigate("/");
+    } else if (item === "forum") {
+      navigate("/forum");
+    } else if (item === "recipes") {
+      navigate("/recipes");
+    } else if (item === "shop") {
+      navigate("/marketplace");
+    }
+  };
+
+  const handleCameraClick = () => {
+    navigate("/scan");
   };
 
   if (loading) {
@@ -134,7 +153,7 @@ const CartPage = () => {
             ))}
           </div>
           
-          <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 shadow-lg">
+          <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 shadow-lg" style={{ bottom: '64px' }}>
             <div className="space-y-2 mb-4">
               <div className="flex justify-between">
                 <span className="text-gray-500">Subtotal</span>
@@ -173,6 +192,12 @@ const CartPage = () => {
           </Button>
         </div>
       )}
+
+      <BottomNavigation
+        activeItem={activeItem}
+        onItemClick={handleItemClick}
+        onCameraClick={handleCameraClick}
+      />
     </div>
   );
 };
