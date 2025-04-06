@@ -22,6 +22,18 @@ const CameraSheet: React.FC<CameraSheetProps> = ({ open, onOpenChange }) => {
     }, 100);
   };
 
+  const handleScanOption = (type: string) => {
+    onOpenChange(false);
+    
+    const tabMap: Record<string, string> = {
+      "Food": "food",
+      "Plant": "plants",
+      "Animal": "animals"
+    };
+    
+    navigate(`/scan?tab=${tabMap[type] || "food"}`);
+  };
+
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="p-6 pt-0 max-h-[90vh]">
@@ -38,9 +50,24 @@ const CameraSheet: React.FC<CameraSheetProps> = ({ open, onOpenChange }) => {
         <div className="mb-8">
           <h3 className="text-base text-gray-600 mb-4">Scan</h3>
           <div className="flex justify-between">
-            <ScanOption icon={<Utensils className="h-6 w-6 text-[#B04B7D]" />} label="Food" color="bg-pink-100" />
-            <ScanOption icon={<Flower className="h-6 w-6 text-[#34A67F]" />} label="Plant" color="bg-green-100" />
-            <ScanOption icon={<PawPrint className="h-6 w-6 text-[#E67E22]" />} label="Animal" color="bg-orange-100" />
+            <ScanOption 
+              icon={<Utensils className="h-6 w-6 text-[#B04B7D]" />} 
+              label="Food" 
+              color="bg-pink-100" 
+              onClick={() => handleScanOption("Food")}
+            />
+            <ScanOption 
+              icon={<Flower className="h-6 w-6 text-[#34A67F]" />} 
+              label="Plant" 
+              color="bg-green-100" 
+              onClick={() => handleScanOption("Plant")}
+            />
+            <ScanOption 
+              icon={<PawPrint className="h-6 w-6 text-[#E67E22]" />} 
+              label="Animal" 
+              color="bg-orange-100" 
+              onClick={() => handleScanOption("Animal")}
+            />
           </div>
         </div>
         
@@ -68,11 +95,12 @@ interface ScanOptionProps {
   icon: React.ReactNode;
   label: string;
   color: string;
+  onClick?: () => void;
 }
 
-const ScanOption: React.FC<ScanOptionProps> = ({ icon, label, color }) => {
+const ScanOption: React.FC<ScanOptionProps> = ({ icon, label, color, onClick }) => {
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center cursor-pointer" onClick={onClick}>
       <div className={`${color} rounded-full w-16 h-16 flex items-center justify-center mb-2`}>
         {icon}
       </div>

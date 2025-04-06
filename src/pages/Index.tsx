@@ -1,16 +1,28 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import ScannerCard from "@/components/ScannerCard";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
 import { Bell, User, Utensils, Leaf, PawPrint, ShoppingBag } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("home");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+
+  // Check if redirected from a scanner card click
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const tab = searchParams.get("tab");
+    
+    if (tab) {
+      navigate(`/scan?tab=${tab}`);
+    }
+  }, [location, navigate]);
 
   const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop") => {
     setActiveNavItem(item);
@@ -45,10 +57,13 @@ const Index = () => {
   };
 
   const handleScannerClick = (type: string) => {
-    toast({
-      title: `${type} Scanner Selected`,
-      description: `The ${type.toLowerCase()} scanner is under development.`,
-    });
+    const tabMap: Record<string, string> = {
+      "Food": "food",
+      "Plant": "plants",
+      "Animal": "animals"
+    };
+    
+    navigate(`/scan?tab=${tabMap[type] || "food"}`);
   };
 
   const handleProfileClick = () => {

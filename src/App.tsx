@@ -15,6 +15,7 @@ import RecipesPage from "./pages/RecipesPage";
 import RecipeDetailPage from "./pages/RecipeDetailPage";
 import RecipeSearchPage from "./pages/RecipeSearchPage";
 import AllRecipesPage from "./pages/AllRecipesPage";
+import ScanPage from "./pages/ScanPage";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/recipes/:recipeId" element={<RecipeDetailPage />} />
           <Route path="/recipes/search" element={<RecipeSearchPage />} />
           <Route path="/recipes/all" element={<AllRecipesPage />} />
+          <Route path="/scan" element={<ScanPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

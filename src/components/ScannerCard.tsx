@@ -1,6 +1,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 
 interface ScannerCardProps {
   title: string;
@@ -17,6 +18,7 @@ const ScannerCard: React.FC<ScannerCardProps> = ({
   icon,
   onClick,
 }) => {
+  const navigate = useNavigate();
   const colorMap = {
     red: "bg-wayscanner-red",
     green: "bg-wayscanner-green",
@@ -24,10 +26,23 @@ const ScannerCard: React.FC<ScannerCardProps> = ({
     purple: "bg-wayscanner-purple",
   };
 
+  const handleClick = () => {
+    // Navigate to the scan page with the appropriate tab selected
+    let tabValue = "food";
+    if (title === "Food Scan") tabValue = "food";
+    else if (title === "Plant Scan") tabValue = "plants";
+    else if (title === "Animal Scan") tabValue = "animals";
+    
+    navigate(`/scan?tab=${tabValue}`);
+    
+    // Also call the original onClick if provided
+    if (onClick) onClick();
+  };
+
   return (
     <div 
       className="relative rounded-xl p-4 bg-gray-300 cursor-pointer shadow-md h-40"
-      onClick={onClick}
+      onClick={handleClick}
     >
       {/* Icon container at top-left */}
       <div className={cn("absolute top-4 left-4 rounded-2xl p-3 w-12 h-12 flex items-center justify-center", colorMap[color])}>
