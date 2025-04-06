@@ -1,6 +1,6 @@
 
-import React from "react";
-import { ChevronLeft, Camera, Upload } from "lucide-react";
+import React, { useState } from "react";
+import { ChevronLeft, Camera, Upload, Plus, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,6 +25,38 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useToast } from "@/hooks/use-toast";
 
+// Array of all countries
+const countries = [
+  "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", 
+  "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", 
+  "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", 
+  "Cabo Verde", "Cambodia", "Cameroon", "Canada", "Central African Republic", "Chad", "Chile", "China", "Colombia", 
+  "Comoros", "Congo", "Costa Rica", "Croatia", "Cuba", "Cyprus", "Czech Republic", "Denmark", "Djibouti", "Dominica", 
+  "Dominican Republic", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini", 
+  "Ethiopia", "Fiji", "Finland", "France", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Greece", "Grenada", 
+  "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Honduras", "Hungary", "Iceland", "India", "Indonesia", 
+  "Iran", "Iraq", "Ireland", "Israel", "Italy", "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati", 
+  "Korea, North", "Korea, South", "Kosovo", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", 
+  "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", 
+  "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", 
+  "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Niger", 
+  "Nigeria", "North Macedonia", "Norway", "Oman", "Pakistan", "Palau", "Palestine", "Panama", "Papua New Guinea", 
+  "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis", 
+  "Saint Lucia", "Saint Vincent and the Grenadines", "Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia", 
+  "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", 
+  "South Africa", "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland", "Syria", "Taiwan", 
+  "Tajikistan", "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", 
+  "Turkmenistan", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay", 
+  "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
+];
+
+const colors = [
+  "Red", "Gold", "Pink", "Orange", "Grey", "Brown", "Navy blue", "Yellow", 
+  "Black", "Green", "Maroon", "Silver", "Turquoise", "Purple", "Teal", "Blue"
+];
+
+const conditions = ["New", "Open Box", "Like New", "Used", "Refurbished"];
+
 const formSchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters" }),
   description: z.string().min(10, { message: "Description must be at least 10 characters" }),
@@ -32,14 +64,21 @@ const formSchema = z.object({
     message: "Price must be a positive number",
   }),
   category: z.string().min(1, { message: "Please select a category" }),
+  condition: z.string().min(1, { message: "Please select condition" }),
+  weight: z.string().refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
+    message: "Weight must be a non-negative number",
+  }),
+  color: z.string().min(1, { message: "Please select a color" }),
+  brand: z.string().min(1, { message: "Please enter a brand" }),
+  country: z.string().min(1, { message: "Please select a country" }),
+  variations: z.string().optional(),
 });
 
 const AddListingPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const [imagePreview, setImagePreview] = React.useState<string | null>(null);
-
+  const [images, setImages] = useState<{file: File, preview: string}[]>([]);
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,29 +86,38 @@ const AddListingPage = () => {
       description: "",
       price: "",
       category: "",
+      condition: "",
+      weight: "",
+      color: "",
+      brand: "",
+      country: "",
+      variations: "",
     },
   });
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
+    if (file && images.length < 6) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result as string);
+        setImages([...images, {
+          file: file,
+          preview: reader.result as string
+        }]);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleTriggerUpload = () => {
-    fileInputRef.current?.click();
+  const removeImage = (index: number) => {
+    setImages(images.filter((_, i) => i !== index));
   };
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    if (!imagePreview) {
+    if (images.length === 0) {
       toast({
         title: "Image Required",
-        description: "Please upload a product image",
+        description: "Please upload at least one product image",
         variant: "destructive",
       });
       return;
@@ -78,7 +126,7 @@ const AddListingPage = () => {
     // In a real app, this would send the data to an API
     console.log({
       ...values,
-      image: imagePreview,
+      images: images.map(img => img.preview),
     });
 
     toast({
@@ -109,36 +157,39 @@ const AddListingPage = () => {
       <div className="p-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Image Upload */}
-            <div 
-              className="w-full h-48 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer bg-gray-50"
-              onClick={handleTriggerUpload}
-            >
-              {imagePreview ? (
-                <div className="relative w-full h-full">
-                  <img 
-                    src={imagePreview} 
-                    alt="Product preview" 
-                    className="w-full h-full object-contain"
-                  />
-                  <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                    <p className="text-white font-medium">Change Image</p>
+            {/* Images Upload */}
+            <div>
+              <FormLabel className="block mb-2">Product Images (up to 6)</FormLabel>
+              <div className="grid grid-cols-3 gap-2">
+                {images.map((image, index) => (
+                  <div key={index} className="relative h-24 border rounded overflow-hidden">
+                    <img src={image.preview} alt={`Preview ${index}`} className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="absolute top-1 right-1 bg-black bg-opacity-50 rounded-full p-1 text-white"
+                    >
+                      <X size={14} />
+                    </button>
                   </div>
-                </div>
-              ) : (
-                <>
-                  <Upload size={40} className="text-gray-400 mb-2" />
-                  <p className="text-sm text-gray-500">Upload product image</p>
-                  <p className="text-xs text-gray-400 mt-1">Click to browse files</p>
-                </>
+                ))}
+                
+                {images.length < 6 && (
+                  <label className="border-2 border-dashed border-gray-300 rounded flex flex-col items-center justify-center h-24 cursor-pointer bg-gray-50">
+                    <Plus size={24} className="text-gray-400" />
+                    <span className="text-xs text-gray-500 mt-1">Add Image</span>
+                    <input 
+                      type="file" 
+                      className="hidden" 
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                    />
+                  </label>
+                )}
+              </div>
+              {images.length === 0 && (
+                <p className="text-xs text-gray-500 mt-1">Please upload at least one image</p>
               )}
-              <input 
-                type="file" 
-                ref={fileInputRef} 
-                className="hidden" 
-                accept="image/*"
-                onChange={handleImageUpload}
-              />
             </div>
 
             {/* Title */}
@@ -156,6 +207,21 @@ const AddListingPage = () => {
               )}
             />
 
+            {/* Brand */}
+            <FormField
+              control={form.control}
+              name="brand"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Brand</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter brand name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             {/* Description */}
             <FormField
               control={form.control}
@@ -165,21 +231,6 @@ const AddListingPage = () => {
                   <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Textarea placeholder="Describe your product" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Price */}
-            <FormField
-              control={form.control}
-              name="price"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Price ($)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="0.00" type="number" step="0.01" min="0" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -207,6 +258,127 @@ const AddListingPage = () => {
                       <SelectItem value="Kitchen Essentials">Kitchen Essentials</SelectItem>
                     </SelectContent>
                   </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Condition */}
+            <FormField
+              control={form.control}
+              name="condition"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Condition</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select condition" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {conditions.map(condition => (
+                        <SelectItem key={condition} value={condition}>{condition}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Color */}
+            <FormField
+              control={form.control}
+              name="color"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Color</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select color" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {colors.map(color => (
+                        <SelectItem key={color} value={color}>{color}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Price and Weight in the same row */}
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Price ($)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="0.00" type="number" step="0.01" min="0" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="weight"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Weight (kg)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="0.00" type="number" step="0.01" min="0" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Country */}
+            <FormField
+              control={form.control}
+              name="country"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Country</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select country" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="max-h-[200px]">
+                      {countries.map(country => (
+                        <SelectItem key={country} value={country}>{country}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Product Variations */}
+            <FormField
+              control={form.control}
+              name="variations"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Product Variations (optional)</FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      placeholder="Enter product variations (e.g., Size: S, M, L; Color: Red, Blue; etc.)" 
+                      {...field} 
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { ChevronLeft, ShoppingCart, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -7,8 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProductCard from "@/components/ProductCard";
 import BottomNavigation from "@/components/BottomNavigation";
+import CameraSheet from "@/components/CameraSheet";
 
-// Sample product data
 const products = [
   {
     id: 1,
@@ -79,6 +78,7 @@ const MarketplacePage = () => {
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("shop");
+  const [showCameraSheet, setShowCameraSheet] = useState(false);
   const navigate = useNavigate();
 
   const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop") => {
@@ -94,7 +94,7 @@ const MarketplacePage = () => {
   };
 
   const handleCameraClick = () => {
-    navigate("/add-listing");
+    setShowCameraSheet(true);
   };
 
   const filteredProducts = products.filter(product => {
@@ -185,6 +185,9 @@ const MarketplacePage = () => {
         onItemClick={handleNavItemClick}
         onCameraClick={handleCameraClick}
       />
+      
+      {/* Camera Options Sheet */}
+      <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
     </div>
   );
 };
