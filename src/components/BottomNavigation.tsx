@@ -1,15 +1,10 @@
 
 import React from "react";
 import { 
-  Home, 
   MessageCircle, 
   Utensils, 
   ShoppingBag, 
-  Camera,
-  HomeIcon,
-  MessageCircleIcon,
-  UtensilsIcon,
-  ShoppingBagIcon
+  Camera
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -27,8 +22,8 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
   return (
     <div className="fixed bottom-0 left-0 right-0 h-16 bg-white border-t flex items-center justify-between px-4 z-10">
       <NavItem
-        icon={<Home size={24} />}
-        activeIcon={<Home size={24} fill="currentColor" />}
+        icon={<HomeIcon filled={false} />}
+        activeIcon={<HomeIcon filled={true} />}
         label="Home"
         isActive={activeItem === "home"}
         onClick={() => onItemClick("home")}
@@ -55,11 +50,11 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
         onClick={() => onItemClick("shop")}
       />
       <button
-        className="flex flex-col items-center justify-center w-16"
+        className="flex flex-col items-center justify-center"
         onClick={onCameraClick}
       >
-        <div className="mb-1 text-wayscanner-blue">
-          <Camera size={24} />
+        <div className="bg-wayscanner-blue text-white rounded-full w-12 h-12 flex items-center justify-center mb-1">
+          <Camera size={24} color="white" />
         </div>
         <span className="text-xs text-wayscanner-blue font-medium">
           Camera
@@ -106,6 +101,26 @@ const NavItem: React.FC<NavItemProps> = ({
         {label}
       </span>
     </button>
+  );
+};
+
+// Custom Home icon component that matches the uploaded image
+const HomeIcon = ({ filled, size = 24 }: { filled: boolean; size?: number }) => {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 600 600"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M300 50C280 50 260 60 246 73L76 243C63 256 56 273 56 290V500C56 533 83 560 116 560H206C222.6 560 236 546.6 236 530V390C236 373.4 249.4 360 266 360H334C350.6 360 364 373.4 364 390V530C364 546.6 377.4 560 394 560H484C517 560 544 533 544 500V290C544 273 537 256 524 243L354 73C340 60 320 50 300 50Z"
+        fill={filled ? "currentColor" : "none"}
+        stroke="currentColor"
+        strokeWidth="16"
+      />
+    </svg>
   );
 };
 
