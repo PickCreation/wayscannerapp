@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, FileText } from "lucide-react";
+import { ArrowLeft, FileText, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import BottomNavigation from "@/components/BottomNavigation";
@@ -37,6 +37,10 @@ const TermsOfUsePage = () => {
 
   const handlePrint = () => {
     window.print();
+  };
+  
+  const handleContactUs = () => {
+    window.open("https://wayscanner.com/contact", "_blank");
   };
 
   return (
@@ -204,13 +208,16 @@ const TermsOfUsePage = () => {
 
           <section>
             <h3 className="font-semibold text-base mb-2">13. Contact Information</h3>
-            <p className="text-sm">
-              For questions about these Terms, please contact us at:
+            <p className="text-sm mb-4">
+              For questions about these Terms, please contact us:
             </p>
-            <p className="text-sm mt-2">
-              Email: legal@wayscanner.com<br />
-              Address: 123 Eco Street, Green City, EC 12345
-            </p>
+            <Button
+              className="bg-wayscanner-blue hover:bg-blue-700 flex items-center"
+              onClick={handleContactUs}
+            >
+              <ExternalLink className="h-4 w-4 mr-2" />
+              Contact Us
+            </Button>
           </section>
         </div>
       </div>

@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Shield } from "lucide-react";
+import { ArrowLeft, Shield, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import BottomNavigation from "@/components/BottomNavigation";
@@ -37,6 +37,10 @@ const PrivacyPolicyPage = () => {
 
   const handlePrint = () => {
     window.print();
+  };
+  
+  const handleContactUs = () => {
+    window.open("https://wayscanner.com/contact", "_blank");
   };
 
   return (
@@ -191,13 +195,16 @@ const PrivacyPolicyPage = () => {
 
           <section>
             <h3 className="font-semibold text-base mb-2">9. Contact Us</h3>
-            <p className="text-sm">
-              If you have any questions about this Privacy Policy, please contact us at:
+            <p className="text-sm mb-4">
+              If you have any questions about this Privacy Policy, please contact us:
             </p>
-            <p className="text-sm mt-2">
-              Email: privacy@wayscanner.com<br />
-              Address: 123 Eco Street, Green City, EC 12345
-            </p>
+            <Button
+              className="bg-wayscanner-blue hover:bg-blue-700 flex items-center"
+              onClick={handleContactUs}
+            >
+              <ExternalLink className="h-4 w-4 mr-2" />
+              Contact Us
+            </Button>
           </section>
         </div>
       </div>

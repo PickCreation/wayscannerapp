@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Package, Calendar, ChevronRight, ExternalLink } from "lucide-react";
@@ -7,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Purchase {
   id: string;
@@ -157,13 +157,16 @@ const PurchasesPage = () => {
 
       <div className="flex-1 p-4">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="pending">Pending</TabsTrigger>
-            <TabsTrigger value="shipped">Shipped</TabsTrigger>
-            <TabsTrigger value="delivered">Delivered</TabsTrigger>
-            <TabsTrigger value="cancelled">Cancelled</TabsTrigger>
-          </TabsList>
+          <ScrollArea className="w-full whitespace-nowrap">
+            <TabsList className="inline-flex w-max border-b bg-transparent p-0">
+              <TabsTrigger value="all" className="px-4 py-2 data-[state=active]:border-b-2 data-[state=active]:border-wayscanner-blue">All</TabsTrigger>
+              <TabsTrigger value="pending" className="px-4 py-2 data-[state=active]:border-b-2 data-[state=active]:border-wayscanner-blue">Pending</TabsTrigger>
+              <TabsTrigger value="processing" className="px-4 py-2 data-[state=active]:border-b-2 data-[state=active]:border-wayscanner-blue">Processing</TabsTrigger>
+              <TabsTrigger value="shipped" className="px-4 py-2 data-[state=active]:border-b-2 data-[state=active]:border-wayscanner-blue">Shipped</TabsTrigger>
+              <TabsTrigger value="delivered" className="px-4 py-2 data-[state=active]:border-b-2 data-[state=active]:border-wayscanner-blue">Delivered</TabsTrigger>
+              <TabsTrigger value="cancelled" className="px-4 py-2 data-[state=active]:border-b-2 data-[state=active]:border-wayscanner-blue">Cancelled</TabsTrigger>
+            </TabsList>
+          </ScrollArea>
         </Tabs>
 
         {filteredPurchases.length > 0 ? (

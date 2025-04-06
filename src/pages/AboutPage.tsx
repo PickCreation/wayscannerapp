@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -81,10 +80,10 @@ const AboutPage = () => {
         </div>
       </div>
 
-      <div className="flex-1 p-4">
+      <div className="flex-1 p-4 pb-24">
         <div className="flex flex-col items-center mb-8">
           <img 
-            src="/lovable-uploads/8fdd5ac8-39b5-43e6-86de-c8b27715d7c8.png" 
+            src="/lovable-uploads/3981fb88-0fa3-404e-8a77-3a58ae1e0347.png" 
             alt="WayScanner Logo" 
             className="h-24 mb-4" 
           />
@@ -190,7 +189,7 @@ const AboutPage = () => {
           </div>
         </div>
 
-        <p className="text-xs text-center text-gray-500 mt-6">
+        <p className="text-xs text-center text-gray-500 mt-6 mb-16">
           © 2025 WayScanner. All rights reserved.
         </p>
       </div>

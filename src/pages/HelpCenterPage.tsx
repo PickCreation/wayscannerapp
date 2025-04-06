@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -240,7 +239,7 @@ const HelpCenterPage = () => {
           ))}
         </div>
 
-        <div className="bg-blue-50 rounded-lg p-4 mb-6">
+        <div className="bg-blue-50 rounded-lg p-4 mb-16">
           <h3 className="font-semibold mb-2 flex items-center">
             <MessageCircle className="h-5 w-5 text-wayscanner-blue mr-2" />
             Can't find what you're looking for?
