@@ -3,7 +3,8 @@ import {
   ArrowLeft, Edit, Lock, Store, Bookmark, Heart, 
   ShoppingCart, Truck, Ticket, Globe, HelpCircle, Info, 
   Shield, LogOut, FileText, ChevronRight, User,
-  CreditCard, MapPin, Package, MessageSquare, Crown
+  CreditCard, MapPin, Package, MessageSquare, Crown,
+  LogIn
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
@@ -13,6 +14,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
+import LoginDialog from "@/components/LoginDialog";
+import { useAuth } from "@/hooks/use-auth";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -20,6 +23,8 @@ const ProfilePage = () => {
   const isMobile = useIsMobile();
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("profile");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const { isAuthenticated, user, logout } = useAuth();
 
   useEffect(() => {
     const handleBackButton = () => {
@@ -43,6 +48,12 @@ const ProfilePage = () => {
   };
 
   const handleMenuItemClick = (item: string) => {
+    if (!isAuthenticated && ['Bookmarks', 'Favorites', 'Cart', 'Orders', 'Purchases', 'Addresses', 
+                             'Payment Methods', 'Edit Profile'].includes(item)) {
+      setShowLoginDialog(true);
+      return;
+    }
+    
     if (item === "Bookmarks") {
       navigate("/bookmarks");
       return;
@@ -144,7 +155,19 @@ const ProfilePage = () => {
   };
 
   const handleUpgradeClick = () => {
+    if (!isAuthenticated) {
+      setShowLoginDialog(true);
+      return;
+    }
     navigate("/subscription");
+  };
+
+  const handleLoginClick = () => {
+    setShowLoginDialog(true);
+  };
+
+  const handleLogoutClick = () => {
+    logout();
   };
 
   return (
@@ -169,25 +192,49 @@ const ProfilePage = () => {
               <User size={30} />
             </AvatarFallback>
           </Avatar>
-          <h2 className="text-base font-bold mb-0">John Doe</h2>
-          <p className="mb-1">johndoe@example.com</p>
+          {isAuthenticated ? (
+            <>
+              <h2 className="text-base font-bold mb-0">{user?.name || "User"}</h2>
+              <p className="mb-1">{user?.email || "user@example.com"}</p>
+            </>
+          ) : (
+            <div className="text-center mt-2">
+              <Button 
+                variant="outline" 
+                className="bg-white text-wayscanner-blue hover:bg-blue-50 border-none" 
+                onClick={handleLoginClick}
+              >
+                <LogIn className="mr-2 h-4 w-4" />
+                Login / Sign Up
+              </Button>
+              <p className="text-sm mt-2 opacity-80">Login to access all features</p>
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="flex justify-around py-3">
-        <div className="text-center">
-          <p className="text-base font-bold text-wayscanner-blue">127</p>
-          <p className="text-[13px] text-[#6E6E6E]">Followers</p>
+      {isAuthenticated ? (
+        <div className="flex justify-around py-3">
+          <div className="text-center">
+            <p className="text-base font-bold text-wayscanner-blue">127</p>
+            <p className="text-[13px] text-[#6E6E6E]">Followers</p>
+          </div>
+          <div className="text-center border-x border-gray-200 px-8">
+            <p className="text-base font-bold text-wayscanner-blue">15</p>
+            <p className="text-[13px] text-[#6E6E6E]">Sales</p>
+          </div>
+          <div className="text-center">
+            <p className="text-base font-bold text-wayscanner-blue">32</p>
+            <p className="text-[13px] text-[#6E6E6E]">Reviews</p>
+          </div>
         </div>
-        <div className="text-center border-x border-gray-200 px-8">
-          <p className="text-base font-bold text-wayscanner-blue">15</p>
-          <p className="text-[13px] text-[#6E6E6E]">Sales</p>
+      ) : (
+        <div className="py-4 px-4 bg-gray-50 border-b">
+          <p className="text-center text-gray-600">
+            Create an account to access all features and track your activities
+          </p>
         </div>
-        <div className="text-center">
-          <p className="text-base font-bold text-wayscanner-blue">32</p>
-          <p className="text-[13px] text-[#6E6E6E]">Reviews</p>
-        </div>
-      </div>
+      )}
 
       {/* Upgrade Button */}
       <div className="px-4 my-3">
@@ -344,22 +391,38 @@ const ProfilePage = () => {
       </div>
 
       <div className="px-4 pb-28 mt-4 flex flex-col">
-        <Button 
-          className="bg-wayscanner-blue hover:bg-blue-700 w-full py-6 rounded-lg flex items-center justify-center gap-2 mb-4"
-          onClick={() => handleMenuItemClick("Logout")}
-        >
-          <LogOut className="h-5 w-5" />
-          <span className="text-base font-semibold">Log Out</span>
-        </Button>
-        
-        <button 
-          className="text-red-500 text-center font-semibold text-base mt-2 pb-2"
-          onClick={() => handleMenuItemClick("Delete Account")}
-        >
-          Delete Account
-        </button>
+        {isAuthenticated ? (
+          <>
+            <Button 
+              className="bg-wayscanner-blue hover:bg-blue-700 w-full py-6 rounded-lg flex items-center justify-center gap-2 mb-4"
+              onClick={handleLogoutClick}
+            >
+              <LogOut className="h-5 w-5" />
+              <span className="text-base font-semibold">Log Out</span>
+            </Button>
+            
+            <button 
+              className="text-red-500 text-center font-semibold text-base mt-2 pb-2"
+              onClick={() => handleMenuItemClick("Delete Account")}
+            >
+              Delete Account
+            </button>
+          </>
+        ) : (
+          <Button 
+            className="bg-wayscanner-blue hover:bg-blue-700 w-full py-6 rounded-lg flex items-center justify-center gap-2 mb-4"
+            onClick={handleLoginClick}
+          >
+            <LogIn className="h-5 w-5" />
+            <span className="text-base font-semibold">Login / Sign Up</span>
+          </Button>
+        )}
       </div>
 
+      <LoginDialog 
+        open={showLoginDialog} 
+        onOpenChange={setShowLoginDialog} 
+      />
       <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
 
       <BottomNavigation
