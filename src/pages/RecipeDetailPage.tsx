@@ -4,10 +4,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, 
   Clock, 
-  Star, 
   Users, 
   BookmarkPlus, 
-  Heart, 
   Share2,
   ChefHat,
   CircleCheck,
@@ -15,7 +13,10 @@ import {
   MessageSquare,
   LightbulbIcon,
   Check,
-  Tags
+  Tags,
+  X,
+  Copy,
+  Facebook
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -28,10 +29,14 @@ import {
   DrawerDescription,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
   DrawerClose,
   DrawerFooter,
 } from "@/components/ui/drawer";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 // Mock recipe data (in a real app this would come from an API)
 const recipeData = {
@@ -83,14 +88,16 @@ const recipeData = {
         author: "Sarah Johnson",
         date: "2 days ago",
         rating: 5,
-        text: "Made this last night and it was amazing! My family loved it. Will definitely make again."
+        text: "Made this last night and it was amazing! My family loved it. Will definitely make again.",
+        ratingLabel: "Delicious"
       },
       {
         id: 2,
         author: "Mike Thompson",
         date: "1 week ago",
         rating: 4,
-        text: "Great recipe! I added some grilled chicken and it was perfect for dinner."
+        text: "Great recipe! I added some grilled chicken and it was perfect for dinner.",
+        ratingLabel: "Tasty"
       }
     ]
   },
@@ -143,17 +150,27 @@ const recipeData = {
     comments: [
       {
         id: 1,
-        author: "Emily Chen",
-        date: "3 days ago",
+        author: "Sarah J****",
+        date: "2 days ago",
         rating: 5,
-        text: "So fresh and healthy! I added tofu for protein and it was delicious."
+        text: "Made this yesterday and it was absolutely delicious! Everyone in my family loved it.",
+        ratingLabel: "Delicious"
       },
       {
         id: 2,
-        author: "David Wilson",
+        author: "John M****",
         date: "1 week ago",
         rating: 4,
-        text: "Great weeknight dinner option. Quick and tasty, my kids even ate the veggies!"
+        text: "Great recipe! I added some extra garlic and it turned out amazing.",
+        ratingLabel: "Tasty"
+      },
+      {
+        id: 3,
+        author: "Alex B****",
+        date: "2 weeks ago",
+        rating: 5,
+        text: "Simple to make and really flavorful. Will definitely make it again!",
+        ratingLabel: "Delicious"
       }
     ]
   }
@@ -188,10 +205,11 @@ const RecipeDetailPage = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("ingredients");
   const [isSaved, setIsSaved] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
   const [comment, setComment] = useState("");
   const [selectedRating, setSelectedRating] = useState<string | null>("delicious");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [showShareOptions, setShowShareOptions] = useState(false);
+  const [userComments, setUserComments] = useState<any[]>([]);
 
   // Get recipe data using the recipeId from URL params
   const recipe = recipeData[recipeId as keyof typeof recipeData] || getDefaultRecipe(recipeId || "unknown");
@@ -203,6 +221,12 @@ const RecipeDetailPage = () => {
       const bookmarks = JSON.parse(savedBookmarks);
       const isRecipeSaved = bookmarks.some((item: any) => item.id === recipe.id);
       setIsSaved(isRecipeSaved);
+    }
+
+    // Load user comments from localStorage
+    const savedComments = localStorage.getItem(`comments-${recipe.id}`);
+    if (savedComments) {
+      setUserComments(JSON.parse(savedComments));
     }
   }, [recipe.id]);
 
@@ -246,23 +270,56 @@ const RecipeDetailPage = () => {
     });
   };
 
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    toast({
-      title: isLiked ? "Removed Like" : "Recipe Liked",
-      description: `You've ${isLiked ? 'removed your like from' : 'liked'} ${recipe.title}.`,
-    });
+  const handleShare = () => {
+    setShowShareOptions(!showShareOptions);
   };
 
-  const handleShare = () => {
+  const handleCopyLink = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url);
+    
     toast({
-      title: "Share Recipe",
-      description: `Sharing options for ${recipe.title} are coming soon.`,
+      title: "Link Copied",
+      description: "Recipe link has been copied to clipboard!",
     });
+    
+    setShowShareOptions(false);
+  };
+
+  const handleFacebookShare = () => {
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+    
+    toast({
+      title: "Sharing on Facebook",
+      description: "Opening Facebook share dialog.",
+    });
+    
+    setShowShareOptions(false);
   };
 
   const handleViewAllComments = () => {
     setIsDrawerOpen(true);
+  };
+
+  const getRatingLabelColor = (ratingLabel: string) => {
+    switch(ratingLabel) {
+      case "Delicious": return "bg-green-100 text-green-700";
+      case "Tasty": return "bg-blue-100 text-blue-700";
+      case "Just Okay": return "bg-yellow-100 text-yellow-700";
+      case "Not Great": return "bg-red-100 text-red-700";
+      default: return "bg-gray-100 text-gray-700";
+    }
+  };
+
+  const getRatingLabel = (ratingType: string): string => {
+    switch(ratingType) {
+      case "delicious": return "Delicious";
+      case "tasty": return "Tasty";
+      case "just-okay": return "Just Okay";
+      case "not-great": return "Not Great";
+      default: return "Delicious";
+    }
   };
 
   const handlePostComment = () => {
@@ -274,6 +331,23 @@ const RecipeDetailPage = () => {
       return;
     }
 
+    const ratingLabel = getRatingLabel(selectedRating || "delicious");
+    
+    const newComment = {
+      id: Date.now(),
+      author: "You",
+      date: "Just now",
+      rating: ratingLabel === "Delicious" ? 5 : ratingLabel === "Tasty" ? 4 : ratingLabel === "Just Okay" ? 3 : 2,
+      text: comment,
+      ratingLabel: ratingLabel
+    };
+
+    const updatedComments = [...userComments, newComment];
+    setUserComments(updatedComments);
+    
+    // Save comments to localStorage
+    localStorage.setItem(`comments-${recipe.id}`, JSON.stringify(updatedComments));
+
     toast({
       title: "Comment Posted",
       description: "Your comment has been posted successfully.",
@@ -281,6 +355,9 @@ const RecipeDetailPage = () => {
 
     setComment("");
   };
+
+  // Combine predefined recipe comments with user comments
+  const allComments = [...(recipe.comments || []), ...userComments];
 
   return (
     <div className="pb-6 bg-white min-h-screen">
@@ -312,31 +389,43 @@ const RecipeDetailPage = () => {
                 fill={isSaved ? "white" : "none"}
               />
             </button>
-            <button 
-              onClick={handleLike}
-              className="bg-white/20 backdrop-blur-sm rounded-full p-2"
-            >
-              <Heart 
-                size={16} 
-                color="white"
-                fill={isLiked ? "white" : "none"}
-              />
-            </button>
-            <button 
-              onClick={handleShare}
-              className="bg-white/20 backdrop-blur-sm rounded-full p-2"
-            >
-              <Share2 size={16} color="white" />
-            </button>
+            <Popover open={showShareOptions} onOpenChange={setShowShareOptions}>
+              <PopoverTrigger asChild>
+                <button 
+                  onClick={handleShare}
+                  className="bg-white/20 backdrop-blur-sm rounded-full p-2"
+                >
+                  <Share2 size={16} color="white" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-48 p-0">
+                <div className="flex flex-col">
+                  <button 
+                    onClick={handleCopyLink}
+                    className="flex items-center px-4 py-2 hover:bg-gray-100 text-sm"
+                  >
+                    <Copy size={16} className="mr-2" />
+                    Copy Link
+                  </button>
+                  <button 
+                    onClick={handleFacebookShare}
+                    className="flex items-center px-4 py-2 hover:bg-gray-100 text-sm text-blue-600"
+                  >
+                    <Facebook size={16} className="mr-2" />
+                    Share on Facebook
+                  </button>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
       </div>
 
       {/* Recipe Title */}
       <div className="px-4 pt-4">
-        <h1 className="text-2xl font-semibold mb-3">{recipe.title}</h1>
+        <h1 className="text-2xl font-semibold mb-3 text-[28px]">{recipe.title}</h1>
         
-        {/* Recipe Info */}
+        {/* Recipe Tags */}
         <div className="flex flex-wrap gap-2 mb-3">
           {recipe.tags.map(tag => (
             <Badge key={tag} variant="secondary" className="capitalize text-xs">
@@ -491,7 +580,7 @@ const RecipeDetailPage = () => {
         <div className="flex justify-between items-center mb-3">
           <div className="flex items-center">
             <MessageSquare size={14} className="mr-2 text-blue-500" />
-            <h3 className="text-base font-semibold">Comments ({recipe.comments?.length || 0})</h3>
+            <h3 className="text-base font-semibold">Comments ({allComments.length})</h3>
           </div>
           <button 
             className="text-blue-500 text-sm font-medium"
@@ -503,22 +592,18 @@ const RecipeDetailPage = () => {
 
         {/* Display comments */}
         <div className="space-y-4 mb-6">
-          {recipe.comments && recipe.comments.slice(0, 2).map((comment) => (
+          {allComments.slice(0, 2).map((comment) => (
             <div key={comment.id} className="bg-gray-50 p-3 rounded-lg">
               <div className="flex justify-between mb-1">
                 <div className="font-medium text-sm">{comment.author}</div>
                 <div className="text-xs text-gray-500">{comment.date}</div>
               </div>
-              <div className="flex items-center mb-2">
-                {[...Array(5)].map((_, i) => (
-                  <Star 
-                    key={i} 
-                    size={12} 
-                    className={i < comment.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"} 
-                  />
-                ))}
-              </div>
-              <p className="text-sm text-gray-700">{comment.text}</p>
+              <p className="text-sm text-gray-700 mb-2">{comment.text}</p>
+              {comment.ratingLabel && (
+                <div className={`inline-block px-3 py-1 rounded-full text-xs ${getRatingLabelColor(comment.ratingLabel)}`}>
+                  {comment.ratingLabel}
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -628,48 +713,45 @@ const RecipeDetailPage = () => {
         </div>
       </div>
 
-      {/* Comments Drawer */}
+      {/* Comments Drawer with X close button */}
       <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
         <DrawerContent className="p-4 max-h-[90vh]">
-          <DrawerHeader>
-            <DrawerTitle className="text-center">All Comments</DrawerTitle>
-            <DrawerDescription className="text-center">
-              {recipe.comments?.length || 0} comments on this recipe
-            </DrawerDescription>
+          <DrawerHeader className="relative">
+            <DrawerTitle className="text-center">All Comments ({allComments.length})</DrawerTitle>
+            <DrawerClose className="absolute right-2 top-2">
+              <X className="h-5 w-5" />
+            </DrawerClose>
           </DrawerHeader>
           
-          <div className="mt-4 space-y-4 overflow-auto max-h-[60vh] p-2">
-            {recipe.comments && recipe.comments.map((comment) => (
-              <div key={comment.id} className="bg-gray-50 p-3 rounded-lg border border-gray-100">
-                <div className="flex justify-between mb-1">
-                  <div className="font-medium text-sm">{comment.author}</div>
-                  <div className="text-xs text-gray-500">{comment.date}</div>
+          <div className="mt-4 space-y-4 overflow-auto max-h-[70vh] p-2">
+            {allComments.map((comment) => (
+              <div key={comment.id} className="bg-gray-50 p-4 rounded-lg border border-gray-100">
+                <div className="flex items-start">
+                  <div className="bg-blue-100 w-10 h-10 rounded-full flex items-center justify-center text-blue-500 font-semibold mr-3">
+                    {comment.author.charAt(0)}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex justify-between mb-1">
+                      <div className="font-medium text-sm">{comment.author}</div>
+                      <div className="text-xs text-gray-500">{comment.date}</div>
+                    </div>
+                    <p className="text-sm text-gray-700 mb-2">{comment.text}</p>
+                    {comment.ratingLabel && (
+                      <div className={`inline-block px-3 py-1 rounded-full text-xs ${getRatingLabelColor(comment.ratingLabel)}`}>
+                        {comment.ratingLabel}
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center mb-2">
-                  {[...Array(5)].map((_, i) => (
-                    <Star 
-                      key={i} 
-                      size={12} 
-                      className={i < comment.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"} 
-                    />
-                  ))}
-                </div>
-                <p className="text-sm text-gray-700">{comment.text}</p>
               </div>
             ))}
 
-            {!recipe.comments || recipe.comments.length === 0 ? (
+            {allComments.length === 0 && (
               <div className="text-center py-8 text-gray-500">
                 No comments yet. Be the first to add one!
               </div>
-            ) : null}
+            )}
           </div>
-          
-          <DrawerFooter>
-            <DrawerClose asChild>
-              <Button variant="outline">Close</Button>
-            </DrawerClose>
-          </DrawerFooter>
         </DrawerContent>
       </Drawer>
     </div>
