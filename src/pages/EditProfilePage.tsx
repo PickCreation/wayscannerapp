@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Camera, UserCircle, Mail, Phone } from "lucide-react";
@@ -54,6 +55,7 @@ const EditProfilePage = () => {
   };
 
   const handleProfilePhotoChange = () => {
+    // Directly open the camera sheet which will immediately trigger the file picker
     setShowCameraSheet(true);
   };
 

@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -29,13 +28,15 @@ const CameraSheet = ({ open, onOpenChange }: CameraSheetProps) => {
     if (open) {
       if (isProfilePage()) {
         // For profile pages, immediately trigger file selection when sheet opens
-        // We use a direct click on the file input instead of calling a function
-        // This ensures we directly interact with the native file picker
+        // We directly click the file input to use the native file picker without extra permissions
         if (fileInputRef.current) {
-          // Give the browser a moment to render the sheet before triggering file input
-          setTimeout(() => {
-            fileInputRef.current?.click();
-          }, 50);
+          // Immediately trigger file input click to avoid any visual sheet appearance
+          fileInputRef.current.click();
+          
+          // Close the sheet if we're on profile to avoid showing it at all
+          if (!capturedImage) {
+            onOpenChange(false);
+          }
         }
       } else if (!isCameraActive) {
         // Only start camera for non-profile pages
@@ -123,6 +124,11 @@ const CameraSheet = ({ open, onOpenChange }: CameraSheetProps) => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setCapturedImage(reader.result as string);
+        
+        // For profile page, now show the sheet with the image preview
+        if (isProfilePage()) {
+          onOpenChange(true);
+        }
       };
       reader.readAsDataURL(file);
       
@@ -130,6 +136,9 @@ const CameraSheet = ({ open, onOpenChange }: CameraSheetProps) => {
       if (isCameraActive) {
         stopCamera();
       }
+    } else if (isProfilePage()) {
+      // If no file was selected on the profile page, keep the sheet closed
+      onOpenChange(false);
     }
   };
   
