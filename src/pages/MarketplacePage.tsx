@@ -1,7 +1,5 @@
-
 import React, { useState, useEffect } from "react";
-import { Search } from "lucide-react";
-import { ShoppingCart } from "lucide-react";
+import { Search, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -86,7 +84,6 @@ const MarketplacePage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Update cart count whenever the component mounts or localStorage changes
     const updateCartCount = () => {
       const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
       const count = cartItems.reduce((total: number, item: any) => total + item.quantity, 0);
@@ -95,10 +92,7 @@ const MarketplacePage = () => {
     
     updateCartCount();
     
-    // Set up event listener for storage changes
     window.addEventListener('storage', updateCartCount);
-    
-    // Custom event for cart updates within the same page
     window.addEventListener('cartUpdated', updateCartCount);
     
     return () => {
@@ -134,7 +128,7 @@ const MarketplacePage = () => {
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
         <h1 className="text-xl font-bold">Marketplace</h1>
         <button className="p-2 relative" onClick={() => navigate('/cart')}>
-          <ShoppingCart size={24} className="text-white" />
+          <ShoppingCart size={24} className="text-white" fill="white" />
           {cartCount > 0 && (
             <Badge variant="destructive" className="absolute -top-1 -right-1 px-1.5 py-0.5 min-w-5 h-5 flex items-center justify-center">
               {cartCount}
