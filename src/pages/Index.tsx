@@ -56,7 +56,7 @@ const Index = () => {
 
       {/* Scanner Options */}
       <div className="px-4 mb-8">
-        <h3 className="text-base font-bold mb-4">Start Exploring</h3>
+        <h3 className="text-base font-medium">Start Exploring</h3>
         <div className="grid grid-cols-2 gap-4">
           <ScannerCard
             title="Food Scan"
