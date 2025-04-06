@@ -9,6 +9,7 @@ interface AnimalItem {
   riskLevel: "High" | "Moderate" | "Low";
   imageUrl: string;
   borderColor: string;
+  icon: "mammal" | "bird" | "fish";
 }
 
 const animalItems: AnimalItem[] = [
@@ -17,24 +18,27 @@ const animalItems: AnimalItem[] = [
     name: "Bengal Tiger",
     scientificName: "Panthera tigris tigris",
     riskLevel: "High",
-    imageUrl: "/lovable-uploads/1044c752-2d75-49e0-836c-39ab8130a173.png",
+    imageUrl: "/lovable-uploads/b7a77845-a980-42f1-8b7e-eea9a8b822f8.png",
     borderColor: "border-red-100",
+    icon: "mammal"
   },
   {
     id: "2",
     name: "Gray Wolf",
     scientificName: "Canis lupus",
     riskLevel: "Moderate",
-    imageUrl: "/lovable-uploads/1044c752-2d75-49e0-836c-39ab8130a173.png",
+    imageUrl: "/lovable-uploads/b7a77845-a980-42f1-8b7e-eea9a8b822f8.png",
     borderColor: "border-yellow-100",
+    icon: "mammal"
   },
   {
     id: "3",
     name: "Labrador Retriever",
     scientificName: "Canis lupus familiaris",
     riskLevel: "Low",
-    imageUrl: "/lovable-uploads/1044c752-2d75-49e0-836c-39ab8130a173.png",
+    imageUrl: "/lovable-uploads/b7a77845-a980-42f1-8b7e-eea9a8b822f8.png",
     borderColor: "border-green-100",
+    icon: "mammal"
   },
 ];
 
@@ -45,6 +49,12 @@ const AnimalScanTab = () => {
     return "bg-green-500";
   };
 
+  const getAnimalIcon = (type: "mammal" | "bird" | "fish") => {
+    if (type === "bird") return <Bird size={14} className="mr-1" />;
+    if (type === "fish") return <Fish size={14} className="mr-1" />;
+    return <PawPrint size={14} className="mr-1" />;
+  };
+
   return (
     <div className="space-y-3 mb-6">
       {animalItems.map((item) => (
@@ -53,7 +63,7 @@ const AnimalScanTab = () => {
           className={`rounded-xl overflow-hidden border ${item.borderColor} shadow-sm flex`}
         >
           <div className="flex items-center p-3 w-full">
-            <div className="w-16 h-16 rounded-lg overflow-hidden mr-3">
+            <div className="w-14 h-14 rounded-lg overflow-hidden mr-3">
               <img 
                 src={item.imageUrl} 
                 alt={item.name} 
@@ -61,14 +71,14 @@ const AnimalScanTab = () => {
               />
             </div>
             <div className="flex-1">
-              <h3 className="text-base font-bold mb-0.5">{item.name}</h3>
+              <h3 className="text-sm font-bold mb-0.5">{item.name}</h3>
               <p className="text-blue-500 text-xs font-medium mb-1">{item.scientificName}</p>
-              <div className={`${getRiskColor(item.riskLevel)} text-white px-3 py-1 rounded-full inline-flex items-center text-xs`}>
-                <AlertTriangle className="mr-1" size={12} />
+              <div className={`${getRiskColor(item.riskLevel)} text-white px-2 py-0.5 rounded-full inline-flex items-center text-xs`}>
+                <AlertTriangle className="mr-1" size={10} />
                 <span>{item.riskLevel} Risk</span>
               </div>
             </div>
-            <ChevronRight className="text-gray-400 ml-2" size={20} />
+            <ChevronRight className="text-gray-400 ml-2" size={18} />
           </div>
         </div>
       ))}

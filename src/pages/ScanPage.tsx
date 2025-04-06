@@ -55,7 +55,7 @@ const ScanPage = () => {
         >
           <ChevronLeft className="h-6 w-6" color="white" />
         </button>
-        <h1 className="text-xl font-semibold">Scan Results</h1>
+        <h1 className="text-lg font-semibold">Scan Results</h1>
         <div className="w-10 h-10 flex items-center justify-center">
           <Search size={24} color="white" />
         </div>
@@ -66,23 +66,23 @@ const ScanPage = () => {
         <TabsList className="w-full flex justify-between border-b mb-4">
           <TabsTrigger 
             value="food" 
-            className="flex flex-col items-center py-4 px-6 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+            className="flex flex-col items-center py-3 px-6 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
           >
-            <Utensils className="mb-1" size={24} />
+            <Utensils className="mb-1" size={22} color={activeTab === "food" ? "#034AFF" : "#666"} />
             <span className="text-sm font-medium">Food</span>
           </TabsTrigger>
           <TabsTrigger 
             value="plants" 
-            className="flex flex-col items-center py-4 px-6 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+            className="flex flex-col items-center py-3 px-6 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
           >
-            <Flower className="mb-1" size={24} />
+            <Flower className="mb-1" size={22} color={activeTab === "plants" ? "#4CAF50" : "#666"} />
             <span className="text-sm font-medium">Plants</span>
           </TabsTrigger>
           <TabsTrigger 
             value="animals" 
-            className="flex flex-col items-center py-4 px-6 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+            className="flex flex-col items-center py-3 px-6 data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
           >
-            <PawPrint className="mb-1" size={24} />
+            <PawPrint className="mb-1" size={22} color={activeTab === "animals" ? "#FF6B6B" : "#666"} />
             <span className="text-sm font-medium">Animals</span>
           </TabsTrigger>
         </TabsList>
