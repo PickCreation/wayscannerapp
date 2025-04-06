@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import ScannerCard from "@/components/ScannerCard";
 import BottomNavigation from "@/components/BottomNavigation";
-import { Bell, User, Utensil, Leaf, PawPrint, ShoppingBag } from "lucide-react";
+import { Bell, User, Utensils, Leaf, PawPrint, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
@@ -62,7 +62,7 @@ const Index = () => {
             title="Food Scanner"
             description="Get nutritional info & health rating"
             color="red"
-            icon={<Utensil size={24} color="white" />}
+            icon={<Utensils size={24} color="white" />}
             onClick={() => handleScannerClick("Food")}
           />
           <ScannerCard
