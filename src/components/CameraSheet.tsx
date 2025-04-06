@@ -24,16 +24,16 @@ const CameraSheet: React.FC<CameraSheetProps> = ({ open, onOpenChange }) => {
         </div>
         
         <div className="mb-8">
-          <h3 className="text-xl text-gray-600 mb-4">Scan</h3>
+          <h3 className="text-base text-gray-600 mb-4">Scan</h3>
           <div className="flex justify-between">
-            <ScanOption icon={<Utensils className="h-8 w-8 text-[#B04B7D]" />} label="Food" color="bg-pink-100" />
-            <ScanOption icon={<Flower className="h-8 w-8 text-[#34A67F]" />} label="Plant" color="bg-green-100" />
-            <ScanOption icon={<PawPrint className="h-8 w-8 text-[#E67E22]" />} label="Animal" color="bg-orange-100" />
+            <ScanOption icon={<Utensils className="h-6 w-6 text-[#B04B7D]" />} label="Food" color="bg-pink-100" />
+            <ScanOption icon={<Flower className="h-6 w-6 text-[#34A67F]" />} label="Plant" color="bg-green-100" />
+            <ScanOption icon={<PawPrint className="h-6 w-6 text-[#E67E22]" />} label="Animal" color="bg-orange-100" />
           </div>
         </div>
         
-        <div className="space-y-4">
-          <h3 className="text-xl text-gray-600 mb-4">Other Actions</h3>
+        <div className="space-y-4 mb-8">
+          <h3 className="text-base text-gray-600 mb-4">Other Actions</h3>
           <Button className="w-full h-14 bg-black hover:bg-gray-800 justify-center px-6 py-4 text-lg rounded-xl" variant="default">
             <Pencil className="mr-4 h-6 w-6" />
             Create Post
@@ -57,10 +57,10 @@ interface ScanOptionProps {
 const ScanOption: React.FC<ScanOptionProps> = ({ icon, label, color }) => {
   return (
     <div className="flex flex-col items-center">
-      <div className={`${color} rounded-full w-20 h-20 flex items-center justify-center mb-2`}>
+      <div className={`${color} rounded-full w-16 h-16 flex items-center justify-center mb-2`}>
         {icon}
       </div>
-      <span className="text-lg font-medium" style={{ color: label === "Food" ? "#B04B7D" : label === "Plant" ? "#34A67F" : "#E67E22" }}>
+      <span className="text-base font-medium" style={{ color: label === "Food" ? "#B04B7D" : label === "Plant" ? "#34A67F" : "#E67E22" }}>
         {label}
       </span>
     </div>
