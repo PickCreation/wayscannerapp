@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { 
   ArrowLeft, Edit, Lock, Store, Bookmark, Heart, 
@@ -260,7 +259,7 @@ const ProfilePage = () => {
       <div className="px-4 pb-2">
         <h3 className="text-base font-semibold mb-3">Account Settings</h3>
         
-        {isAuthenticated && (
+        {isAuthenticated ? (
           <>
             <ProfileMenuItem 
               icon={<Edit className="h-5 w-5 text-wayscanner-blue" />} 
@@ -283,19 +282,6 @@ const ProfilePage = () => {
               onClick={() => handleMenuItemClick("Seller Dashboard")}
             />
           </>
-        )}
-        
-        {!isAuthenticated && (
-          <div className="flex justify-center py-2">
-            <Button 
-              variant="outline" 
-              className="text-wayscanner-blue" 
-              onClick={handleLoginClick}
-            >
-              <LogIn className="mr-2 h-4 w-4" />
-              Login to access settings
-            </Button>
-          </div>
         )}
       </div>
 
