@@ -8,6 +8,7 @@ import ProductCard from "@/components/ProductCard";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
 import { Badge } from "@/components/ui/badge";
+import FilterBottomSheet, { FilterOptions } from "@/components/FilterBottomSheet";
 
 const products = [
   {
@@ -81,6 +82,8 @@ const MarketplacePage = () => {
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("shop");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+  const [showFilterSheet, setShowFilterSheet] = useState(false);
+  const [appliedFilters, setAppliedFilters] = useState<FilterOptions | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -122,14 +125,58 @@ const MarketplacePage = () => {
   };
 
   const handleFilterClick = () => {
-    // Filter functionality can be implemented here
+    setShowFilterSheet(true);
+  };
+
+  const handleApplyFilters = (filters: FilterOptions) => {
+    setAppliedFilters(filters);
+    console.log("Applied filters:", filters);
   };
 
   const filteredProducts = products.filter(product => {
+    // Filter by category
     const matchesCategory = activeCategory === "all" || 
                            product.category.toLowerCase() === activeCategory.replace("-", " ");
+    
+    // Filter by search term
     const matchesSearch = product.title.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesCategory && matchesSearch;
+    
+    // If no additional filters applied, just use category and search
+    if (!appliedFilters) {
+      return matchesCategory && matchesSearch;
+    }
+    
+    // Filter by price range
+    const matchesPrice = product.price >= appliedFilters.priceRange[0] && 
+                         product.price <= (appliedFilters.priceRange[1] === 100 ? Number.MAX_SAFE_INTEGER : appliedFilters.priceRange[1]);
+    
+    // Basic filtering - in a real app, these would be proper properties of the product
+    // Currently just using these as example filters
+    
+    return matchesCategory && matchesSearch && matchesPrice;
+  });
+
+  // Sort products based on applied filters
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    if (!appliedFilters || appliedFilters.sortBy === "Relevance") {
+      return 0;
+    }
+    
+    switch (appliedFilters.sortBy) {
+      case "Recent":
+        // In a real app, we'd use a timestamp property
+        return b.id - a.id;
+      case "Price: Low to High":
+        return a.price - b.price;
+      case "Price: High to Low":
+        return b.price - a.price;
+      case "Most Reviews":
+        return b.reviews - a.reviews;
+      case "Highest Rated":
+        return b.rating - a.rating;
+      default:
+        return 0;
+    }
   });
 
   return (
@@ -195,8 +242,44 @@ const MarketplacePage = () => {
           {activeCategory === "all" ? "All Products" : 
             categories.find(cat => cat.id === activeCategory)?.name || "Products"}
         </h2>
+        
+        {/* Applied Filters Section (if any) */}
+        {appliedFilters && (
+          <div className="mb-4 flex items-center">
+            <span className="text-sm text-gray-500 mr-2">Filters:</span>
+            {appliedFilters.sortBy !== "Relevance" && (
+              <Badge variant="outline" className="mr-2 bg-gray-100">
+                {appliedFilters.sortBy}
+              </Badge>
+            )}
+            {appliedFilters.priceRange[0] > 0 || appliedFilters.priceRange[1] < 100 && (
+              <Badge variant="outline" className="mr-2 bg-gray-100">
+                ${appliedFilters.priceRange[0]}-${appliedFilters.priceRange[1] === 100 ? '100+' : appliedFilters.priceRange[1]}
+              </Badge>
+            )}
+            {appliedFilters.condition !== "Any" && (
+              <Badge variant="outline" className="mr-2 bg-gray-100">
+                {appliedFilters.condition}
+              </Badge>
+            )}
+            {appliedFilters.inStock && (
+              <Badge variant="outline" className="mr-2 bg-gray-100">
+                In Stock
+              </Badge>
+            )}
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className="text-xs text-blue-500 h-7 px-2"
+              onClick={() => setAppliedFilters(null)}
+            >
+              Clear All
+            </Button>
+          </div>
+        )}
+        
         <div className="grid grid-cols-2 gap-4">
-          {filteredProducts.map(product => (
+          {sortedProducts.map(product => (
             <ProductCard
               key={product.id}
               id={product.id}
@@ -209,7 +292,7 @@ const MarketplacePage = () => {
           ))}
         </div>
         
-        {filteredProducts.length === 0 && (
+        {sortedProducts.length === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-500">No products found.</p>
           </div>
@@ -223,6 +306,12 @@ const MarketplacePage = () => {
       />
       
       <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
+      
+      <FilterBottomSheet 
+        open={showFilterSheet} 
+        onOpenChange={setShowFilterSheet}
+        onApplyFilters={handleApplyFilters}
+      />
     </div>
   );
 };
