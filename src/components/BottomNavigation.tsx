@@ -10,8 +10,8 @@ import { cn } from "@/lib/utils";
 import { useLocation, useNavigate } from "react-router-dom";
 
 interface BottomNavigationProps {
-  activeItem: "home" | "forum" | "recipes" | "shop";
-  onItemClick: (item: "home" | "forum" | "recipes" | "shop") => void;
+  activeItem: "home" | "forum" | "recipes" | "shop" | "profile";
+  onItemClick: (item: "home" | "forum" | "recipes" | "shop" | "profile") => void;
   onCameraClick: () => void;
 }
 
@@ -53,9 +53,9 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
         onClick={() => onItemClick("forum")}
       />
       <NavItem
-        icon={isProfilePage ? <User size={24} /> : <Utensils size={24} />}
-        activeIcon={isProfilePage ? <User size={24} fill="currentColor" /> : <Utensils size={24} fill="currentColor" />}
-        label={isProfilePage ? "Profile" : "Recipes"}
+        icon={<Utensils size={24} />}
+        activeIcon={<Utensils size={24} fill="currentColor" />}
+        label="Recipes"
         isActive={activeItem === "recipes" || isRecipesPage}
         onClick={handleRecipesClick}
       />
