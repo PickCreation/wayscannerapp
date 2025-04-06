@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { 
   ArrowLeft, Edit, Lock, Store, Bookmark, Heart, 
@@ -70,11 +69,10 @@ const ProfilePage = () => {
       navigate("/");
     } else if (item === "forum") {
       navigate("/forum");
-    } else {
-      toast({
-        title: "Coming Soon",
-        description: `The ${item} feature is under development.`,
-      });
+    } else if (item === "recipes") {
+      navigate("/recipes");
+    } else if (item === "shop") {
+      navigate("/marketplace");
     }
   };
 
