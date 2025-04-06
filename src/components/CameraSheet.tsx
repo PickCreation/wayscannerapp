@@ -26,15 +26,21 @@ const CameraSheet = ({ open, onOpenChange }: CameraSheetProps) => {
   };
   
   useEffect(() => {
-    // If on profile page, automatically trigger file selection when sheet opens
-    if (open && isProfilePage()) {
-      // Short delay to ensure the sheet is visible first
-      setTimeout(() => {
-        handleFileSelect();
-      }, 300);
-    } else if (open && !isCameraActive && !isProfilePage()) {
-      // Only start camera for non-profile pages
-      startCamera();
+    if (open) {
+      if (isProfilePage()) {
+        // For profile pages, immediately trigger file selection when sheet opens
+        // We use a direct click on the file input instead of calling a function
+        // This ensures we directly interact with the native file picker
+        if (fileInputRef.current) {
+          // Give the browser a moment to render the sheet before triggering file input
+          setTimeout(() => {
+            fileInputRef.current?.click();
+          }, 50);
+        }
+      } else if (!isCameraActive) {
+        // Only start camera for non-profile pages
+        startCamera();
+      }
     }
     
     return () => {
@@ -100,15 +106,11 @@ const CameraSheet = ({ open, onOpenChange }: CameraSheetProps) => {
     
     // If on profile page, go back to file selection
     if (isProfilePage()) {
-      handleFileSelect();
+      if (fileInputRef.current) {
+        fileInputRef.current.click();
+      }
     } else {
       startCamera();
-    }
-  };
-  
-  const handleFileSelect = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
     }
   };
   
@@ -158,7 +160,7 @@ const CameraSheet = ({ open, onOpenChange }: CameraSheetProps) => {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="h-[90%] p-0 overflow-hidden rounded-t-xl">
+      <SheetContent side="bottom" className="h-[90%] p-0 overflow-hidden rounded-t-xl" hideCloseButton={isProfilePage()}>
         <SheetHeader className="px-4 pt-4">
           <div className="flex justify-between items-center">
             <SheetTitle>
@@ -201,7 +203,7 @@ const CameraSheet = ({ open, onOpenChange }: CameraSheetProps) => {
                 <div className="flex justify-center space-x-4">
                   <Button 
                     variant="outline" 
-                    onClick={handleFileSelect}
+                    onClick={() => fileInputRef.current?.click()}
                     className="flex-1"
                   >
                     <Image size={18} className="mr-2" />
