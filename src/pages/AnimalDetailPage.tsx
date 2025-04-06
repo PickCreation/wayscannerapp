@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ChevronLeft, AlertTriangle, PawPrint, Utensils, Moon, PhoneCall, Info } from "lucide-react";
@@ -190,8 +191,8 @@ const AnimalDetailPage = () => {
         <div className="w-10 h-10"></div>
       </header>
 
-      {/* Animal Image */}
-      <div className="w-full h-64 overflow-hidden relative">
+      {/* Animal Image - Now full width and larger */}
+      <div className="w-full h-[250px] overflow-hidden">
         <img 
           src={animal.imageUrl} 
           alt={animal.name} 
@@ -199,12 +200,12 @@ const AnimalDetailPage = () => {
         />
       </div>
 
-      {/* Animal Name */}
-      <div className="p-4">
+      {/* Animal Name - Moved below image */}
+      <div className="p-4 pb-2">
         <h2 className="text-xl font-bold">{animal.name}</h2>
       </div>
 
-      {/* Scientific Name and Risk Level - Moved risk level below scientific name */}
+      {/* Scientific Name and Risk Level */}
       <div className="px-4 pb-2">
         <h3 className="text-base text-green-600 font-medium">Scientific Name</h3>
         <p className="text-blue-600 text-sm font-medium mb-2">{animal.scientificName}</p>
@@ -278,13 +279,13 @@ const AnimalDetailPage = () => {
         <p className="text-xs">{animal.behavioralTraits}</p>
       </div>
 
-      {/* Legal Restrictions - Moved from before to after Behavioral Traits */}
+      {/* Legal Restrictions */}
       <div className="px-4 py-3 bg-blue-100 mx-4 rounded-lg mb-3">
         <h3 className="text-base font-semibold mb-1">Legal Restrictions</h3>
         <p className="text-xs">{animal.legalRestrictions}</p>
       </div>
 
-      {/* Interesting Facts - Moved to the end */}
+      {/* Interesting Facts */}
       <div className="px-4 py-3 border border-gray-300 mx-4 rounded-lg mb-3">
         <h3 className="text-base font-semibold mb-1">Interesting Facts</h3>
         <ul className="space-y-2">
@@ -299,7 +300,7 @@ const AnimalDetailPage = () => {
         </ul>
       </div>
 
-      {/* Emergency Contacts - Moved to the end */}
+      {/* Emergency Contacts */}
       <div className="px-4 py-3 bg-red-100 mx-4 rounded-lg mb-3">
         <h3 className="text-base font-semibold mb-1">Emergency Contacts</h3>
         <ul className="space-y-2">
@@ -315,7 +316,7 @@ const AnimalDetailPage = () => {
         </ul>
       </div>
 
-      {/* Similar Species - Moved to the end */}
+      {/* Similar Species */}
       <div className="px-4 py-3 mx-4 mb-3">
         <h3 className="text-base font-semibold mb-2">Similar Species</h3>
         <div className="flex space-x-4 overflow-x-auto pb-2">
