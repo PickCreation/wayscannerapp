@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { 
   ArrowLeft, Edit, Lock, Store, Bookmark, Heart, 
@@ -40,6 +41,11 @@ const ProfilePage = () => {
   };
 
   const handleMenuItemClick = (item: string) => {
+    if (item === "Bookmarks") {
+      navigate("/bookmarks");
+      return;
+    }
+    
     toast({
       title: "Coming Soon",
       description: `The ${item} feature is under development.`,
@@ -248,6 +254,7 @@ const ProfileMenuItem = ({ icon, title, description, onClick }: ProfileMenuItemP
     <button 
       className="flex items-center w-full py-3"
       onClick={onClick}
+      type="button"
     >
       <div className="bg-blue-50 rounded-full p-3 mr-3">
         {icon}

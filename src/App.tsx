@@ -10,6 +10,7 @@ import MyPostsPage from "./pages/MyPostsPage";
 import PostDetailPage from "./pages/PostDetailPage";
 import NotFound from "./pages/NotFound";
 import ProfilePage from "./pages/ProfilePage";
+import BookmarksPage from "./pages/BookmarksPage";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/bookmarks" element={<BookmarksPage />} />
           <Route path="/forum" element={<ForumPage />} />
           <Route path="/forum/my-posts" element={<MyPostsPage />} />
           <Route path="/forum/post/:postId" element={<PostDetailPage />} />

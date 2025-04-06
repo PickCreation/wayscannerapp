@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, Heart, Bookmark, Send, Bell, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -19,7 +18,6 @@ const PostDetailPage = () => {
   const [showCameraSheet, setShowCameraSheet] = useState(false);
   const [loading, setLoading] = useState(true);
   
-  // Load post data from localStorage
   useEffect(() => {
     const postId = params.postId;
     console.log("Loading post with ID:", postId);
@@ -31,7 +29,6 @@ const PostDetailPage = () => {
       
       if (foundPost) {
         setPost(foundPost);
-        // Initialize comments array if not present
         if (!foundPost.comments || !Array.isArray(foundPost.comments)) {
           foundPost.comments = [];
         }
@@ -44,13 +41,11 @@ const PostDetailPage = () => {
   const handleLikePost = () => {
     if (!post) return;
     
-    // Update post in state
     setPost((prev: any) => {
       const newLikes = prev.likes + (prev.liked ? -1 : 1);
       return { ...prev, likes: newLikes, liked: !prev.liked };
     });
     
-    // Also update in localStorage
     const savedPosts = localStorage.getItem('forumPosts');
     if (savedPosts) {
       const allPosts = JSON.parse(savedPosts);
@@ -76,10 +71,8 @@ const PostDetailPage = () => {
   const handleBookmarkPost = () => {
     if (!post) return;
     
-    // Update post in state
     setPost((prev: any) => ({ ...prev, bookmarked: !prev.bookmarked }));
     
-    // Also update in localStorage
     const savedPosts = localStorage.getItem('forumPosts');
     if (savedPosts) {
       const allPosts = JSON.parse(savedPosts);
@@ -95,7 +88,7 @@ const PostDetailPage = () => {
     
     toast({
       title: post.bookmarked ? "Bookmark removed" : "Post bookmarked",
-      description: post.bookmarked ? "Removed from your profile" : "Saved to your profile",
+      description: post.bookmarked ? "Removed from your bookmarks" : "Saved to your bookmarks",
     });
   };
 
@@ -112,17 +105,14 @@ const PostDetailPage = () => {
       content: newComment.trim(),
     };
 
-    // Update comments in state
     const updatedComments = [...comments, newCommentObj];
     setComments(updatedComments);
     
-    // Also update the post's comment count and comments array in localStorage
     const savedPosts = localStorage.getItem('forumPosts');
     if (savedPosts) {
       const allPosts = JSON.parse(savedPosts);
       const updatedPosts = allPosts.map((p: any) => {
         if (p.id === post.id) {
-          // Initialize comments array if it doesn't exist
           if (!p.comments) {
             p.comments = [];
           }
@@ -138,7 +128,6 @@ const PostDetailPage = () => {
       localStorage.setItem('forumPosts', JSON.stringify(updatedPosts));
     }
     
-    // Update local post state too
     setPost({
       ...post,
       comments: post.comments + 1
@@ -182,7 +171,6 @@ const PostDetailPage = () => {
   
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 pb-20">
-      {/* Header */}
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
         <button onClick={() => navigate(-1)} className="p-2 -ml-2" type="button">
           <ChevronLeft size={24} color="white" />
@@ -204,10 +192,8 @@ const PostDetailPage = () => {
         </div>
       </header>
       
-      {/* Post Detail */}
       <div className="flex-1 p-4">
         <div className="bg-white rounded-lg shadow p-4 mb-4 border border-gray-100">
-          {/* Post Header - Author & Time */}
           <div className="flex items-center mb-3">
             <Avatar className="h-12 w-12 mr-3">
               <AvatarImage src={post.author.avatar} alt={post.author.name} />
@@ -234,17 +220,14 @@ const PostDetailPage = () => {
             </div>
           </div>
           
-          {/* Post Content */}
           <p className="text-gray-700 mb-4">{post.content}</p>
           
-          {/* Post Image (if available) */}
           {post.imageUrl && (
             <div className="mb-4 border rounded-lg overflow-hidden">
               <img src={post.imageUrl} alt="Post" className="w-full h-auto" />
             </div>
           )}
           
-          {/* Post Actions */}
           <div className="flex items-center border-t border-gray-100 pt-3">
             <button 
               className="flex items-center mr-5"
@@ -278,7 +261,6 @@ const PostDetailPage = () => {
           </div>
         </div>
         
-        {/* Comments Section */}
         <div className="bg-white rounded-lg shadow p-4 border border-gray-100">
           <h4 className="font-medium text-lg mb-4">Comments</h4>
           
@@ -310,7 +292,6 @@ const PostDetailPage = () => {
             )}
           </div>
           
-          {/* Add Comment */}
           <div className="flex space-x-2">
             <Input
               value={newComment}
@@ -325,10 +306,8 @@ const PostDetailPage = () => {
         </div>
       </div>
       
-      {/* Camera Sheet */}
       <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
       
-      {/* Bottom Navigation */}
       <BottomNavigation
         activeItem="forum"
         onItemClick={(item) => {
