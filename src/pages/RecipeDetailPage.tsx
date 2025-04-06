@@ -15,7 +15,6 @@ import {
   MessageSquare,
   LightbulbIcon
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
@@ -221,6 +220,19 @@ const RecipeDetailPage = () => {
     });
   };
 
+  // Determine recipe difficulty
+  const recipeDifficulty = recipe.tags.includes("easy") ? "Easy" : recipe.tags.includes("medium") ? "Medium" : "Hard";
+  
+  // Determine recipe category
+  const getRecipeCategory = () => {
+    if (recipe.tags.includes("breakfast")) return "Breakfast";
+    if (recipe.tags.includes("lunch")) return "Lunch";
+    if (recipe.tags.includes("dinner")) return "Dinner";
+    if (recipe.tags.includes("dessert")) return "Dessert";
+    if (recipe.tags.includes("snack")) return "Snack";
+    return "Meal";
+  };
+
   return (
     <div className="pb-6 bg-white min-h-screen">
       {/* Header with Image */}
@@ -237,7 +249,7 @@ const RecipeDetailPage = () => {
             onClick={handleBack}
             className="bg-white/20 backdrop-blur-sm rounded-full p-2"
           >
-            <ArrowLeft size={20} color="white" />
+            <ArrowLeft size={16} color="white" />
           </button>
           
           <div className="flex space-x-2">
@@ -246,7 +258,7 @@ const RecipeDetailPage = () => {
               className="bg-white/20 backdrop-blur-sm rounded-full p-2"
             >
               <BookmarkPlus 
-                size={20} 
+                size={16} 
                 color="white"
                 fill={isSaved ? "white" : "none"}
               />
@@ -256,7 +268,7 @@ const RecipeDetailPage = () => {
               className="bg-white/20 backdrop-blur-sm rounded-full p-2"
             >
               <Heart 
-                size={20} 
+                size={16} 
                 color="white"
                 fill={isLiked ? "white" : "none"}
               />
@@ -265,18 +277,57 @@ const RecipeDetailPage = () => {
               onClick={handleShare}
               className="bg-white/20 backdrop-blur-sm rounded-full p-2"
             >
-              <Share2 size={20} color="white" />
+              <Share2 size={16} color="white" />
             </button>
           </div>
         </div>
-        
-        <div className="absolute bottom-6 left-6 right-6 text-white">
-          <h1 className="text-2xl font-bold">{recipe.title}</h1>
+      </div>
+
+      {/* Recipe Title */}
+      <div className="px-4 pt-4">
+        <h1 className="text-2xl font-semibold mb-3">{recipe.title}</h1>
+      </div>
+
+      {/* Recipe Info */}
+      <div className="px-4 pb-4 grid grid-cols-4 gap-2">
+        <div className="flex flex-col items-center">
+          <div className="bg-blue-100 w-14 h-14 rounded-full flex items-center justify-center mb-1">
+            <Clock size={20} className="text-blue-500" />
+          </div>
+          <p className="text-blue-500 font-medium text-sm">{recipe.time}</p>
+          <p className="text-xs text-gray-500">Cook Time</p>
+        </div>
+        <div className="flex flex-col items-center">
+          <div className="bg-green-100 w-14 h-14 rounded-full flex items-center justify-center mb-1">
+            <svg width="20" height="20" viewBox="0 0 24 24" className="text-green-500">
+              <rect x="3" y="12" width="4" height="6" fill="currentColor" />
+              <rect x="10" y="8" width="4" height="10" fill="currentColor" />
+              <rect x="17" y="4" width="4" height="14" fill="currentColor" />
+            </svg>
+          </div>
+          <p className="text-green-500 font-medium text-sm">{recipeDifficulty}</p>
+          <p className="text-xs text-gray-500">Difficulty</p>
+        </div>
+        <div className="flex flex-col items-center">
+          <div className="bg-orange-100 w-14 h-14 rounded-full flex items-center justify-center mb-1">
+            <Users size={20} className="text-orange-500" />
+          </div>
+          <p className="text-orange-500 font-medium text-sm">{recipe.servings} Servings</p>
+          <p className="text-xs text-gray-500">Yield</p>
+        </div>
+        <div className="flex flex-col items-center">
+          <div className="bg-indigo-100 w-14 h-14 rounded-full flex items-center justify-center mb-1">
+            <svg width="20" height="20" viewBox="0 0 24 24" className="text-indigo-500">
+              <polygon points="12,2 22,12 18,12 18,22 6,22 6,12 2,12" fill="currentColor" />
+            </svg>
+          </div>
+          <p className="text-indigo-500 font-medium text-sm">{getRecipeCategory()}</p>
+          <p className="text-xs text-gray-500">Category</p>
         </div>
       </div>
 
       {/* Description */}
-      <div className="px-4 py-4">
+      <div className="px-4 py-2">
         <h2 className="text-base font-semibold mb-2">Description</h2>
         <p className="text-sm text-gray-700">{recipe.description}</p>
         
@@ -334,49 +385,49 @@ const RecipeDetailPage = () => {
         </Tabs>
       </div>
 
-      {/* Nutrition Info */}
-      <div className="px-4 mt-8">
+      {/* Nutrition Info - Smaller Size */}
+      <div className="px-4 mt-6">
         <h3 className="text-base font-semibold mb-3">Nutrition Information</h3>
         <div className="flex justify-between mb-2">
           <div className="flex flex-col items-center">
-            <div className="bg-red-100 w-20 h-20 rounded-full flex items-center justify-center mb-2">
-              <span className="text-red-500 text-xl font-semibold">{recipe.nutrition.calories}</span>
+            <div className="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mb-1">
+              <span className="text-red-500 text-lg font-semibold">{recipe.nutrition.calories}</span>
             </div>
-            <p className="text-sm text-gray-600">Calories</p>
+            <p className="text-xs text-gray-600">Calories</p>
           </div>
           <div className="flex flex-col items-center">
-            <div className="bg-purple-100 w-20 h-20 rounded-full flex items-center justify-center mb-2">
-              <span className="text-purple-600 text-xl font-semibold">{recipe.nutrition.protein}</span>
+            <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mb-1">
+              <span className="text-purple-600 text-lg font-semibold">{recipe.nutrition.protein}</span>
             </div>
-            <p className="text-sm text-gray-600">Protein</p>
+            <p className="text-xs text-gray-600">Protein</p>
           </div>
           <div className="flex flex-col items-center">
-            <div className="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mb-2">
-              <span className="text-green-500 text-xl font-semibold">{recipe.nutrition.carbs}</span>
+            <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mb-1">
+              <span className="text-green-500 text-lg font-semibold">{recipe.nutrition.carbs}</span>
             </div>
-            <p className="text-sm text-gray-600">Carbs</p>
+            <p className="text-xs text-gray-600">Carbs</p>
           </div>
           <div className="flex flex-col items-center">
-            <div className="bg-yellow-100 w-20 h-20 rounded-full flex items-center justify-center mb-2">
-              <span className="text-yellow-600 text-xl font-semibold">{recipe.nutrition.fat}</span>
+            <div className="bg-yellow-100 w-16 h-16 rounded-full flex items-center justify-center mb-1">
+              <span className="text-yellow-600 text-lg font-semibold">{recipe.nutrition.fat}</span>
             </div>
-            <p className="text-sm text-gray-600">Fat</p>
+            <p className="text-xs text-gray-600">Fat</p>
           </div>
         </div>
-        <div className="bg-gray-100 p-3 rounded-lg text-center">
+        <div className="bg-gray-100 p-2 rounded-lg text-center">
           <div className="flex items-center justify-center">
-            <Info size={16} className="mr-2 text-gray-500" />
-            <p className="text-sm text-gray-500">Values are per serving and are approximate.</p>
+            <Info size={14} className="mr-1 text-gray-500" />
+            <p className="text-xs text-gray-500">Values are per serving and are approximate.</p>
           </div>
         </div>
       </div>
 
       {/* Tips Section */}
-      <div className="px-4 mt-8">
+      <div className="px-4 mt-6">
         <h3 className="text-base font-semibold mb-3">Tips</h3>
         <div className="bg-yellow-50 border border-yellow-100 rounded-lg p-4">
-          <div className="flex items-start mb-3">
-            <LightbulbIcon size={20} className="text-yellow-500 mr-2 mt-0.5" />
+          <div className="flex items-start mb-2">
+            <LightbulbIcon size={18} className="text-yellow-500 mr-2 mt-0.5" />
             <h4 className="text-base font-semibold text-yellow-600">Chef Tips</h4>
           </div>
           <ul className="space-y-2 ml-2">
@@ -391,10 +442,10 @@ const RecipeDetailPage = () => {
       </div>
 
       {/* Comments Section */}
-      <div className="px-4 mt-8">
+      <div className="px-4 mt-6">
         <div className="flex justify-between items-center mb-3">
           <div className="flex items-center">
-            <MessageSquare size={18} className="mr-2 text-blue-500" />
+            <MessageSquare size={16} className="mr-2 text-blue-500" />
             <h3 className="text-base font-semibold">Comments ({recipe.comments || 0})</h3>
           </div>
           <button 
@@ -404,16 +455,6 @@ const RecipeDetailPage = () => {
             View All
           </button>
         </div>
-      </div>
-
-      {/* Start Cooking Button */}
-      <div className="px-4 mt-8">
-        <Button className="w-full py-6 text-lg" onClick={() => toast({
-          title: "Start Cooking",
-          description: "This feature is coming soon!",
-        })}>
-          Start Cooking
-        </Button>
       </div>
     </div>
   );
