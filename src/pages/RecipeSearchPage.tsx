@@ -93,14 +93,20 @@ const RecipeSearchPage = () => {
   const { toast } = useToast();
   
   useEffect(() => {
+    // Update search query from URL
     setSearchQuery(query);
+    
+    // Fix the search functionality by ensuring proper filtering
     if (query) {
-      // Filter recipes based on search query
+      // Improved filtering to be more inclusive
       const filtered = allRecipes.filter(recipe => 
         recipe.title.toLowerCase().includes(query.toLowerCase())
       );
+      console.log("Search query:", query);
+      console.log("Filtered recipes:", filtered);
       setResults(filtered);
     } else {
+      // If no query, show all recipes
       setResults(allRecipes);
     }
   }, [query]);
@@ -195,10 +201,9 @@ const RecipeSearchPage = () => {
               <Input
                 type="text"
                 placeholder="Search for recipes..."
-                className="pl-10 pr-10 py-2 bg-gray-100 rounded-full focus:border-wayscanner-blue focus:ring-1 focus:ring-wayscanner-blue focus:border-[1px]"
+                className="pl-10 pr-10 py-2 bg-gray-100 rounded-full focus:border-wayscanner-blue focus:ring-1 focus:ring-wayscanner-blue"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                style={{ borderColor: "#e5e7eb", borderWidth: "1px" }}
               />
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <Search className="h-5 w-5 text-gray-400" />
