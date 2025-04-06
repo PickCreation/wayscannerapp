@@ -7,7 +7,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
-  const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("home");
+  const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("home");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -22,7 +22,7 @@ const Index = () => {
     }
   }, [location, navigate]);
 
-  const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop") => {
+  const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop" | "profile") => {
     setActiveNavItem(item);
     
     if (item === "home") {
@@ -41,6 +41,11 @@ const Index = () => {
     
     if (item === "shop") {
       navigate("/marketplace");
+      return;
+    }
+    
+    if (item === "profile") {
+      navigate("/profile");
       return;
     }
   };

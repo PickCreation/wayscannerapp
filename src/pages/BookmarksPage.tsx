@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { 
   ArrowLeft, User, Bell, BookmarkCheck, Heart, MessageSquare, Bookmark,
@@ -7,7 +6,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent } from "@/components/ui/card"; // Added this import
+import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
 import { RecipeCard } from "@/components/RecipeCard";
@@ -16,14 +15,12 @@ const BookmarksPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("forum");
-  const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("recipes");
+  const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("profile");
   const [bookmarkedPosts, setBookmarkedPosts] = useState<any[]>([]);
   const [bookmarkedScans, setBookmarkedScans] = useState<any[]>([]);
   const [bookmarkedRecipes, setBookmarkedRecipes] = useState<any[]>([]);
 
-  // Load bookmarked posts from localStorage
   useEffect(() => {
-    // Load forum posts
     const savedPosts = localStorage.getItem('forumPosts');
     if (savedPosts) {
       const allPosts = JSON.parse(savedPosts);
@@ -31,12 +28,10 @@ const BookmarksPage = () => {
       setBookmarkedPosts(bookmarkedItems);
     }
 
-    // Load bookmarked recipes
     const savedRecipes = localStorage.getItem('bookmarkedRecipes');
     if (savedRecipes) {
       setBookmarkedRecipes(JSON.parse(savedRecipes));
     } else {
-      // For demonstration only - this would be removed in production
       setBookmarkedRecipes([
         { 
           id: 'r1', 
@@ -59,7 +54,6 @@ const BookmarksPage = () => {
       ]);
     }
 
-    // For demonstration, we'll add some placeholder data for scans
     setBookmarkedScans([
       { id: 's1', title: 'Organic Apple', date: '2025-04-01', category: 'Fruit', score: 87 },
       { id: 's2', title: 'Whole Grain Bread', date: '2025-04-02', category: 'Bakery', score: 92 },
@@ -78,7 +72,7 @@ const BookmarksPage = () => {
     navigate(`/recipes/${recipeId}`);
   };
 
-  const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop") => {
+  const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop" | "profile") => {
     setActiveNavItem(item);
     if (item === "home") {
       navigate("/");
@@ -86,11 +80,10 @@ const BookmarksPage = () => {
       navigate("/forum");
     } else if (item === "recipes") {
       navigate("/recipes");
-    } else {
-      toast({
-        title: "Coming Soon",
-        description: `The ${item} feature is under development.`,
-      });
+    } else if (item === "shop") {
+      navigate("/marketplace");
+    } else if (item === "profile") {
+      navigate("/profile");
     }
   };
 
@@ -102,7 +95,6 @@ const BookmarksPage = () => {
   };
 
   const handleLikePost = (postId: string) => {
-    // This is a placeholder for liking a post
     toast({
       title: "Post liked",
       description: "The author has been notified",
@@ -110,10 +102,8 @@ const BookmarksPage = () => {
   };
 
   const handleUnbookmarkPost = (postId: string) => {
-    // Update the local state
     setBookmarkedPosts(bookmarkedPosts.filter(post => post.id !== postId));
     
-    // Update localStorage
     const savedPosts = localStorage.getItem('forumPosts');
     if (savedPosts) {
       const allPosts = JSON.parse(savedPosts);
@@ -130,10 +120,8 @@ const BookmarksPage = () => {
   };
   
   const handleRemoveRecipeBookmark = (recipeId: string) => {
-    // Update the local state
     setBookmarkedRecipes(bookmarkedRecipes.filter(recipe => recipe.id !== recipeId));
     
-    // Update localStorage
     const savedBookmarks = localStorage.getItem('bookmarkedRecipes');
     if (savedBookmarks) {
       const bookmarks = JSON.parse(savedBookmarks);
@@ -149,7 +137,6 @@ const BookmarksPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
       <div className="bg-wayscanner-blue text-white p-4 relative">
         <div className="flex justify-between items-center mb-2">
           <button className="p-2" onClick={handleBackClick} type="button">
@@ -167,7 +154,6 @@ const BookmarksPage = () => {
         </div>
       </div>
 
-      {/* Tabs */}
       <div className="p-4">
         <Tabs defaultValue="forum" className="w-full" onValueChange={setActiveTab}>
           <TabsList className="grid grid-cols-3 w-full mb-6">
@@ -182,13 +168,11 @@ const BookmarksPage = () => {
             </TabsTrigger>
           </TabsList>
 
-          {/* Forum Bookmarks */}
           <TabsContent value="forum" className="pb-20">
             <div className="space-y-4">
               {bookmarkedPosts.length > 0 ? (
                 bookmarkedPosts.map(post => (
                   <div key={post.id} className="bg-white rounded-lg shadow p-4 border border-gray-200">
-                    {/* Post Header - Author & Time */}
                     <div className="flex items-center mb-3">
                       <Avatar className="h-12 w-12 mr-3">
                         <AvatarImage src={post.author.avatar} alt={post.author.name} />
@@ -215,17 +199,14 @@ const BookmarksPage = () => {
                       </div>
                     </div>
                     
-                    {/* Post Content */}
                     <p className="text-[14px] text-gray-700 mb-4">{post.content}</p>
                     
-                    {/* Post Image (if available) */}
                     {post.imageUrl && (
                       <div className="mb-4 border rounded-lg overflow-hidden">
                         <img src={post.imageUrl} alt="Post" className="w-full h-auto" />
                       </div>
                     )}
                     
-                    {/* Post Actions */}
                     <div className="flex items-center border-t border-gray-100 pt-3">
                       <button 
                         className="flex items-center mr-5"
@@ -271,7 +252,6 @@ const BookmarksPage = () => {
             </div>
           </TabsContent>
 
-          {/* Scan Bookmarks */}
           <TabsContent value="scan" className="pb-20">
             <div className="space-y-4">
               {bookmarkedScans.length > 0 ? (
@@ -313,7 +293,6 @@ const BookmarksPage = () => {
             </div>
           </TabsContent>
 
-          {/* Recipes Bookmarks */}
           <TabsContent value="recipes" className="pb-20">
             <div className="space-y-4">
               {bookmarkedRecipes.length > 0 ? (
@@ -352,9 +331,8 @@ const BookmarksPage = () => {
         </Tabs>
       </div>
 
-      {/* Bottom Navigation */}
       <BottomNavigation
-        activeItem={activeNavItem}
+        activeItem="profile"
         onItemClick={handleNavItemClick}
         onCameraClick={handleCameraClick}
       />

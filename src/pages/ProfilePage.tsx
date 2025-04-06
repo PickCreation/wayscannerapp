@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { 
   ArrowLeft, Edit, Lock, Store, Bookmark, Heart, 
@@ -19,7 +18,7 @@ const ProfilePage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
-  const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("recipes");
+  const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("profile");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
 
   useEffect(() => {
@@ -85,7 +84,7 @@ const ProfilePage = () => {
     });
   };
 
-  const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop") => {
+  const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop" | "profile") => {
     setActiveNavItem(item);
     if (item === "home") {
       navigate("/");
@@ -95,6 +94,8 @@ const ProfilePage = () => {
       navigate("/recipes");
     } else if (item === "shop") {
       navigate("/marketplace");
+    } else if (item === "profile") {
+      navigate("/profile");
     }
   };
 
@@ -292,7 +293,7 @@ const ProfilePage = () => {
       <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
 
       <BottomNavigation
-        activeItem={activeNavItem}
+        activeItem="profile"
         onItemClick={handleNavItemClick}
         onCameraClick={handleCameraClick}
       />
