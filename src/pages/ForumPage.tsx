@@ -1,12 +1,12 @@
 
-import React, { useState } from "react";
-import { ChevronLeft, Heart, MessageSquare, Bookmark } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Heart, MessageSquare, Bookmark, Bell, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import BottomNavigation from "@/components/BottomNavigation";
 import { useToast } from "@/hooks/use-toast";
 import CreatePostSheet from "@/components/CreatePostSheet";
+import CameraSheet from "@/components/CameraSheet";
 
 // Sample forum data
 const POSTS = [
@@ -63,11 +63,21 @@ export const ForumPage = () => {
   const [activeCategory, setActiveCategory] = useState("All");
   const [posts, setPosts] = useState(POSTS);
   const [showCreatePost, setShowCreatePost] = useState(false);
+  const [showCameraSheet, setShowCameraSheet] = useState(false);
   const { toast } = useToast();
   
-  const handleBackClick = () => {
-    navigate("/");
-  };
+  useEffect(() => {
+    // Listen for openCreatePost event from CameraSheet
+    const handleOpenCreatePost = () => {
+      setShowCreatePost(true);
+    };
+    
+    window.addEventListener('openCreatePost', handleOpenCreatePost);
+    
+    return () => {
+      window.removeEventListener('openCreatePost', handleOpenCreatePost);
+    };
+  }, []);
   
   const handleLikePost = (postId: string) => {
     setPosts(posts.map(post => {
@@ -101,21 +111,35 @@ export const ForumPage = () => {
   const handleCommentClick = (postId: string) => {
     navigate(`/forum/post/${postId}`);
   };
+
+  const handleProfileClick = () => {
+    navigate("/profile");
+  };
+  
+  const handleCameraClick = () => {
+    setShowCameraSheet(true);
+  };
   
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 pb-20">
-      {/* Header */}
-      <header className="bg-wayscanner-blue text-white py-4 px-4 flex items-center">
-        <button
-          onClick={handleBackClick}
-          className="p-2 -ml-2 mr-2"
-        >
-          <ChevronLeft size={24} color="white" />
-        </button>
-        <div className="flex-1 text-center">
-          <h1 className="text-2xl font-bold">Forum</h1>
+      {/* Header - Using the same header as home page */}
+      <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
+        <div className="w-6"></div> {/* Empty div for spacing */}
+        <div className="flex justify-center">
+          <img 
+            src="/lovable-uploads/8fdd5ac8-39b5-43e6-86de-c8b27715d7c8.png" 
+            alt="WayScanner Logo" 
+            className="h-8" 
+          />
         </div>
-        <div className="w-10"></div> {/* Empty space for balance */}
+        <div className="flex items-center space-x-3">
+          <button className="p-2">
+            <Bell size={24} fill="white" strokeWidth={1.5} />
+          </button>
+          <button className="p-2" onClick={handleProfileClick}>
+            <User size={24} fill="white" strokeWidth={1.5} />
+          </button>
+        </div>
       </header>
       
       {/* Tab Navigation */}
@@ -223,14 +247,25 @@ export const ForumPage = () => {
       {/* Create Post Sheet */}
       <CreatePostSheet open={showCreatePost} onOpenChange={setShowCreatePost} />
       
+      {/* Camera Sheet */}
+      <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
+      
       {/* Bottom Navigation */}
       <BottomNavigation
         activeItem="forum"
         onItemClick={(item) => {
           if (item === "forum") return;
-          navigate("/");
+          if (item === "home") {
+            navigate("/");
+            return;
+          }
+          
+          toast({
+            title: "Coming Soon",
+            description: `The ${item} feature is under development.`,
+          });
         }}
-        onCameraClick={() => setShowCreatePost(true)}
+        onCameraClick={handleCameraClick}
       />
     </div>
   );

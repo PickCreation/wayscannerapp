@@ -1,11 +1,13 @@
 
 import React, { useState } from "react";
-import { ChevronLeft, Heart, Bookmark, Send } from "lucide-react";
+import { ChevronLeft, Heart, Bookmark, Send, Bell, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useNavigate, useParams } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import BottomNavigation from "@/components/BottomNavigation";
 import { useToast } from "@/hooks/use-toast";
+import CameraSheet from "@/components/CameraSheet";
 
 // Sample post data
 const POST = {
@@ -26,36 +28,33 @@ const POST = {
         avatar: "/placeholder.svg",
       },
       timeAgo: "10h ago",
-      content: "It looks like a variety of fern. Beautiful find!",
+      content: "Looks like a peace lily! They're great indoor plants.",
     },
     {
       id: "c2",
       author: {
-        name: "Tom B.",
+        name: "Robert J.",
         avatar: "/placeholder.svg",
       },
       timeAgo: "8h ago",
-      content: "I think it's a Japanese painted fern. They have that distinctive silver color.",
-    },
+      content: "I agree with Sarah, definitely a peace lily. They like indirect light and regular watering.",
+    }
   ],
   bookmarked: false,
-  liked: false,
+  liked: false
 };
 
-export const PostDetailPage = () => {
-  const { postId } = useParams();
+const PostDetailPage = () => {
   const navigate = useNavigate();
-  const [post, setPost] = useState(POST);
-  const [comments, setComments] = useState(POST.comments);
-  const [newComment, setNewComment] = useState("");
+  const params = useParams();
   const { toast } = useToast();
-  
-  const handleBackClick = () => {
-    navigate("/forum");
-  };
+  const [post, setPost] = useState(POST);
+  const [comments, setComments] = useState(post.comments);
+  const [newComment, setNewComment] = useState("");
+  const [showCameraSheet, setShowCameraSheet] = useState(false);
   
   const handleLikePost = () => {
-    setPost(prev => {
+    setPost((prev) => {
       const newLikes = prev.likes + (prev.liked ? -1 : 1);
       return { ...prev, likes: newLikes, liked: !prev.liked };
     });
@@ -69,19 +68,17 @@ export const PostDetailPage = () => {
   };
   
   const handleBookmarkPost = () => {
-    setPost(prev => ({ ...prev, bookmarked: !prev.bookmarked }));
+    setPost((prev) => ({ ...prev, bookmarked: !prev.bookmarked }));
     
     toast({
       title: post.bookmarked ? "Bookmark removed" : "Post bookmarked",
-      description: post.bookmarked ? "Removed from your saved items" : "Saved to your profile",
+      description: post.bookmarked ? "Removed from your profile" : "Saved to your profile",
     });
   };
-  
-  const handleSubmitComment = (e: React.FormEvent) => {
-    e.preventDefault();
-    
+
+  const handleSubmitComment = () => {
     if (!newComment.trim()) return;
-    
+
     const newCommentObj = {
       id: `c${comments.length + 1}`,
       author: {
@@ -89,146 +86,170 @@ export const PostDetailPage = () => {
         avatar: "/placeholder.svg",
       },
       timeAgo: "Just now",
-      content: newComment,
+      content: newComment.trim(),
     };
-    
+
     setComments([...comments, newCommentObj]);
     setNewComment("");
     
     toast({
       title: "Comment posted",
-      description: "Your comment has been added to the post",
+      description: "The author has been notified",
     });
+  };
+
+  const handleProfileClick = () => {
+    navigate("/profile");
+  };
+  
+  const handleCameraClick = () => {
+    setShowCameraSheet(true);
   };
   
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-wayscanner-blue text-white py-4 px-4 flex items-center">
-        <button
-          onClick={handleBackClick}
-          className="p-2 -ml-2 mr-2"
-        >
+    <div className="flex flex-col min-h-screen bg-gray-50 pb-20">
+      {/* Header - Using the same header as home page */}
+      <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
+        <button onClick={() => navigate(-1)} className="p-2 -ml-2">
           <ChevronLeft size={24} color="white" />
         </button>
-        <div className="flex-1 text-center">
-          <h1 className="text-xl font-bold">Post</h1>
+        <div className="flex justify-center">
+          <img 
+            src="/lovable-uploads/8fdd5ac8-39b5-43e6-86de-c8b27715d7c8.png" 
+            alt="WayScanner Logo" 
+            className="h-8" 
+          />
         </div>
-        <div className="w-10"></div> {/* Empty space for balance */}
+        <div className="flex items-center space-x-3">
+          <button className="p-2">
+            <Bell size={24} fill="white" strokeWidth={1.5} />
+          </button>
+          <button className="p-2" onClick={handleProfileClick}>
+            <User size={24} fill="white" strokeWidth={1.5} />
+          </button>
+        </div>
       </header>
       
-      {/* Original Post */}
-      <div className="bg-white p-4 border-b">
-        {/* Post Header - Author & Time */}
-        <div className="flex items-center mb-3">
-          <Avatar className="h-12 w-12 mr-3">
-            <AvatarImage src={post.author.avatar} alt={post.author.name} />
-            <AvatarFallback>
-              {post.author.name.charAt(0)}
-            </AvatarFallback>
-          </Avatar>
-          <div>
-            <h3 className="font-medium text-lg text-gray-800">{post.author.name}</h3>
-            <div className="flex items-center">
-              <span className="text-gray-500 text-sm">{post.timeAgo}</span>
-              <span className={`ml-2 px-3 py-1 rounded-full text-xs ${
-                post.category === "Plants" ? "bg-green-100 text-green-700" : 
-                post.category === "Food" ? "bg-red-100 text-red-700" : 
-                "bg-blue-100 text-blue-700"
-              }`}>
-                {post.category}
-              </span>
+      {/* Post Detail */}
+      <div className="flex-1 p-4">
+        <div className="bg-white rounded-lg shadow p-4 mb-4 border border-gray-100">
+          {/* Post Header - Author & Time */}
+          <div className="flex items-center mb-3">
+            <Avatar className="h-12 w-12 mr-3">
+              <AvatarImage src={post.author.avatar} alt={post.author.name} />
+              <AvatarFallback>
+                {post.author.name.charAt(0)}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <h3 className="font-medium text-lg text-gray-800">{post.author.name}</h3>
+              <div className="flex items-center">
+                <span className="text-gray-500 text-sm">{post.timeAgo}</span>
+                <span className="ml-2 px-3 py-1 rounded-full text-xs bg-green-100 text-green-700">
+                  {post.category}
+                </span>
+              </div>
             </div>
           </div>
-        </div>
-        
-        {/* Post Content */}
-        <p className="text-gray-700 mb-4">{post.content}</p>
-        
-        {/* Post Actions */}
-        <div className="flex items-center pt-2">
-          <button 
-            className="flex items-center mr-5"
-            onClick={handleLikePost}
-          >
-            <Heart 
-              size={22} 
-              className={post.liked ? "fill-red-500 text-red-500" : "text-gray-500"}
-            />
-            <span className="ml-1 text-gray-600">{post.likes}</span>
-          </button>
-          <button 
-            className="flex items-center"
-            onClick={handleBookmarkPost}
-          >
-            <Bookmark 
-              size={22} 
-              className={post.bookmarked ? "fill-gray-700 text-gray-700" : "text-gray-500"}
-            />
-          </button>
-        </div>
-      </div>
-      
-      {/* Comments Header */}
-      <div className="bg-white px-4 py-3 border-b">
-        <h2 className="font-medium">Comments ({comments.length})</h2>
-      </div>
-      
-      {/* Comments List */}
-      <div className="flex-1 overflow-auto">
-        {comments.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
-            No comments yet. Be the first to comment!
+          
+          {/* Post Content */}
+          <p className="text-gray-700 mb-4">{post.content}</p>
+          
+          {/* Post Actions */}
+          <div className="flex items-center border-t border-gray-100 pt-3">
+            <button 
+              className="flex items-center mr-5"
+              onClick={handleLikePost}
+            >
+              <Heart 
+                size={22} 
+                className={post.liked ? "fill-red-500 text-red-500" : "text-gray-500"}
+              />
+              <span className="ml-1 text-gray-600">{post.likes}</span>
+            </button>
+            <button 
+              className="flex items-center mr-5"
+            >
+              <div className="text-blue-600 font-medium">
+                {comments.length} Comments
+              </div>
+            </button>
+            <button 
+              className="flex items-center ml-auto"
+              onClick={handleBookmarkPost}
+            >
+              <Bookmark 
+                size={22} 
+                className={post.bookmarked ? "fill-gray-700 text-gray-700" : "text-gray-500"}
+              />
+            </button>
           </div>
-        ) : (
-          <div className="divide-y">
+        </div>
+        
+        {/* Comments Section */}
+        <div className="bg-white rounded-lg shadow p-4 border border-gray-100">
+          <h4 className="font-medium text-lg mb-4">Comments</h4>
+          
+          <div className="space-y-4 mb-4">
             {comments.map(comment => (
-              <div key={comment.id} className="p-4 bg-white">
-                <div className="flex">
-                  <Avatar className="h-8 w-8 mr-3">
-                    <AvatarImage src={comment.author.avatar} alt={comment.author.name} />
-                    <AvatarFallback>
-                      {comment.author.name.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <div className="flex items-baseline">
-                      <h4 className="font-medium">{comment.author.name}</h4>
-                      <span className="ml-2 text-xs text-gray-500">{comment.timeAgo}</span>
+              <div key={comment.id} className="flex">
+                <Avatar className="h-10 w-10 mr-3 mt-1">
+                  <AvatarImage src={comment.author.avatar} alt={comment.author.name} />
+                  <AvatarFallback>
+                    {comment.author.name.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <div className="flex justify-between mb-1">
+                      <span className="font-medium">{comment.author.name}</span>
+                      <span className="text-gray-500 text-xs">{comment.timeAgo}</span>
                     </div>
-                    <p className="text-gray-700 mt-1">{comment.content}</p>
+                    <p className="text-gray-700">{comment.content}</p>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-        )}
+          
+          {/* Add Comment */}
+          <div className="flex space-x-2">
+            <Input
+              value={newComment}
+              onChange={e => setNewComment(e.target.value)}
+              placeholder="Add a comment..."
+              className="flex-1"
+            />
+            <Button onClick={handleSubmitComment} size="icon">
+              <Send size={18} />
+            </Button>
+          </div>
+        </div>
       </div>
       
-      {/* Comment Input */}
-      <div className="bg-white border-t p-3 sticky bottom-0">
-        <form onSubmit={handleSubmitComment} className="flex items-center">
-          <Avatar className="h-8 w-8 mr-2 shrink-0">
-            <AvatarImage src="/placeholder.svg" alt="You" />
-            <AvatarFallback>Y</AvatarFallback>
-          </Avatar>
-          <Input
-            placeholder="Write a comment..."
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            className="flex-1 bg-gray-100 border-0"
-          />
-          <Button 
-            type="submit" 
-            variant="ghost" 
-            size="icon" 
-            className="ml-1 text-wayscanner-blue" 
-            disabled={!newComment.trim()}
-          >
-            <Send size={20} />
-          </Button>
-        </form>
-      </div>
+      {/* Camera Sheet */}
+      <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
+      
+      {/* Bottom Navigation */}
+      <BottomNavigation
+        activeItem="forum"
+        onItemClick={(item) => {
+          if (item === "forum") {
+            navigate("/forum");
+            return;
+          }
+          if (item === "home") {
+            navigate("/");
+            return;
+          }
+          
+          toast({
+            title: "Coming Soon",
+            description: `The ${item} feature is under development.`,
+          });
+        }}
+        onCameraClick={handleCameraClick}
+      />
     </div>
   );
 };
