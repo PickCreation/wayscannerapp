@@ -3,14 +3,20 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, Plus, Edit, Trash2, CreditCard, 
-  CheckCircle2, DollarSign, CircleDollarSign
+  CheckCircle2, DollarSign, CircleDollarSign, Camera
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { 
+  Drawer, 
+  DrawerContent, 
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription
+} from "@/components/ui/drawer";
 import PaymentMethodForm from "@/components/PaymentMethodForm";
 
 interface PaymentMethod {
@@ -59,6 +65,7 @@ const PaymentMethodsPage = () => {
     }
   ]);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showCameraSheet, setShowCameraSheet] = useState(false);
   const [currentType, setCurrentType] = useState<"card" | "paypal" | "payoneer">("card");
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("recipes");
 
@@ -117,6 +124,10 @@ const PaymentMethodsPage = () => {
       title: "Payment Method Added",
       description: "Your new payment method has been added successfully."
     });
+  };
+  
+  const handleCameraClick = () => {
+    setShowCameraSheet(true);
   };
 
   const filteredPaymentMethods = activeTab === "all" 
@@ -179,7 +190,7 @@ const PaymentMethodsPage = () => {
         </div>
       </div>
 
-      <div className="flex-1 p-4">
+      <div className="flex-1 p-4 pb-20">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="all">All</TabsTrigger>
@@ -260,25 +271,52 @@ const PaymentMethodsPage = () => {
         )}
       </div>
 
-      <Sheet open={showAddForm} onOpenChange={setShowAddForm}>
-        <SheetContent className="pt-10 sm:max-w-md">
-          <SheetHeader>
-            <SheetTitle>
+      {/* Bottom drawer for payment method form */}
+      <Drawer open={showAddForm} onOpenChange={setShowAddForm}>
+        <DrawerContent className="px-4">
+          <DrawerHeader className="text-left">
+            <DrawerTitle>
               {currentType === "card" ? "Add Credit Card" : 
                currentType === "paypal" ? "Add PayPal Account" : 
                "Add Payoneer Account"}
-            </SheetTitle>
-          </SheetHeader>
-          <div className="py-4">
+            </DrawerTitle>
+          </DrawerHeader>
+          <div className="px-4 py-2 pb-10">
             <PaymentMethodForm type={currentType} onSubmit={handleSavePaymentMethod} onCancel={() => setShowAddForm(false)} />
           </div>
-        </SheetContent>
-      </Sheet>
+        </DrawerContent>
+      </Drawer>
+
+      {/* Camera sheet for scanning card */}
+      <Drawer open={showCameraSheet} onOpenChange={setShowCameraSheet}>
+        <DrawerContent className="px-4">
+          <DrawerHeader className="text-left">
+            <DrawerTitle>Scan Your Card</DrawerTitle>
+            <DrawerDescription>Position your card in the camera frame</DrawerDescription>
+          </DrawerHeader>
+          <div className="px-4 pb-10">
+            <div className="bg-gray-100 rounded-lg p-4 aspect-video flex items-center justify-center mb-4">
+              <Camera size={48} className="text-gray-400" />
+              <p className="text-gray-500 text-sm mt-2">Camera preview would appear here</p>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <Button variant="outline" onClick={() => setShowCameraSheet(false)}>Cancel</Button>
+              <Button onClick={() => {
+                setShowCameraSheet(false);
+                toast({
+                  title: "Card Detected",
+                  description: "Your card information has been captured successfully."
+                });
+              }}>Capture</Button>
+            </div>
+          </div>
+        </DrawerContent>
+      </Drawer>
 
       <BottomNavigation
-        activeItem={activeNavItem}
+        activeItem="recipes"
         onItemClick={handleNavItemClick}
-        onCameraClick={() => {}}
+        onCameraClick={handleCameraClick}
       />
     </div>
   );

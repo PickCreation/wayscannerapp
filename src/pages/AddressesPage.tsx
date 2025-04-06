@@ -1,13 +1,19 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Plus, Edit, Trash2, MapPin } from "lucide-react";
+import { ArrowLeft, Plus, Edit, Trash2, MapPin, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
 import AddressForm from "@/components/AddressForm";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { 
+  Drawer, 
+  DrawerContent, 
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription
+} from "@/components/ui/drawer";
 
 interface Address {
   id: string;
@@ -129,7 +135,7 @@ const AddressesPage = () => {
         </div>
       </div>
 
-      <div className="flex-1 p-4">
+      <div className="flex-1 p-4 pb-20">
         <Button 
           onClick={handleAddAddress}
           className="w-full bg-wayscanner-blue mb-6 py-6 rounded-lg flex items-center justify-center"
@@ -204,23 +210,25 @@ const AddressesPage = () => {
         )}
       </div>
 
-      <Sheet open={showAddForm} onOpenChange={setShowAddForm}>
-        <SheetContent className="pt-10 sm:max-w-md">
-          <SheetHeader>
-            <SheetTitle>Add New Address</SheetTitle>
-          </SheetHeader>
-          <div className="py-4">
+      {/* Bottom drawer for adding new address */}
+      <Drawer open={showAddForm} onOpenChange={setShowAddForm}>
+        <DrawerContent className="px-4">
+          <DrawerHeader className="text-left">
+            <DrawerTitle>Add New Address</DrawerTitle>
+          </DrawerHeader>
+          <div className="px-4 py-2 pb-10">
             <AddressForm onSubmit={handleSaveAddress} onCancel={() => setShowAddForm(false)} />
           </div>
-        </SheetContent>
-      </Sheet>
+        </DrawerContent>
+      </Drawer>
 
-      <Sheet open={showEditForm} onOpenChange={setShowEditForm}>
-        <SheetContent className="pt-10 sm:max-w-md">
-          <SheetHeader>
-            <SheetTitle>Edit Address</SheetTitle>
-          </SheetHeader>
-          <div className="py-4">
+      {/* Bottom drawer for editing address */}
+      <Drawer open={showEditForm} onOpenChange={setShowEditForm}>
+        <DrawerContent className="px-4">
+          <DrawerHeader className="text-left">
+            <DrawerTitle>Edit Address</DrawerTitle>
+          </DrawerHeader>
+          <div className="px-4 py-2 pb-10">
             {currentAddress && (
               <AddressForm 
                 initialValues={currentAddress}
@@ -229,11 +237,11 @@ const AddressesPage = () => {
               />
             )}
           </div>
-        </SheetContent>
-      </Sheet>
+        </DrawerContent>
+      </Drawer>
 
       <BottomNavigation
-        activeItem={activeNavItem}
+        activeItem="recipes"
         onItemClick={handleNavItemClick}
         onCameraClick={() => {}}
       />
