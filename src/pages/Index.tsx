@@ -56,7 +56,7 @@ const Index = () => {
 
       {/* Scanner Options */}
       <div className="px-4 mb-8">
-        <h3 className="text-lg font-bold mb-4">Start Exploring</h3>
+        <h3 className="text-base font-bold mb-4">Start Exploring</h3>
         <div className="grid grid-cols-2 gap-4">
           <ScannerCard
             title="Food Scan"
@@ -86,14 +86,6 @@ const Index = () => {
             icon={<ShoppingBag size={24} color="white" />}
             onClick={() => handleScannerClick("Marketplace")}
           />
-        </div>
-      </div>
-
-      {/* Recent Scans */}
-      <div className="px-4">
-        <h3 className="text-2xl font-bold mb-4">Recent Scans</h3>
-        <div className="bg-gray-100 rounded-xl p-8 flex items-center justify-center">
-          <p className="text-gray-500">No recent scans yet</p>
         </div>
       </div>
 
