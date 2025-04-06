@@ -114,7 +114,7 @@ const FilterBottomSheet: React.FC<FilterBottomSheetProps> = ({ open, onOpenChang
             {/* Sort By Section */}
             <div>
               <h3 className="font-medium mb-3">Sort By</h3>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-2 pb-10">
                 {sortOptions.map((option) => (
                   <Button
                     key={option}
@@ -131,7 +131,7 @@ const FilterBottomSheet: React.FC<FilterBottomSheetProps> = ({ open, onOpenChang
             {/* Condition Section */}
             <div>
               <h3 className="font-medium mb-3">Condition</h3>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-2 pb-10">
                 {conditions.map((c) => (
                   <Button
                     key={c}
@@ -203,7 +203,7 @@ const FilterBottomSheet: React.FC<FilterBottomSheetProps> = ({ open, onOpenChang
         </ScrollArea>
 
         <DrawerFooter className="px-4 pt-2 pb-4">
-          <div className="flex gap-2">
+          <div className="flex gap-2 pb-10">
             <Button variant="outline" className="flex-1" onClick={handleReset}>
               Reset
             </Button>
