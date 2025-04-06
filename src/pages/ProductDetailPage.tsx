@@ -1,6 +1,5 @@
-
 import React, { useState } from "react";
-import { ChevronLeft, Heart, Share2, Plus, Minus } from "lucide-react";
+import { ChevronLeft, Heart, Share2, Plus, Minus, Tag } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -30,6 +29,7 @@ const products = [
     brand: "EcoPlant",
     country: "United States",
     color: "White",
+    tags: ["Plant", "Home Decor", "Ceramic", "Indoor", "Modern"],
   },
   {
     id: 2,
@@ -53,6 +53,7 @@ const products = [
     brand: "PetCare",
     country: "Canada",
     color: "Blue",
+    tags: ["Pet", "Dog", "Bowl", "Ceramic", "Non-slip"],
   },
   {
     id: 3,
@@ -76,6 +77,7 @@ const products = [
     brand: "GreenLife",
     country: "Brazil",
     color: "Green",
+    tags: ["Plant", "Monstera", "Indoor", "Tropical", "Easy Care"],
   },
   {
     id: 4,
@@ -99,6 +101,7 @@ const products = [
     brand: "EcoKitchen",
     country: "Japan",
     color: "Natural",
+    tags: ["Kitchen", "Bamboo", "Cutting Board", "Eco-friendly", "Durable"],
   },
   {
     id: 5,
@@ -122,6 +125,7 @@ const products = [
     brand: "HandMade",
     country: "Mexico",
     color: "Beige",
+    tags: ["Decor", "Macrame", "Wall Hanging", "Handcrafted", "Boho"],
   },
   {
     id: 6,
@@ -145,6 +149,7 @@ const products = [
     brand: "CatHaven",
     country: "Germany",
     color: "Gray",
+    tags: ["Pet", "Cat", "Climbing Tree", "Scratching Post", "Furniture"],
   }
 ];
 
@@ -318,6 +323,26 @@ const ProductDetailPage = () => {
                 
                 <div className="text-gray-600">Country:</div>
                 <div className="font-medium">{product.country || "Not specified"}</div>
+                
+                {/* Tags section */}
+                <div className="text-gray-600">Tags:</div>
+                <div className="font-medium">
+                  {product.tags && product.tags.length > 0 ? (
+                    <div className="flex flex-wrap gap-1">
+                      {product.tags.map((tag, index) => (
+                        <span 
+                          key={index} 
+                          className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full flex items-center"
+                        >
+                          <Tag size={12} className="mr-1" />
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    "No tags"
+                  )}
+                </div>
               </div>
             </div>
           </TabsContent>

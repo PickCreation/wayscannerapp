@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ChevronLeft, Camera, Upload, Plus, X } from "lucide-react";
+import { ChevronLeft, Camera, Upload, Plus, X, Tag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -72,6 +72,7 @@ const formSchema = z.object({
   brand: z.string().min(1, { message: "Please enter a brand" }),
   country: z.string().min(1, { message: "Please select a country" }),
   variations: z.string().optional(),
+  tags: z.array(z.string()).max(6, { message: "Maximum 6 tags allowed" }).optional(),
 });
 
 const AddListingPage = () => {
@@ -80,6 +81,8 @@ const AddListingPage = () => {
   const [images, setImages] = useState<{file: File, preview: string}[]>([]);
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("shop");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -94,6 +97,7 @@ const AddListingPage = () => {
       brand: "",
       country: "",
       variations: "",
+      tags: [],
     },
   });
 
@@ -115,6 +119,41 @@ const AddListingPage = () => {
     setImages(images.filter((_, i) => i !== index));
   };
 
+  const addTag = () => {
+    const trimmedTag = tagInput.trim();
+    if (trimmedTag && tags.length < 6 && !tags.includes(trimmedTag)) {
+      const newTags = [...tags, trimmedTag];
+      setTags(newTags);
+      form.setValue("tags", newTags);
+      setTagInput("");
+    } else if (tags.includes(trimmedTag)) {
+      toast({
+        title: "Tag already exists",
+        description: "This tag is already added",
+        variant: "destructive",
+      });
+    } else if (tags.length >= 6) {
+      toast({
+        title: "Maximum tags reached",
+        description: "You can only add up to 6 tags",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const removeTag = (tagToRemove: string) => {
+    const newTags = tags.filter((tag) => tag !== tagToRemove);
+    setTags(newTags);
+    form.setValue("tags", newTags);
+  };
+
+  const handleTagInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addTag();
+    }
+  };
+
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     if (images.length === 0) {
       toast({
@@ -128,6 +167,7 @@ const AddListingPage = () => {
     console.log({
       ...values,
       images: images.map(img => img.preview),
+      tags: tags,
     });
 
     toast({
@@ -249,6 +289,53 @@ const AddListingPage = () => {
                 </FormItem>
               )}
             />
+
+            <div>
+              <FormLabel className="block mb-2">Tags (max 6)</FormLabel>
+              <div className="flex items-center space-x-2 mb-2">
+                <Input
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyDown={handleTagInputKeyDown}
+                  placeholder="Add a tag"
+                  className="flex-1"
+                  disabled={tags.length >= 6}
+                />
+                <Button 
+                  type="button" 
+                  size="sm"
+                  onClick={addTag}
+                  disabled={tags.length >= 6 || !tagInput.trim()}
+                  className="bg-wayscanner-blue hover:bg-blue-700"
+                >
+                  <Tag size={16} className="mr-1" /> Add
+                </Button>
+              </div>
+              
+              {tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {tags.map((tag, index) => (
+                    <div 
+                      key={index} 
+                      className="bg-gray-100 px-3 py-1 rounded-full flex items-center text-sm"
+                    >
+                      <span>{tag}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeTag(tag)}
+                        className="ml-2 text-gray-500 hover:text-red-500"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              <p className="text-xs text-gray-500">
+                {tags.length}/6 tags added. Press Enter or click Add to add a tag.
+              </p>
+            </div>
 
             <FormField
               control={form.control}
