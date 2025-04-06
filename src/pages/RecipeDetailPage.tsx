@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { 
@@ -38,7 +37,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-// Mock recipe data (in a real app this would come from an API)
 const recipeData = {
   "pasta-1": {
     id: "pasta-1",
@@ -176,7 +174,6 @@ const recipeData = {
   }
 };
 
-// For other recipes we'll load a simplified version
 const getDefaultRecipe = (id: string) => ({
   id,
   title: "Recipe Not Found",
@@ -211,11 +208,9 @@ const RecipeDetailPage = () => {
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [userComments, setUserComments] = useState<any[]>([]);
 
-  // Get recipe data using the recipeId from URL params
   const recipe = recipeData[recipeId as keyof typeof recipeData] || getDefaultRecipe(recipeId || "unknown");
 
   useEffect(() => {
-    // Check if recipe is already saved in bookmarks
     const savedBookmarks = localStorage.getItem('bookmarkedRecipes');
     if (savedBookmarks) {
       const bookmarks = JSON.parse(savedBookmarks);
@@ -223,7 +218,6 @@ const RecipeDetailPage = () => {
       setIsSaved(isRecipeSaved);
     }
 
-    // Load user comments from localStorage
     const savedComments = localStorage.getItem(`comments-${recipe.id}`);
     if (savedComments) {
       setUserComments(JSON.parse(savedComments));
@@ -238,12 +232,10 @@ const RecipeDetailPage = () => {
     const newSaveState = !isSaved;
     setIsSaved(newSaveState);
     
-    // Update localStorage
     const savedBookmarks = localStorage.getItem('bookmarkedRecipes');
     let bookmarks = savedBookmarks ? JSON.parse(savedBookmarks) : [];
     
     if (newSaveState) {
-      // Add to bookmarks if not already saved
       if (!bookmarks.some((item: any) => item.id === recipe.id)) {
         const bookmarkItem = {
           id: recipe.id,
@@ -256,7 +248,6 @@ const RecipeDetailPage = () => {
         bookmarks.push(bookmarkItem);
       }
     } else {
-      // Remove from bookmarks
       bookmarks = bookmarks.filter((item: any) => item.id !== recipe.id);
     }
     
@@ -345,7 +336,6 @@ const RecipeDetailPage = () => {
     const updatedComments = [...userComments, newComment];
     setUserComments(updatedComments);
     
-    // Save comments to localStorage
     localStorage.setItem(`comments-${recipe.id}`, JSON.stringify(updatedComments));
 
     toast({
@@ -356,12 +346,10 @@ const RecipeDetailPage = () => {
     setComment("");
   };
 
-  // Combine predefined recipe comments with user comments
   const allComments = [...(recipe.comments || []), ...userComments];
 
   return (
     <div className="pb-6 bg-white min-h-screen">
-      {/* Header with Image */}
       <div className="relative h-72 bg-gray-200">
         <img 
           src={recipe.image || "https://via.placeholder.com/800x600?text=No+Image"}
@@ -421,11 +409,9 @@ const RecipeDetailPage = () => {
         </div>
       </div>
 
-      {/* Recipe Title */}
       <div className="px-4 pt-4">
         <h1 className="text-2xl font-semibold mb-3 text-[28px]">{recipe.title}</h1>
         
-        {/* Recipe Tags */}
         <div className="flex flex-wrap gap-2 mb-3">
           {recipe.tags.map(tag => (
             <Badge key={tag} variant="secondary" className="capitalize text-xs">
@@ -435,7 +421,6 @@ const RecipeDetailPage = () => {
         </div>
       </div>
 
-      {/* Recipe Info */}
       <div className="px-4 grid grid-cols-4 gap-2 mb-4">
         <div className="flex flex-col items-center">
           <div className="bg-blue-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
@@ -467,7 +452,6 @@ const RecipeDetailPage = () => {
         </div>
       </div>
 
-      {/* Description */}
       <div className="px-4 py-2">
         <h3 className="text-base font-semibold mb-2">Description</h3>
         <div className="border border-gray-200 bg-gray-50 rounded-lg p-3 mb-4">
@@ -475,7 +459,6 @@ const RecipeDetailPage = () => {
         </div>
       </div>
 
-      {/* Tabs for Ingredients and Instructions */}
       <div className="px-4">
         <Tabs defaultValue="ingredients" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
@@ -519,7 +502,6 @@ const RecipeDetailPage = () => {
         </Tabs>
       </div>
 
-      {/* Nutrition Info - Smaller Size */}
       <div className="px-4 mt-6">
         <h3 className="text-base font-semibold mb-3">Nutrition Information</h3>
         <div className="flex justify-between mb-2">
@@ -556,7 +538,6 @@ const RecipeDetailPage = () => {
         </div>
       </div>
 
-      {/* Tips Section */}
       <div className="px-4 mt-6">
         <h3 className="text-base font-semibold mb-3">Tips</h3>
         <div className="bg-yellow-50 border border-yellow-100 rounded-lg p-4">
@@ -575,7 +556,6 @@ const RecipeDetailPage = () => {
         </div>
       </div>
 
-      {/* Comments Section */}
       <div className="px-4 mt-6">
         <div className="flex justify-between items-center mb-3">
           <div className="flex items-center">
@@ -590,26 +570,7 @@ const RecipeDetailPage = () => {
           </button>
         </div>
 
-        {/* Display comments */}
-        <div className="space-y-4 mb-6">
-          {allComments.slice(0, 2).map((comment) => (
-            <div key={comment.id} className="bg-gray-50 p-3 rounded-lg">
-              <div className="flex justify-between mb-1">
-                <div className="font-medium text-sm">{comment.author}</div>
-                <div className="text-xs text-gray-500">{comment.date}</div>
-              </div>
-              <p className="text-sm text-gray-700 mb-2">{comment.text}</p>
-              {comment.ratingLabel && (
-                <div className={`inline-block px-3 py-1 rounded-full text-xs ${getRatingLabelColor(comment.ratingLabel)}`}>
-                  {comment.ratingLabel}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Add comment form */}
-        <div className="mt-6">
+        <div className="mt-4">
           <h3 className="text-base font-semibold mb-4">Add Your Comment</h3>
           
           <Textarea 
@@ -713,7 +674,6 @@ const RecipeDetailPage = () => {
         </div>
       </div>
 
-      {/* Comments Drawer with X close button */}
       <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
         <DrawerContent className="p-4 max-h-[90vh]">
           <DrawerHeader className="relative">
