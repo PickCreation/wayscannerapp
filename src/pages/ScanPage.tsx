@@ -7,6 +7,7 @@ import FoodScanTab from "@/components/FoodScanTab";
 import PlantScanTab from "@/components/PlantScanTab";
 import AnimalScanTab from "@/components/AnimalScanTab";
 import CameraSheet from "@/components/CameraSheet";
+import CameraActionSheet from "@/components/CameraActionSheet";
 import EditPreferencesSheet from "@/components/EditPreferencesSheet";
 import HowWeScoreSheet from "@/components/HowWeScoreSheet";
 
@@ -14,6 +15,7 @@ const ScanPage = () => {
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("home");
   const [activeTab, setActiveTab] = useState("food");
   const [cameraSheetOpen, setCameraSheetOpen] = useState(false);
+  const [cameraActionSheetOpen, setCameraActionSheetOpen] = useState(false);
   const [editPreferencesOpen, setEditPreferencesOpen] = useState(false);
   const [howWeScoreOpen, setHowWeScoreOpen] = useState(false);
   const navigate = useNavigate();
@@ -41,8 +43,20 @@ const ScanPage = () => {
   };
 
   const handleCameraClick = () => {
-    // Open the camera sheet instead of directly navigating
-    setCameraSheetOpen(true);
+    // Show camera action sheet instead of camera sheet directly
+    setCameraActionSheetOpen(true);
+  };
+
+  const handleScanClick = (type: "food" | "plant" | "animal") => {
+    const tabMap: Record<string, string> = {
+      "food": "food",
+      "plant": "plants",
+      "animal": "animals"
+    };
+    
+    // Update URL to change the tab
+    navigate(`/scan?tab=${tabMap[type]}`);
+    setCameraActionSheetOpen(false);
   };
 
   const handleTabChange = (value: string) => {
@@ -136,6 +150,13 @@ const ScanPage = () => {
 
       {/* Camera Sheet */}
       <CameraSheet open={cameraSheetOpen} onOpenChange={setCameraSheetOpen} />
+      
+      {/* Camera Action Sheet */}
+      <CameraActionSheet 
+        open={cameraActionSheetOpen} 
+        onOpenChange={setCameraActionSheetOpen} 
+        onScanClick={handleScanClick}
+      />
       
       {/* Edit Preferences Sheet */}
       <EditPreferencesSheet 

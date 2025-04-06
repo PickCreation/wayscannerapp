@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import ScannerCard from "@/components/ScannerCard";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
+import CameraActionSheet from "@/components/CameraActionSheet";
 import SplashScreen from "@/components/SplashScreen";
 import { Bell, User, Utensils, Leaf, PawPrint, ShoppingBag } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -12,6 +13,7 @@ import { AnimatePresence } from "framer-motion";
 const Index = () => {
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("home");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
+  const [showCameraActionSheet, setShowCameraActionSheet] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
@@ -68,7 +70,8 @@ const Index = () => {
   };
 
   const handleCameraClick = () => {
-    setShowCameraSheet(true);
+    // Instead of opening camera sheet directly, show the options first
+    setShowCameraActionSheet(true);
   };
 
   const handleScannerClick = (type: string) => {
@@ -84,6 +87,17 @@ const Index = () => {
     }
     
     navigate(`/scan?tab=${tabMap[type] || "food"}`);
+  };
+
+  const handleScanClick = (type: "food" | "plant" | "animal") => {
+    const tabMap: Record<string, string> = {
+      "food": "food",
+      "plant": "plants",
+      "animal": "animals"
+    };
+    
+    navigate(`/scan?tab=${tabMap[type]}`);
+    setShowCameraActionSheet(false);
   };
 
   const handleProfileClick = () => {
@@ -155,6 +169,11 @@ const Index = () => {
       </div>
 
       <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
+      <CameraActionSheet 
+        open={showCameraActionSheet} 
+        onOpenChange={setShowCameraActionSheet} 
+        onScanClick={handleScanClick}
+      />
 
       <BottomNavigation
         activeItem={activeNavItem}

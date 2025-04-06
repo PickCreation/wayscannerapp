@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
+import CameraActionSheet from "@/components/CameraActionSheet";
 import { useAuth } from "@/hooks/use-auth";
 
 const EditProfilePage = () => {
@@ -16,6 +17,7 @@ const EditProfilePage = () => {
   const { toast } = useToast();
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("profile");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
+  const [showCameraActionSheet, setShowCameraActionSheet] = useState(false);
   const { user, updateUserProfile } = useAuth();
   
   const [formData, setFormData] = useState({
@@ -55,7 +57,7 @@ const EditProfilePage = () => {
   };
 
   const handleProfilePhotoChange = () => {
-    // Open camera sheet which will directly trigger the file picker without showing UI
+    // Open camera sheet directly for profile photo
     setShowCameraSheet(true);
   };
 
@@ -75,7 +77,18 @@ const EditProfilePage = () => {
   };
 
   const handleCameraClick = () => {
-    setShowCameraSheet(true);
+    setShowCameraActionSheet(true);
+  };
+  
+  const handleScanClick = (type: "food" | "plant" | "animal") => {
+    const tabMap: Record<string, string> = {
+      "food": "food",
+      "plant": "plants",
+      "animal": "animals"
+    };
+    
+    navigate(`/scan?tab=${tabMap[type]}`);
+    setShowCameraActionSheet(false);
   };
   
   useEffect(() => {
@@ -188,6 +201,11 @@ const EditProfilePage = () => {
       </form>
 
       <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
+      <CameraActionSheet 
+        open={showCameraActionSheet} 
+        onOpenChange={setShowCameraActionSheet} 
+        onScanClick={handleScanClick}
+      />
 
       <BottomNavigation
         activeItem="profile"
