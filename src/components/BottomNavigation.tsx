@@ -8,7 +8,7 @@ import {
   User
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface BottomNavigationProps {
   activeItem: "home" | "forum" | "recipes" | "shop";
@@ -22,8 +22,14 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
   onCameraClick,
 }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const isProfilePage = location.pathname === "/profile";
   const isRecipesPage = location.pathname.includes("/recipes");
+
+  const handleRecipesClick = () => {
+    navigate("/recipes");
+    onItemClick("recipes");
+  };
 
   return (
     <div className="fixed bottom-0 left-0 right-0 h-16 bg-white border-t flex items-center justify-between px-4 z-10">
@@ -46,7 +52,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
         activeIcon={isProfilePage ? <User size={24} fill="currentColor" /> : <Utensils size={24} fill="currentColor" />}
         label={isProfilePage ? "Profile" : "Recipes"}
         isActive={activeItem === "recipes" || isRecipesPage}
-        onClick={() => onItemClick("recipes")}
+        onClick={handleRecipesClick}
       />
       <NavItem
         icon={<ShoppingBag size={24} />}

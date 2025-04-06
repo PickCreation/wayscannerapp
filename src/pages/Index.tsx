@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import ScannerCard from "@/components/ScannerCard";
 import BottomNavigation from "@/components/BottomNavigation";
@@ -21,16 +20,24 @@ const Index = () => {
       return;
     }
     
-    // Redirect to Forum page
+    // Redirect to appropriate page
     if (item === "forum") {
       navigate("/forum");
       return;
     }
     
-    toast({
-      title: "Coming Soon",
-      description: `The ${item} feature is under development.`,
-    });
+    if (item === "recipes") {
+      navigate("/recipes");
+      return;
+    }
+    
+    // Only show toast for shop which is under development
+    if (item === "shop") {
+      toast({
+        title: "Coming Soon",
+        description: `The ${item} feature is under development.`,
+      });
+    }
   };
 
   const handleCameraClick = () => {
