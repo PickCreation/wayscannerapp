@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/use-auth";
 
 interface MessageSellerDialogProps {
   open: boolean;
@@ -20,8 +21,19 @@ const MessageSellerDialog: React.FC<MessageSellerDialogProps> = ({
   const [message, setMessage] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth();
 
   const handleSendMessage = () => {
+    if (!isAuthenticated) {
+      toast({
+        title: "Login required",
+        description: "Please login to send messages to sellers",
+        variant: "destructive",
+      });
+      onOpenChange(false);
+      return;
+    }
+
     if (!message.trim()) {
       toast({
         title: "Empty message",

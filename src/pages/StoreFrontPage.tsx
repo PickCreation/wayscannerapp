@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, ShoppingBag, Star, ChevronDown, Filter, Store, MessageCircle, UserPlus, Users } from "lucide-react";
@@ -155,6 +156,14 @@ const StoreFrontPage = () => {
   };
 
   const handleMessageSeller = () => {
+    if (!user) {
+      toast({
+        title: "Login required",
+        description: "Please log in to message sellers",
+        variant: "destructive",
+      });
+      return;
+    }
     setMessageDialogOpen(true);
   };
 

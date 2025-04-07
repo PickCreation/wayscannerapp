@@ -5,7 +5,8 @@ import {
   ChevronLeft, 
   MessageCircle, 
   Check, 
-  Send 
+  Send,
+  ArrowLeft
 } from "lucide-react";
 import { 
   Card, 
@@ -22,6 +23,8 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { useAuth } from "@/hooks/use-auth";
+import BottomNavigation from "@/components/BottomNavigation";
 
 interface Message {
   id: number;
@@ -35,10 +38,24 @@ interface Message {
 const MessagesPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { isAuthenticated, user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [activeTab, setActiveTab] = useState("received");
   const [selectedShop, setSelectedShop] = useState<string | null>(null);
   const [reply, setReply] = useState("");
+  const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("profile");
+
+  // Check if user is authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      toast({
+        title: "Login required",
+        description: "Please login to view your messages",
+        variant: "destructive",
+      });
+      navigate("/profile");
+    }
+  }, [isAuthenticated, navigate, toast]);
 
   // Load messages from localStorage
   useEffect(() => {
@@ -69,7 +86,7 @@ const MessagesPage = () => {
   const sentMessages = filteredMessages.filter(msg => msg.isFromBuyer);
 
   const handleBack = () => {
-    navigate(-1);
+    navigate("/profile");
   };
 
   const handleSelectShop = (shop: string) => {
@@ -122,6 +139,35 @@ const MessagesPage = () => {
       .toUpperCase()
       .substring(0, 2);
   };
+
+  const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop" | "profile") => {
+    setActiveNavItem(item);
+    
+    if (item === "home") {
+      navigate("/");
+    } else if (item === "forum") {
+      navigate("/forum");
+    } else if (item === "recipes") {
+      navigate("/recipes");
+    } else if (item === "shop") {
+      navigate("/marketplace");
+    } else if (item === "profile") {
+      navigate("/profile");
+    }
+  };
+
+  const handleCameraClick = () => {
+    navigate("/scan");
+  };
+
+  // Auto-select a shop if there's a shop query parameter
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const shopParam = urlParams.get('shop');
+    if (shopParam && shops.includes(shopParam)) {
+      setSelectedShop(shopParam);
+    }
+  }, [shops]);
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
@@ -270,6 +316,12 @@ const MessagesPage = () => {
           </Tabs>
         )}
       </div>
+
+      <BottomNavigation
+        activeItem={activeNavItem}
+        onItemClick={handleNavItemClick}
+        onCameraClick={handleCameraClick}
+      />
     </div>
   );
 };
