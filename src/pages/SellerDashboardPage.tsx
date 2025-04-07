@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -139,13 +138,14 @@ const SellerDashboardPage = () => {
         </div>
       </div>
 
-      {/* Seller info card */}
+      {/* Seller info card - Redesigned as per the image */}
       <div className="p-4">
         <Card className="w-full">
           <CardContent className="p-4">
-            <div className="flex items-start gap-4">
-              <div className="flex flex-col items-center">
-                <Avatar className="w-14 h-14 border-2 border-wayscanner-blue">
+            <div className="flex">
+              {/* Left side - Avatar and joined info */}
+              <div className="flex flex-col items-center mr-4">
+                <Avatar className="w-20 h-20 border-2 border-wayscanner-blue mb-2">
                   {profileImage ? (
                     <AvatarImage src={profileImage} alt="User" />
                   ) : (
@@ -154,12 +154,23 @@ const SellerDashboardPage = () => {
                     </AvatarFallback>
                   )}
                 </Avatar>
-                <div className="mt-2 flex flex-col items-center gap-2 w-full">
-                  <span className="text-sm font-medium text-center">{user?.name || "Store Owner"}</span>
+                <div className="text-center">
+                  <div className="font-medium">{user?.name || "Admin"}</div>
+                  <div className="text-xs text-gray-500 mt-2">Joined: {currentDate}</div>
+                  <div className="text-xs text-gray-500">{products.length} Products</div>
+                </div>
+              </div>
+              
+              {/* Right side - Shop info and buttons */}
+              <div className="flex-1">
+                <h2 className="text-2xl font-bold">{shopSettings.shopName}</h2>
+                <p className="text-gray-600 mb-4">{shopSettings.shopDescription}</p>
+                
+                <div className="flex flex-col space-y-2">
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="text-xs w-full"
+                    className="justify-center"
                     onClick={handleEditShop}
                   >
                     Edit Shop
@@ -167,29 +178,11 @@ const SellerDashboardPage = () => {
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="text-xs w-full"
+                    className="justify-center"
                     onClick={handleViewStore}
                   >
                     View Store
                   </Button>
-                  <div className="mt-1 text-xs text-gray-500 text-center">
-                    <div>Joined: {currentDate}</div>
-                    <div>{products.length} Products</div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex-1 ml-2">
-                <h2 className="font-bold text-lg">{shopSettings.shopName || "My Shop"}</h2>
-                <p className="text-sm text-gray-500 line-clamp-3">{shopSettings.shopDescription}</p>
-                <div className="mt-2 grid grid-cols-2 gap-2">
-                  <div className="bg-gray-100 p-2 rounded text-center">
-                    <div className="text-lg font-bold text-wayscanner-blue">$1,243</div>
-                    <div className="text-xs text-gray-500">Earnings</div>
-                  </div>
-                  <div className="bg-gray-100 p-2 rounded text-center">
-                    <div className="text-lg font-bold text-wayscanner-blue">32</div>
-                    <div className="text-xs text-gray-500">Orders</div>
-                  </div>
                 </div>
               </div>
             </div>
