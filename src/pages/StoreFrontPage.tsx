@@ -271,49 +271,52 @@ const StoreFrontPage = () => {
       </div>
 
       <div className="mt-14 px-4">
-        <div className="flex justify-between items-start">
-          <div>
-            <h2 className="text-xl font-bold">{shopSettings.shopName}</h2>
-            <div className="flex items-center text-sm text-gray-500 mt-1">
-              <span className="flex items-center">
-                <Star size={16} className="text-yellow-400 fill-yellow-400 mr-1" />
-                4.8
-              </span>
-              <span className="mx-2">•</span>
-              <span>{products.length} Products</span>
-              <span className="mx-2">•</span>
-              <span className="flex items-center">
-                <Users size={16} className="mr-1" />
-                {followCount} Followers
-              </span>
+        <div>
+          <div className="flex justify-between items-start">
+            <div>
+              <h2 className="text-xl font-bold">{shopSettings.shopName}</h2>
+              <div className="flex items-center text-sm text-gray-500 mt-1">
+                <span className="flex items-center">
+                  <Star size={16} className="text-yellow-400 fill-yellow-400 mr-1" />
+                  4.8
+                </span>
+                <span className="mx-2">•</span>
+                <span>{products.length} Products</span>
+                <span className="mx-2">•</span>
+                <span className="flex items-center">
+                  <Users size={16} className="mr-1" />
+                  {followCount} Followers
+                </span>
+              </div>
             </div>
+          </div>
+          
+          <div className="flex mt-3 gap-2">
+            <Button 
+              variant={isFollowing ? "default" : "outline"} 
+              size="sm" 
+              className="flex items-center gap-1"
+              onClick={handleFollowToggle}
+            >
+              <UserPlus size={16} />
+              {isFollowing ? "Following" : "Follow"}
+            </Button>
             
             <Button 
               variant="outline" 
               size="sm" 
-              className="flex items-center gap-1 mt-2"
+              className="flex items-center gap-1"
               onClick={handleMessageSeller}
             >
               <MessageCircle size={16} />
               Message Seller
             </Button>
           </div>
-          <div className="flex">
-            <Button 
-              variant={isFollowing ? "default" : "outline"} 
-              size="sm" 
-              className="mt-1 flex items-center gap-1"
-              onClick={handleFollowToggle}
-            >
-              <UserPlus size={16} />
-              {isFollowing ? "Following" : "Follow"}
-            </Button>
-          </div>
+          
+          <p className="text-sm text-gray-600 mt-3 mb-5">
+            {shopSettings.shopDescription}
+          </p>
         </div>
-        
-        <p className="text-sm text-gray-600 mt-3 mb-5">
-          {shopSettings.shopDescription}
-        </p>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
