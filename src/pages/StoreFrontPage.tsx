@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, ShoppingBag, Star, ChevronDown, Filter, Store, MessageCircle } from "lucide-react";
@@ -225,18 +224,19 @@ const StoreFrontPage = () => {
               <span className="mx-2">•</span>
               <span>{products.length} Products</span>
             </div>
-          </div>
-          <div className="flex flex-col gap-2">
-            <Button variant="outline" size="sm" className="mt-1">Follow</Button>
+            
             <Button 
               variant="outline" 
               size="sm" 
-              className="flex items-center gap-1"
+              className="flex items-center gap-1 mt-2"
               onClick={handleMessageSeller}
             >
               <MessageCircle size={16} />
-              Message
+              Message Seller
             </Button>
+          </div>
+          <div className="flex">
+            <Button variant="outline" size="sm" className="mt-1">Follow</Button>
           </div>
         </div>
         
