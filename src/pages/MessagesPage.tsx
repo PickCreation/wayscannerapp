@@ -62,16 +62,16 @@ const MessagesPage = () => {
     const storedMessages = JSON.parse(localStorage.getItem("sellerMessages") || "[]");
     setMessages(storedMessages);
     
-    // Mark messages as read
-    if (storedMessages.length > 0) {
+    // Mark messages as read only for selected shop
+    if (selectedShop && storedMessages.length > 0) {
       const updatedMessages = storedMessages.map((msg: Message) => ({
         ...msg,
-        read: true
+        read: msg.shopName === selectedShop ? true : msg.read
       }));
       localStorage.setItem("sellerMessages", JSON.stringify(updatedMessages));
       setMessages(updatedMessages);
     }
-  }, []);
+  }, [selectedShop]);
 
   // Get unique shop names
   const shops = [...new Set(messages.map(msg => msg.shopName))];
@@ -91,6 +91,16 @@ const MessagesPage = () => {
 
   const handleSelectShop = (shop: string) => {
     setSelectedShop(shop === selectedShop ? null : shop);
+    
+    // Mark messages as read when selecting a shop
+    if (shop !== selectedShop) {
+      const updatedMessages = messages.map(msg => ({
+        ...msg,
+        read: msg.shopName === shop ? true : msg.read
+      }));
+      localStorage.setItem("sellerMessages", JSON.stringify(updatedMessages));
+      setMessages(updatedMessages);
+    }
   };
 
   const handleSendReply = () => {
@@ -117,10 +127,29 @@ const MessagesPage = () => {
     setMessages(updatedMessages);
     setReply("");
 
+    // Also update sales data since this represents a customer interaction
+    updateSalesData(selectedShop);
+
     toast({
       title: "Message sent",
       description: `Your message has been sent to ${selectedShop}.`,
     });
+  };
+
+  const updateSalesData = (shopName: string) => {
+    const salesData = JSON.parse(localStorage.getItem("shopSalesData") || "{}");
+    
+    if (!salesData[shopName]) {
+      salesData[shopName] = {
+        messageCount: 0,
+        salesCount: 0,
+        reviewCount: 0
+      };
+    }
+    
+    salesData[shopName].messageCount = (salesData[shopName].messageCount || 0) + 1;
+    
+    localStorage.setItem("shopSalesData", JSON.stringify(salesData));
   };
 
   const formatDate = (dateString: string) => {
@@ -138,6 +167,10 @@ const MessagesPage = () => {
       .join('')
       .toUpperCase()
       .substring(0, 2);
+  };
+
+  const getUnreadCount = (shopName: string) => {
+    return messages.filter(msg => msg.shopName === shopName && !msg.read && !msg.isFromBuyer).length;
   };
 
   const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop" | "profile") => {
@@ -182,17 +215,29 @@ const MessagesPage = () => {
 
       <div className="p-4">
         <div className="flex flex-nowrap overflow-x-auto gap-2 pb-4">
-          {shops.map(shop => (
-            <Button
-              key={shop}
-              variant={selectedShop === shop ? "default" : "outline"}
-              size="sm"
-              className="whitespace-nowrap"
-              onClick={() => handleSelectShop(shop)}
-            >
-              {shop}
-            </Button>
-          ))}
+          {shops.map(shop => {
+            const unreadCount = getUnreadCount(shop);
+            
+            return (
+              <Button
+                key={shop}
+                variant={selectedShop === shop ? "default" : "outline"}
+                size="sm"
+                className="whitespace-nowrap relative"
+                onClick={() => handleSelectShop(shop)}
+              >
+                {shop}
+                {unreadCount > 0 && (
+                  <Badge 
+                    variant="destructive" 
+                    className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0"
+                  >
+                    {unreadCount}
+                  </Badge>
+                )}
+              </Button>
+            );
+          })}
         </div>
 
         {selectedShop ? (
@@ -226,7 +271,7 @@ const MessagesPage = () => {
                           {formatDate(msg.date)}
                         </span>
                         {msg.isFromBuyer && (
-                          <Check size={12} className="text-gray-500" />
+                          <Check size={12} className={msg.read ? "text-blue-500" : "text-gray-500"} />
                         )}
                       </div>
                     </div>
@@ -261,7 +306,10 @@ const MessagesPage = () => {
             <TabsContent value="received" className="space-y-4">
               {receivedMessages.length > 0 ? (
                 receivedMessages.map(msg => (
-                  <Card key={msg.id} className="cursor-pointer" onClick={() => handleSelectShop(msg.shopName)}>
+                  <Card key={msg.id} className="cursor-pointer relative" onClick={() => handleSelectShop(msg.shopName)}>
+                    {!msg.read && (
+                      <div className="absolute top-0 right-0 w-3 h-3 bg-blue-500 rounded-full m-2"></div>
+                    )}
                     <CardHeader className="p-4 pb-2">
                       <div className="flex justify-between items-start">
                         <div className="flex items-center gap-2">
@@ -274,7 +322,7 @@ const MessagesPage = () => {
                       </div>
                     </CardHeader>
                     <CardContent className="p-4 pt-2">
-                      <p className="text-sm line-clamp-2">{msg.message}</p>
+                      <p className={`text-sm line-clamp-2 ${!msg.read ? "font-medium" : ""}`}>{msg.message}</p>
                     </CardContent>
                   </Card>
                 ))
@@ -298,7 +346,10 @@ const MessagesPage = () => {
                           </Avatar>
                           <CardTitle className="text-base">To: {msg.shopName}</CardTitle>
                         </div>
-                        <span className="text-xs text-gray-500">{formatDate(msg.date)}</span>
+                        <div className="flex items-center">
+                          <span className="text-xs text-gray-500 mr-1">{formatDate(msg.date)}</span>
+                          <Check size={16} className={msg.read ? "text-blue-500" : "text-gray-500"} />
+                        </div>
                       </div>
                     </CardHeader>
                     <CardContent className="p-4 pt-2">

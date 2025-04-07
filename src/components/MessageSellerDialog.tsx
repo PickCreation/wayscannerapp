@@ -56,6 +56,9 @@ const MessageSellerDialog: React.FC<MessageSellerDialogProps> = ({
     messages.push(newMessage);
     localStorage.setItem("sellerMessages", JSON.stringify(messages));
 
+    // Update shop sales data for message count
+    updateShopSalesData(shopName);
+
     // Show success toast
     toast({
       title: "Message sent",
@@ -76,6 +79,22 @@ const MessageSellerDialog: React.FC<MessageSellerDialogProps> = ({
         </Button>
       )
     });
+  };
+
+  const updateShopSalesData = (shop: string) => {
+    const salesData = JSON.parse(localStorage.getItem("shopSalesData") || "{}");
+    
+    if (!salesData[shop]) {
+      salesData[shop] = {
+        messageCount: 0,
+        salesCount: 0,
+        reviewCount: 0
+      };
+    }
+    
+    salesData[shop].messageCount = (salesData[shop].messageCount || 0) + 1;
+    
+    localStorage.setItem("shopSalesData", JSON.stringify(salesData));
   };
 
   return (

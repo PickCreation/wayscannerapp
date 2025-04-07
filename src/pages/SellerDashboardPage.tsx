@@ -64,6 +64,14 @@ const SellerDashboardPage = () => {
     shopDescription: "Selling eco-friendly products for a sustainable lifestyle."
   });
   const [sellerMessages, setSellerMessages] = useState<any[]>([]);
+  const [salesData, setSalesData] = useState({
+    totalEarnings: 1243,
+    ordersCount: 32,
+    rating: 4.8,
+    followers: 0,
+    salesCount: 0,
+    reviewCount: 0
+  });
   
   const currentDate = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
@@ -94,7 +102,53 @@ const SellerDashboardPage = () => {
     if (messages && messages.length > 0) {
       setSellerMessages(messages);
     }
-  }, [isAuthenticated, navigate, toast]);
+    
+    const shopSalesData = JSON.parse(localStorage.getItem('shopSalesData') || '{}');
+    if (shopSettings && shopSalesData[shopSettings.shopName]) {
+      setSalesData(prev => ({
+        ...prev,
+        salesCount: shopSalesData[shopSettings.shopName].salesCount || 0,
+        reviewCount: shopSalesData[shopSettings.shopName].reviewCount || 0
+      }));
+    }
+    
+    const storeFollowers = JSON.parse(localStorage.getItem('storeFollowers') || '{}');
+    if (shopSettings && storeFollowers[shopSettings.shopName]) {
+      setSalesData(prev => ({
+        ...prev,
+        followers: storeFollowers[shopSettings.shopName] || 0
+      }));
+    }
+    
+    if (shopSettings && shopSettings.shopName && !shopSalesData[shopSettings.shopName]) {
+      shopSalesData[shopSettings.shopName] = {
+        messageCount: messages.length,
+        salesCount: 15,
+        reviewCount: 32
+      };
+      
+      localStorage.setItem('shopSalesData', JSON.stringify(shopSalesData));
+      
+      setSalesData(prev => ({
+        ...prev,
+        salesCount: 15,
+        reviewCount: 32
+      }));
+    }
+    
+    if (user) {
+      const userProfileStats = JSON.parse(localStorage.getItem('userProfileStats') || '{}');
+      if (!userProfileStats[user.id]) {
+        userProfileStats[user.id] = {
+          followers: storeFollowers[shopSettings.shopName] || 0,
+          sales: shopSalesData[shopSettings.shopName]?.salesCount || 15,
+          reviews: shopSalesData[shopSettings.shopName]?.reviewCount || 32
+        };
+        
+        localStorage.setItem('userProfileStats', JSON.stringify(userProfileStats));
+      }
+    }
+  }, [isAuthenticated, navigate, toast, user, shopSettings]);
 
   const handleBackClick = () => {
     navigate("/profile");
@@ -147,6 +201,76 @@ const SellerDashboardPage = () => {
     } catch (e) {
       return "Unknown date";
     }
+  };
+
+  const handleAddDemoSale = () => {
+    setSalesData(prev => ({
+      ...prev,
+      totalEarnings: prev.totalEarnings + Math.floor(Math.random() * 30) + 10,
+      ordersCount: prev.ordersCount + 1,
+      salesCount: prev.salesCount + 1
+    }));
+    
+    const shopSalesData = JSON.parse(localStorage.getItem('shopSalesData') || '{}');
+    if (!shopSalesData[shopSettings.shopName]) {
+      shopSalesData[shopSettings.shopName] = {
+        messageCount: sellerMessages.length,
+        salesCount: 0,
+        reviewCount: 0
+      };
+    }
+    
+    shopSalesData[shopSettings.shopName].salesCount = (shopSalesData[shopSettings.shopName].salesCount || 0) + 1;
+    localStorage.setItem('shopSalesData', JSON.stringify(shopSalesData));
+    
+    if (user) {
+      const userProfileStats = JSON.parse(localStorage.getItem('userProfileStats') || '{}');
+      if (!userProfileStats[user.id]) {
+        userProfileStats[user.id] = { followers: 0, sales: 0, reviews: 0 };
+      }
+      
+      userProfileStats[user.id].sales = (userProfileStats[user.id].sales || 0) + 1;
+      localStorage.setItem('userProfileStats', JSON.stringify(userProfileStats));
+    }
+    
+    toast({
+      title: "New Sale!",
+      description: "You've made a new sale. Congratulations!",
+    });
+  };
+
+  const handleAddDemoReview = () => {
+    setSalesData(prev => ({
+      ...prev,
+      reviewCount: prev.reviewCount + 1
+    }));
+    
+    const shopSalesData = JSON.parse(localStorage.getItem('shopSalesData') || '{}');
+    if (!shopSalesData[shopSettings.shopName]) {
+      shopSalesData[shopSettings.shopName] = {
+        messageCount: sellerMessages.length,
+        salesCount: 0,
+        reviewCount: 0
+      };
+    }
+    
+    shopSalesData[shopSettings.shopName].reviewCount = (shopSalesData[shopSettings.shopName].reviewCount || 0) + 1;
+    localStorage.setItem('shopSalesData', JSON.stringify(shopSalesData));
+    
+    if (user) {
+      const userProfileStats = JSON.parse(localStorage.getItem('userProfileStats') || '{}');
+      if (!userProfileStats[user.id]) {
+        userProfileStats[user.id] = { followers: 0, sales: 0, reviews: 0 };
+      }
+      
+      userProfileStats[user.id].reviews = (userProfileStats[user.id].reviews || 0) + 1;
+      localStorage.setItem('userProfileStats', JSON.stringify(userProfileStats));
+    }
+    
+    toast({
+      title: "New Review!",
+      description: "You've received a new 5-star review!",
+    });
   };
 
   return (
@@ -213,13 +337,13 @@ const SellerDashboardPage = () => {
       <div className="p-4 grid grid-cols-2 gap-3">
         <Card className="bg-white">
           <CardContent className="p-3 flex flex-col items-center">
-            <h3 className="text-xl font-bold text-wayscanner-blue">$1,243</h3>
+            <h3 className="text-xl font-bold text-wayscanner-blue">${salesData.totalEarnings}</h3>
             <p className="text-sm text-gray-500">Total Earnings</p>
           </CardContent>
         </Card>
         <Card className="bg-white">
           <CardContent className="p-3 flex flex-col items-center">
-            <h3 className="text-xl font-bold text-wayscanner-blue">32</h3>
+            <h3 className="text-xl font-bold text-wayscanner-blue">{salesData.ordersCount}</h3>
             <p className="text-sm text-gray-500">Orders</p>
           </CardContent>
         </Card>
@@ -231,7 +355,7 @@ const SellerDashboardPage = () => {
         </Card>
         <Card className="bg-white">
           <CardContent className="p-3 flex flex-col items-center">
-            <h3 className="text-xl font-bold text-wayscanner-blue">4.8/5</h3>
+            <h3 className="text-xl font-bold text-wayscanner-blue">{salesData.rating}/5</h3>
             <p className="text-sm text-gray-500">Rating</p>
           </CardContent>
         </Card>
@@ -255,6 +379,9 @@ const SellerDashboardPage = () => {
               onViewProduct={handleViewProduct}
               messages={sellerMessages}
               onViewAllMessages={handleViewAllMessages}
+              onAddDemoSale={handleAddDemoSale}
+              onAddDemoReview={handleAddDemoReview}
+              salesData={salesData}
             />
           </TabsContent>
           
@@ -311,6 +438,16 @@ interface OverviewTabProps {
   onViewProduct: (id: string) => void;
   messages: any[];
   onViewAllMessages: () => void;
+  onAddDemoSale: () => void;
+  onAddDemoReview: () => void;
+  salesData: {
+    totalEarnings: number;
+    ordersCount: number;
+    rating: number;
+    followers: number;
+    salesCount: number;
+    reviewCount: number;
+  };
 }
 
 const OverviewTab = ({ 
@@ -320,11 +457,16 @@ const OverviewTab = ({
   onDeleteProduct, 
   onViewProduct,
   messages,
-  onViewAllMessages
+  onViewAllMessages,
+  onAddDemoSale,
+  onAddDemoReview,
+  salesData
 }: OverviewTabProps) => {
   const recentMessages = messages
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 3);
+
+  const unreadMessageCount = messages.filter(msg => !msg.read && !msg.isFromBuyer).length;
 
   return (
     <div className="space-y-4">
@@ -350,6 +492,37 @@ const OverviewTab = ({
               description="$34.99 for Order #2342"
               time="Yesterday"
             />
+          </div>
+          
+          <div className="flex gap-2 mt-4">
+            <Button variant="outline" className="w-1/2" onClick={onAddDemoSale}>
+              Simulate Sale
+            </Button>
+            <Button variant="outline" className="w-1/2" onClick={onAddDemoReview}>
+              Simulate Review
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+      
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="font-bold text-lg">Statistics</h3>
+          </div>
+          <div className="grid grid-cols-3 gap-3 mb-4">
+            <div className="border rounded-lg p-3 text-center">
+              <p className="text-xl font-bold text-wayscanner-blue">{salesData.followers}</p>
+              <p className="text-xs text-gray-500">Followers</p>
+            </div>
+            <div className="border rounded-lg p-3 text-center">
+              <p className="text-xl font-bold text-wayscanner-blue">{salesData.salesCount}</p>
+              <p className="text-xs text-gray-500">Sales</p>
+            </div>
+            <div className="border rounded-lg p-3 text-center">
+              <p className="text-xl font-bold text-wayscanner-blue">{salesData.reviewCount}</p>
+              <p className="text-xs text-gray-500">Reviews</p>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -420,7 +593,14 @@ const OverviewTab = ({
       <Card>
         <CardContent className="p-4">
           <div className="flex justify-between items-center mb-3">
-            <h3 className="font-bold text-lg">Recent Messages</h3>
+            <div className="flex items-center">
+              <h3 className="font-bold text-lg">Recent Messages</h3>
+              {unreadMessageCount > 0 && (
+                <Badge variant="destructive" className="ml-2">
+                  {unreadMessageCount} new
+                </Badge>
+              )}
+            </div>
             <Button 
               variant="outline" 
               size="sm" 
@@ -435,14 +615,16 @@ const OverviewTab = ({
               recentMessages.map((msg) => (
                 <div key={msg.id} className="flex items-start gap-3 p-3 border rounded-lg bg-white">
                   <div className="bg-gray-100 p-2 rounded-full">
-                    <MessageSquare className="text-blue-500" size={18} />
+                    <MessageSquare className={msg.read ? "text-blue-500" : "text-red-500"} size={18} />
                   </div>
                   <div className="flex-1">
                     <div className="flex justify-between">
-                      <h4 className="font-medium">{msg.isFromBuyer ? "From Customer" : "Your Reply"}</h4>
+                      <h4 className={`font-medium ${!msg.read && !msg.isFromBuyer ? "text-black" : "text-gray-700"}`}>
+                        {msg.isFromBuyer ? "Your Reply" : "From Customer"}
+                      </h4>
                       <span className="text-xs text-gray-400">{new Date(msg.date).toLocaleDateString()}</span>
                     </div>
-                    <p className="text-sm text-gray-500 line-clamp-1">{msg.message}</p>
+                    <p className={`text-sm ${!msg.read && !msg.isFromBuyer ? "text-black font-medium" : "text-gray-500"} line-clamp-1`}>{msg.message}</p>
                   </div>
                 </div>
               ))

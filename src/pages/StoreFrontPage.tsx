@@ -28,6 +28,12 @@ interface Product {
   category: string;
 }
 
+interface ShopSalesData {
+  messageCount: number;
+  salesCount: number;
+  reviewCount: number;
+}
+
 const StoreFrontPage = () => {
   const { storeId } = useParams();
   const navigate = useNavigate();
@@ -39,6 +45,11 @@ const StoreFrontPage = () => {
   const [messageDialogOpen, setMessageDialogOpen] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followCount, setFollowCount] = useState(0);
+  const [shopSalesData, setShopSalesData] = useState<ShopSalesData>({
+    messageCount: 0,
+    salesCount: 0,
+    reviewCount: 0
+  });
   
   const [shopSettings, setShopSettings] = useState({
     shopName: "My Eco Shop",
@@ -109,6 +120,7 @@ const StoreFrontPage = () => {
       setShopBanner(savedShopBanner);
     }
     
+    // Load follow state and count
     if (user && storeId) {
       const followedStores = JSON.parse(localStorage.getItem('followedStores') || '{}');
       const storeFollowers = JSON.parse(localStorage.getItem('storeFollowers') || '{}');
@@ -119,7 +131,13 @@ const StoreFrontPage = () => {
       const storeFollowerCount = storeFollowers[storeId] || 0;
       setFollowCount(storeFollowerCount);
     }
-  }, [storeId, user]);
+    
+    // Load shop sales data
+    const salesData = JSON.parse(localStorage.getItem('shopSalesData') || '{}');
+    if (salesData && storeId && salesData[shopSettings.shopName]) {
+      setShopSalesData(salesData[shopSettings.shopName]);
+    }
+  }, [storeId, user, shopSettings.shopName]);
 
   const handleBackClick = () => {
     navigate(-1);
@@ -177,29 +195,39 @@ const StoreFrontPage = () => {
       return;
     }
 
-    setIsFollowing(prev => !prev);
+    const newIsFollowing = !isFollowing;
+    setIsFollowing(newIsFollowing);
     
+    // Update followedStores for the user
     const followedStores = JSON.parse(localStorage.getItem('followedStores') || '{}');
     const storeFollowers = JSON.parse(localStorage.getItem('storeFollowers') || '{}');
     
     const userFollowedStores = followedStores[user.id] || [];
     
     if (isFollowing) {
+      // Unfollow
       const updatedFollowedStores = userFollowedStores.filter((id: string) => id !== storeId);
       followedStores[user.id] = updatedFollowedStores;
       
       storeFollowers[storeId] = Math.max((storeFollowers[storeId] || 0) - 1, 0);
       setFollowCount(prev => Math.max(prev - 1, 0));
       
+      // Update storeFollowers count for the shop name as well
+      storeFollowers[shopSettings.shopName] = Math.max((storeFollowers[shopSettings.shopName] || 0) - 1, 0);
+      
       toast({
         title: "Unfollowed",
         description: `You have unfollowed ${shopSettings.shopName}`,
       });
     } else {
+      // Follow
       followedStores[user.id] = [...userFollowedStores, storeId];
       
       storeFollowers[storeId] = (storeFollowers[storeId] || 0) + 1;
       setFollowCount(prev => prev + 1);
+      
+      // Update storeFollowers count for the shop name as well
+      storeFollowers[shopSettings.shopName] = (storeFollowers[shopSettings.shopName] || 0) + 1;
       
       toast({
         title: "Following",
@@ -209,6 +237,30 @@ const StoreFrontPage = () => {
     
     localStorage.setItem('followedStores', JSON.stringify(followedStores));
     localStorage.setItem('storeFollowers', JSON.stringify(storeFollowers));
+    
+    // Update user profile follower count stats (for Profile page)
+    updateUserProfileStats(user.id, newIsFollowing);
+  };
+  
+  const updateUserProfileStats = (userId: string, isNewFollow: boolean) => {
+    const userStats = JSON.parse(localStorage.getItem('userProfileStats') || '{}');
+    
+    if (!userStats[userId]) {
+      userStats[userId] = {
+        followers: 0,
+        sales: 0,
+        reviews: 0
+      };
+    }
+    
+    // If the user is a shop owner, update their follower count
+    if (isNewFollow) {
+      userStats[userId].followers = (userStats[userId].followers || 0) + 1;
+    } else {
+      userStats[userId].followers = Math.max((userStats[userId].followers || 0) - 1, 0);
+    }
+    
+    localStorage.setItem('userProfileStats', JSON.stringify(userStats));
   };
 
   const adaptProductForCard = (product: Product) => ({
@@ -243,6 +295,8 @@ const StoreFrontPage = () => {
   };
 
   const sortedProducts = getSortedProducts(products);
+  
+  const totalReviews = products.reduce((total, product) => total + product.reviews, 0);
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
@@ -296,6 +350,11 @@ const StoreFrontPage = () => {
                   <Users size={16} className="mr-1" />
                   {followCount} Followers
                 </span>
+              </div>
+              <div className="flex items-center text-sm text-gray-500 mt-1">
+                <span>{shopSalesData.salesCount || 0} Sales</span>
+                <span className="mx-2">•</span>
+                <span>{totalReviews} Reviews</span>
               </div>
             </div>
           </div>

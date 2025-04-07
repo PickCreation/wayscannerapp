@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { 
   ArrowLeft, Edit, Lock, Store, Bookmark, Heart, 
@@ -50,6 +51,11 @@ const ProfilePage = () => {
     fullName: "",
     email: ""
   });
+  const [userStats, setUserStats] = useState({
+    followers: 0,
+    sales: 0,
+    reviews: 0
+  });
 
   useEffect(() => {
     const savedProfileImage = localStorage.getItem('profileImage');
@@ -62,6 +68,57 @@ const ProfilePage = () => {
         fullName: user.name,
         email: user.email
       });
+      
+      // Load user stats
+      const savedUserStats = JSON.parse(localStorage.getItem('userProfileStats') || '{}');
+      if (savedUserStats[user.id]) {
+        setUserStats(savedUserStats[user.id]);
+      }
+      
+      // Load shop sales data
+      const shopSalesData = JSON.parse(localStorage.getItem('shopSalesData') || '{}');
+      const shopSettings = JSON.parse(localStorage.getItem('shopSettings') || '{}');
+      
+      if (shopSalesData[shopSettings.shopName]) {
+        const salesData = shopSalesData[shopSettings.shopName];
+        
+        // Update sales count from shop data
+        setUserStats(prev => ({
+          ...prev,
+          sales: salesData.salesCount || 0,
+          reviews: salesData.reviewCount || 0
+        }));
+        
+        // Persist these stats
+        const allUserStats = JSON.parse(localStorage.getItem('userProfileStats') || '{}');
+        if (!allUserStats[user.id]) {
+          allUserStats[user.id] = { followers: 0, sales: 0, reviews: 0 };
+        }
+        
+        allUserStats[user.id].sales = salesData.salesCount || 0;
+        allUserStats[user.id].reviews = salesData.reviewCount || 0;
+        
+        localStorage.setItem('userProfileStats', JSON.stringify(allUserStats));
+      }
+      
+      // Get follower count from store followers
+      const storeFollowers = JSON.parse(localStorage.getItem('storeFollowers') || '{}');
+      if (shopSettings && storeFollowers[shopSettings.shopName]) {
+        setUserStats(prev => ({
+          ...prev,
+          followers: storeFollowers[shopSettings.shopName] || 0
+        }));
+        
+        // Persist these stats
+        const allUserStats = JSON.parse(localStorage.getItem('userProfileStats') || '{}');
+        if (!allUserStats[user.id]) {
+          allUserStats[user.id] = { followers: 0, sales: 0, reviews: 0 };
+        }
+        
+        allUserStats[user.id].followers = storeFollowers[shopSettings.shopName] || 0;
+        
+        localStorage.setItem('userProfileStats', JSON.stringify(allUserStats));
+      }
     }
 
     const savedProfileData = localStorage.getItem('profileData');
@@ -266,15 +323,15 @@ const ProfilePage = () => {
       {isAuthenticated ? (
         <div className="flex justify-around py-3">
           <div className="text-center">
-            <p className="text-base font-bold text-wayscanner-blue">127</p>
+            <p className="text-base font-bold text-wayscanner-blue">{userStats.followers}</p>
             <p className="text-[13px] text-[#6E6E6E]">Followers</p>
           </div>
           <div className="text-center border-x border-gray-200 px-8">
-            <p className="text-base font-bold text-wayscanner-blue">15</p>
+            <p className="text-base font-bold text-wayscanner-blue">{userStats.sales}</p>
             <p className="text-[13px] text-[#6E6E6E]">Sales</p>
           </div>
           <div className="text-center">
-            <p className="text-base font-bold text-wayscanner-blue">32</p>
+            <p className="text-base font-bold text-wayscanner-blue">{userStats.reviews}</p>
             <p className="text-[13px] text-[#6E6E6E]">Reviews</p>
           </div>
         </div>
