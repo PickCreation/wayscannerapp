@@ -63,8 +63,8 @@ const SellerDashboardPage = () => {
     shopName: "My Eco Shop",
     shopDescription: "Selling eco-friendly products for a sustainable lifestyle."
   });
+  const [sellerMessages, setSellerMessages] = useState<any[]>([]);
   
-  // Get current date for display
   const currentDate = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
@@ -80,16 +80,19 @@ const SellerDashboardPage = () => {
       navigate("/profile");
     }
 
-    // Load profile image from localStorage
     const savedProfileImage = localStorage.getItem('profileImage');
     if (savedProfileImage) {
       setProfileImage(savedProfileImage);
     }
     
-    // Load shop settings from localStorage
     const savedShopSettings = localStorage.getItem('shopSettings');
     if (savedShopSettings) {
       setShopSettings(JSON.parse(savedShopSettings));
+    }
+
+    const messages = JSON.parse(localStorage.getItem("sellerMessages") || "[]");
+    if (messages && messages.length > 0) {
+      setSellerMessages(messages);
     }
   }, [isAuthenticated, navigate, toast]);
 
@@ -125,9 +128,25 @@ const SellerDashboardPage = () => {
     navigate(`/marketplace/product/${productId}`);
   };
 
+  const handleViewAllMessages = () => {
+    navigate("/profile/messages");
+  };
+
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+    } catch (e) {
+      return "Unknown date";
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Top navigation bar */}
       <div className="bg-wayscanner-blue text-white p-4 relative">
         <div className="flex justify-between items-center">
           <button className="p-2" onClick={handleBackClick}>
@@ -138,12 +157,10 @@ const SellerDashboardPage = () => {
         </div>
       </div>
 
-      {/* Seller info card - Redesigned as per the image */}
       <div className="p-4">
         <Card className="w-full">
           <CardContent className="p-4">
             <div className="flex">
-              {/* Left side - Avatar and joined info */}
               <div className="flex flex-col items-center mr-4">
                 <Avatar className="w-20 h-20 border-2 border-wayscanner-blue mb-2">
                   {profileImage ? (
@@ -161,7 +178,6 @@ const SellerDashboardPage = () => {
                 </div>
               </div>
               
-              {/* Right side - Shop info and buttons */}
               <div className="flex-1">
                 <h2 className="text-2xl font-bold">{shopSettings.shopName}</h2>
                 <p className="text-gray-600 mb-4">{shopSettings.shopDescription}</p>
@@ -190,7 +206,6 @@ const SellerDashboardPage = () => {
         </Card>
       </div>
 
-      {/* Dashboard stats */}
       <div className="p-4 grid grid-cols-2 gap-3">
         <Card className="bg-white">
           <CardContent className="p-3 flex flex-col items-center">
@@ -218,17 +233,25 @@ const SellerDashboardPage = () => {
         </Card>
       </div>
 
-      {/* Dashboard tabs */}
       <div className="px-4 pb-20">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="w-full grid grid-cols-3 bg-gray-100">
+          <TabsList className="w-full grid grid-cols-4 bg-gray-100">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="orders">Orders</TabsTrigger>
+            <TabsTrigger value="messages">Messages</TabsTrigger>
           </TabsList>
           
           <TabsContent value="overview" className="mt-4">
-            <OverviewTab onAddNewProduct={handleAddNewProduct} onViewAllProducts={handleViewAllProducts} products={products} onDeleteProduct={handleDeleteProduct} onViewProduct={handleViewProduct} />
+            <OverviewTab 
+              onAddNewProduct={handleAddNewProduct} 
+              onViewAllProducts={handleViewAllProducts} 
+              products={products} 
+              onDeleteProduct={handleDeleteProduct} 
+              onViewProduct={handleViewProduct}
+              messages={sellerMessages}
+              onViewAllMessages={handleViewAllMessages}
+            />
           </TabsContent>
           
           <TabsContent value="products" className="mt-4">
@@ -238,15 +261,18 @@ const SellerDashboardPage = () => {
           <TabsContent value="orders" className="mt-4">
             <OrdersTab />
           </TabsContent>
+
+          <TabsContent value="messages" className="mt-4">
+            <MessagesTab messages={sellerMessages} onViewAllMessages={handleViewAllMessages} />
+          </TabsContent>
         </Tabs>
       </div>
 
-      {/* Bottom navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-3 px-4 flex justify-around">
         <NavItem icon={<LayoutDashboard size={20} />} label="Dashboard" onClick={() => setActiveTab("overview")} active={activeTab === "overview"} />
         <NavItem icon={<Package size={20} />} label="Products" onClick={() => setActiveTab("products")} active={activeTab === "products"} />
         <NavItem icon={<FileText size={20} />} label="Orders" onClick={() => setActiveTab("orders")} active={activeTab === "orders"} />
-        <NavItem icon={<Settings size={20} />} label="Settings" onClick={() => navigate("/seller-dashboard/settings")} active={false} />
+        <NavItem icon={<MessageSquare size={20} />} label="Messages" onClick={() => setActiveTab("messages")} active={activeTab === "messages"} />
       </div>
     </div>
   );
@@ -271,16 +297,29 @@ const NavItem = ({ icon, label, onClick, active }: NavItemProps) => {
   );
 };
 
-// Tab components
 interface OverviewTabProps {
   onAddNewProduct: () => void;
   onViewAllProducts: () => void;
   products: any[];
   onDeleteProduct: (id: string) => void;
   onViewProduct: (id: string) => void;
+  messages: any[];
+  onViewAllMessages: () => void;
 }
 
-const OverviewTab = ({ onAddNewProduct, onViewAllProducts, products, onDeleteProduct, onViewProduct }: OverviewTabProps) => {
+const OverviewTab = ({ 
+  onAddNewProduct, 
+  onViewAllProducts, 
+  products, 
+  onDeleteProduct, 
+  onViewProduct,
+  messages,
+  onViewAllMessages
+}: OverviewTabProps) => {
+  const recentMessages = messages
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 3);
+
   return (
     <div className="space-y-4">
       <Card>
@@ -368,6 +407,44 @@ const OverviewTab = ({ onAddNewProduct, onViewAllProducts, products, onDeletePro
           </div>
           <div className="bg-gray-100 h-40 rounded flex items-center justify-center">
             <p className="text-gray-500 text-sm">Sales chart will appear here</p>
+          </div>
+        </CardContent>
+      </Card>
+      
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="font-bold text-lg">Recent Messages</h3>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="text-xs"
+              onClick={onViewAllMessages}
+            >
+              View All
+            </Button>
+          </div>
+          <div className="space-y-3">
+            {recentMessages.length > 0 ? (
+              recentMessages.map((msg) => (
+                <div key={msg.id} className="flex items-start gap-3 p-3 border rounded-lg bg-white">
+                  <div className="bg-gray-100 p-2 rounded-full">
+                    <MessageSquare className="text-blue-500" size={18} />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex justify-between">
+                      <h4 className="font-medium">{msg.isFromBuyer ? "From Customer" : "Your Reply"}</h4>
+                      <span className="text-xs text-gray-400">{new Date(msg.date).toLocaleDateString()}</span>
+                    </div>
+                    <p className="text-sm text-gray-500 line-clamp-1">{msg.message}</p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-4">
+                <p className="text-gray-500">No recent messages</p>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -484,7 +561,92 @@ const OrdersTab = () => {
   );
 };
 
-// Helper components
+interface MessagesTabProps {
+  messages: any[];
+  onViewAllMessages: () => void;
+}
+
+const MessagesTab = ({ messages, onViewAllMessages }: MessagesTabProps) => {
+  const navigate = useNavigate();
+  const sortedMessages = [...messages].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+    } catch (e) {
+      return "Unknown date";
+    }
+  };
+  
+  const handleViewConversation = (shopName: string) => {
+    navigate(`/profile/messages?shop=${shopName}`);
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <h3 className="font-bold text-lg">Customer Messages</h3>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="text-xs"
+          onClick={onViewAllMessages}
+        >
+          View All Messages
+        </Button>
+      </div>
+      
+      <div className="space-y-3">
+        {sortedMessages.length > 0 ? (
+          sortedMessages.map((msg) => (
+            <div 
+              key={msg.id} 
+              className="p-3 border rounded-lg bg-white cursor-pointer"
+              onClick={() => handleViewConversation(msg.shopName)}
+            >
+              <div className="flex justify-between items-start mb-1">
+                <div className="flex items-center gap-2">
+                  <div className="bg-gray-100 p-2 rounded-full">
+                    <MessageSquare className="text-blue-500" size={18} />
+                  </div>
+                  <h4 className="font-medium">{msg.isFromBuyer ? "From Customer" : "Your Reply"}</h4>
+                </div>
+                <span className="text-xs text-gray-400">{formatDate(msg.date)}</span>
+              </div>
+              <p className="text-sm pl-10">{msg.message}</p>
+              <div className="flex justify-between items-center mt-2 pl-10">
+                <span className="text-xs text-gray-500">
+                  {msg.read ? "Read" : "Unread"}
+                </span>
+                <span className="text-xs text-blue-500">
+                  Tap to view conversation
+                </span>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="text-center py-8 bg-white rounded-lg border">
+            <MessageSquare className="mx-auto h-12 w-12 text-gray-300 mb-2" />
+            <p className="text-gray-500 mb-4">No messages received yet</p>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => navigate("/marketplace")}
+            >
+              Go to Marketplace
+            </Button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 interface ActivityItemProps {
   icon: React.ReactNode;
   title: string;
