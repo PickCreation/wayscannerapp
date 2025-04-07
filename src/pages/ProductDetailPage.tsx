@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, Heart, Share2, Plus, Minus, Tag } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
@@ -258,6 +257,10 @@ const ProductDetailPage = () => {
     }
   };
 
+  const handleSellerClick = () => {
+    navigate(`/store/1`);
+  };
+
   return (
     <div className="pb-24 bg-white min-h-screen">
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
@@ -341,7 +344,15 @@ const ProductDetailPage = () => {
         
         <div className="mb-3">
           <p className="text-sm text-gray-600"><span className="font-medium">Category:</span> {product.category}</p>
-          <p className="text-sm text-gray-600"><span className="font-medium">Seller:</span> {product.seller}</p>
+          <p className="text-sm text-gray-600">
+            <span className="font-medium">Seller:</span>{" "}
+            <button 
+              className="text-wayscanner-blue font-medium hover:underline" 
+              onClick={handleSellerClick}
+            >
+              {product.seller}
+            </button>
+          </p>
         </div>
         
         <div className="flex items-center mb-3">
