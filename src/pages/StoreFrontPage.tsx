@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, ShoppingBag, Star, ChevronDown, Filter, Store, MessageCircle } from "lucide-react";
+import { ArrowLeft, ShoppingBag, Star, ChevronDown, Filter, Store, MessageCircle, UserPlus, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
@@ -31,10 +31,13 @@ const StoreFrontPage = () => {
   const { storeId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("shop");
   const [shopLogo, setShopLogo] = useState<string | null>(null);
   const [shopBanner, setShopBanner] = useState<string | null>(null);
   const [messageDialogOpen, setMessageDialogOpen] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followCount, setFollowCount] = useState(0);
   
   const [shopSettings, setShopSettings] = useState({
     shopName: "My Eco Shop",
@@ -104,7 +107,18 @@ const StoreFrontPage = () => {
     if (savedShopBanner) {
       setShopBanner(savedShopBanner);
     }
-  }, [storeId]);
+    
+    if (user && storeId) {
+      const followedStores = JSON.parse(localStorage.getItem('followedStores') || '{}');
+      const storeFollowers = JSON.parse(localStorage.getItem('storeFollowers') || '{}');
+      
+      const userFollowedStores = followedStores[user.id] || [];
+      setIsFollowing(userFollowedStores.includes(storeId));
+      
+      const storeFollowerCount = storeFollowers[storeId] || 0;
+      setFollowCount(storeFollowerCount);
+    }
+  }, [storeId, user]);
 
   const handleBackClick = () => {
     navigate(-1);
@@ -142,6 +156,50 @@ const StoreFrontPage = () => {
 
   const handleMessageSeller = () => {
     setMessageDialogOpen(true);
+  };
+
+  const handleFollowToggle = () => {
+    if (!user) {
+      toast({
+        title: "Login required",
+        description: "Please log in to follow stores",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsFollowing(prev => !prev);
+    
+    const followedStores = JSON.parse(localStorage.getItem('followedStores') || '{}');
+    const storeFollowers = JSON.parse(localStorage.getItem('storeFollowers') || '{}');
+    
+    const userFollowedStores = followedStores[user.id] || [];
+    
+    if (isFollowing) {
+      const updatedFollowedStores = userFollowedStores.filter((id: string) => id !== storeId);
+      followedStores[user.id] = updatedFollowedStores;
+      
+      storeFollowers[storeId] = Math.max((storeFollowers[storeId] || 0) - 1, 0);
+      setFollowCount(prev => Math.max(prev - 1, 0));
+      
+      toast({
+        title: "Unfollowed",
+        description: `You have unfollowed ${shopSettings.shopName}`,
+      });
+    } else {
+      followedStores[user.id] = [...userFollowedStores, storeId];
+      
+      storeFollowers[storeId] = (storeFollowers[storeId] || 0) + 1;
+      setFollowCount(prev => prev + 1);
+      
+      toast({
+        title: "Following",
+        description: `You are now following ${shopSettings.shopName}`,
+      });
+    }
+    
+    localStorage.setItem('followedStores', JSON.stringify(followedStores));
+    localStorage.setItem('storeFollowers', JSON.stringify(storeFollowers));
   };
 
   const adaptProductForCard = (product: Product) => ({
@@ -223,6 +281,11 @@ const StoreFrontPage = () => {
               </span>
               <span className="mx-2">•</span>
               <span>{products.length} Products</span>
+              <span className="mx-2">•</span>
+              <span className="flex items-center">
+                <Users size={16} className="mr-1" />
+                {followCount} Followers
+              </span>
             </div>
             
             <Button 
@@ -236,7 +299,15 @@ const StoreFrontPage = () => {
             </Button>
           </div>
           <div className="flex">
-            <Button variant="outline" size="sm" className="mt-1">Follow</Button>
+            <Button 
+              variant={isFollowing ? "default" : "outline"} 
+              size="sm" 
+              className="mt-1 flex items-center gap-1"
+              onClick={handleFollowToggle}
+            >
+              <UserPlus size={16} />
+              {isFollowing ? "Following" : "Follow"}
+            </Button>
           </div>
         </div>
         
