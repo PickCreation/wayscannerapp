@@ -2,6 +2,7 @@ import { useState, useEffect, createContext, useContext } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 interface User {
+  id: string;
   name: string;
   email: string;
   isAdmin?: boolean;
@@ -46,6 +47,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Admin login check
     if (email.toLowerCase() === ADMIN_EMAIL.toLowerCase() && password === ADMIN_PASSWORD) {
       const adminUser = {
+        id: 'admin-123',
         name: 'Admin',
         email: ADMIN_EMAIL,
         isAdmin: true,
@@ -68,12 +70,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Regular user login (keeping existing code)
     localStorage.setItem('isLoggedIn', 'true');
     localStorage.setItem('user', JSON.stringify({
+      id: 'user-' + Date.now(),
       name: 'John Doe',
       email,
     }));
     
     setIsAuthenticated(true);
     setUser({
+      id: 'user-' + Date.now(),
       name: 'John Doe',
       email,
     });
@@ -88,14 +92,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     console.log("Signing up with:", name, email, password);
     
     // Simulate signup success
+    const userId = 'user-' + Date.now();
+    
     localStorage.setItem('isLoggedIn', 'true');
     localStorage.setItem('user', JSON.stringify({
+      id: userId,
       name,
       email,
     }));
     
     setIsAuthenticated(true);
     setUser({
+      id: userId,
       name,
       email,
     });

@@ -11,6 +11,16 @@ import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
 import ProductCard from "@/components/ProductCard";
 
+interface Product {
+  id: string;
+  name: string;
+  price: string;
+  rating: number;
+  reviews: number;
+  image: string;
+  category: string;
+}
+
 const StoreFrontPage = () => {
   const { storeId } = useParams();
   const navigate = useNavigate();
@@ -34,7 +44,7 @@ const StoreFrontPage = () => {
     shopPolicy: "All sales are final. Returns accepted within 30 days with receipt."
   });
 
-  const [products, setProducts] = useState([
+  const [products, setProducts] = useState<Product[]>([
     {
       id: "1",
       name: "Eco-friendly Water Bottle",
@@ -114,6 +124,20 @@ const StoreFrontPage = () => {
   const handleProductClick = (productId: string) => {
     navigate(`/marketplace/product/${productId}`);
   };
+
+  const handleCameraClick = () => {
+    navigate("/scan");
+  };
+
+  // Helper function to convert product item for the ProductCard component
+  const adaptProductForCard = (product: Product) => ({
+    id: parseInt(product.id),
+    title: product.name,
+    price: parseFloat(product.price.replace('$', '')),
+    image: product.image,
+    rating: product.rating,
+    reviews: product.reviews
+  });
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
@@ -209,12 +233,7 @@ const StoreFrontPage = () => {
             {products.map((product) => (
               <ProductCard
                 key={product.id}
-                id={product.id}
-                name={product.name}
-                price={product.price}
-                image={product.image}
-                rating={product.rating}
-                reviews={product.reviews}
+                {...adaptProductForCard(product)}
                 onClick={() => handleProductClick(product.id)}
               />
             ))}
@@ -226,12 +245,7 @@ const StoreFrontPage = () => {
             {products.filter(p => p.category === "kitchen").map((product) => (
               <ProductCard
                 key={product.id}
-                id={product.id}
-                name={product.name}
-                price={product.price}
-                image={product.image}
-                rating={product.rating}
-                reviews={product.reviews}
+                {...adaptProductForCard(product)}
                 onClick={() => handleProductClick(product.id)}
               />
             ))}
@@ -243,12 +257,7 @@ const StoreFrontPage = () => {
             {products.filter(p => p.category === "decor").map((product) => (
               <ProductCard
                 key={product.id}
-                id={product.id}
-                name={product.name}
-                price={product.price}
-                image={product.image}
-                rating={product.rating}
-                reviews={product.reviews}
+                {...adaptProductForCard(product)}
                 onClick={() => handleProductClick(product.id)}
               />
             ))}
@@ -260,12 +269,7 @@ const StoreFrontPage = () => {
             {products.filter(p => p.category === "electronics").map((product) => (
               <ProductCard
                 key={product.id}
-                id={product.id}
-                name={product.name}
-                price={product.price}
-                image={product.image}
-                rating={product.rating}
-                reviews={product.reviews}
+                {...adaptProductForCard(product)}
                 onClick={() => handleProductClick(product.id)}
               />
             ))}
@@ -276,6 +280,7 @@ const StoreFrontPage = () => {
       <BottomNavigation
         activeItem={activeNavItem}
         onItemClick={handleNavItemClick}
+        onCameraClick={handleCameraClick}
       />
     </div>
   );
