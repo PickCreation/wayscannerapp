@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Store, CreditCard, Link, MapPin, Camera, ImageIcon } from "lucide-react";
@@ -9,6 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
 
 const SellerDashboardSettingsPage = () => {
   const navigate = useNavigate();
@@ -19,6 +22,7 @@ const SellerDashboardSettingsPage = () => {
   const [shopBanner, setShopBanner] = useState<string | null>(null);
   const logoInputRef = React.useRef<HTMLInputElement>(null);
   const bannerInputRef = React.useRef<HTMLInputElement>(null);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<"bank" | "paypal" | "payoneer">("bank");
   
   const [shopSettings, setShopSettings] = useState({
     shopName: "My Eco Shop",
@@ -32,10 +36,13 @@ const SellerDashboardSettingsPage = () => {
     shopCountry: "",
     shopWebsite: "",
     shopPolicy: "All sales are final. Returns accepted within 30 days with receipt.",
+    paymentMethod: "bank",
     bankName: "",
     accountNumber: "",
     routingNumber: "",
     accountHolder: "",
+    paypalEmail: "",
+    payoneerEmail: "",
   });
 
   useEffect(() => {
@@ -70,7 +77,13 @@ const SellerDashboardSettingsPage = () => {
     // Load shop settings from localStorage
     const savedShopSettings = localStorage.getItem('shopSettings');
     if (savedShopSettings) {
-      setShopSettings(JSON.parse(savedShopSettings));
+      const parsedSettings = JSON.parse(savedShopSettings);
+      setShopSettings(parsedSettings);
+      
+      // Set the selected payment method from saved settings
+      if (parsedSettings.paymentMethod) {
+        setSelectedPaymentMethod(parsedSettings.paymentMethod);
+      }
     }
   }, [isAuthenticated, navigate, toast, user]);
 
@@ -129,6 +142,11 @@ const SellerDashboardSettingsPage = () => {
         description: "Your shop banner has been changed successfully.",
       });
     }
+  };
+
+  const handlePaymentMethodChange = (value: "bank" | "paypal" | "payoneer") => {
+    setSelectedPaymentMethod(value);
+    setShopSettings(prev => ({ ...prev, paymentMethod: value }));
   };
 
   const handleSaveSettings = () => {
@@ -373,51 +391,134 @@ const SellerDashboardSettingsPage = () => {
                   </div>
                 </div>
                 
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="bankName">Bank Name</Label>
-                    <Input
-                      id="bankName"
-                      name="bankName"
-                      value={shopSettings.bankName}
-                      onChange={handleInputChange}
-                      className="mt-1"
-                    />
+                <div className="space-y-6">
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-center">How would you like to receive payments?</h3>
+                    
+                    <RadioGroup 
+                      value={selectedPaymentMethod} 
+                      onValueChange={(value) => handlePaymentMethodChange(value as "bank" | "paypal" | "payoneer")}
+                      className="mt-4"
+                    >
+                      <div className="flex items-center space-x-2 border p-3 rounded-md mb-2">
+                        <RadioGroupItem value="bank" id="bank" />
+                        <Label htmlFor="bank" className="font-medium cursor-pointer flex-1">
+                          Bank Account
+                        </Label>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2 border p-3 rounded-md mb-2">
+                        <RadioGroupItem value="paypal" id="paypal" />
+                        <Label htmlFor="paypal" className="font-medium cursor-pointer flex-1">
+                          PayPal
+                        </Label>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2 border p-3 rounded-md mb-2">
+                        <RadioGroupItem value="payoneer" id="payoneer" />
+                        <Label htmlFor="payoneer" className="font-medium cursor-pointer flex-1">
+                          Payoneer
+                        </Label>
+                      </div>
+                    </RadioGroup>
                   </div>
                   
-                  <div>
-                    <Label htmlFor="accountHolder">Account Holder Name</Label>
-                    <Input
-                      id="accountHolder"
-                      name="accountHolder"
-                      value={shopSettings.accountHolder}
-                      onChange={handleInputChange}
-                      className="mt-1"
-                    />
-                  </div>
+                  {selectedPaymentMethod === "bank" && (
+                    <div className="space-y-4 pt-2">
+                      <h3 className="font-semibold">Bank Account Details</h3>
+                      
+                      <div>
+                        <Label htmlFor="bankName">Bank Name</Label>
+                        <Input
+                          id="bankName"
+                          name="bankName"
+                          value={shopSettings.bankName}
+                          onChange={handleInputChange}
+                          className="mt-1"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="accountHolder">Account Holder Name</Label>
+                        <Input
+                          id="accountHolder"
+                          name="accountHolder"
+                          value={shopSettings.accountHolder}
+                          onChange={handleInputChange}
+                          className="mt-1"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="accountNumber">Account Number</Label>
+                        <Input
+                          id="accountNumber"
+                          name="accountNumber"
+                          value={shopSettings.accountNumber}
+                          onChange={handleInputChange}
+                          className="mt-1"
+                          type="password"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="routingNumber">Routing Number</Label>
+                        <Input
+                          id="routingNumber"
+                          name="routingNumber"
+                          value={shopSettings.routingNumber}
+                          onChange={handleInputChange}
+                          className="mt-1"
+                        />
+                      </div>
+                    </div>
+                  )}
                   
-                  <div>
-                    <Label htmlFor="accountNumber">Account Number</Label>
-                    <Input
-                      id="accountNumber"
-                      name="accountNumber"
-                      value={shopSettings.accountNumber}
-                      onChange={handleInputChange}
-                      className="mt-1"
-                      type="password"
-                    />
-                  </div>
+                  {selectedPaymentMethod === "paypal" && (
+                    <div className="space-y-4 pt-2">
+                      <h3 className="font-semibold">PayPal Account Details</h3>
+                      
+                      <div>
+                        <Label htmlFor="paypalEmail">PayPal Email</Label>
+                        <Input
+                          id="paypalEmail"
+                          name="paypalEmail"
+                          type="email"
+                          value={shopSettings.paypalEmail}
+                          onChange={handleInputChange}
+                          className="mt-1"
+                          placeholder="your-paypal@example.com"
+                        />
+                      </div>
+                      
+                      <p className="text-sm text-gray-500">
+                        Payments will be sent to your PayPal account. Make sure your email is correct.
+                      </p>
+                    </div>
+                  )}
                   
-                  <div>
-                    <Label htmlFor="routingNumber">Routing Number</Label>
-                    <Input
-                      id="routingNumber"
-                      name="routingNumber"
-                      value={shopSettings.routingNumber}
-                      onChange={handleInputChange}
-                      className="mt-1"
-                    />
-                  </div>
+                  {selectedPaymentMethod === "payoneer" && (
+                    <div className="space-y-4 pt-2">
+                      <h3 className="font-semibold">Payoneer Account Details</h3>
+                      
+                      <div>
+                        <Label htmlFor="payoneerEmail">Payoneer Email</Label>
+                        <Input
+                          id="payoneerEmail"
+                          name="payoneerEmail"
+                          type="email"
+                          value={shopSettings.payoneerEmail}
+                          onChange={handleInputChange}
+                          className="mt-1"
+                          placeholder="your-payoneer@example.com"
+                        />
+                      </div>
+                      
+                      <p className="text-sm text-gray-500">
+                        Payments will be sent to your Payoneer account. Make sure your email is correct.
+                      </p>
+                    </div>
+                  )}
                   
                   <p className="text-sm text-gray-500 mt-4">
                     Your payment information is securely stored and only used for depositing your earnings.
