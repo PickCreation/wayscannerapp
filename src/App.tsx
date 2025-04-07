@@ -42,6 +42,7 @@ import SubmitTicketPage from "./pages/SubmitTicketPage";
 import SubscriptionPage from "./pages/SubscriptionPage";
 import SellerDashboardPage from "./pages/SellerDashboardPage";
 import SellerDashboardSettingsPage from "./pages/SellerDashboardSettingsPage";
+import StoreFrontPage from "./pages/StoreFrontPage";
 
 const queryClient = new QueryClient();
 
@@ -89,6 +90,7 @@ const App = () => (
             <Route path="/subscription" element={<SubscriptionPage />} />
             <Route path="/seller-dashboard" element={<SellerDashboardPage />} />
             <Route path="/seller-dashboard/settings" element={<SellerDashboardSettingsPage />} />
+            <Route path="/store/:storeId" element={<StoreFrontPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

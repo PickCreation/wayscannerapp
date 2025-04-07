@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Store, CreditCard, Link, MapPin, Camera } from "lucide-react";
+import { ArrowLeft, Store, CreditCard, Link, MapPin, Camera, ImageIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,9 @@ const SellerDashboardSettingsPage = () => {
   const { user, isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState<string>("shop");
   const [shopLogo, setShopLogo] = useState<string | null>(null);
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [shopBanner, setShopBanner] = useState<string | null>(null);
+  const logoInputRef = React.useRef<HTMLInputElement>(null);
+  const bannerInputRef = React.useRef<HTMLInputElement>(null);
   
   const [shopSettings, setShopSettings] = useState({
     shopName: "My Eco Shop",
@@ -60,6 +62,12 @@ const SellerDashboardSettingsPage = () => {
       setShopLogo(savedShopLogo);
     }
 
+    // Load shop banner from localStorage
+    const savedShopBanner = localStorage.getItem('shopBanner');
+    if (savedShopBanner) {
+      setShopBanner(savedShopBanner);
+    }
+
     // Load shop settings from localStorage
     const savedShopSettings = localStorage.getItem('shopSettings');
     if (savedShopSettings) {
@@ -77,12 +85,18 @@ const SellerDashboardSettingsPage = () => {
   };
 
   const handleShopLogoChange = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
+    if (logoInputRef.current) {
+      logoInputRef.current.click();
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleShopBannerChange = () => {
+    if (bannerInputRef.current) {
+      bannerInputRef.current.click();
+    }
+  };
+
+  const handleLogoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -100,6 +114,24 @@ const SellerDashboardSettingsPage = () => {
     }
   };
 
+  const handleBannerFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setShopBanner(base64String);
+        localStorage.setItem('shopBanner', base64String);
+      };
+      reader.readAsDataURL(file);
+      
+      toast({
+        title: "Shop Banner Updated",
+        description: "Your shop banner has been changed successfully.",
+      });
+    }
+  };
+
   const handleSaveSettings = () => {
     // Save shop settings to localStorage
     localStorage.setItem('shopSettings', JSON.stringify(shopSettings));
@@ -108,6 +140,10 @@ const SellerDashboardSettingsPage = () => {
       title: "Settings Saved",
       description: "Your shop settings have been saved successfully.",
     });
+  };
+
+  const handleViewStore = () => {
+    navigate(`/store/${user?.id || 'default'}`);
   };
 
   return (
@@ -119,7 +155,14 @@ const SellerDashboardSettingsPage = () => {
             <ArrowLeft size={24} />
           </button>
           <h1 className="text-base font-bold">Shop Settings</h1>
-          <div className="w-10"></div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="text-white border-white hover:bg-white/20"
+            onClick={handleViewStore}
+          >
+            View Store
+          </Button>
         </div>
       </div>
 
@@ -132,8 +175,41 @@ const SellerDashboardSettingsPage = () => {
           </TabsList>
           
           <TabsContent value="shop" className="mt-4">
-            <Card>
+            <Card className="mb-4">
               <CardContent className="p-4 pt-6">
+                <div className="relative mb-6">
+                  <div 
+                    className="h-32 bg-cover bg-center rounded-lg relative overflow-hidden" 
+                    style={{ 
+                      backgroundImage: shopBanner ? `url(${shopBanner})` : 'linear-gradient(to right, #4f46e5, #3b82f6)' 
+                    }}
+                  >
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      {!shopBanner && (
+                        <span className="text-white text-center">
+                          <ImageIcon size={30} className="mx-auto mb-1" />
+                          <p className="text-sm">Shop Banner</p>
+                        </span>
+                      )}
+                    </div>
+                    <button 
+                      type="button"
+                      className="absolute bottom-2 right-2 bg-black/50 text-white rounded-full p-2"
+                      onClick={handleShopBannerChange}
+                    >
+                      <Camera size={18} />
+                    </button>
+                  </div>
+                  
+                  <input 
+                    type="file" 
+                    ref={bannerInputRef}
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleBannerFileChange}
+                  />
+                </div>
+                
                 <div className="flex flex-col items-center mb-6">
                   <div className="relative mb-4">
                     <Avatar className="w-24 h-24 border-4 border-white">
@@ -155,10 +231,10 @@ const SellerDashboardSettingsPage = () => {
                     
                     <input 
                       type="file" 
-                      ref={fileInputRef}
+                      ref={logoInputRef}
                       className="hidden"
                       accept="image/*"
-                      onChange={handleFileChange}
+                      onChange={handleLogoFileChange}
                     />
                   </div>
                   <p className="text-sm text-gray-500">Tap to change shop logo</p>
@@ -287,6 +363,13 @@ const SellerDashboardSettingsPage = () => {
                 </div>
               </CardContent>
             </Card>
+            
+            <Button 
+              className="w-full bg-wayscanner-blue"
+              onClick={handleSaveSettings}
+            >
+              Save Settings
+            </Button>
           </TabsContent>
           
           <TabsContent value="payment" className="mt-4">
@@ -350,6 +433,13 @@ const SellerDashboardSettingsPage = () => {
                 </div>
               </CardContent>
             </Card>
+            
+            <Button 
+              className="w-full mt-4 bg-wayscanner-blue"
+              onClick={handleSaveSettings}
+            >
+              Save Settings
+            </Button>
           </TabsContent>
           
           <TabsContent value="policy" className="mt-4">
@@ -375,15 +465,15 @@ const SellerDashboardSettingsPage = () => {
                 </div>
               </CardContent>
             </Card>
+            
+            <Button 
+              className="w-full mt-4 bg-wayscanner-blue"
+              onClick={handleSaveSettings}
+            >
+              Save Settings
+            </Button>
           </TabsContent>
         </Tabs>
-        
-        <Button 
-          className="w-full mt-4 bg-wayscanner-blue"
-          onClick={handleSaveSettings}
-        >
-          Save Settings
-        </Button>
       </div>
     </div>
   );

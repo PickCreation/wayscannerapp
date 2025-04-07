@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   ArrowLeft,
@@ -13,7 +13,9 @@ import {
   Users,
   MessageSquare,
   ChevronRight,
-  Bell
+  Bell,
+  Trash2,
+  Eye
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -28,8 +30,42 @@ const SellerDashboardPage = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<string>("overview");
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [products, setProducts] = useState([
+    {
+      id: "1",
+      name: "Eco-friendly Water Bottle",
+      price: "$24.99",
+      stock: 15,
+      image: "/placeholder.svg"
+    },
+    {
+      id: "2",
+      name: "Bamboo Cutlery Set",
+      price: "$19.99",
+      stock: 8,
+      image: "/placeholder.svg"
+    },
+    {
+      id: "3",
+      name: "Reusable Grocery Bags (3pk)",
+      price: "$15.99",
+      stock: 22,
+      image: "/placeholder.svg"
+    },
+    {
+      id: "4",
+      name: "Solar-Powered Charger",
+      price: "$45.99",
+      stock: 4,
+      image: "/placeholder.svg"
+    }
+  ]);
+  const [shopSettings, setShopSettings] = useState({
+    shopName: "My Eco Shop",
+    shopDescription: "Selling eco-friendly products for a sustainable lifestyle."
+  });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isAuthenticated) {
       toast({
         title: "Authentication Required",
@@ -43,10 +79,40 @@ const SellerDashboardPage = () => {
     if (savedProfileImage) {
       setProfileImage(savedProfileImage);
     }
+    
+    // Load shop settings from localStorage
+    const savedShopSettings = localStorage.getItem('shopSettings');
+    if (savedShopSettings) {
+      setShopSettings(JSON.parse(savedShopSettings));
+    }
   }, [isAuthenticated, navigate, toast]);
 
   const handleBackClick = () => {
     navigate("/profile");
+  };
+
+  const handleAddNewProduct = () => {
+    navigate("/add-listing");
+  };
+
+  const handleViewAllProducts = () => {
+    setActiveTab("products");
+  };
+
+  const handleDeleteProduct = (productId: string) => {
+    setProducts(products.filter(product => product.id !== productId));
+    toast({
+      title: "Product Deleted",
+      description: "The product has been removed from your shop.",
+    });
+  };
+
+  const handleViewStore = () => {
+    navigate(`/store/${user?.id || 'default'}`);
+  };
+
+  const handleViewProduct = (productId: string) => {
+    navigate(`/marketplace/product/${productId}`);
   };
 
   return (
@@ -77,16 +143,25 @@ const SellerDashboardPage = () => {
                 )}
               </Avatar>
               <div>
-                <h2 className="font-bold text-lg">{user?.name || "User"}'s Shop</h2>
-                <p className="text-sm text-gray-500">Joined Apr 2023 • 15 Products</p>
+                <h2 className="font-bold text-lg">{shopSettings.shopName || "My Shop"}</h2>
+                <p className="text-sm text-gray-500">Joined Apr 2023 • {products.length} Products</p>
               </div>
-              <Button 
-                variant="outline" 
-                className="ml-auto text-xs"
-                onClick={() => navigate("/seller-dashboard/settings")}
-              >
-                Edit Shop
-              </Button>
+              <div className="ml-auto flex gap-2">
+                <Button 
+                  variant="outline" 
+                  className="text-xs"
+                  onClick={() => navigate("/seller-dashboard/settings")}
+                >
+                  Edit Shop
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="text-xs"
+                  onClick={handleViewStore}
+                >
+                  View Store
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -108,7 +183,7 @@ const SellerDashboardPage = () => {
         </Card>
         <Card className="bg-white">
           <CardContent className="p-3 flex flex-col items-center">
-            <h3 className="text-xl font-bold text-wayscanner-blue">15</h3>
+            <h3 className="text-xl font-bold text-wayscanner-blue">{products.length}</h3>
             <p className="text-sm text-gray-500">Products</p>
           </CardContent>
         </Card>
@@ -130,11 +205,11 @@ const SellerDashboardPage = () => {
           </TabsList>
           
           <TabsContent value="overview" className="mt-4">
-            <OverviewTab />
+            <OverviewTab onAddNewProduct={handleAddNewProduct} onViewAllProducts={handleViewAllProducts} products={products} onDeleteProduct={handleDeleteProduct} onViewProduct={handleViewProduct} />
           </TabsContent>
           
           <TabsContent value="products" className="mt-4">
-            <ProductsTab />
+            <ProductsTab products={products} onAddNewProduct={handleAddNewProduct} onDeleteProduct={handleDeleteProduct} onViewProduct={handleViewProduct} />
           </TabsContent>
           
           <TabsContent value="orders" className="mt-4">
@@ -174,7 +249,15 @@ const NavItem = ({ icon, label, onClick, active }: NavItemProps) => {
 };
 
 // Tab components
-const OverviewTab = () => {
+interface OverviewTabProps {
+  onAddNewProduct: () => void;
+  onViewAllProducts: () => void;
+  products: any[];
+  onDeleteProduct: (id: string) => void;
+  onViewProduct: (id: string) => void;
+}
+
+const OverviewTab = ({ onAddNewProduct, onViewAllProducts, products, onDeleteProduct, onViewProduct }: OverviewTabProps) => {
   return (
     <div className="space-y-4">
       <Card>
@@ -206,6 +289,53 @@ const OverviewTab = () => {
       <Card>
         <CardContent className="p-4">
           <div className="flex justify-between items-center mb-3">
+            <h3 className="font-bold text-lg">My Products</h3>
+            <Button variant="outline" size="sm" className="text-xs">
+              View All
+            </Button>
+          </div>
+          <div className="space-y-3">
+            {products.slice(0, 3).map((product) => (
+              <div key={product.id} className="flex items-center gap-3 p-3 border rounded-lg bg-white">
+                <img src={product.image} alt={product.name} className="w-12 h-12 object-cover rounded" />
+                <div className="flex-1">
+                  <h4 className="font-medium">{product.name}</h4>
+                  <p className="text-sm text-gray-500">
+                    {product.price} • {product.stock} in stock
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button 
+                    className="text-gray-500 hover:text-blue-500"
+                    onClick={() => onViewProduct(product.id)}
+                  >
+                    <Eye size={18} />
+                  </button>
+                  <button 
+                    className="text-gray-500 hover:text-red-500"
+                    onClick={() => onDeleteProduct(product.id)}
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-3">
+            <Button 
+              variant="outline" 
+              className="w-full"
+              onClick={onViewAllProducts}
+            >
+              View All Products
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+      
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex justify-between items-center mb-3">
             <h3 className="font-bold text-lg">Performance</h3>
             <select className="text-xs border rounded p-1">
               <option>This Week</option>
@@ -219,53 +349,59 @@ const OverviewTab = () => {
         </CardContent>
       </Card>
       
-      <Button className="w-full bg-wayscanner-blue">
+      <Button 
+        className="w-full bg-wayscanner-blue" 
+        onClick={onAddNewProduct}
+      >
         Add New Product
       </Button>
     </div>
   );
 };
 
-const ProductsTab = () => {
+interface ProductsTabProps {
+  products: any[];
+  onAddNewProduct: () => void;
+  onDeleteProduct: (id: string) => void;
+  onViewProduct: (id: string) => void;
+}
+
+const ProductsTab = ({ products, onAddNewProduct, onDeleteProduct, onViewProduct }: ProductsTabProps) => {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h3 className="font-bold text-lg">My Products (15)</h3>
-        <Button variant="outline" size="sm" className="text-xs">
+        <h3 className="font-bold text-lg">My Products ({products.length})</h3>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="text-xs"
+          onClick={onAddNewProduct}
+        >
           Add New
         </Button>
       </div>
       
       <div className="space-y-3">
-        <ProductItem
-          name="Eco-friendly Water Bottle"
-          price="$24.99"
-          stock={15}
-          image="/placeholder.svg"
-        />
-        <ProductItem
-          name="Bamboo Cutlery Set"
-          price="$19.99"
-          stock={8}
-          image="/placeholder.svg"
-        />
-        <ProductItem
-          name="Reusable Grocery Bags (3pk)"
-          price="$15.99"
-          stock={22}
-          image="/placeholder.svg"
-        />
-        <ProductItem
-          name="Solar-Powered Charger"
-          price="$45.99"
-          stock={4}
-          image="/placeholder.svg"
-        />
+        {products.map((product) => (
+          <ProductItem
+            key={product.id}
+            id={product.id}
+            name={product.name}
+            price={product.price}
+            stock={product.stock}
+            image={product.image}
+            onDelete={onDeleteProduct}
+            onView={onViewProduct}
+          />
+        ))}
       </div>
       
-      <Button variant="outline" className="w-full">
-        View All Products
-      </Button>
+      {products.length === 0 && (
+        <div className="text-center py-8">
+          <p className="text-gray-500 mb-4">You don't have any products yet</p>
+          <Button onClick={onAddNewProduct}>Add Your First Product</Button>
+        </div>
+      )}
     </div>
   );
 };
@@ -349,13 +485,16 @@ const ActivityItem = ({ icon, title, description, time }: ActivityItemProps) => 
 };
 
 interface ProductItemProps {
+  id: string;
   name: string;
   price: string;
   stock: number;
   image: string;
+  onDelete: (id: string) => void;
+  onView: (id: string) => void;
 }
 
-const ProductItem = ({ name, price, stock, image }: ProductItemProps) => {
+const ProductItem = ({ id, name, price, stock, image, onDelete, onView }: ProductItemProps) => {
   return (
     <div className="flex items-center gap-3 p-3 border rounded-lg bg-white">
       <img src={image} alt={name} className="w-12 h-12 object-cover rounded" />
@@ -365,9 +504,20 @@ const ProductItem = ({ name, price, stock, image }: ProductItemProps) => {
           {price} • {stock} in stock
         </p>
       </div>
-      <button className="text-gray-400">
-        <ChevronRight size={18} />
-      </button>
+      <div className="flex gap-2">
+        <button 
+          className="text-gray-500 hover:text-blue-500" 
+          onClick={() => onView(id)}
+        >
+          <Eye size={18} />
+        </button>
+        <button 
+          className="text-gray-500 hover:text-red-500" 
+          onClick={() => onDelete(id)}
+        >
+          <Trash2 size={18} />
+        </button>
+      </div>
     </div>
   );
 };
