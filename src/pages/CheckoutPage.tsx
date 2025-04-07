@@ -382,13 +382,13 @@ const CheckoutPage = () => {
                       }`}
                       onClick={() => setSelectedAddress(address)}
                     >
-                      <div className={`rounded-full w-5 h-5 flex-shrink-0 mr-3 border ${
+                      <div className={`rounded-full w-5 h-5 flex-shrink-0 mr-3 border flex items-center justify-center ${
                         selectedAddress?.id === address.id 
                           ? 'border-wayscanner-blue' 
                           : 'border-gray-300'
                       }`}>
                         {selectedAddress?.id === address.id && (
-                          <div className="rounded-full w-3 h-3 bg-wayscanner-blue m-auto" />
+                          <div className="rounded-full w-3 h-3 bg-wayscanner-blue" />
                         )}
                       </div>
 
@@ -436,13 +436,13 @@ const CheckoutPage = () => {
                   }`}
                   onClick={() => setShippingMethod('standard')}
                 >
-                  <div className={`rounded-full w-5 h-5 flex-shrink-0 mr-3 border ${
+                  <div className={`rounded-full w-5 h-5 flex-shrink-0 mr-3 border flex items-center justify-center ${
                     shippingMethod === 'standard' 
                       ? 'border-wayscanner-blue' 
                       : 'border-gray-300'
                   }`}>
                     {shippingMethod === 'standard' && (
-                      <div className="rounded-full w-3 h-3 bg-wayscanner-blue m-auto" />
+                      <div className="rounded-full w-3 h-3 bg-wayscanner-blue" />
                     )}
                   </div>
 
@@ -463,13 +463,13 @@ const CheckoutPage = () => {
                   }`}
                   onClick={() => setShippingMethod('express')}
                 >
-                  <div className={`rounded-full w-5 h-5 flex-shrink-0 mr-3 border ${
+                  <div className={`rounded-full w-5 h-5 flex-shrink-0 mr-3 border flex items-center justify-center ${
                     shippingMethod === 'express' 
                       ? 'border-wayscanner-blue' 
                       : 'border-gray-300'
                   }`}>
                     {shippingMethod === 'express' && (
-                      <div className="rounded-full w-3 h-3 bg-wayscanner-blue m-auto" />
+                      <div className="rounded-full w-3 h-3 bg-wayscanner-blue" />
                     )}
                   </div>
 
@@ -546,13 +546,13 @@ const CheckoutPage = () => {
                       }`}
                       onClick={() => setSelectedPayment(method)}
                     >
-                      <div className={`rounded-full w-5 h-5 flex-shrink-0 mr-3 border ${
+                      <div className={`rounded-full w-5 h-5 flex-shrink-0 mr-3 border flex items-center justify-center ${
                         selectedPayment?.id === method.id 
                           ? 'border-wayscanner-blue' 
                           : 'border-gray-300'
                       }`}>
                         {selectedPayment?.id === method.id && (
-                          <div className="rounded-full w-3 h-3 bg-wayscanner-blue m-auto" />
+                          <div className="rounded-full w-3 h-3 bg-wayscanner-blue" />
                         )}
                       </div>
 
@@ -786,7 +786,7 @@ const CheckoutPage = () => {
           <DrawerHeader className="text-left">
             <DrawerTitle>Add New Address</DrawerTitle>
           </DrawerHeader>
-          <div className="px-4 py-2 pb-10">
+          <div className="px-4 py-2 pb-10 overflow-y-auto">
             <AddressForm 
               onSubmit={handleSaveAddress}
               onCancel={() => setShowAddAddressForm(false)} 
@@ -804,7 +804,7 @@ const CheckoutPage = () => {
                "Add Payoneer Account"}
             </DrawerTitle>
           </DrawerHeader>
-          <div className="px-4 py-2 pb-10">
+          <div className="px-4 py-2 pb-10 overflow-y-auto">
             <PaymentMethodForm 
               type={currentPaymentType} 
               onSubmit={handleSavePaymentMethod} 
