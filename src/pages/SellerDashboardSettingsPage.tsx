@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Store, CreditCard, Link, MapPin, Camera, ImageIcon } from "lucide-react";
@@ -155,14 +154,7 @@ const SellerDashboardSettingsPage = () => {
             <ArrowLeft size={24} />
           </button>
           <h1 className="text-base font-bold">Shop Settings</h1>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="text-white border-white hover:bg-white/20"
-            onClick={handleViewStore}
-          >
-            View Store
-          </Button>
+          <div className="w-10"></div>
         </div>
       </div>
 
