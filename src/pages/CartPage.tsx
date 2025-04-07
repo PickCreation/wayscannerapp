@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, Trash2, Plus, Minus, ShoppingBag } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
@@ -11,6 +12,7 @@ import LoginDialog from "@/components/LoginDialog";
 
 const CartPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -93,6 +95,10 @@ const CartPage = () => {
     setCameraSheetOpen(true);
   };
 
+  const handleBackClick = () => {
+    navigate("/marketplace");
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -106,7 +112,7 @@ const CartPage = () => {
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
         <button 
           className="p-2" 
-          onClick={() => navigate(-1)}
+          onClick={handleBackClick}
         >
           <ChevronLeft size={24} color="white" />
         </button>

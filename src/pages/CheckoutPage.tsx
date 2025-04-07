@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -22,6 +21,12 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
 import AddressForm from "@/components/AddressForm";
 import PaymentMethodForm from "@/components/PaymentMethodForm";
 
@@ -81,49 +86,6 @@ const mockCartItems: CartItem[] = [
   }
 ];
 
-const mockAddresses: Address[] = [
-  {
-    id: "1",
-    name: "Home",
-    street: "123 Main St",
-    city: "San Francisco",
-    state: "California",
-    zipCode: "94105",
-    country: "United States",
-    phone: "+1 (555) 123-4567",
-    isDefault: true
-  }
-];
-
-const mockPaymentMethods: PaymentMethod[] = [
-  {
-    id: "1",
-    type: "card",
-    isDefault: true,
-    cardInfo: {
-      name: "John Doe",
-      number: "4111111111111111",
-      expiry: "12/25",
-      last4: "1111",
-      cardType: "visa"
-    }
-  },
-  {
-    id: "2",
-    type: "paypal",
-    isDefault: false,
-    paypalInfo: {
-      email: "johndoe@example.com"
-    }
-  }
-];
-
-enum CheckoutStep {
-  SHIPPING = "shipping",
-  PAYMENT = "payment",
-  REVIEW = "review"
-}
-
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -131,15 +93,71 @@ const CheckoutPage = () => {
     const storedItems = localStorage.getItem('cartItems');
     return storedItems ? JSON.parse(storedItems) : mockCartItems;
   });
-  const [addresses, setAddresses] = useState<Address[]>(mockAddresses);
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>(mockPaymentMethods);
-  const [selectedAddress, setSelectedAddress] = useState<Address | null>(mockAddresses.find(a => a.isDefault) || null);
-  const [selectedPayment, setSelectedPayment] = useState<PaymentMethod | null>(mockPaymentMethods.find(p => p.isDefault) || null);
-  const [currentStep, setCurrentStep] = useState<CheckoutStep>(CheckoutStep.SHIPPING);
+  
+  const [addresses, setAddresses] = useState<Address[]>(() => {
+    const savedAddresses = localStorage.getItem('userAddresses');
+    if (savedAddresses) {
+      return JSON.parse(savedAddresses);
+    }
+    return [
+      {
+        id: "1",
+        name: "Home",
+        street: "123 Main St",
+        city: "San Francisco",
+        state: "California",
+        zipCode: "94105",
+        country: "United States",
+        phone: "+1 (555) 123-4567",
+        isDefault: true
+      }
+    ];
+  });
+  
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>(() => {
+    const savedPaymentMethods = localStorage.getItem('userPaymentMethods');
+    if (savedPaymentMethods) {
+      return JSON.parse(savedPaymentMethods);
+    }
+    return [
+      {
+        id: "1",
+        type: "card",
+        isDefault: true,
+        cardInfo: {
+          name: "John Doe",
+          number: "4111111111111111",
+          expiry: "12/25",
+          last4: "1111",
+          cardType: "visa"
+        }
+      },
+      {
+        id: "2",
+        type: "paypal",
+        isDefault: false,
+        paypalInfo: {
+          email: "johndoe@example.com"
+        }
+      }
+    ];
+  });
+  
+  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
+  const [selectedPayment, setSelectedPayment] = useState<PaymentMethod | null>(null);
+  const [currentStep, setCurrentStep] = useState<"shipping" | "payment" | "review">("shipping");
   const [showAddAddressForm, setShowAddAddressForm] = useState(false);
   const [showAddPaymentForm, setShowAddPaymentForm] = useState(false);
   const [currentPaymentType, setCurrentPaymentType] = useState<"card" | "paypal" | "payoneer">("card");
   const [shippingMethod, setShippingMethod] = useState<"standard" | "express">("standard");
+
+  useEffect(() => {
+    const defaultAddress = addresses.find(a => a.isDefault);
+    const defaultPayment = paymentMethods.find(p => p.isDefault);
+    
+    if (defaultAddress) setSelectedAddress(defaultAddress);
+    if (defaultPayment) setSelectedPayment(defaultPayment);
+  }, [addresses, paymentMethods]);
 
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const shippingCost = shippingMethod === "standard" ? 4.99 : 12.99;
@@ -147,17 +165,17 @@ const CheckoutPage = () => {
   const total = subtotal + shippingCost + tax;
 
   const handleBackClick = () => {
-    if (currentStep === CheckoutStep.SHIPPING) {
+    if (currentStep === "shipping") {
       navigate("/cart");
-    } else if (currentStep === CheckoutStep.PAYMENT) {
-      setCurrentStep(CheckoutStep.SHIPPING);
+    } else if (currentStep === "payment") {
+      setCurrentStep("shipping");
     } else {
-      setCurrentStep(CheckoutStep.PAYMENT);
+      setCurrentStep("payment");
     }
   };
 
   const handleContinueClick = () => {
-    if (currentStep === CheckoutStep.SHIPPING) {
+    if (currentStep === "shipping") {
       if (!selectedAddress) {
         toast({
           title: "Shipping Address Required",
@@ -166,8 +184,8 @@ const CheckoutPage = () => {
         });
         return;
       }
-      setCurrentStep(CheckoutStep.PAYMENT);
-    } else if (currentStep === CheckoutStep.PAYMENT) {
+      setCurrentStep("payment");
+    } else if (currentStep === "payment") {
       if (!selectedPayment) {
         toast({
           title: "Payment Method Required",
@@ -176,7 +194,7 @@ const CheckoutPage = () => {
         });
         return;
       }
-      setCurrentStep(CheckoutStep.REVIEW);
+      setCurrentStep("review");
     }
   };
 
@@ -195,9 +213,14 @@ const CheckoutPage = () => {
       ...address,
       isDefault: addresses.length === 0
     };
-    setAddresses([...addresses, newAddress]);
+    
+    const updatedAddresses = [...addresses, newAddress];
+    setAddresses(updatedAddresses);
     setSelectedAddress(newAddress);
     setShowAddAddressForm(false);
+    
+    localStorage.setItem('userAddresses', JSON.stringify(updatedAddresses));
+    
     toast({
       title: "Address Added",
       description: "Your new address has been added successfully."
@@ -212,9 +235,13 @@ const CheckoutPage = () => {
       ...paymentMethod
     };
     
-    setPaymentMethods([...paymentMethods, newPaymentMethod]);
+    const updatedPaymentMethods = [...paymentMethods, newPaymentMethod];
+    setPaymentMethods(updatedPaymentMethods);
     setSelectedPayment(newPaymentMethod);
     setShowAddPaymentForm(false);
+    
+    localStorage.setItem('userPaymentMethods', JSON.stringify(updatedPaymentMethods));
+    
     toast({
       title: "Payment Method Added",
       description: "Your new payment method has been added successfully."
@@ -222,7 +249,6 @@ const CheckoutPage = () => {
   };
 
   const handlePlaceOrder = () => {
-    // Clear cart items from localStorage
     localStorage.setItem('cartItems', JSON.stringify([]));
     
     toast({
@@ -230,7 +256,6 @@ const CheckoutPage = () => {
       description: "Your order has been successfully placed."
     });
     
-    // Navigate to confirmation page with timeout to allow toast to be seen
     setTimeout(() => {
       navigate("/profile");
     }, 2000);
@@ -292,49 +317,47 @@ const CheckoutPage = () => {
       </div>
 
       <div className="flex-1 p-4 pb-20">
-        {/* Steps Indicator */}
         <div className="flex justify-between mb-6">
           <div 
             className={`flex flex-col items-center ${
-              currentStep === CheckoutStep.SHIPPING ? 'text-wayscanner-blue' : 
-              currentStep === CheckoutStep.PAYMENT || currentStep === CheckoutStep.REVIEW ? 'text-green-500' : 'text-gray-400'
+              currentStep === "shipping" ? 'text-wayscanner-blue' : 
+              currentStep === "payment" || currentStep === "review" ? 'text-green-500' : 'text-gray-400'
             }`}
           >
             <div className={`rounded-full w-8 h-8 flex items-center justify-center border-2 ${
-              currentStep === CheckoutStep.SHIPPING ? 'border-wayscanner-blue' : 
-              currentStep === CheckoutStep.PAYMENT || currentStep === CheckoutStep.REVIEW ? 'border-green-500 bg-green-500 text-white' : 'border-gray-300'
+              currentStep === "payment" || currentStep === "review" ? 'border-green-500 bg-green-500 text-white' : 'border-gray-300'
             }`}>
-              {currentStep === CheckoutStep.PAYMENT || currentStep === CheckoutStep.REVIEW ? <Check size={16} /> : "1"}
+              {currentStep === "payment" || currentStep === "review" ? <Check size={16} /> : "1"}
             </div>
             <span className="text-xs mt-1">Shipping</span>
           </div>
           <div className={`flex-1 border-t-2 self-start mt-4 mx-2 ${
-            currentStep === CheckoutStep.PAYMENT || currentStep === CheckoutStep.REVIEW ? 'border-green-500' : 'border-gray-300'
+            currentStep === "payment" || currentStep === "review" ? 'border-green-500' : 'border-gray-300'
           }`}></div>
           <div 
             className={`flex flex-col items-center ${
-              currentStep === CheckoutStep.PAYMENT ? 'text-wayscanner-blue' : 
-              currentStep === CheckoutStep.REVIEW ? 'text-green-500' : 'text-gray-400'
+              currentStep === "payment" ? 'text-wayscanner-blue' : 
+              currentStep === "review" ? 'text-green-500' : 'text-gray-400'
             }`}
           >
             <div className={`rounded-full w-8 h-8 flex items-center justify-center border-2 ${
-              currentStep === CheckoutStep.PAYMENT ? 'border-wayscanner-blue' : 
-              currentStep === CheckoutStep.REVIEW ? 'border-green-500 bg-green-500 text-white' : 'border-gray-300'
+              currentStep === "payment" ? 'border-wayscanner-blue' : 
+              currentStep === "review" ? 'border-green-500 bg-green-500 text-white' : 'border-gray-300'
             }`}>
-              {currentStep === CheckoutStep.REVIEW ? <Check size={16} /> : "2"}
+              {currentStep === "review" ? <Check size={16} /> : "2"}
             </div>
             <span className="text-xs mt-1">Payment</span>
           </div>
           <div className={`flex-1 border-t-2 self-start mt-4 mx-2 ${
-            currentStep === CheckoutStep.REVIEW ? 'border-green-500' : 'border-gray-300'
+            currentStep === "review" ? 'border-green-500' : 'border-gray-300'
           }`}></div>
           <div 
             className={`flex flex-col items-center ${
-              currentStep === CheckoutStep.REVIEW ? 'text-wayscanner-blue' : 'text-gray-400'
+              currentStep === "review" ? 'text-wayscanner-blue' : 'text-gray-400'
             }`}
           >
             <div className={`rounded-full w-8 h-8 flex items-center justify-center border-2 ${
-              currentStep === CheckoutStep.REVIEW ? 'border-wayscanner-blue' : 'border-gray-300'
+              currentStep === "review" ? 'border-wayscanner-blue' : 'border-gray-300'
             }`}>
               3
             </div>
@@ -342,8 +365,7 @@ const CheckoutPage = () => {
           </div>
         </div>
 
-        {/* Shipping Step */}
-        {currentStep === CheckoutStep.SHIPPING && (
+        {currentStep === "shipping" && (
           <div className="space-y-6">
             <div className="bg-gray-50 rounded-lg p-4">
               <h2 className="font-semibold text-lg mb-4">Shipping Address</h2>
@@ -507,8 +529,7 @@ const CheckoutPage = () => {
           </div>
         )}
 
-        {/* Payment Step */}
-        {currentStep === CheckoutStep.PAYMENT && (
+        {currentStep === "payment" && (
           <div className="space-y-6">
             <div className="bg-gray-50 rounded-lg p-4">
               <h2 className="font-semibold text-lg mb-4">Payment Method</h2>
@@ -598,7 +619,7 @@ const CheckoutPage = () => {
                     variant="ghost" 
                     size="sm" 
                     className="ml-auto text-wayscanner-blue p-1 h-auto"
-                    onClick={() => setCurrentStep(CheckoutStep.SHIPPING)}
+                    onClick={() => setCurrentStep("shipping")}
                   >
                     <Edit2 size={16} />
                   </Button>
@@ -632,8 +653,7 @@ const CheckoutPage = () => {
           </div>
         )}
 
-        {/* Review Step */}
-        {currentStep === CheckoutStep.REVIEW && (
+        {currentStep === "review" && (
           <div className="space-y-6">
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="flex justify-between items-center mb-4">
@@ -642,7 +662,7 @@ const CheckoutPage = () => {
                   variant="ghost" 
                   size="sm" 
                   className="text-wayscanner-blue p-1 h-auto"
-                  onClick={() => setCurrentStep(CheckoutStep.SHIPPING)}
+                  onClick={() => setCurrentStep("shipping")}
                 >
                   <Edit2 size={16} />
                 </Button>
@@ -669,7 +689,7 @@ const CheckoutPage = () => {
                   variant="ghost" 
                   size="sm" 
                   className="text-wayscanner-blue p-1 h-auto"
-                  onClick={() => setCurrentStep(CheckoutStep.PAYMENT)}
+                  onClick={() => setCurrentStep("payment")}
                 >
                   <Edit2 size={16} />
                 </Button>
@@ -741,9 +761,8 @@ const CheckoutPage = () => {
         )}
       </div>
 
-      {/* Bottom Button */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4">
-        {currentStep === CheckoutStep.REVIEW ? (
+        {currentStep === "review" ? (
           <Button 
             className="w-full bg-wayscanner-blue py-6"
             onClick={handlePlaceOrder}
@@ -762,40 +781,38 @@ const CheckoutPage = () => {
         )}
       </div>
 
-      {/* Address Form Sheet */}
-      <Sheet open={showAddAddressForm} onOpenChange={setShowAddAddressForm}>
-        <SheetContent className="pt-10 sm:max-w-md">
-          <SheetHeader>
-            <SheetTitle>Add New Address</SheetTitle>
-          </SheetHeader>
-          <div className="py-4">
+      <Drawer open={showAddAddressForm} onOpenChange={setShowAddAddressForm}>
+        <DrawerContent className="px-4">
+          <DrawerHeader className="text-left">
+            <DrawerTitle>Add New Address</DrawerTitle>
+          </DrawerHeader>
+          <div className="px-4 py-2 pb-10">
             <AddressForm 
               onSubmit={handleSaveAddress}
               onCancel={() => setShowAddAddressForm(false)} 
             />
           </div>
-        </SheetContent>
-      </Sheet>
+        </DrawerContent>
+      </Drawer>
 
-      {/* Payment Form Sheet */}
-      <Sheet open={showAddPaymentForm} onOpenChange={setShowAddPaymentForm}>
-        <SheetContent className="pt-10 sm:max-w-md">
-          <SheetHeader>
-            <SheetTitle>
+      <Drawer open={showAddPaymentForm} onOpenChange={setShowAddPaymentForm}>
+        <DrawerContent className="px-4">
+          <DrawerHeader className="text-left">
+            <DrawerTitle>
               {currentPaymentType === "card" ? "Add Credit Card" : 
                currentPaymentType === "paypal" ? "Add PayPal Account" : 
                "Add Payoneer Account"}
-            </SheetTitle>
-          </SheetHeader>
-          <div className="py-4">
+            </DrawerTitle>
+          </DrawerHeader>
+          <div className="px-4 py-2 pb-10">
             <PaymentMethodForm 
               type={currentPaymentType} 
               onSubmit={handleSavePaymentMethod} 
               onCancel={() => setShowAddPaymentForm(false)} 
             />
           </div>
-        </SheetContent>
-      </Sheet>
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 };

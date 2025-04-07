@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Plus, Edit, Trash2, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -30,24 +30,41 @@ interface Address {
 const AddressesPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [addresses, setAddresses] = useState<Address[]>([
-    {
-      id: "1",
-      name: "Home",
-      street: "123 Main St",
-      city: "San Francisco",
-      state: "California",
-      zipCode: "94105",
-      country: "United States",
-      phone: "+1 (555) 123-4567",
-      isDefault: true
-    }
-  ]);
+  const [addresses, setAddresses] = useState<Address[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [showCameraSheet, setShowCameraSheet] = useState(false);
   const [currentAddress, setCurrentAddress] = useState<Address | null>(null);
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("profile");
+
+  useEffect(() => {
+    const savedAddresses = localStorage.getItem('userAddresses');
+    if (savedAddresses) {
+      setAddresses(JSON.parse(savedAddresses));
+    } else {
+      const defaultAddress = [
+        {
+          id: "1",
+          name: "Home",
+          street: "123 Main St",
+          city: "San Francisco",
+          state: "California",
+          zipCode: "94105",
+          country: "United States",
+          phone: "+1 (555) 123-4567",
+          isDefault: true
+        }
+      ];
+      setAddresses(defaultAddress);
+      localStorage.setItem('userAddresses', JSON.stringify(defaultAddress));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (addresses.length > 0) {
+      localStorage.setItem('userAddresses', JSON.stringify(addresses));
+    }
+  }, [addresses]);
 
   const handleBackClick = () => {
     navigate("/profile");

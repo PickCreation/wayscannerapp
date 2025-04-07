@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, Plus, Edit, Trash2, CreditCard, 
@@ -42,32 +43,52 @@ const PaymentMethodsPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("all");
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
-    {
-      id: "1",
-      type: "card",
-      isDefault: true,
-      cardInfo: {
-        name: "John Doe",
-        number: "4111111111111111",
-        expiry: "12/25",
-        last4: "1111",
-        cardType: "visa"
-      }
-    },
-    {
-      id: "2",
-      type: "paypal",
-      isDefault: false,
-      paypalInfo: {
-        email: "johndoe@example.com"
-      }
-    }
-  ]);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [showCameraSheet, setShowCameraSheet] = useState(false);
   const [currentType, setCurrentType] = useState<"card" | "paypal" | "payoneer">("card");
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("profile");
+
+  // Load payment methods from localStorage
+  useEffect(() => {
+    const savedPaymentMethods = localStorage.getItem('userPaymentMethods');
+    if (savedPaymentMethods) {
+      setPaymentMethods(JSON.parse(savedPaymentMethods));
+    } else {
+      // Default payment methods if none exist
+      const defaultPaymentMethods = [
+        {
+          id: "1",
+          type: "card",
+          isDefault: true,
+          cardInfo: {
+            name: "John Doe",
+            number: "4111111111111111",
+            expiry: "12/25",
+            last4: "1111",
+            cardType: "visa"
+          }
+        },
+        {
+          id: "2",
+          type: "paypal",
+          isDefault: false,
+          paypalInfo: {
+            email: "johndoe@example.com"
+          }
+        }
+      ];
+      setPaymentMethods(defaultPaymentMethods);
+      localStorage.setItem('userPaymentMethods', JSON.stringify(defaultPaymentMethods));
+    }
+  }, []);
+
+  // Save payment methods to localStorage whenever they change
+  useEffect(() => {
+    if (paymentMethods.length > 0) {
+      localStorage.setItem('userPaymentMethods', JSON.stringify(paymentMethods));
+    }
+  }, [paymentMethods]);
 
   const handleBackClick = () => {
     navigate("/profile");
@@ -83,6 +104,8 @@ const PaymentMethodsPage = () => {
       navigate("/recipes");
     } else if (item === "shop") {
       navigate("/marketplace");
+    } else if (item === "profile") {
+      navigate("/profile");
     }
   };
 
