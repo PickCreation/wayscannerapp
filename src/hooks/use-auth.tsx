@@ -1,3 +1,4 @@
+
 import { useState, useEffect, createContext, useContext } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -59,6 +60,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsAuthenticated(true);
       setUser(adminUser);
       
+      // Clear any existing profile data that might override the admin details
+      localStorage.removeItem('profileData');
+      
       toast({
         title: "Admin Login Successful",
         description: "Welcome back, Admin!",
@@ -67,20 +71,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       return;
     }
     
-    // Regular user login (keeping existing code)
-    localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('user', JSON.stringify({
+    // Regular user login - but let's not hard-code John Doe anymore
+    const regularUser = {
       id: 'user-' + Date.now(),
-      name: 'John Doe',
+      name: email.split('@')[0], // Use the part before @ as a name
       email,
-    }));
+    };
+    
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('user', JSON.stringify(regularUser));
     
     setIsAuthenticated(true);
-    setUser({
-      id: 'user-' + Date.now(),
-      name: 'John Doe',
-      email,
-    });
+    setUser(regularUser);
     
     toast({
       title: "Login Successful",
@@ -93,20 +95,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     
     // Simulate signup success
     const userId = 'user-' + Date.now();
+    const newUser = {
+      id: userId,
+      name,
+      email,
+    };
     
     localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('user', JSON.stringify({
-      id: userId,
-      name,
-      email,
-    }));
+    localStorage.setItem('user', JSON.stringify(newUser));
     
     setIsAuthenticated(true);
-    setUser({
-      id: userId,
-      name,
-      email,
-    });
+    setUser(newUser);
     
     toast({
       title: "Account Created",
@@ -117,6 +116,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = () => {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('user');
+    // Also remove any profile data
+    localStorage.removeItem('profileData');
     
     setIsAuthenticated(false);
     setUser(null);

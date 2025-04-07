@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Camera, UserCircle, Mail, Phone } from "lucide-react";
@@ -20,8 +21,8 @@ const EditProfilePage = () => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
-    fullName: "John Doe",
-    email: "johndoe@example.com",
+    fullName: "",
+    email: "",
     phone: "+1 555-123-4567",
     bio: "Nature enthusiast and eco-friendly lifestyle advocate.",
   });
@@ -32,14 +33,26 @@ const EditProfilePage = () => {
       setProfileImage(savedProfileImage);
     }
     
-    const savedProfileData = localStorage.getItem('profileData');
-    if (savedProfileData) {
-      setFormData(JSON.parse(savedProfileData));
-    } else if (user) {
+    // First prioritize logged-in user data
+    if (user) {
       setFormData(prev => ({
         ...prev,
-        fullName: user.name || prev.fullName,
-        email: user.email || prev.email
+        fullName: user.name,
+        email: user.email
+      }));
+    }
+    
+    // Then check for saved profile data as a secondary source
+    const savedProfileData = localStorage.getItem('profileData');
+    if (savedProfileData) {
+      const parsedData = JSON.parse(savedProfileData);
+      setFormData(prev => ({
+        ...prev,
+        // Only use saved data if we don't have user data
+        fullName: user?.name || parsedData.fullName,
+        email: user?.email || parsedData.email,
+        phone: parsedData.phone || prev.phone,
+        bio: parsedData.bio || prev.bio,
       }));
     }
   }, [user]);
@@ -56,7 +69,19 @@ const EditProfilePage = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    localStorage.setItem('profileData', JSON.stringify(formData));
+    // Ensure we don't override the authenticated user's core details
+    if (user) {
+      const profileData = {
+        ...formData,
+        // Preserve the original user name and email from auth
+        fullName: user.name,
+        email: user.email,
+      };
+      
+      localStorage.setItem('profileData', JSON.stringify(profileData));
+    } else {
+      localStorage.setItem('profileData', JSON.stringify(formData));
+    }
     
     toast({
       title: "Profile Updated",
@@ -161,7 +186,11 @@ const EditProfilePage = () => {
               onChange={handleInputChange}
               placeholder="Enter your full name"
               className="mt-1"
+              disabled={user?.isAdmin} // Disable editing for admin
             />
+            {user?.isAdmin && (
+              <p className="text-xs text-gray-500 mt-1">Admin name cannot be changed</p>
+            )}
           </div>
 
           <div>
@@ -174,7 +203,11 @@ const EditProfilePage = () => {
               onChange={handleInputChange}
               placeholder="Enter your email"
               className="mt-1"
+              disabled={user?.isAdmin} // Disable editing for admin
             />
+            {user?.isAdmin && (
+              <p className="text-xs text-gray-500 mt-1">Admin email cannot be changed</p>
+            )}
           </div>
 
           <div>

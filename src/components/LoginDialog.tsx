@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription } from "@/components/ui/drawer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -53,6 +52,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, onOpenChange }) => {
   const onLoginSubmit = async (values: z.infer<typeof loginSchema>) => {
     try {
       await login(values.email, values.password);
+      loginForm.reset();
       onOpenChange(false);
     } catch (error) {
       console.error("Login error:", error);
@@ -62,6 +62,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, onOpenChange }) => {
   const onSignupSubmit = async (values: z.infer<typeof signupSchema>) => {
     try {
       await signup(values.name, values.email, values.password);
+      signupForm.reset();
       onOpenChange(false);
     } catch (error) {
       console.error("Signup error:", error);

@@ -7,7 +7,6 @@ import {
   LogIn
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -48,8 +47,8 @@ const ProfilePage = () => {
   const { isAuthenticated, user, logout } = useAuth();
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [profileData, setProfileData] = useState({
-    fullName: "John Doe",
-    email: "johndoe@example.com"
+    fullName: "",
+    email: ""
   });
 
   useEffect(() => {
@@ -58,11 +57,23 @@ const ProfilePage = () => {
       setProfileImage(savedProfileImage);
     }
 
-    const savedProfileData = localStorage.getItem('profileData');
-    if (savedProfileData) {
-      setProfileData(JSON.parse(savedProfileData));
+    if (user) {
+      setProfileData({
+        fullName: user.name,
+        email: user.email
+      });
     }
-  }, []);
+
+    const savedProfileData = localStorage.getItem('profileData');
+    if (savedProfileData && !user?.isAdmin) {
+      const parsedData = JSON.parse(savedProfileData);
+      setProfileData(prev => ({
+        ...prev,
+        fullName: user?.name || parsedData.fullName,
+        email: user?.email || parsedData.email
+      }));
+    }
+  }, [user]);
 
   const handleBackClick = () => {
     navigate("/");
@@ -223,8 +234,8 @@ const ProfilePage = () => {
           </Avatar>
           {isAuthenticated ? (
             <>
-              <h2 className="text-base font-bold mb-0">{profileData.fullName || user?.name || "User"}</h2>
-              <p className="mb-1">{profileData.email || user?.email || "user@example.com"}</p>
+              <h2 className="text-base font-bold mb-0">{user?.name || profileData.fullName}</h2>
+              <p className="mb-1">{user?.email || profileData.email}</p>
               {user?.isAdmin && (
                 <span className="bg-yellow-400 text-black px-2 py-0.5 rounded-full text-xs font-medium">
                   Admin
