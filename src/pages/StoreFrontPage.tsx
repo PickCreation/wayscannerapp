@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, ShoppingBag, Star, ChevronDown, Filter, Store } from "lucide-react";
+import { ArrowLeft, ShoppingBag, Star, ChevronDown, Filter, Store, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
 import ProductCard from "@/components/ProductCard";
+import MessageSellerDialog from "@/components/MessageSellerDialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,8 +35,7 @@ const StoreFrontPage = () => {
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("shop");
   const [shopLogo, setShopLogo] = useState<string | null>(null);
   const [shopBanner, setShopBanner] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<string>("Featured");
+  const [messageDialogOpen, setMessageDialogOpen] = useState(false);
   
   const [shopSettings, setShopSettings] = useState({
     shopName: "My Eco Shop",
@@ -141,6 +141,10 @@ const StoreFrontPage = () => {
     });
   };
 
+  const handleMessageSeller = () => {
+    setMessageDialogOpen(true);
+  };
+
   const adaptProductForCard = (product: Product) => ({
     id: parseInt(product.id),
     title: product.name,
@@ -149,6 +153,9 @@ const StoreFrontPage = () => {
     rating: product.rating,
     reviews: product.reviews
   });
+
+  const [activeTab, setActiveTab] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<string>("Featured");
 
   const getSortedProducts = (productList: Product[]) => {
     const filtered = productList.filter(p => activeTab === "all" || p.category === activeTab);
@@ -219,7 +226,18 @@ const StoreFrontPage = () => {
               <span>{products.length} Products</span>
             </div>
           </div>
-          <Button variant="outline" size="sm" className="mt-1">Follow</Button>
+          <div className="flex flex-col gap-2">
+            <Button variant="outline" size="sm" className="mt-1">Follow</Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="flex items-center gap-1"
+              onClick={handleMessageSeller}
+            >
+              <MessageCircle size={16} />
+              Message
+            </Button>
+          </div>
         </div>
         
         <p className="text-sm text-gray-600 mt-3 mb-5">
@@ -318,6 +336,12 @@ const StoreFrontPage = () => {
           </div>
         </TabsContent>
       </Tabs>
+
+      <MessageSellerDialog 
+        open={messageDialogOpen} 
+        onOpenChange={setMessageDialogOpen} 
+        shopName={shopSettings.shopName} 
+      />
 
       <BottomNavigation
         activeItem={activeNavItem}
