@@ -132,6 +132,10 @@ const SellerDashboardPage = () => {
     navigate("/profile/messages");
   };
 
+  const handleViewMessagesTab = () => {
+    navigate("/profile/messages");
+  };
+
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
@@ -239,7 +243,7 @@ const SellerDashboardPage = () => {
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="orders">Orders</TabsTrigger>
-            <TabsTrigger value="messages">Messages</TabsTrigger>
+            <TabsTrigger value="messages" onClick={() => handleViewMessagesTab()}>Messages</TabsTrigger>
           </TabsList>
           
           <TabsContent value="overview" className="mt-4">
@@ -263,7 +267,9 @@ const SellerDashboardPage = () => {
           </TabsContent>
 
           <TabsContent value="messages" className="mt-4">
-            <MessagesTab messages={sellerMessages} onViewAllMessages={handleViewAllMessages} />
+            <div className="text-center py-8">
+              <p className="text-gray-500 mb-4">Redirecting to messages page...</p>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
@@ -272,7 +278,7 @@ const SellerDashboardPage = () => {
         <NavItem icon={<LayoutDashboard size={20} />} label="Dashboard" onClick={() => setActiveTab("overview")} active={activeTab === "overview"} />
         <NavItem icon={<Package size={20} />} label="Products" onClick={() => setActiveTab("products")} active={activeTab === "products"} />
         <NavItem icon={<FileText size={20} />} label="Orders" onClick={() => setActiveTab("orders")} active={activeTab === "orders"} />
-        <NavItem icon={<MessageSquare size={20} />} label="Messages" onClick={() => setActiveTab("messages")} active={activeTab === "messages"} />
+        <NavItem icon={<MessageSquare size={20} />} label="Messages" onClick={handleViewMessagesTab} active={activeTab === "messages"} />
       </div>
     </div>
   );
@@ -568,81 +574,14 @@ interface MessagesTabProps {
 
 const MessagesTab = ({ messages, onViewAllMessages }: MessagesTabProps) => {
   const navigate = useNavigate();
-  const sortedMessages = [...messages].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   
-  const formatDate = (dateString: string) => {
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric'
-      });
-    } catch (e) {
-      return "Unknown date";
-    }
-  };
+  useEffect(() => {
+    navigate("/profile/messages");
+  }, [navigate]);
   
-  const handleViewConversation = (shopName: string) => {
-    navigate(`/profile/messages?shop=${shopName}`);
-  };
-
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h3 className="font-bold text-lg">Customer Messages</h3>
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="text-xs"
-          onClick={onViewAllMessages}
-        >
-          View All Messages
-        </Button>
-      </div>
-      
-      <div className="space-y-3">
-        {sortedMessages.length > 0 ? (
-          sortedMessages.map((msg) => (
-            <div 
-              key={msg.id} 
-              className="p-3 border rounded-lg bg-white cursor-pointer"
-              onClick={() => handleViewConversation(msg.shopName)}
-            >
-              <div className="flex justify-between items-start mb-1">
-                <div className="flex items-center gap-2">
-                  <div className="bg-gray-100 p-2 rounded-full">
-                    <MessageSquare className="text-blue-500" size={18} />
-                  </div>
-                  <h4 className="font-medium">{msg.isFromBuyer ? "From Customer" : "Your Reply"}</h4>
-                </div>
-                <span className="text-xs text-gray-400">{formatDate(msg.date)}</span>
-              </div>
-              <p className="text-sm pl-10">{msg.message}</p>
-              <div className="flex justify-between items-center mt-2 pl-10">
-                <span className="text-xs text-gray-500">
-                  {msg.read ? "Read" : "Unread"}
-                </span>
-                <span className="text-xs text-blue-500">
-                  Tap to view conversation
-                </span>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="text-center py-8 bg-white rounded-lg border">
-            <MessageSquare className="mx-auto h-12 w-12 text-gray-300 mb-2" />
-            <p className="text-gray-500 mb-4">No messages received yet</p>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => navigate("/marketplace")}
-            >
-              Go to Marketplace
-            </Button>
-          </div>
-        )}
-      </div>
+    <div className="text-center py-8">
+      <p className="text-gray-500 mb-4">Redirecting to messages page...</p>
     </div>
   );
 };
