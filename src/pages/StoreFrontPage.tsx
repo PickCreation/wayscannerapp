@@ -21,6 +21,16 @@ interface Product {
   category: string;
 }
 
+interface ProductCardProps {
+  id: number;
+  title: string;
+  price: number;
+  image: string;
+  rating: number;
+  reviews: number;
+  onClick: () => void;
+}
+
 const StoreFrontPage = () => {
   const { storeId } = useParams();
   const navigate = useNavigate();
@@ -130,13 +140,14 @@ const StoreFrontPage = () => {
   };
 
   // Helper function to convert product item for the ProductCard component
-  const adaptProductForCard = (product: Product) => ({
+  const adaptProductForCard = (product: Product): ProductCardProps => ({
     id: parseInt(product.id),
     title: product.name,
     price: parseFloat(product.price.replace('$', '')),
     image: product.image,
     rating: product.rating,
-    reviews: product.reviews
+    reviews: product.reviews,
+    onClick: () => handleProductClick(product.id)
   });
 
   return (
@@ -234,7 +245,6 @@ const StoreFrontPage = () => {
               <ProductCard
                 key={product.id}
                 {...adaptProductForCard(product)}
-                onClick={() => handleProductClick(product.id)}
               />
             ))}
           </div>
@@ -246,7 +256,6 @@ const StoreFrontPage = () => {
               <ProductCard
                 key={product.id}
                 {...adaptProductForCard(product)}
-                onClick={() => handleProductClick(product.id)}
               />
             ))}
           </div>
@@ -258,7 +267,6 @@ const StoreFrontPage = () => {
               <ProductCard
                 key={product.id}
                 {...adaptProductForCard(product)}
-                onClick={() => handleProductClick(product.id)}
               />
             ))}
           </div>
@@ -270,7 +278,6 @@ const StoreFrontPage = () => {
               <ProductCard
                 key={product.id}
                 {...adaptProductForCard(product)}
-                onClick={() => handleProductClick(product.id)}
               />
             ))}
           </div>

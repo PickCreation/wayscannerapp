@@ -64,6 +64,13 @@ const SellerDashboardPage = () => {
     shopName: "My Eco Shop",
     shopDescription: "Selling eco-friendly products for a sustainable lifestyle."
   });
+  
+  // Get current date for display
+  const currentDate = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -111,6 +118,10 @@ const SellerDashboardPage = () => {
     navigate(`/store/${user?.id || 'default'}`);
   };
 
+  const handleEditShop = () => {
+    navigate("/seller-dashboard/settings");
+  };
+
   const handleViewProduct = (productId: string) => {
     navigate(`/marketplace/product/${productId}`);
   };
@@ -132,35 +143,54 @@ const SellerDashboardPage = () => {
       <div className="p-4">
         <Card className="w-full">
           <CardContent className="p-4">
-            <div className="flex items-center gap-4">
-              <Avatar className="w-14 h-14 border-2 border-wayscanner-blue">
-                {profileImage ? (
-                  <AvatarImage src={profileImage} alt="User" />
-                ) : (
-                  <AvatarFallback className="bg-wayscanner-blue text-white">
-                    {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
-                  </AvatarFallback>
-                )}
-              </Avatar>
-              <div>
-                <h2 className="font-bold text-lg">{shopSettings.shopName || "My Shop"}</h2>
-                <p className="text-sm text-gray-500">Joined Apr 2023 • {products.length} Products</p>
+            <div className="flex items-start gap-4">
+              <div className="flex flex-col items-center">
+                <Avatar className="w-14 h-14 border-2 border-wayscanner-blue">
+                  {profileImage ? (
+                    <AvatarImage src={profileImage} alt="User" />
+                  ) : (
+                    <AvatarFallback className="bg-wayscanner-blue text-white">
+                      {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+                <div className="mt-2 flex flex-col items-center gap-2 w-full">
+                  <span className="text-sm font-medium text-center">{user?.name || "Store Owner"}</span>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="text-xs w-full"
+                    onClick={handleEditShop}
+                  >
+                    Edit Shop
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="text-xs w-full"
+                    onClick={handleViewStore}
+                  >
+                    View Store
+                  </Button>
+                  <div className="mt-1 text-xs text-gray-500 text-center">
+                    <div>Joined: {currentDate}</div>
+                    <div>{products.length} Products</div>
+                  </div>
+                </div>
               </div>
-              <div className="ml-auto flex gap-2">
-                <Button 
-                  variant="outline" 
-                  className="text-xs"
-                  onClick={() => navigate("/seller-dashboard/settings")}
-                >
-                  Edit Shop
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="text-xs"
-                  onClick={handleViewStore}
-                >
-                  View Store
-                </Button>
+              <div className="flex-1 ml-2">
+                <h2 className="font-bold text-lg">{shopSettings.shopName || "My Shop"}</h2>
+                <p className="text-sm text-gray-500 line-clamp-3">{shopSettings.shopDescription}</p>
+                <div className="mt-2 grid grid-cols-2 gap-2">
+                  <div className="bg-gray-100 p-2 rounded text-center">
+                    <div className="text-lg font-bold text-wayscanner-blue">$1,243</div>
+                    <div className="text-xs text-gray-500">Earnings</div>
+                  </div>
+                  <div className="bg-gray-100 p-2 rounded text-center">
+                    <div className="text-lg font-bold text-wayscanner-blue">32</div>
+                    <div className="text-xs text-gray-500">Orders</div>
+                  </div>
+                </div>
               </div>
             </div>
           </CardContent>
