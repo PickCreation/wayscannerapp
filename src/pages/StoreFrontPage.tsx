@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, ShoppingBag, Star, ChevronDown, Filter, Store } from "lucide-react";
@@ -9,6 +10,12 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
 import ProductCard from "@/components/ProductCard";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface Product {
   id: string;
@@ -28,6 +35,7 @@ const StoreFrontPage = () => {
   const [shopLogo, setShopLogo] = useState<string | null>(null);
   const [shopBanner, setShopBanner] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<string>("Featured");
   
   const [shopSettings, setShopSettings] = useState({
     shopName: "My Eco Shop",
@@ -125,6 +133,14 @@ const StoreFrontPage = () => {
     navigate("/scan");
   };
 
+  const handleSortChange = (value: string) => {
+    setSortBy(value);
+    toast({
+      title: "Sorting updated",
+      description: `Products sorted by ${value}`,
+    });
+  };
+
   const adaptProductForCard = (product: Product) => ({
     id: parseInt(product.id),
     title: product.name,
@@ -133,6 +149,27 @@ const StoreFrontPage = () => {
     rating: product.rating,
     reviews: product.reviews
   });
+
+  const getSortedProducts = (productList: Product[]) => {
+    const filtered = productList.filter(p => activeTab === "all" || p.category === activeTab);
+    
+    switch (sortBy) {
+      case "Recent":
+        return [...filtered].sort((a, b) => parseInt(b.id) - parseInt(a.id));
+      case "Price: Low to High":
+        return [...filtered].sort((a, b) => 
+          parseFloat(a.price.replace('$', '')) - parseFloat(b.price.replace('$', ''))
+        );
+      case "Price: High to Low":
+        return [...filtered].sort((a, b) => 
+          parseFloat(b.price.replace('$', '')) - parseFloat(a.price.replace('$', ''))
+        );
+      default:
+        return filtered;
+    }
+  };
+
+  const sortedProducts = getSortedProducts(products);
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
@@ -213,15 +250,33 @@ const StoreFrontPage = () => {
             <Filter size={16} className="mr-1" />
             Filter
           </button>
-          <button className="flex items-center text-sm text-gray-600">
-            Sort By: Featured
-            <ChevronDown size={16} className="ml-1" />
-          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center text-sm text-gray-600">
+                Sort By: {sortBy}
+                <ChevronDown size={16} className="ml-1" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="bg-white">
+              <DropdownMenuItem onClick={() => handleSortChange("Featured")}>
+                Featured
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleSortChange("Recent")}>
+                Recent
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleSortChange("Price: Low to High")}>
+                Price: Low to High
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleSortChange("Price: High to Low")}>
+                Price: High to Low
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         
         <TabsContent value="all" className="px-4 py-4 m-0">
           <div className="grid grid-cols-2 gap-3">
-            {products.map((product) => (
+            {sortedProducts.map((product) => (
               <ProductCard
                 key={product.id}
                 {...adaptProductForCard(product)}
@@ -232,7 +287,7 @@ const StoreFrontPage = () => {
         
         <TabsContent value="kitchen" className="px-4 py-4 m-0">
           <div className="grid grid-cols-2 gap-3">
-            {products.filter(p => p.category === "kitchen").map((product) => (
+            {sortedProducts.filter(p => p.category === "kitchen").map((product) => (
               <ProductCard
                 key={product.id}
                 {...adaptProductForCard(product)}
@@ -243,7 +298,7 @@ const StoreFrontPage = () => {
         
         <TabsContent value="decor" className="px-4 py-4 m-0">
           <div className="grid grid-cols-2 gap-3">
-            {products.filter(p => p.category === "decor").map((product) => (
+            {sortedProducts.filter(p => p.category === "decor").map((product) => (
               <ProductCard
                 key={product.id}
                 {...adaptProductForCard(product)}
@@ -254,7 +309,7 @@ const StoreFrontPage = () => {
         
         <TabsContent value="electronics" className="px-4 py-4 m-0">
           <div className="grid grid-cols-2 gap-3">
-            {products.filter(p => p.category === "electronics").map((product) => (
+            {sortedProducts.filter(p => p.category === "electronics").map((product) => (
               <ProductCard
                 key={product.id}
                 {...adaptProductForCard(product)}
