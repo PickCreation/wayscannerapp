@@ -81,7 +81,7 @@ const ProfilePage = () => {
 
   const handleMenuItemClick = (item: string) => {
     if (!isAuthenticated && ['Bookmarks', 'Favorites', 'Cart', 'Orders', 'Purchases', 'Addresses', 
-                             'Payment Methods', 'Edit Profile', 'Seller Dashboard'].includes(item)) {
+                             'Payment Methods', 'Edit Profile', 'Seller Dashboard', 'Messages'].includes(item)) {
       setShowLoginDialog(true);
       return;
     }
@@ -163,6 +163,11 @@ const ProfilePage = () => {
 
     if (item === "Seller Dashboard") {
       navigate("/seller-dashboard");
+      return;
+    }
+    
+    if (item === "Messages") {
+      navigate("/profile/messages");
       return;
     }
     
@@ -316,6 +321,13 @@ const ProfilePage = () => {
               title="Change Password" 
               description="Update your password"
               onClick={() => handleMenuItemClick("Change Password")}
+            />
+            
+            <ProfileMenuItem 
+              icon={<MessageSquare className="h-5 w-5 text-wayscanner-blue" />} 
+              title="Messages" 
+              description="View and manage your messages"
+              onClick={() => handleMenuItemClick("Messages")}
             />
             
             <ProfileMenuItem 
