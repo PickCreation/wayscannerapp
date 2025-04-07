@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, ShoppingBag, Star, ChevronDown, Filter, Store } from "lucide-react";
@@ -19,16 +18,6 @@ interface Product {
   reviews: number;
   image: string;
   category: string;
-}
-
-interface ProductCardProps {
-  id: number;
-  title: string;
-  price: number;
-  image: string;
-  rating: number;
-  reviews: number;
-  onClick: () => void;
 }
 
 const StoreFrontPage = () => {
@@ -94,19 +83,16 @@ const StoreFrontPage = () => {
   ]);
 
   useEffect(() => {
-    // Load shop settings from localStorage
     const savedShopSettings = localStorage.getItem('shopSettings');
     if (savedShopSettings) {
       setShopSettings(JSON.parse(savedShopSettings));
     }
     
-    // Load shop logo from localStorage
     const savedShopLogo = localStorage.getItem('shopLogo');
     if (savedShopLogo) {
       setShopLogo(savedShopLogo);
     }
     
-    // Load shop banner from localStorage
     const savedShopBanner = localStorage.getItem('shopBanner');
     if (savedShopBanner) {
       setShopBanner(savedShopBanner);
@@ -139,20 +125,17 @@ const StoreFrontPage = () => {
     navigate("/scan");
   };
 
-  // Helper function to convert product item for the ProductCard component
-  const adaptProductForCard = (product: Product): ProductCardProps => ({
+  const adaptProductForCard = (product: Product) => ({
     id: parseInt(product.id),
     title: product.name,
     price: parseFloat(product.price.replace('$', '')),
     image: product.image,
     rating: product.rating,
-    reviews: product.reviews,
-    onClick: () => handleProductClick(product.id)
+    reviews: product.reviews
   });
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
-      {/* Top navigation bar */}
       <div className="bg-wayscanner-blue text-white p-4 relative">
         <div className="flex justify-between items-center">
           <button className="p-2" onClick={handleBackClick}>
@@ -165,7 +148,6 @@ const StoreFrontPage = () => {
         </div>
       </div>
 
-      {/* Store banner and info */}
       <div className="relative">
         <div 
           className="h-32 bg-cover bg-center" 
@@ -208,7 +190,6 @@ const StoreFrontPage = () => {
         </p>
       </div>
 
-      {/* Product categories tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="px-4">
           <TabsList className="w-full grid grid-cols-4 bg-transparent h-auto border-b border-gray-200 gap-2 p-0">
@@ -227,7 +208,6 @@ const StoreFrontPage = () => {
           </TabsList>
         </div>
 
-        {/* Filter and sort bar */}
         <div className="flex justify-between px-4 py-3 border-b border-gray-200">
           <button className="flex items-center text-sm text-gray-600">
             <Filter size={16} className="mr-1" />
