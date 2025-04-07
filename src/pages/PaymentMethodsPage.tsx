@@ -55,11 +55,11 @@ const PaymentMethodsPage = () => {
     if (savedPaymentMethods) {
       setPaymentMethods(JSON.parse(savedPaymentMethods));
     } else {
-      // Default payment methods if none exist
-      const defaultPaymentMethods = [
+      // Default payment methods if none exist - with proper typing
+      const defaultPaymentMethods: PaymentMethod[] = [
         {
           id: "1",
-          type: "card",
+          type: "card" as const,
           isDefault: true,
           cardInfo: {
             name: "John Doe",
@@ -71,7 +71,7 @@ const PaymentMethodsPage = () => {
         },
         {
           id: "2",
-          type: "paypal",
+          type: "paypal" as const,
           isDefault: false,
           paypalInfo: {
             email: "johndoe@example.com"
