@@ -18,15 +18,21 @@ import {
   Eye,
   DollarSign,
   AlertTriangle,
-  Clock
+  Clock,
+  Truck,
+  XCircle,
+  ExternalLink,
+  CheckCircle
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const SellerDashboardPage = () => {
   const navigate = useNavigate();
@@ -91,7 +97,9 @@ const SellerDashboardPage = () => {
       status: "Processing",
       amount: 24.99,
       shippingDeadline: new Date(new Date("2025-04-06").getTime() + (5 * 24 * 60 * 60 * 1000)),
-      isPastDeadline: false
+      isPastDeadline: false,
+      trackingNumber: "",
+      trackingUrl: ""
     },
     {
       id: "2344",
@@ -102,7 +110,9 @@ const SellerDashboardPage = () => {
       status: "Shipped",
       amount: 19.99,
       shippingDeadline: new Date(new Date("2025-04-05").getTime() + (5 * 24 * 60 * 60 * 1000)),
-      isPastDeadline: false
+      isPastDeadline: false,
+      trackingNumber: "USPS12345678",
+      trackingUrl: "https://tools.usps.com/go/TrackConfirmAction?tLabels="
     },
     {
       id: "2343",
@@ -113,7 +123,9 @@ const SellerDashboardPage = () => {
       status: "Delivered",
       amount: 15.99,
       shippingDeadline: new Date(new Date("2025-04-03").getTime() + (5 * 24 * 60 * 60 * 1000)),
-      isPastDeadline: false
+      isPastDeadline: false,
+      trackingNumber: "FEDEX87654321",
+      trackingUrl: "https://www.fedex.com/fedextrack/?trknbr="
     },
     {
       id: "2342",
@@ -124,9 +136,24 @@ const SellerDashboardPage = () => {
       status: "Delivered",
       amount: 45.99,
       shippingDeadline: new Date(new Date("2025-04-02").getTime() + (5 * 24 * 60 * 60 * 1000)),
-      isPastDeadline: false
+      isPastDeadline: false,
+      trackingNumber: "UPS98765432",
+      trackingUrl: "https://www.ups.com/track?tracknum="
     }
   ]);
+  const [trackingInput, setTrackingInput] = useState("");
+  const [trackingCarrierInput, setTrackingCarrierInput] = useState("usps");
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [showTrackingDialog, setShowTrackingDialog] = useState(false);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
+  
+  const carrierOptions = [
+    { id: "usps", name: "USPS", url: "https://tools.usps.com/go/TrackConfirmAction?tLabels=" },
+    { id: "fedex", name: "FedEx", url: "https://www.fedex.com/fedextrack/?trknbr=" },
+    { id: "ups", name: "UPS", url: "https://www.ups.com/track?tracknum=" },
+    { id: "dhl", name: "DHL", url: "https://www.dhl.com/en/express/tracking.html?AWB=" },
+  ];
   
   const currentDate = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
@@ -224,6 +251,41 @@ const SellerDashboardPage = () => {
       };
       localStorage.setItem('escrowBalance', JSON.stringify(defaultBalance));
     }
+    
+    // Check for orders past deadline - auto cancel them
+    const now = new Date();
+    const ordersToUpdate = updatedOrders.map(order => {
+      if (order.status === "Processing" && now > order.shippingDeadline) {
+        // Auto-cancel the order and refund
+        return {
+          ...order,
+          status: "Cancelled",
+          isPastDeadline: false
+        };
+      }
+      return order;
+    });
+    
+    if (JSON.stringify(ordersToUpdate) !== JSON.stringify(updatedOrders)) {
+      setOrders(ordersToUpdate);
+      
+      // Update escrow balance when orders are auto-cancelled
+      const newBalance = { ...escrowBalance };
+      ordersToUpdate.forEach((order, index) => {
+        if (order.status === "Cancelled" && updatedOrders[index].status === "Processing") {
+          newBalance.pendingBalance -= order.amount;
+        }
+      });
+      
+      setEscrowBalance(newBalance);
+      localStorage.setItem('escrowBalance', JSON.stringify(newBalance));
+      
+      toast({
+        title: "Orders Auto-Cancelled",
+        description: "Some orders past their shipping deadline have been automatically cancelled and refunded.",
+        variant: "destructive"
+      });
+    }
   }, [isAuthenticated, navigate, toast, user, shopSettings, orders]);
 
   const handleBackClick = () => {
@@ -305,6 +367,7 @@ const SellerDashboardPage = () => {
   };
 
   const handleShipOrder = (orderId: string) => {
+    // Just mark as shipped without tracking
     const updatedOrders = orders.map(order => 
       order.id === orderId 
         ? { ...order, status: "Shipped", isPastDeadline: false } 
@@ -327,6 +390,116 @@ const SellerDashboardPage = () => {
       title: "Order Shipped",
       description: `Order #${orderId} has been marked as shipped.`,
     });
+  };
+  
+  const handleAddTracking = (orderId: string) => {
+    setSelectedOrderId(orderId);
+    setTrackingInput("");
+    setTrackingCarrierInput("usps");
+    setShowTrackingDialog(true);
+  };
+  
+  const handleCancelOrder = (orderId: string) => {
+    setSelectedOrderId(orderId);
+    setCancelReason("");
+    setShowCancelDialog(true);
+  };
+  
+  const confirmAddTracking = () => {
+    if (!trackingInput.trim()) {
+      toast({
+        title: "Tracking number required",
+        description: "Please enter a valid tracking number",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    const selectedCarrier = carrierOptions.find(c => c.id === trackingCarrierInput);
+    
+    if (!selectedCarrier) {
+      toast({
+        title: "Invalid carrier",
+        description: "Please select a valid shipping carrier",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    const updatedOrders = orders.map(order => 
+      order.id === selectedOrderId 
+        ? { 
+            ...order, 
+            status: "Shipped", 
+            isPastDeadline: false,
+            trackingNumber: trackingInput,
+            trackingUrl: selectedCarrier.url
+          } 
+        : order
+    );
+    setOrders(updatedOrders);
+    
+    // When an order is shipped, move part of its value from pending to available
+    const shippedOrder = orders.find(order => order.id === selectedOrderId);
+    if (shippedOrder) {
+      const newBalance = {
+        pendingBalance: Math.max(0, escrowBalance.pendingBalance - shippedOrder.amount),
+        availableBalance: escrowBalance.availableBalance + shippedOrder.amount
+      };
+      setEscrowBalance(newBalance);
+      localStorage.setItem('escrowBalance', JSON.stringify(newBalance));
+      
+      // Save updated orders to localStorage
+      localStorage.setItem('sellerOrders', JSON.stringify(updatedOrders));
+    }
+    
+    toast({
+      title: "Order Shipped with Tracking",
+      description: `Order #${selectedOrderId} has been marked as shipped with tracking information.`,
+    });
+    
+    setShowTrackingDialog(false);
+  };
+  
+  const confirmCancelOrder = () => {
+    if (!cancelReason.trim()) {
+      toast({
+        title: "Reason required",
+        description: "Please provide a reason for cancellation",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    const cancelledOrder = orders.find(order => order.id === selectedOrderId);
+    
+    if (cancelledOrder) {
+      // Update order status
+      const updatedOrders = orders.map(order => 
+        order.id === selectedOrderId 
+          ? { ...order, status: "Cancelled" } 
+          : order
+      );
+      setOrders(updatedOrders);
+      
+      // Refund the order amount from pending balance
+      const newBalance = {
+        pendingBalance: Math.max(0, escrowBalance.pendingBalance - cancelledOrder.amount),
+        availableBalance: escrowBalance.availableBalance
+      };
+      setEscrowBalance(newBalance);
+      localStorage.setItem('escrowBalance', JSON.stringify(newBalance));
+      
+      // Save updated orders to localStorage
+      localStorage.setItem('sellerOrders', JSON.stringify(updatedOrders));
+      
+      toast({
+        title: "Order Cancelled",
+        description: `Order #${selectedOrderId} has been cancelled and the buyer has been refunded.`,
+      });
+    }
+    
+    setShowCancelDialog(false);
   };
 
   const handleAddDemoSale = () => {
@@ -371,7 +544,9 @@ const SellerDashboardPage = () => {
       status: "Processing",
       amount: orderAmount,
       shippingDeadline: new Date(new Date().getTime() + (5 * 24 * 60 * 60 * 1000)),
-      isPastDeadline: false
+      isPastDeadline: false,
+      trackingNumber: "",
+      trackingUrl: ""
     };
     
     setOrders([newOrder, ...orders]);
@@ -422,6 +597,13 @@ const SellerDashboardPage = () => {
       title: "New Review!",
       description: "You've received a new 5-star review!",
     });
+  };
+
+  const getTrackingUrl = (order: any) => {
+    if (order.trackingNumber && order.trackingUrl) {
+      return `${order.trackingUrl}${order.trackingNumber}`;
+    }
+    return null;
   };
 
   return (
@@ -543,7 +725,13 @@ const SellerDashboardPage = () => {
           </TabsContent>
           
           <TabsContent value="orders" className="mt-4">
-            <OrdersTab orders={orders} onShipOrder={handleShipOrder} />
+            <OrdersTab 
+              orders={orders} 
+              onShipOrder={handleShipOrder} 
+              onAddTracking={handleAddTracking}
+              onCancelOrder={handleCancelOrder}
+              getTrackingUrl={getTrackingUrl}
+            />
           </TabsContent>
 
           <TabsContent value="messages" className="mt-4">
@@ -560,6 +748,78 @@ const SellerDashboardPage = () => {
         <NavItem icon={<FileText size={20} />} label="Orders" onClick={() => setActiveTab("orders")} active={activeTab === "orders"} />
         <NavItem icon={<MessageSquare size={20} />} label="Messages" onClick={handleViewMessagesTab} active={activeTab === "messages"} />
       </div>
+
+      {/* Add Tracking Dialog */}
+      <Dialog open={showTrackingDialog} onOpenChange={setShowTrackingDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add Tracking Information</DialogTitle>
+            <DialogDescription>
+              Enter tracking details for this order. The buyer will be able to track the package.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label htmlFor="carrier" className="text-sm font-medium">Shipping Carrier</label>
+              <select 
+                id="carrier"
+                className="w-full p-2 border rounded-md"
+                value={trackingCarrierInput}
+                onChange={(e) => setTrackingCarrierInput(e.target.value)}
+              >
+                {carrierOptions.map(carrier => (
+                  <option key={carrier.id} value={carrier.id}>{carrier.name}</option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="tracking" className="text-sm font-medium">Tracking Number</label>
+              <Input
+                id="tracking"
+                placeholder="Enter tracking number"
+                value={trackingInput}
+                onChange={(e) => setTrackingInput(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button onClick={confirmAddTracking} className="bg-wayscanner-blue">Add Tracking</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Cancel Order Dialog */}
+      <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Cancel Order</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to cancel this order? The customer will receive a full refund.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label htmlFor="reason" className="text-sm font-medium">Cancellation Reason</label>
+              <Textarea
+                id="reason"
+                placeholder="Please provide a reason for cancellation"
+                value={cancelReason}
+                onChange={(e) => setCancelReason(e.target.value)}
+                className="min-h-[100px]"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Keep Order</Button>
+            </DialogClose>
+            <Button onClick={confirmCancelOrder} variant="destructive">Cancel Order</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
@@ -932,9 +1192,12 @@ const ProductsTab = ({ products, onAddNewProduct, onDeleteProduct, onViewProduct
 interface OrdersTabProps {
   orders: any[];
   onShipOrder: (id: string) => void;
+  onAddTracking: (id: string) => void;
+  onCancelOrder: (id: string) => void;
+  getTrackingUrl: (order: any) => string | null;
 }
 
-const OrdersTab = ({ orders, onShipOrder }: OrdersTabProps) => {
+const OrdersTab = ({ orders, onShipOrder, onAddTracking, onCancelOrder, getTrackingUrl }: OrdersTabProps) => {
   const getStatusColor = (status: string, isPastDeadline: boolean) => {
     if (isPastDeadline) return "bg-red-100 text-red-800";
     
@@ -942,6 +1205,7 @@ const OrdersTab = ({ orders, onShipOrder }: OrdersTabProps) => {
       case "Processing": return "bg-yellow-100 text-yellow-800";
       case "Shipped": return "bg-blue-100 text-blue-800";
       case "Delivered": return "bg-green-100 text-green-800";
+      case "Cancelled": return "bg-red-100 text-red-800";
       default: return "bg-gray-100 text-gray-800";
     }
   };
@@ -977,6 +1241,27 @@ const OrdersTab = ({ orders, onShipOrder }: OrdersTabProps) => {
                   <p className="text-sm font-medium mt-1">${order.amount.toFixed(2)}</p>
                 </div>
                 
+                {order.trackingNumber && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-md p-2 mb-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <Truck className="h-4 w-4 text-blue-500 mr-2" />
+                        <p className="text-xs text-blue-700 font-medium">
+                          Tracking: {order.trackingNumber}
+                        </p>
+                      </div>
+                      <a 
+                        href={getTrackingUrl(order)} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center text-xs text-blue-600 hover:underline"
+                      >
+                        Track <ExternalLink size={12} className="ml-1" />
+                      </a>
+                    </div>
+                  </div>
+                )}
+                
                 {order.status === "Processing" && (
                   <div className="mb-3">
                     {order.isPastDeadline ? (
@@ -996,14 +1281,33 @@ const OrdersTab = ({ orders, onShipOrder }: OrdersTabProps) => {
                         </div>
                       </div>
                     )}
-                    <Button 
-                      variant="default" 
-                      size="sm" 
-                      className="w-full bg-wayscanner-blue"
-                      onClick={() => onShipOrder(order.id)}
-                    >
-                      Mark as Shipped
-                    </Button>
+                    
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button 
+                        variant="default" 
+                        size="sm" 
+                        className="w-full bg-wayscanner-blue flex items-center justify-center"
+                        onClick={() => onAddTracking(order.id)}
+                      >
+                        <Truck size={14} className="mr-1" /> Add Tracking
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="w-full"
+                        onClick={() => onShipOrder(order.id)}
+                      >
+                        Ship Without Tracking
+                      </Button>
+                      <Button 
+                        variant="destructive" 
+                        size="sm" 
+                        className="w-full col-span-2"
+                        onClick={() => onCancelOrder(order.id)}
+                      >
+                        <XCircle size={14} className="mr-1" /> Cancel Order
+                      </Button>
+                    </div>
                   </div>
                 )}
               </div>

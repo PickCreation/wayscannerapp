@@ -1,5 +1,6 @@
+
 import React, { useState } from "react";
-import { ChevronLeft, Camera, Upload, Plus, X, Tag } from "lucide-react";
+import { ChevronLeft, Camera, Upload, Plus, X, Tag, Clock, DollarSign } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -73,6 +74,9 @@ const formSchema = z.object({
   country: z.string().min(1, { message: "Please select a country" }),
   variations: z.string().optional(),
   tags: z.array(z.string()).max(6, { message: "Maximum 6 tags allowed" }).optional(),
+  shippingDays: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0 && Number(val) <= 30, {
+    message: "Shipping days must be between 1 and 30 days",
+  }),
 });
 
 const AddListingPage = () => {
@@ -83,6 +87,9 @@ const AddListingPage = () => {
   const [showCameraSheet, setShowCameraSheet] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
+  const [calculatedAmount, setCalculatedAmount] = useState<string>("0.00");
+  const [commissionAmount, setCommissionAmount] = useState<string>("0.00");
+  const COMMISSION_RATE = 0.10; // 10% commission
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -98,8 +105,26 @@ const AddListingPage = () => {
       country: "",
       variations: "",
       tags: [],
+      shippingDays: "5", // Default to 5 days
     },
   });
+
+  // Watch price field to calculate commission
+  const watchPrice = form.watch("price");
+  
+  React.useEffect(() => {
+    if (watchPrice && !isNaN(Number(watchPrice))) {
+      const price = Number(watchPrice);
+      const commission = price * COMMISSION_RATE;
+      const sellerReceives = price - commission;
+      
+      setCommissionAmount(commission.toFixed(2));
+      setCalculatedAmount(sellerReceives.toFixed(2));
+    } else {
+      setCommissionAmount("0.00");
+      setCalculatedAmount("0.00");
+    }
+  }, [watchPrice]);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -168,6 +193,8 @@ const AddListingPage = () => {
       ...values,
       images: images.map(img => img.preview),
       tags: tags,
+      sellerAmount: calculatedAmount,
+      commissionAmount: commissionAmount,
     });
 
     toast({
@@ -437,6 +464,56 @@ const AddListingPage = () => {
                 )}
               />
             </div>
+
+            {/* Commission information */}
+            {Number(watchPrice) > 0 && (
+              <div className="bg-gray-50 border rounded-md p-4">
+                <div className="flex items-center mb-2">
+                  <DollarSign className="h-5 w-5 text-green-500 mr-2" />
+                  <h3 className="font-medium">Price Breakdown</h3>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <p>Product price:</p>
+                    <p className="font-medium">${Number(watchPrice).toFixed(2)}</p>
+                  </div>
+                  <div className="flex justify-between text-red-500">
+                    <p>Platform fee (10%):</p>
+                    <p>-${commissionAmount}</p>
+                  </div>
+                  <div className="flex justify-between pt-2 border-t font-medium text-green-600">
+                    <p>You receive:</p>
+                    <p>${calculatedAmount}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <FormField
+              control={form.control}
+              name="shippingDays"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Shipping Deadline (days)</FormLabel>
+                  <div className="flex items-center">
+                    <FormControl>
+                      <Input 
+                        type="number" 
+                        min="1" 
+                        max="30" 
+                        placeholder="5"
+                        {...field} 
+                      />
+                    </FormControl>
+                    <Clock className="ml-2 text-gray-400" size={18} />
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Number of days you need to ship the item after receiving an order. Orders not shipped within this period may be automatically canceled.
+                  </p>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}

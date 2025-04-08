@@ -1,7 +1,7 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Package, Calendar, ChevronRight, ExternalLink, Search, Clock, CheckCircle, Truck } from "lucide-react";
+import { ArrowLeft, Package, Calendar, ChevronRight, ExternalLink, Search, Clock, CheckCircle, Truck, AlertTriangle, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,8 @@ import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Progress } from "@/components/ui/progress";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 interface Order {
   id: string;
@@ -28,6 +30,9 @@ interface Order {
   isPaid: boolean;
   shippingDeadline: string;
   escrowStatus: "held" | "released" | "refunded";
+  trackingNumber?: string;
+  trackingUrl?: string;
+  seller?: string;
 }
 
 const sampleOrders: Order[] = [
@@ -55,7 +60,10 @@ const sampleOrders: Order[] = [
     ],
     isPaid: true,
     shippingDeadline: "2025-04-06",
-    escrowStatus: "released"
+    escrowStatus: "released",
+    trackingNumber: "USPS12345678",
+    trackingUrl: "https://tools.usps.com/go/TrackConfirmAction?tLabels=",
+    seller: "EcoStore"
   },
   {
     id: "2",
@@ -81,7 +89,10 @@ const sampleOrders: Order[] = [
     ],
     isPaid: true,
     shippingDeadline: "2025-03-20",
-    escrowStatus: "held"
+    escrowStatus: "held",
+    trackingNumber: "FEDEX87654321",
+    trackingUrl: "https://www.fedex.com/fedextrack/?trknbr=",
+    seller: "BambooLife"
   },
   {
     id: "3",
@@ -100,7 +111,8 @@ const sampleOrders: Order[] = [
     ],
     isPaid: true,
     shippingDeadline: "2025-03-05",
-    escrowStatus: "released"
+    escrowStatus: "released",
+    seller: "GreenTech"
   },
   {
     id: "4",
@@ -119,7 +131,8 @@ const sampleOrders: Order[] = [
     ],
     isPaid: true,
     shippingDeadline: "2025-02-20",
-    escrowStatus: "held"
+    escrowStatus: "held",
+    seller: "EcoFashion"
   }
 ];
 
@@ -128,9 +141,46 @@ const OrdersPage = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [orders] = useState<Order[]>(sampleOrders);
+  const [orders, setOrders] = useState<Order[]>(sampleOrders);
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("profile");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [cancelReason, setCancelReason] = useState("");
+
+  useEffect(() => {
+    // Load saved orders from localStorage if they exist
+    const savedOrders = localStorage.getItem('buyerOrders');
+    if (savedOrders) {
+      setOrders(JSON.parse(savedOrders));
+    }
+    
+    // Check for auto-cancellation of orders past their deadline
+    const now = new Date();
+    const updatedOrders = orders.map(order => {
+      const deadline = new Date(order.shippingDeadline);
+      if (order.status === "pending" && now > deadline) {
+        // Auto-cancel the order and mark as refunded
+        return {
+          ...order,
+          status: "cancelled",
+          escrowStatus: "refunded"
+        };
+      }
+      return order;
+    });
+    
+    if (JSON.stringify(updatedOrders) !== JSON.stringify(orders)) {
+      setOrders(updatedOrders);
+      localStorage.setItem('buyerOrders', JSON.stringify(updatedOrders));
+      
+      toast({
+        title: "Orders Auto-Cancelled",
+        description: "Some orders past their shipping deadline have been automatically cancelled and refunded.",
+        variant: "destructive"
+      });
+    }
+  }, []);
 
   const handleBackClick = () => {
     navigate("/profile");
@@ -160,6 +210,39 @@ const OrdersPage = () => {
       title: "Coming Soon",
       description: "Order details view is under development."
     });
+  };
+  
+  const handleCancelOrder = (orderId: string) => {
+    setSelectedOrderId(orderId);
+    setCancelReason("");
+    setShowCancelDialog(true);
+  };
+  
+  const confirmCancelOrder = () => {
+    if (!cancelReason.trim()) {
+      toast({
+        title: "Reason required",
+        description: "Please provide a reason for cancellation",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    const updatedOrders = orders.map(order => 
+      order.id === selectedOrderId 
+        ? { ...order, status: "cancelled", escrowStatus: "refunded" } 
+        : order
+    );
+    
+    setOrders(updatedOrders);
+    localStorage.setItem('buyerOrders', JSON.stringify(updatedOrders));
+    
+    toast({
+      title: "Order Cancelled",
+      description: "Your order has been cancelled and a refund has been initiated.",
+    });
+    
+    setShowCancelDialog(false);
   };
 
   const filteredOrders = orders
@@ -201,7 +284,7 @@ const OrdersPage = () => {
   
   const getShippingDeadlineStatus = (order: Order) => {
     // If already shipped or delivered, no need to show deadline
-    if (order.status === "shipped" || order.status === "delivered") {
+    if (order.status === "shipped" || order.status === "delivered" || order.status === "cancelled") {
       return null;
     }
     
@@ -260,6 +343,13 @@ const OrdersPage = () => {
       default:
         return null;
     }
+  };
+  
+  const getTrackingUrl = (order: Order) => {
+    if (order.trackingNumber && order.trackingUrl) {
+      return `${order.trackingUrl}${order.trackingNumber}`;
+    }
+    return null;
   };
 
   return (
@@ -322,6 +412,10 @@ const OrdersPage = () => {
                   </div>
 
                   <div className="p-4">
+                    <p className="text-xs text-gray-500 mb-2">
+                      Seller: {order.seller || "Unknown Seller"}
+                    </p>
+                    
                     {order.items.map((item) => (
                       <div key={item.id} className="flex items-center py-2">
                         <img src={item.image} alt={item.name} className="w-12 h-12 object-cover rounded mr-3" />
@@ -336,6 +430,31 @@ const OrdersPage = () => {
                     ))}
 
                     <Separator className="my-3" />
+                    
+                    {/* Tracking Number Section */}
+                    {order.trackingNumber && (
+                      <div className="mb-3 bg-blue-50 p-3 rounded-md">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <Truck className="h-4 w-4 text-blue-500 mr-2" />
+                            <div>
+                              <p className="text-xs font-medium text-blue-700">Tracking: {order.trackingNumber}</p>
+                            </div>
+                          </div>
+                          {getTrackingUrl(order) && (
+                            <a 
+                              href={getTrackingUrl(order) || "#"} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="text-xs text-blue-600 flex items-center hover:underline"
+                            >
+                              Track <ExternalLink size={12} className="ml-1" />
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    )}
                     
                     {/* Shipping Deadline Section */}
                     {getShippingDeadlineStatus(order) && (
@@ -368,14 +487,28 @@ const OrdersPage = () => {
 
                     <div className="flex justify-between items-center">
                       <p className="font-semibold">Total: ${order.total.toFixed(2)}</p>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        className="text-wayscanner-blue flex items-center"
-                      >
-                        View Details
-                        <ChevronRight className="h-4 w-4 ml-1" />
-                      </Button>
+                      <div className="flex gap-2">
+                        {order.status === "pending" && (
+                          <Button 
+                            variant="destructive" 
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCancelOrder(order.id);
+                            }}
+                          >
+                            <XCircle size={14} className="mr-1" /> Cancel
+                          </Button>
+                        )}
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          className="text-wayscanner-blue flex items-center"
+                        >
+                          View Details
+                          <ChevronRight className="h-4 w-4 ml-1" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -401,6 +534,36 @@ const OrdersPage = () => {
           )}
         </div>
       </div>
+
+      {/* Cancel Order Dialog */}
+      <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Cancel Order</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to cancel this order? You will receive a full refund.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label htmlFor="reason" className="text-sm font-medium">Cancellation Reason</label>
+              <Textarea
+                id="reason"
+                placeholder="Please provide a reason for cancellation"
+                value={cancelReason}
+                onChange={(e) => setCancelReason(e.target.value)}
+                className="min-h-[100px]"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Keep Order</Button>
+            </DialogClose>
+            <Button onClick={confirmCancelOrder} variant="destructive">Cancel Order</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
 
