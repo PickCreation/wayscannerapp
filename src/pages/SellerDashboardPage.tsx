@@ -992,6 +992,7 @@ const OverviewTab = ({
         </CardContent>
       </Card>
       
+      {/* Statistics card - moved up */}
       <Card>
         <CardContent className="p-4">
           <div className="flex justify-between items-center mb-3">
@@ -1011,6 +1012,53 @@ const OverviewTab = ({
               <p className="text-xs text-gray-500">Reviews</p>
             </div>
           </div>
+        </CardContent>
+      </Card>
+      
+      {/* Escrow Balance card - moved up, after Statistics */}
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="font-bold text-lg">Escrow Balance</h3>
+          </div>
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="border rounded-lg p-4 bg-yellow-50 flex flex-col">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Clock className="h-5 w-5 text-yellow-500 mr-2" />
+                  <h4 className="font-medium">Pending</h4>
+                </div>
+                <div className="text-yellow-500">
+                  <p className="text-lg font-bold">${escrowBalance.pendingBalance.toFixed(2)}</p>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                Funds held in escrow until orders are shipped
+              </p>
+            </div>
+            <div className="border rounded-lg p-4 bg-green-50 flex flex-col">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <DollarSign className="h-5 w-5 text-green-500 mr-2" />
+                  <h4 className="font-medium">Available</h4>
+                </div>
+                <div className="text-green-500">
+                  <p className="text-lg font-bold">${escrowBalance.availableBalance.toFixed(2)}</p>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                Ready to withdraw
+              </p>
+            </div>
+          </div>
+          <Button 
+            variant="default" 
+            className="w-full bg-wayscanner-blue" 
+            disabled={escrowBalance.availableBalance <= 0}
+            onClick={onWithdrawFunds}
+          >
+            Withdraw Funds
+          </Button>
         </CardContent>
       </Card>
       
@@ -1058,52 +1106,6 @@ const OverviewTab = ({
               View All Products
             </Button>
           </div>
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex justify-between items-center mb-3">
-            <h3 className="font-bold text-lg">Escrow Balance</h3>
-          </div>
-          <div className="grid grid-cols-2 gap-3 mb-4">
-            <div className="border rounded-lg p-4 bg-yellow-50 flex flex-col">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <Clock className="h-5 w-5 text-yellow-500 mr-2" />
-                  <h4 className="font-medium">Pending</h4>
-                </div>
-                <div className="text-yellow-500">
-                  <p className="text-lg font-bold">${escrowBalance.pendingBalance.toFixed(2)}</p>
-                </div>
-              </div>
-              <p className="text-xs text-gray-500 mt-2">
-                Funds held in escrow until orders are shipped
-              </p>
-            </div>
-            <div className="border rounded-lg p-4 bg-green-50 flex flex-col">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <DollarSign className="h-5 w-5 text-green-500 mr-2" />
-                  <h4 className="font-medium">Available</h4>
-                </div>
-                <div className="text-green-500">
-                  <p className="text-lg font-bold">${escrowBalance.availableBalance.toFixed(2)}</p>
-                </div>
-              </div>
-              <p className="text-xs text-gray-500 mt-2">
-                Ready to withdraw
-              </p>
-            </div>
-          </div>
-          <Button 
-            variant="default" 
-            className="w-full bg-wayscanner-blue" 
-            disabled={escrowBalance.availableBalance <= 0}
-            onClick={onWithdrawFunds}
-          >
-            Withdraw Funds
-          </Button>
         </CardContent>
       </Card>
       
