@@ -149,10 +149,45 @@ const SellerDashboardPage = () => {
   const [cancelReason, setCancelReason] = useState("");
   
   const carrierOptions = [
-    { id: "usps", name: "USPS", url: "https://tools.usps.com/go/TrackConfirmAction?tLabels=" },
-    { id: "fedex", name: "FedEx", url: "https://www.fedex.com/fedextrack/?trknbr=" },
-    { id: "ups", name: "UPS", url: "https://www.ups.com/track?tracknum=" },
-    { id: "dhl", name: "DHL", url: "https://www.dhl.com/en/express/tracking.html?AWB=" },
+    // North America
+    { id: "usps", name: "USPS (USA)", url: "https://tools.usps.com/go/TrackConfirmAction?tLabels=", continent: "North America" },
+    { id: "fedex", name: "FedEx (USA)", url: "https://www.fedex.com/fedextrack/?trknbr=", continent: "North America" },
+    { id: "ups", name: "UPS (USA)", url: "https://www.ups.com/track?tracknum=", continent: "North America" },
+    { id: "canadapost", name: "Canada Post", url: "https://www.canadapost-postescanada.ca/track-reperage/en#/search?searchFor=", continent: "North America" },
+    { id: "purolator", name: "Purolator (Canada)", url: "https://www.purolator.com/en/shipping/tracker?pin=", continent: "North America" },
+    { id: "mexicopost", name: "Correos de México", url: "https://www.correosdemexico.com.mx/Paginas/GuiaRastreo.aspx?numero=", continent: "North America" },
+    
+    // South America
+    { id: "correiosb", name: "Correios (Brazil)", url: "https://www2.correios.com.br/sistemas/rastreamento/default.cfm?objetos=", continent: "South America" },
+    { id: "correoarg", name: "Correo Argentino", url: "https://www.correoargentino.com.ar/formularios/e-pack?tracking_id=", continent: "South America" },
+    { id: "serpost", name: "Serpost (Peru)", url: "https://www.serpost.com.pe/tracking?numero=", continent: "South America" },
+    
+    // Europe
+    { id: "royalmail", name: "Royal Mail (UK)", url: "https://www.royalmail.com/track-your-item#/tracking-results/", continent: "Europe" },
+    { id: "dhl", name: "DHL (Germany)", url: "https://www.dhl.com/en/express/tracking.html?AWB=", continent: "Europe" },
+    { id: "laposte", name: "La Poste (France)", url: "https://www.laposte.fr/outils/suivre-vos-envois?code=", continent: "Europe" },
+    { id: "posteitaliane", name: "Poste Italiane", url: "https://www.poste.it/cerca/index.html#/risultati-spedizioni/", continent: "Europe" },
+    
+    // Asia
+    { id: "japanpost", name: "Japan Post", url: "https://trackings.post.japanpost.jp/services/srv/search/direct?reqCodeNo1=", continent: "Asia" },
+    { id: "chinapost", name: "China Post", url: "https://track-chinapost.com/?p=", continent: "Asia" },
+    { id: "singpost", name: "Singapore Post", url: "https://www.singpost.com/track-items?item_number=", continent: "Asia" },
+    { id: "indiapost", name: "India Post", url: "https://www.indiapost.gov.in/vas/Pages/trackingMobile.aspx?prid=", continent: "Asia" },
+    
+    // Africa
+    { id: "sapost", name: "South African Post", url: "https://tracking.postoffice.co.za/TrackNTrace/TrackNTrace.aspx?id=", continent: "Africa" },
+    { id: "egyptpost", name: "Egypt Post", url: "https://egyptpost.org/en/track-and-trace?code=", continent: "Africa" },
+    { id: "nigeriapost", name: "Nigeria Post (NIPOST)", url: "https://www.nipost.gov.ng/Track_Trace?trackingNumber=", continent: "Africa" },
+    
+    // Oceania
+    { id: "auspost", name: "Australia Post", url: "https://auspost.com.au/mypost/track/#/details/", continent: "Oceania" },
+    { id: "nzpost", name: "New Zealand Post", url: "https://www.nzpost.co.nz/tools/tracking/item/", continent: "Oceania" },
+    { id: "fijpost", name: "Post Fiji", url: "https://www.postfiji.com.fj/track-trace/?tracking-number=", continent: "Oceania" },
+    
+    // International
+    { id: "dhlexpress", name: "DHL Express (International)", url: "https://www.dhl.com/en/express/tracking.html?AWB=", continent: "International" },
+    { id: "fedexint", name: "FedEx International", url: "https://www.fedex.com/fedextrack/?trknbr=", continent: "International" },
+    { id: "upsint", name: "UPS International", url: "https://www.ups.com/track?tracknum=", continent: "International" },
   ];
   
   const currentDate = new Date().toLocaleDateString('en-US', {
@@ -760,16 +795,48 @@ const SellerDashboardPage = () => {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <label htmlFor="carrier" className="text-sm font-medium">Shipping Carrier</label>
+              <label htmlFor="carrier" className="text-sm font-medium">Shipping Carrier by Region</label>
               <select 
                 id="carrier"
                 className="w-full p-2 border rounded-md"
                 value={trackingCarrierInput}
                 onChange={(e) => setTrackingCarrierInput(e.target.value)}
               >
-                {carrierOptions.map(carrier => (
-                  <option key={carrier.id} value={carrier.id}>{carrier.name}</option>
-                ))}
+                <optgroup label="North America">
+                  {carrierOptions.filter(c => c.continent === "North America").map(carrier => (
+                    <option key={carrier.id} value={carrier.id}>{carrier.name}</option>
+                  ))}
+                </optgroup>
+                <optgroup label="South America">
+                  {carrierOptions.filter(c => c.continent === "South America").map(carrier => (
+                    <option key={carrier.id} value={carrier.id}>{carrier.name}</option>
+                  ))}
+                </optgroup>
+                <optgroup label="Europe">
+                  {carrierOptions.filter(c => c.continent === "Europe").map(carrier => (
+                    <option key={carrier.id} value={carrier.id}>{carrier.name}</option>
+                  ))}
+                </optgroup>
+                <optgroup label="Asia">
+                  {carrierOptions.filter(c => c.continent === "Asia").map(carrier => (
+                    <option key={carrier.id} value={carrier.id}>{carrier.name}</option>
+                  ))}
+                </optgroup>
+                <optgroup label="Africa">
+                  {carrierOptions.filter(c => c.continent === "Africa").map(carrier => (
+                    <option key={carrier.id} value={carrier.id}>{carrier.name}</option>
+                  ))}
+                </optgroup>
+                <optgroup label="Oceania">
+                  {carrierOptions.filter(c => c.continent === "Oceania").map(carrier => (
+                    <option key={carrier.id} value={carrier.id}>{carrier.name}</option>
+                  ))}
+                </optgroup>
+                <optgroup label="International">
+                  {carrierOptions.filter(c => c.continent === "International").map(carrier => (
+                    <option key={carrier.id} value={carrier.id}>{carrier.name}</option>
+                  ))}
+                </optgroup>
               </select>
             </div>
             <div className="space-y-2">
@@ -928,52 +995,6 @@ const OverviewTab = ({
       <Card>
         <CardContent className="p-4">
           <div className="flex justify-between items-center mb-3">
-            <h3 className="font-bold text-lg">Escrow Balance</h3>
-          </div>
-          <div className="grid grid-cols-2 gap-3 mb-4">
-            <div className="border rounded-lg p-4 bg-yellow-50 flex flex-col">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <Clock className="h-5 w-5 text-yellow-500 mr-2" />
-                  <h4 className="font-medium">Pending</h4>
-                </div>
-                <div className="text-yellow-500">
-                  <p className="text-lg font-bold">${escrowBalance.pendingBalance.toFixed(2)}</p>
-                </div>
-              </div>
-              <p className="text-xs text-gray-500 mt-2">
-                Funds held in escrow until orders are shipped
-              </p>
-            </div>
-            <div className="border rounded-lg p-4 bg-green-50 flex flex-col">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <DollarSign className="h-5 w-5 text-green-500 mr-2" />
-                  <h4 className="font-medium">Available</h4>
-                </div>
-                <div className="text-green-500">
-                  <p className="text-lg font-bold">${escrowBalance.availableBalance.toFixed(2)}</p>
-                </div>
-              </div>
-              <p className="text-xs text-gray-500 mt-2">
-                Ready to withdraw
-              </p>
-            </div>
-          </div>
-          <Button 
-            variant="default" 
-            className="w-full bg-wayscanner-blue" 
-            disabled={escrowBalance.availableBalance <= 0}
-            onClick={onWithdrawFunds}
-          >
-            Withdraw Funds
-          </Button>
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex justify-between items-center mb-3">
             <h3 className="font-bold text-lg">Statistics</h3>
           </div>
           <div className="grid grid-cols-3 gap-3 mb-4">
@@ -1037,6 +1058,52 @@ const OverviewTab = ({
               View All Products
             </Button>
           </div>
+        </CardContent>
+      </Card>
+      
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="font-bold text-lg">Escrow Balance</h3>
+          </div>
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="border rounded-lg p-4 bg-yellow-50 flex flex-col">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Clock className="h-5 w-5 text-yellow-500 mr-2" />
+                  <h4 className="font-medium">Pending</h4>
+                </div>
+                <div className="text-yellow-500">
+                  <p className="text-lg font-bold">${escrowBalance.pendingBalance.toFixed(2)}</p>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                Funds held in escrow until orders are shipped
+              </p>
+            </div>
+            <div className="border rounded-lg p-4 bg-green-50 flex flex-col">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <DollarSign className="h-5 w-5 text-green-500 mr-2" />
+                  <h4 className="font-medium">Available</h4>
+                </div>
+                <div className="text-green-500">
+                  <p className="text-lg font-bold">${escrowBalance.availableBalance.toFixed(2)}</p>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                Ready to withdraw
+              </p>
+            </div>
+          </div>
+          <Button 
+            variant="default" 
+            className="w-full bg-wayscanner-blue" 
+            disabled={escrowBalance.availableBalance <= 0}
+            onClick={onWithdrawFunds}
+          >
+            Withdraw Funds
+          </Button>
         </CardContent>
       </Card>
       
@@ -1292,17 +1359,9 @@ const OrdersTab = ({ orders, onShipOrder, onAddTracking, onCancelOrder, getTrack
                         <Truck size={14} className="mr-1" /> Add Tracking
                       </Button>
                       <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="w-full"
-                        onClick={() => onShipOrder(order.id)}
-                      >
-                        Ship Without Tracking
-                      </Button>
-                      <Button 
                         variant="destructive" 
                         size="sm" 
-                        className="w-full col-span-2"
+                        className="w-full"
                         onClick={() => onCancelOrder(order.id)}
                       >
                         <XCircle size={14} className="mr-1" /> Cancel Order
