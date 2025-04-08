@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -841,3 +842,183 @@ const OverviewTab = ({
           </div>
         </CardContent>
       </Card>
+    </div>
+  );
+};
+
+interface ActivityItemProps {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  time: string;
+}
+
+const ActivityItem = ({ icon, title, description, time }: ActivityItemProps) => {
+  return (
+    <div className="flex items-start gap-3">
+      <div className="bg-gray-100 p-2 rounded-full">
+        {icon}
+      </div>
+      <div className="flex-1">
+        <div className="flex justify-between">
+          <h4 className="font-medium">{title}</h4>
+          <span className="text-xs text-gray-400">{time}</span>
+        </div>
+        <p className="text-sm text-gray-500">{description}</p>
+      </div>
+    </div>
+  );
+};
+
+interface ProductsTabProps {
+  products: any[];
+  onAddNewProduct: () => void;
+  onDeleteProduct: (id: string) => void;
+  onViewProduct: (id: string) => void;
+}
+
+const ProductsTab = ({ products, onAddNewProduct, onDeleteProduct, onViewProduct }: ProductsTabProps) => {
+  return (
+    <div className="space-y-4">
+      <Button 
+        className="w-full bg-wayscanner-blue"
+        onClick={onAddNewProduct}
+      >
+        Add New Product
+      </Button>
+      
+      {products.length > 0 ? (
+        <div className="space-y-3">
+          {products.map((product) => (
+            <div key={product.id} className="flex items-center gap-3 p-3 border rounded-lg bg-white">
+              <img src={product.image} alt={product.name} className="w-16 h-16 object-cover rounded" />
+              <div className="flex-1">
+                <h4 className="font-medium">{product.name}</h4>
+                <p className="text-sm text-gray-500 mt-1">Price: {product.price}</p>
+                <p className="text-sm text-gray-500">Stock: {product.stock} units</p>
+              </div>
+              <div className="flex flex-col gap-2">
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  className="h-8 w-8 text-blue-500"
+                  onClick={() => onViewProduct(product.id)}
+                >
+                  <Eye size={18} />
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  className="h-8 w-8 text-red-500"
+                  onClick={() => onDeleteProduct(product.id)}
+                >
+                  <Trash2 size={18} />
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-8">
+          <Package className="h-12 w-12 text-gray-300 mx-auto mb-2" />
+          <h3 className="text-gray-600 font-medium mb-1">No Products Yet</h3>
+          <p className="text-gray-500 text-sm">Start adding products to your shop</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+interface OrdersTabProps {
+  orders: any[];
+  onShipOrder: (id: string) => void;
+}
+
+const OrdersTab = ({ orders, onShipOrder }: OrdersTabProps) => {
+  const getStatusColor = (status: string, isPastDeadline: boolean) => {
+    if (isPastDeadline) return "bg-red-100 text-red-800";
+    
+    switch (status) {
+      case "Processing": return "bg-yellow-100 text-yellow-800";
+      case "Shipped": return "bg-blue-100 text-blue-800";
+      case "Delivered": return "bg-green-100 text-green-800";
+      default: return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
+
+  return (
+    <div className="space-y-4">
+      {orders.length > 0 ? (
+        <div className="space-y-3">
+          {orders.map((order) => (
+            <div key={order.id} className="border rounded-lg bg-white overflow-hidden">
+              <div className="bg-gray-50 p-3 border-b flex justify-between items-center">
+                <div>
+                  <p className="text-sm font-medium">Order #{order.orderNumber}</p>
+                  <p className="text-xs text-gray-500">{formatDate(order.date)}</p>
+                </div>
+                <div className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status, order.isPastDeadline)}`}>
+                  {order.isPastDeadline ? "Ship Now!" : order.status}
+                </div>
+              </div>
+              
+              <div className="p-3">
+                <div className="mb-3">
+                  <p className="font-medium">{order.product}</p>
+                  <p className="text-sm text-gray-500">Customer: {order.customer}</p>
+                  <p className="text-sm font-medium mt-1">${order.amount.toFixed(2)}</p>
+                </div>
+                
+                {order.status === "Processing" && (
+                  <div className="mb-3">
+                    {order.isPastDeadline ? (
+                      <div className="bg-red-50 border border-red-200 rounded-md p-2 mb-2">
+                        <div className="flex items-center">
+                          <AlertTriangle className="h-4 w-4 text-red-500 mr-2" />
+                          <p className="text-xs text-red-700 font-medium">Shipping deadline passed!</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="bg-yellow-50 border border-yellow-200 rounded-md p-2 mb-2">
+                        <div className="flex items-center">
+                          <Clock className="h-4 w-4 text-yellow-500 mr-2" />
+                          <p className="text-xs text-yellow-700 font-medium">
+                            Ship by: {formatDate(order.shippingDeadline)}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                    <Button 
+                      variant="default" 
+                      size="sm" 
+                      className="w-full bg-wayscanner-blue"
+                      onClick={() => onShipOrder(order.id)}
+                    >
+                      Mark as Shipped
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-8">
+          <FileText className="h-12 w-12 text-gray-300 mx-auto mb-2" />
+          <h3 className="text-gray-600 font-medium mb-1">No Orders Yet</h3>
+          <p className="text-gray-500 text-sm">Orders will appear here once customers make purchases</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default SellerDashboardPage;
