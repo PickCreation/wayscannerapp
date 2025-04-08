@@ -4,7 +4,6 @@ import { ArrowLeft, Search, FilterX, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -222,18 +221,23 @@ const BlogsPage = () => {
           </div>
           <div className="flex overflow-x-auto py-2 gap-2 no-scrollbar">
             {CATEGORIES.map((category) => (
-              <Badge 
+              <button
                 key={category}
-                variant={selectedCategory === category ? "default" : "outline"}
-                className={`cursor-pointer whitespace-nowrap ${
-                  selectedCategory === category 
-                    ? "bg-wayscanner-blue hover:bg-blue-700" 
-                    : "bg-white text-gray-700 hover:bg-gray-100"
-                }`}
                 onClick={() => setSelectedCategory(category)}
+                className={`px-5 py-2 rounded-full text-sm flex items-center whitespace-nowrap ${
+                  selectedCategory === category
+                    ? "bg-blue-100 text-blue-600 border border-blue-300"
+                    : "bg-white border border-gray-300"
+                }`}
+                type="button"
               >
+                {selectedCategory === category && category === "All" && (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="mr-1">
+                    <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                )}
                 {category}
-              </Badge>
+              </button>
             ))}
           </div>
         </div>
@@ -266,14 +270,17 @@ const BlogsPage = () => {
                       />
                     </div>
                     <CardContent className="pt-4">
-                      <Badge className="mb-2 bg-blue-100 text-blue-700 hover:bg-blue-200">
+                      <div className="inline-block mb-2 px-3 py-1 rounded-full text-xs bg-blue-100 text-blue-700">
                         {blog.category}
-                      </Badge>
+                      </div>
                       <h3 className="text-lg font-semibold mb-2 line-clamp-2">{blog.title}</h3>
                       <p className="text-gray-600 text-sm mb-3 line-clamp-2">{blog.excerpt}</p>
-                      <div className="flex items-center text-gray-500 text-xs">
-                        <MessageSquare size={14} className="mr-1" />
-                        <span>{blog.commentsCount}</span>
+                      <div className="flex items-center justify-between mt-2">
+                        <div className="flex items-center text-gray-500 text-xs">
+                          <MessageSquare size={14} className="mr-1" />
+                          <span>{blog.commentsCount}</span>
+                        </div>
+                        <div className="text-xs text-gray-500">{blog.readTime}</div>
                       </div>
                     </CardContent>
                   </Card>
@@ -308,14 +315,17 @@ const BlogsPage = () => {
                       />
                     </div>
                     <CardContent className="pt-4">
-                      <Badge className="mb-2 bg-blue-100 text-blue-700 hover:bg-blue-200">
+                      <div className="inline-block mb-2 px-3 py-1 rounded-full text-xs bg-blue-100 text-blue-700">
                         {blog.category}
-                      </Badge>
+                      </div>
                       <h3 className="text-lg font-semibold mb-2 line-clamp-2">{blog.title}</h3>
                       <p className="text-gray-600 text-sm mb-3 line-clamp-2">{blog.excerpt}</p>
-                      <div className="flex items-center text-gray-500 text-xs">
-                        <MessageSquare size={14} className="mr-1" />
-                        <span>{blog.commentsCount}</span>
+                      <div className="flex items-center justify-between mt-2">
+                        <div className="flex items-center text-gray-500 text-xs">
+                          <MessageSquare size={14} className="mr-1" />
+                          <span>{blog.commentsCount}</span>
+                        </div>
+                        <div className="text-xs text-gray-500">{blog.readTime}</div>
                       </div>
                     </CardContent>
                   </Card>
@@ -350,14 +360,17 @@ const BlogsPage = () => {
                       />
                     </div>
                     <CardContent className="pt-4">
-                      <Badge className="mb-2 bg-blue-100 text-blue-700 hover:bg-blue-200">
+                      <div className="inline-block mb-2 px-3 py-1 rounded-full text-xs bg-blue-100 text-blue-700">
                         {blog.category}
-                      </Badge>
+                      </div>
                       <h3 className="text-lg font-semibold mb-2 line-clamp-2">{blog.title}</h3>
                       <p className="text-gray-600 text-sm mb-3 line-clamp-2">{blog.excerpt}</p>
-                      <div className="flex items-center text-gray-500 text-xs">
-                        <MessageSquare size={14} className="mr-1" />
-                        <span>{blog.commentsCount}</span>
+                      <div className="flex items-center justify-between mt-2">
+                        <div className="flex items-center text-gray-500 text-xs">
+                          <MessageSquare size={14} className="mr-1" />
+                          <span>{blog.commentsCount}</span>
+                        </div>
+                        <div className="text-xs text-gray-500">{blog.readTime}</div>
                       </div>
                     </CardContent>
                   </Card>
