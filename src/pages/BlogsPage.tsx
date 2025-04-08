@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { ArrowLeft, Search, FilterX, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import BottomNavigation from "@/components/BottomNavigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import CameraSheet from "@/components/CameraSheet";
 
 interface BlogPost {
   id: string;
@@ -124,6 +126,7 @@ const BlogsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [filteredBlogs, setFilteredBlogs] = useState<BlogPost[]>(BLOGS);
+  const [isCameraSheetOpen, setIsCameraSheetOpen] = useState(false);
 
   useEffect(() => {
     let result = BLOGS;
@@ -164,7 +167,7 @@ const BlogsPage = () => {
   };
 
   const handleCameraClick = () => {
-    // Implementation for camera click
+    setIsCameraSheetOpen(true);
   };
 
   const handleBlogClick = (blogId: string) => {
@@ -371,6 +374,11 @@ const BlogsPage = () => {
           </Tabs>
         </div>
       </div>
+
+      <CameraSheet 
+        open={isCameraSheetOpen} 
+        onOpenChange={setIsCameraSheetOpen}
+      />
 
       <BottomNavigation
         activeItem={activeNavItem as "home" | "forum" | "recipes" | "shop" | "profile"}
