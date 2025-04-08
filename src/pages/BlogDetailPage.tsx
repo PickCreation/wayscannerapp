@@ -4,7 +4,6 @@ import {
   ArrowLeft,
   Share,
   MessageSquare,
-  Heart,
   Copy,
   Facebook,
   Check,
@@ -234,7 +233,6 @@ const BlogDetailPage = () => {
   const [isCameraSheetOpen, setIsCameraSheetOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [activeNavItem, setActiveNavItem] = useState("home");
-  const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
     const foundBlog = BLOGS.find((b) => b.id === blogId);
@@ -246,7 +244,6 @@ const BlogDetailPage = () => {
       
       setNewComment("");
       setCopied(false);
-      setIsLiked(false);
     } else {
       toast({
         title: "Blog not found",
@@ -355,17 +352,6 @@ const BlogDetailPage = () => {
     }
   };
 
-  const toggleLike = () => {
-    setIsLiked(!isLiked);
-    
-    toast({
-      title: isLiked ? "Article unliked" : "Article liked",
-      description: isLiked 
-        ? "You have removed your like from this article" 
-        : "You have liked this article",
-    });
-  };
-
   if (!blog) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -391,16 +377,7 @@ const BlogDetailPage = () => {
           {blog.category}
         </Badge>
         <h1 className="text-2xl font-bold mb-2">{blog.title}</h1>
-        <div className="flex items-center mb-4">
-          <Avatar className="h-8 w-8 mr-2">
-            <AvatarImage src={blog.author.avatar} />
-            <AvatarFallback>{blog.author.name.charAt(0)}</AvatarFallback>
-          </Avatar>
-          <div>
-            <p className="text-xs font-medium">{blog.author.name}</p>
-            <p className="text-xs opacity-90">{blog.date} • {blog.readTime}</p>
-          </div>
-        </div>
+        <p className="text-xs opacity-90 mb-4">{blog.date} • {blog.readTime}</p>
         
         <div className="relative mb-6">
           <img 
@@ -412,15 +389,6 @@ const BlogDetailPage = () => {
         
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className={`flex items-center gap-1 ${isLiked ? 'text-red-500' : 'text-gray-600'}`}
-              onClick={toggleLike}
-            >
-              <Heart size={16} className={isLiked ? 'fill-red-500' : ''} />
-              <span>{isLiked ? 'Liked' : 'Like'}</span>
-            </Button>
             <Button 
               variant="outline" 
               size="sm" 
