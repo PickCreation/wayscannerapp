@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { X, Settings, ChevronRight, ChevronDown, ChevronUp, ThumbsUp, ThumbsDown } from 'lucide-react';
@@ -103,16 +102,16 @@ const PlantDetailPage = () => {
             <Settings className="h-6 w-6 text-gray-800" />
           </button>
         </div>
-        
-        {/* Plant Name Overlay */}
-        <div className="absolute bottom-0 left-0 p-6">
-          <h1 className="text-5xl font-bold text-white shadow-text">{plant.name}</h1>
-          <p className="text-2xl text-white shadow-text mt-1">{plant.scientificName}</p>
-        </div>
       </div>
       
       {/* Main Content Area */}
       <div className="px-4 pb-4">
+        {/* Plant Name and Scientific Name - Moved above tabs */}
+        <div className="mt-4 mb-6">
+          <h1 className="text-5xl font-bold text-gray-800">{plant.name}</h1>
+          <p className="text-2xl text-gray-600 mt-1">{plant.scientificName}</p>
+        </div>
+        
         {/* Tabs Section */}
         <Tabs defaultValue="description" value={activeTab} onValueChange={setActiveTab} className="mt-4">
           <TabsList className="grid grid-cols-3 rounded-full bg-gray-100">
@@ -484,4 +483,3 @@ const PlantDetailPage = () => {
 };
 
 export default PlantDetailPage;
-
