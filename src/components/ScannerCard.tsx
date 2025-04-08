@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 interface ScannerCardProps {
   title: string;
   description: string;
-  color: "red" | "green" | "yellow" | "purple";
+  color: "red" | "green" | "yellow" | "purple" | "blue";
   icon: React.ReactNode;
   onClick?: () => void;
 }
@@ -24,6 +24,7 @@ const ScannerCard: React.FC<ScannerCardProps> = ({
     green: "bg-wayscanner-green",
     yellow: "bg-wayscanner-yellow", 
     purple: "bg-wayscanner-purple",
+    blue: "bg-wayscanner-blue",
   };
 
   const handleClick = () => {
@@ -34,6 +35,12 @@ const ScannerCard: React.FC<ScannerCardProps> = ({
     else if (title === "Animal Scan") tabValue = "animals";
     else if (title === "Marketplace") {
       navigate("/marketplace");
+      // Call the original onClick if provided
+      if (onClick) onClick();
+      return;
+    }
+    else if (title === "Blog & Articles") {
+      navigate("/blogs");
       // Call the original onClick if provided
       if (onClick) onClick();
       return;

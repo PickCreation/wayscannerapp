@@ -4,7 +4,7 @@ import ScannerCard from "@/components/ScannerCard";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
 import SplashScreen from "@/components/SplashScreen";
-import { Bell, User, Utensils, Leaf, PawPrint, ShoppingBag } from "lucide-react";
+import { Bell, User, Utensils, Leaf, PawPrint, ShoppingBag, BookOpen } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { AnimatePresence } from "framer-motion";
@@ -75,11 +75,17 @@ const Index = () => {
     const tabMap: Record<string, string> = {
       "Food": "food",
       "Plant": "plants",
-      "Animal": "animals"
+      "Animal": "animals",
+      "Blog": "blogs"
     };
     
     if (type === "Marketplace") {
       navigate("/marketplace");
+      return;
+    }
+    
+    if (type === "Blog") {
+      navigate("/blogs");
       return;
     }
     
@@ -150,6 +156,13 @@ const Index = () => {
             color="purple"
             icon={<ShoppingBag size={24} color="white" />}
             onClick={() => handleScannerClick("Marketplace")}
+          />
+          <ScannerCard
+            title="Blog & Articles"
+            description="Browse related blog articles"
+            color="blue"
+            icon={<BookOpen size={24} color="white" />}
+            onClick={() => handleScannerClick("Blog")}
           />
         </div>
       </div>
