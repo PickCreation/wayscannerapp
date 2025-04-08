@@ -114,28 +114,30 @@ const PlantDetailPage = () => {
           <p className="text-2xl text-gray-600 mt-1">{plant.scientificName}</p>
         </div>
         
-        {/* Tabs Section - Improved formatting */}
+        {/* Tabs Section - Improved formatting with centered toggle */}
         <Tabs defaultValue="description" value={activeTab} onValueChange={setActiveTab} className="mt-4">
-          <TabsList className="grid grid-cols-3 rounded-full bg-gray-100 p-1">
-            <TabsTrigger 
-              value="description" 
-              className="rounded-full py-2.5 px-4 data-[state=active]:bg-[#034AFF] data-[state=active]:text-white data-[state=active]:shadow transition-all"
-            >
-              Description
-            </TabsTrigger>
-            <TabsTrigger 
-              value="care" 
-              className="rounded-full py-2.5 px-4 data-[state=active]:bg-[#034AFF] data-[state=active]:text-white data-[state=active]:shadow transition-all"
-            >
-              Care
-            </TabsTrigger>
-            <TabsTrigger 
-              value="history" 
-              className="rounded-full py-2.5 px-4 data-[state=active]:bg-[#034AFF] data-[state=active]:text-white data-[state=active]:shadow transition-all"
-            >
-              History
-            </TabsTrigger>
-          </TabsList>
+          <div className="flex justify-center mb-4">
+            <TabsList className="grid grid-cols-3 rounded-full bg-gray-100 p-1 w-full max-w-md mx-auto">
+              <TabsTrigger 
+                value="description" 
+                className="rounded-full py-2.5 px-4 data-[state=active]:bg-[#034AFF] data-[state=active]:text-white data-[state=active]:shadow transition-all"
+              >
+                Description
+              </TabsTrigger>
+              <TabsTrigger 
+                value="care" 
+                className="rounded-full py-2.5 px-4 data-[state=active]:bg-[#034AFF] data-[state=active]:text-white data-[state=active]:shadow transition-all"
+              >
+                Care
+              </TabsTrigger>
+              <TabsTrigger 
+                value="history" 
+                className="rounded-full py-2.5 px-4 data-[state=active]:bg-[#034AFF] data-[state=active]:text-white data-[state=active]:shadow transition-all"
+              >
+                History
+              </TabsTrigger>
+            </TabsList>
+          </div>
           
           {/* Description Tab Content */}
           <TabsContent value="description" className="mt-6 animate-in fade-in-50">
