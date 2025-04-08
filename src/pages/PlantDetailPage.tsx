@@ -78,7 +78,7 @@ const PlantDetailPage = () => {
   };
 
   return (
-    <div className="bg-[#1E1F24] min-h-screen pb-8 text-white">
+    <div className="bg-white min-h-screen pb-8 text-gray-800">
       {/* Hero Section with Image */}
       <div className="relative w-full h-[40vh]">
         <img 
@@ -86,28 +86,28 @@ const PlantDetailPage = () => {
           alt={plant.name} 
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#1E1F24]"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white"></div>
         
         {/* Top Bar */}
         <div className="absolute top-0 left-0 right-0 p-4 flex justify-between">
           <button 
             onClick={handleBack}
-            className="w-12 h-12 rounded-full bg-[#2A2C36] flex items-center justify-center"
+            className="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center shadow-md"
           >
-            <X className="h-6 w-6 text-white" />
+            <X className="h-6 w-6 text-gray-800" />
           </button>
           <button 
             onClick={handleSettings}
-            className="w-12 h-12 rounded-full bg-[#2A2C36] flex items-center justify-center"
+            className="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center shadow-md"
           >
-            <Settings className="h-6 w-6 text-white" />
+            <Settings className="h-6 w-6 text-gray-800" />
           </button>
         </div>
         
         {/* Plant Name Overlay */}
         <div className="absolute bottom-0 left-0 p-6">
-          <h1 className="text-5xl font-bold text-white">{plant.name}</h1>
-          <p className="text-2xl text-white mt-1">{plant.scientificName}</p>
+          <h1 className="text-5xl font-bold text-white shadow-text">{plant.name}</h1>
+          <p className="text-2xl text-white shadow-text mt-1">{plant.scientificName}</p>
         </div>
       </div>
       
@@ -115,22 +115,22 @@ const PlantDetailPage = () => {
       <div className="px-4 pb-4">
         {/* Tabs Section */}
         <Tabs defaultValue="description" value={activeTab} onValueChange={setActiveTab} className="mt-4">
-          <TabsList className="grid grid-cols-3 rounded-full bg-[#2A2C36]">
+          <TabsList className="grid grid-cols-3 rounded-full bg-gray-100">
             <TabsTrigger 
               value="description" 
-              className="data-[state=active]:bg-green-500 data-[state=active]:text-white rounded-full py-3"
+              className="data-[state=active]:bg-[#034AFF] data-[state=active]:text-white rounded-full py-3"
             >
               Description
             </TabsTrigger>
             <TabsTrigger 
               value="care" 
-              className="data-[state=active]:bg-green-500 data-[state=active]:text-white rounded-full py-3"
+              className="data-[state=active]:bg-[#034AFF] data-[state=active]:text-white rounded-full py-3"
             >
               Care
             </TabsTrigger>
             <TabsTrigger 
               value="history" 
-              className="data-[state=active]:bg-green-500 data-[state=active]:text-white rounded-full py-3"
+              className="data-[state=active]:bg-[#034AFF] data-[state=active]:text-white rounded-full py-3"
             >
               History
             </TabsTrigger>
@@ -140,25 +140,25 @@ const PlantDetailPage = () => {
           <TabsContent value="description" className="mt-6">
             <div className="space-y-6">
               <div>
-                <p className="text-gray-400">Latin name:</p>
+                <p className="text-gray-500">Latin name:</p>
                 <p className="text-xl">{plant.scientificName}</p>
               </div>
               
               <div>
-                <p className="text-gray-400">Also known as:</p>
+                <p className="text-gray-500">Also known as:</p>
                 <p className="text-xl">{plant.alsoKnownAs.join(', ')}</p>
               </div>
               
               {plant.isPoisonous && (
-                <div className="flex items-center py-3 px-4 rounded-lg bg-[#2A2C36] mt-4">
+                <div className="flex items-center py-3 px-4 rounded-lg bg-gray-100 mt-4">
                   <div className="bg-amber-500 rounded-full p-2 mr-4">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M12 12C13.6569 12 15 10.6569 15 9C15 7.34315 13.6569 6 12 6C10.3431 6 9 7.34315 9 9C9 10.6569 10.3431 12 12 12Z" fill="#1E1F24"/>
-                      <path d="M19.6 8.4C19.9 8.4 20.1 8.2 20.1 7.9C20.1 7.6 19.9 7.4 19.6 7.4C19.3 7.4 19.1 7.6 19.1 7.9C19.1 8.2 19.3 8.4 19.6 8.4Z" fill="#1E1F24"/>
-                      <path d="M15.8 21.2C15.3 21.8 14.7 22 14 22H10C9.3 22 8.7 21.8 8.2 21.2C7.7 20.6 7.5 19.9 7.6 19.2L8.2 14.8C8.3 14.4 8.7 14.1 9.1 14.1H14.9C15.3 14.1 15.7 14.4 15.8 14.8L16.4 19.2C16.5 19.9 16.3 20.6 15.8 21.2ZM18.4 5.6C17.6 5.6 16.8 5.9 16.1 6.4C15.4 5 14 4 12.3 4C10.2 4 8.4 5.4 8 7.3C6.4 7.1 4.8 8.1 4.2 9.6C3.6 11.1 4.1 12.7 5.3 13.7C5.8 14.1 6.4 14.3 7 14.3H7.5C7.8 14.3 8 14.1 8 13.8C8 13.5 7.8 13.3 7.5 13.3C7.5 13.3 7.4 13.3 7 13.3C6.6 13.3 6.2 13.1 5.9 12.9C4.9 12.1 4.5 10.8 5 9.6C5.5 8.4 6.7 7.7 8 8.1C8.3 8.2 8.6 7.9 8.7 7.6C8.9 6 10.5 5 12.1 5.2C13.6 5.4 14.7 6.8 14.7 8.4C14.7 8.7 14.9 8.9 15.2 8.9C15.5 8.9 15.7 8.7 15.7 8.4C15.7 8.2 15.7 8.1 15.7 8.1C15.7 7.4 16.5 6.6 17.2 6.6C18.3 6.6 19.2 7.4 19.2 8.6C19.2 9.7 18.4 10.6 17.3 10.6H16.8C16.5 10.6 16.3 10.8 16.3 11.1C16.3 11.4 16.5 11.6 16.8 11.6H17.3C18.9 11.6 20.3 10.2 20.3 8.6C20.1 6.9 19 5.6 18.4 5.6Z" fill="#1E1F24"/>
+                      <path d="M12 12C13.6569 12 15 10.6569 15 9C15 7.34315 13.6569 6 12 6C10.3431 6 9 7.34315 9 9C9 10.6569 10.3431 12 12 12Z" fill="#FFFFFF"/>
+                      <path d="M19.6 8.4C19.9 8.4 20.1 8.2 20.1 7.9C20.1 7.6 19.9 7.4 19.6 7.4C19.3 7.4 19.1 7.6 19.1 7.9C19.1 8.2 19.3 8.4 19.6 8.4Z" fill="#FFFFFF"/>
+                      <path d="M15.8 21.2C15.3 21.8 14.7 22 14 22H10C9.3 22 8.7 21.8 8.2 21.2C7.7 20.6 7.5 19.9 7.6 19.2L8.2 14.8C8.3 14.4 8.7 14.1 9.1 14.1H14.9C15.3 14.1 15.7 14.4 15.8 14.8L16.4 19.2C16.5 19.9 16.3 20.6 15.8 21.2ZM18.4 5.6C17.6 5.6 16.8 5.9 16.1 6.4C15.4 5 14 4 12.3 4C10.2 4 8.4 5.4 8 7.3C6.4 7.1 4.8 8.1 4.2 9.6C3.6 11.1 4.1 12.7 5.3 13.7C5.8 14.1 6.4 14.3 7 14.3H7.5C7.8 14.3 8 14.1 8 13.8C8 13.5 7.8 13.3 7.5 13.3C7.5 13.3 7.4 13.3 7 13.3C6.6 13.3 6.2 13.1 5.9 12.9C4.9 12.1 4.5 10.8 5 9.6C5.5 8.4 6.7 7.7 8 8.1C8.3 8.2 8.6 7.9 8.7 7.6C8.9 6 10.5 5 12.1 5.2C13.6 5.4 14.7 6.8 14.7 8.4C14.7 8.7 14.9 8.9 15.2 8.9C15.5 8.9 15.7 8.7 15.7 8.4C15.7 8.2 15.7 8.1 15.7 8.1C15.7 7.4 16.5 6.6 17.2 6.6C18.3 6.6 19.2 7.4 19.2 8.6C19.2 9.7 18.4 10.6 17.3 10.6H16.8C16.5 10.6 16.3 10.8 16.3 11.1C16.3 11.4 16.5 11.6 16.8 11.6H17.3C18.9 11.6 20.3 10.2 20.3 8.6C20.1 6.9 19 5.6 18.4 5.6Z" fill="#FFFFFF"/>
                     </svg>
                   </div>
-                  <span className="text-white text-lg font-medium">Poisonous</span>
+                  <span className="text-gray-800 text-lg font-medium">Poisonous</span>
                   <ChevronRight className="ml-auto text-gray-400" />
                 </div>
               )}
@@ -182,13 +182,13 @@ const PlantDetailPage = () => {
               <h3 className="text-3xl font-bold mb-4">Choose plant location</h3>
               <div className="grid grid-cols-2 gap-3 mt-6 mb-8">
                 <button 
-                  className={`py-4 px-6 rounded-full text-xl font-medium ${selectedLocation === 'indoor' ? 'bg-green-500 text-white' : 'bg-[#2A2C36] text-green-500'}`}
+                  className={`py-4 px-6 rounded-full text-xl font-medium ${selectedLocation === 'indoor' ? 'bg-[#034AFF] text-white' : 'bg-gray-100 text-[#034AFF]'}`}
                   onClick={() => setSelectedLocation('indoor')}
                 >
                   Indoor
                 </button>
                 <button 
-                  className={`py-4 px-6 rounded-full text-xl font-medium ${selectedLocation === 'outdoor' ? 'bg-green-500 text-white' : 'bg-[#2A2C36] text-green-500'}`}
+                  className={`py-4 px-6 rounded-full text-xl font-medium ${selectedLocation === 'outdoor' ? 'bg-[#034AFF] text-white' : 'bg-gray-100 text-[#034AFF]'}`}
                   onClick={() => setSelectedLocation('outdoor')}
                 >
                   Outdoor
@@ -198,26 +198,26 @@ const PlantDetailPage = () => {
               <h3 className="text-3xl font-bold mb-6">Cares</h3>
               
               <div className="space-y-4">
-                <div className="flex items-center justify-between bg-[#2A2C36] p-4 rounded-lg">
+                <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg">
                   <div className="flex items-center">
                     <div className="w-12 flex justify-center">
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="4" y="4" width="16" height="16" rx="1.5" stroke="white" strokeWidth="1.5"/>
-                        <rect x="7" y="7" width="4" height="4" fill="white"/>
-                        <rect x="13" y="7" width="4" height="4" fill="#696974"/>
-                        <rect x="7" y="13" width="4" height="4" fill="#696974"/>
-                        <rect x="13" y="13" width="4" height="4" fill="#696974"/>
+                        <rect x="4" y="4" width="16" height="16" rx="1.5" stroke="#696974" strokeWidth="1.5"/>
+                        <rect x="7" y="7" width="4" height="4" fill="#696974"/>
+                        <rect x="13" y="7" width="4" height="4" fill="#E5E5E5"/>
+                        <rect x="7" y="13" width="4" height="4" fill="#E5E5E5"/>
+                        <rect x="13" y="13" width="4" height="4" fill="#E5E5E5"/>
                       </svg>
                     </div>
                     <div className="ml-4">
                       <h4 className="text-xl font-medium">Difficulty</h4>
-                      <p className="text-green-500">{plant.care.difficulty}</p>
+                      <p className="text-[#034AFF]">{plant.care.difficulty}</p>
                     </div>
                   </div>
                   <ChevronRight className="text-gray-400" />
                 </div>
                 
-                <div className="flex items-center justify-between bg-[#2A2C36] p-4 rounded-lg">
+                <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg">
                   <div className="flex items-center">
                     <div className="w-12 flex justify-center">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -226,13 +226,13 @@ const PlantDetailPage = () => {
                     </div>
                     <div className="ml-4">
                       <h4 className="text-xl font-medium">Water</h4>
-                      <p className="text-green-500">{plant.care.water}</p>
+                      <p className="text-[#034AFF]">{plant.care.water}</p>
                     </div>
                   </div>
                   <ChevronRight className="text-gray-400" />
                 </div>
                 
-                <div className="flex items-center justify-between bg-[#2A2C36] p-4 rounded-lg">
+                <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg">
                   <div className="flex items-center">
                     <div className="w-12 flex justify-center">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -242,7 +242,7 @@ const PlantDetailPage = () => {
                     </div>
                     <div className="ml-4">
                       <h4 className="text-xl font-medium">Fertilize</h4>
-                      <p className="text-green-500">{plant.care.fertilize}</p>
+                      <p className="text-[#034AFF]">{plant.care.fertilize}</p>
                     </div>
                   </div>
                   <ChevronRight className="text-gray-400" />
@@ -250,31 +250,31 @@ const PlantDetailPage = () => {
               </div>
               
               <div className="grid grid-cols-2 gap-3 mt-4">
-                <div className="flex items-center justify-between bg-[#2A2C36] p-4 rounded-lg">
+                <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg">
                   <div className="flex items-center">
                     <div className="w-12 flex justify-center">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M6 7H18M6 12H18M6 17H18" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M6 7H18M6 12H18M6 17H18" stroke="#696974" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
                     </div>
                     <div className="ml-2">
                       <h4 className="text-xl font-medium">Prune</h4>
-                      <p className="text-green-500">{plant.care.prune}</p>
+                      <p className="text-[#034AFF]">{plant.care.prune}</p>
                     </div>
                   </div>
                   <ChevronRight className="text-gray-400" />
                 </div>
                 
-                <div className="flex items-center justify-between bg-[#2A2C36] p-4 rounded-lg">
+                <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg">
                   <div className="flex items-center">
                     <div className="w-12 flex justify-center">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M8 21H16M12 21V11M12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7C16 9.20914 14.2091 11 12 11Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M8 21H16M12 21V11M12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7C16 9.20914 14.2091 11 12 11Z" stroke="#696974" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
                     </div>
                     <div className="ml-2">
                       <h4 className="text-xl font-medium">Repot</h4>
-                      <p className="text-green-500">{plant.care.repot}</p>
+                      <p className="text-[#034AFF]">{plant.care.repot}</p>
                     </div>
                   </div>
                   <ChevronRight className="text-gray-400" />
@@ -288,7 +288,7 @@ const PlantDetailPage = () => {
             <h3 className="text-3xl font-bold mb-6">Plant requirements</h3>
             
             <div className="grid grid-cols-2 gap-3 mb-4">
-              <div className="flex items-center justify-between bg-[#2A2C36] p-4 rounded-lg">
+              <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg">
                 <div className="flex items-center">
                   <div className="w-12 flex justify-center">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -304,7 +304,7 @@ const PlantDetailPage = () => {
                 <ChevronRight className="text-gray-400" />
               </div>
               
-              <div className="flex items-center justify-between bg-[#2A2C36] p-4 rounded-lg">
+              <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg">
                 <div className="flex items-center">
                   <div className="w-12 flex justify-center">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -321,7 +321,7 @@ const PlantDetailPage = () => {
             </div>
             
             <div className="space-y-4">
-              <div className="flex items-center justify-between bg-[#2A2C36] p-4 rounded-lg">
+              <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg">
                 <div className="flex items-center">
                   <div className="w-12 flex justify-center">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -331,13 +331,13 @@ const PlantDetailPage = () => {
                   </div>
                   <div className="ml-4">
                     <h4 className="text-xl font-medium">Lighting</h4>
-                    <p className="text-green-500">{plant.requirements.lighting}</p>
+                    <p className="text-[#034AFF]">{plant.requirements.lighting}</p>
                   </div>
                 </div>
                 <ChevronRight className="text-gray-400" />
               </div>
               
-              <div className="flex items-center justify-between bg-[#2A2C36] p-4 rounded-lg">
+              <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg">
                 <div className="flex items-center">
                   <div className="w-12 flex justify-center">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -346,13 +346,13 @@ const PlantDetailPage = () => {
                   </div>
                   <div className="ml-4">
                     <h4 className="text-xl font-medium">Humidity</h4>
-                    <p className="text-green-500">{plant.requirements.humidity}</p>
+                    <p className="text-[#034AFF]">{plant.requirements.humidity}</p>
                   </div>
                 </div>
                 <ChevronRight className="text-gray-400" />
               </div>
               
-              <div className="flex items-center justify-between bg-[#2A2C36] p-4 rounded-lg">
+              <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg">
                 <div className="flex items-center">
                   <div className="w-12 flex justify-center">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -362,13 +362,13 @@ const PlantDetailPage = () => {
                   </div>
                   <div className="ml-4">
                     <h4 className="text-xl font-medium">Hardiness zone</h4>
-                    <p className="text-green-500">{plant.requirements.hardiness}</p>
+                    <p className="text-[#034AFF]">{plant.requirements.hardiness}</p>
                   </div>
                 </div>
                 <ChevronRight className="text-gray-400" />
               </div>
               
-              <div className="flex items-center justify-between bg-[#2A2C36] p-4 rounded-lg">
+              <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg">
                 <div className="flex items-center">
                   <div className="w-12 flex justify-center">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -379,7 +379,7 @@ const PlantDetailPage = () => {
                   </div>
                   <div className="ml-4">
                     <h4 className="text-xl font-medium">Temperature</h4>
-                    <p className="text-green-500">{plant.requirements.temperature}</p>
+                    <p className="text-[#034AFF]">{plant.requirements.temperature}</p>
                   </div>
                 </div>
                 <ChevronRight className="text-gray-400" />
@@ -394,7 +394,7 @@ const PlantDetailPage = () => {
           
           <Accordion type="single" collapsible className="space-y-4">
             <AccordionItem value="description" className="border-none">
-              <AccordionTrigger className="flex items-center bg-[#2A2C36] p-4 rounded-lg hover:no-underline">
+              <AccordionTrigger className="flex items-center bg-gray-100 p-4 rounded-lg hover:no-underline">
                 <div className="flex items-center">
                   <div className="bg-amber-200 p-2 rounded mr-4">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -404,7 +404,7 @@ const PlantDetailPage = () => {
                   <span className="text-xl font-medium">Description</span>
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="pt-4 px-1 text-gray-200">
+              <AccordionContent className="pt-4 px-1 text-gray-700">
                 {plant.description.map((paragraph, index) => (
                   <p key={index} className="mb-4">{paragraph}</p>
                 ))}
@@ -412,7 +412,7 @@ const PlantDetailPage = () => {
             </AccordionItem>
             
             <AccordionItem value="propagation" className="border-none">
-              <AccordionTrigger className="flex items-center bg-[#2A2C36] p-4 rounded-lg hover:no-underline">
+              <AccordionTrigger className="flex items-center bg-gray-100 p-4 rounded-lg hover:no-underline">
                 <div className="flex items-center">
                   <div className="bg-blue-200 p-2 rounded mr-4">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -437,7 +437,7 @@ const PlantDetailPage = () => {
             </AccordionItem>
             
             <AccordionItem value="funFact" className="border-none">
-              <AccordionTrigger className="flex items-center bg-[#2A2C36] p-4 rounded-lg hover:no-underline">
+              <AccordionTrigger className="flex items-center bg-gray-100 p-4 rounded-lg hover:no-underline">
                 <div className="flex items-center">
                   <div className="bg-yellow-200 p-2 rounded mr-4">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -459,19 +459,19 @@ const PlantDetailPage = () => {
         
         {/* Feedback Section */}
         <div className="mt-10 py-4">
-          <Separator className="bg-gray-700 mb-6" />
+          <Separator className="bg-gray-200 mb-6" />
           <div className="text-center mb-6">
             <p className="text-xl">Was this information helpful?</p>
           </div>
           <div className="flex justify-center gap-8">
             <button 
-              className={`w-16 h-16 rounded-full flex items-center justify-center ${isHelpful === false ? 'bg-red-500' : 'bg-[#2A2C36]'}`}
+              className={`w-16 h-16 rounded-full flex items-center justify-center ${isHelpful === false ? 'bg-red-500 text-white' : 'bg-gray-100 text-gray-600'}`}
               onClick={() => setIsHelpful(false)}
             >
               <ThumbsDown className="h-8 w-8" />
             </button>
             <button 
-              className={`w-16 h-16 rounded-full flex items-center justify-center ${isHelpful === true ? 'bg-green-500' : 'bg-[#2A2C36]'}`}
+              className={`w-16 h-16 rounded-full flex items-center justify-center ${isHelpful === true ? 'bg-[#034AFF] text-white' : 'bg-gray-100 text-gray-600'}`}
               onClick={() => setIsHelpful(true)}
             >
               <ThumbsUp className="h-8 w-8" />
@@ -484,3 +484,4 @@ const PlantDetailPage = () => {
 };
 
 export default PlantDetailPage;
+
