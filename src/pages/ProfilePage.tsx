@@ -398,17 +398,17 @@ const ProfilePage = () => {
         <h3 className="text-base font-semibold mb-3">Content</h3>
         
         <ProfileMenuItem 
+          icon={<BookOpen className="h-5 w-5 text-wayscanner-blue" />} 
+          title="Blog and Articles" 
+          description="Browse related blog and articles"
+          onClick={() => handleMenuItemClick("Blogs")}
+        />
+        
+        <ProfileMenuItem 
           icon={<Bookmark className="h-5 w-5 text-wayscanner-blue" />} 
           title="Bookmarks" 
           description="Your saved content"
           onClick={() => handleMenuItemClick("Bookmarks")}
-        />
-        
-        <ProfileMenuItem 
-          icon={<BookOpen className="h-5 w-5 text-wayscanner-blue" />} 
-          title="Blogs and Post" 
-          description="Your blog posts and articles"
-          onClick={() => handleMenuItemClick("Blogs")}
         />
         
         <ProfileMenuItem 
