@@ -45,6 +45,8 @@ import SellerDashboardSettingsPage from "./pages/SellerDashboardSettingsPage";
 import StoreFrontPage from "./pages/StoreFrontPage";
 import MessagesPage from "./pages/MessagesPage";
 import PlantDetailPage from "./pages/PlantDetailPage";
+import BlogsPage from "./pages/BlogsPage";
+import BlogDetailPage from "./pages/BlogDetailPage";
 
 const queryClient = new QueryClient();
 
@@ -96,6 +98,8 @@ function App() {
               <Route path="/seller-dashboard/settings" element={<SellerDashboardSettingsPage />} />
               <Route path="/store/:storeId" element={<StoreFrontPage />} />
               <Route path="/profile/messages" element={<MessagesPage />} />
+              <Route path="/blogs" element={<BlogsPage />} />
+              <Route path="/blogs/:blogId" element={<BlogDetailPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

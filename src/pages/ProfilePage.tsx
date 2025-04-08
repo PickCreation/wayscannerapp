@@ -221,6 +221,11 @@ const ProfilePage = () => {
       return;
     }
     
+    if (item === "Blogs") {
+      navigate("/blogs");
+      return;
+    }
+    
     toast({
       title: "Coming Soon",
       description: `The ${item} feature is under development.`,
