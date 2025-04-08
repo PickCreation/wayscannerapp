@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Package, Calendar, ChevronRight, ExternalLink, Search } from "lucide-react";
+import { ArrowLeft, Package, Calendar, ChevronRight, ExternalLink, Search, Clock, CheckCircle, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Progress } from "@/components/ui/progress";
 
 interface Order {
   id: string;
@@ -24,6 +25,9 @@ interface Order {
     price: number;
     image: string;
   }[];
+  isPaid: boolean;
+  shippingDeadline: string;
+  escrowStatus: "held" | "released" | "refunded";
 }
 
 const sampleOrders: Order[] = [
@@ -48,7 +52,10 @@ const sampleOrders: Order[] = [
         price: 79.99,
         image: "/placeholder.svg"
       }
-    ]
+    ],
+    isPaid: true,
+    shippingDeadline: "2025-04-06",
+    escrowStatus: "released"
   },
   {
     id: "2",
@@ -71,7 +78,10 @@ const sampleOrders: Order[] = [
         price: 34.99,
         image: "/placeholder.svg"
       }
-    ]
+    ],
+    isPaid: true,
+    shippingDeadline: "2025-03-20",
+    escrowStatus: "held"
   },
   {
     id: "3",
@@ -87,7 +97,10 @@ const sampleOrders: Order[] = [
         price: 199.99,
         image: "/placeholder.svg"
       }
-    ]
+    ],
+    isPaid: true,
+    shippingDeadline: "2025-03-05",
+    escrowStatus: "released"
   },
   {
     id: "4",
@@ -103,7 +116,10 @@ const sampleOrders: Order[] = [
         price: 89.99,
         image: "/placeholder.svg"
       }
-    ]
+    ],
+    isPaid: true,
+    shippingDeadline: "2025-02-20",
+    escrowStatus: "held"
   }
 ];
 
@@ -182,6 +198,69 @@ const OrdersPage = () => {
       day: 'numeric'
     }).format(date);
   };
+  
+  const getShippingDeadlineStatus = (order: Order) => {
+    // If already shipped or delivered, no need to show deadline
+    if (order.status === "shipped" || order.status === "delivered") {
+      return null;
+    }
+    
+    const deadlineDate = new Date(order.shippingDeadline);
+    const currentDate = new Date();
+    const diffTime = deadlineDate.getTime() - currentDate.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays < 0) {
+      return {
+        label: "Shipping overdue",
+        color: "text-red-600",
+        progress: 100
+      };
+    } else if (diffDays === 0) {
+      return {
+        label: "Shipping due today",
+        color: "text-orange-600",
+        progress: 80
+      };
+    } else if (diffDays <= 2) {
+      return {
+        label: `${diffDays} day${diffDays !== 1 ? 's' : ''} until shipping deadline`,
+        color: "text-orange-600",
+        progress: 60
+      };
+    } else {
+      return {
+        label: `Seller has ${diffDays} days to ship`,
+        color: "text-blue-600",
+        progress: 30
+      };
+    }
+  };
+  
+  const getEscrowStatus = (order: Order) => {
+    switch (order.escrowStatus) {
+      case "held":
+        return {
+          label: "Payment in escrow",
+          description: "Will be released to seller after shipping",
+          icon: <Clock className="h-4 w-4 text-blue-500" />
+        };
+      case "released":
+        return {
+          label: "Payment released to seller",
+          description: "Transaction complete",
+          icon: <CheckCircle className="h-4 w-4 text-green-500" />
+        };
+      case "refunded":
+        return {
+          label: "Payment refunded",
+          description: "Transaction cancelled",
+          icon: <ArrowLeft className="h-4 w-4 text-red-500" />
+        };
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -257,6 +336,35 @@ const OrdersPage = () => {
                     ))}
 
                     <Separator className="my-3" />
+                    
+                    {/* Shipping Deadline Section */}
+                    {getShippingDeadlineStatus(order) && (
+                      <div className="mb-3 bg-gray-50 p-3 rounded-md">
+                        <div className="flex items-center mb-1">
+                          <Truck className="h-4 w-4 mr-1" />
+                          <p className={`text-xs font-medium ${getShippingDeadlineStatus(order)?.color}`}>
+                            {getShippingDeadlineStatus(order)?.label}
+                          </p>
+                        </div>
+                        <Progress 
+                          value={getShippingDeadlineStatus(order)?.progress} 
+                          className="h-1.5" 
+                        />
+                      </div>
+                    )}
+                    
+                    {/* Escrow Status Section */}
+                    {getEscrowStatus(order) && (
+                      <div className="mb-3 bg-gray-50 p-3 rounded-md">
+                        <div className="flex items-center">
+                          {getEscrowStatus(order)?.icon}
+                          <div className="ml-2">
+                            <p className="text-xs font-medium">{getEscrowStatus(order)?.label}</p>
+                            <p className="text-xs text-gray-500">{getEscrowStatus(order)?.description}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                     <div className="flex justify-between items-center">
                       <p className="font-semibold">Total: ${order.total.toFixed(2)}</p>

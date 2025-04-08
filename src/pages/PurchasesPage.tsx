@@ -1,13 +1,14 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Package, Calendar, ChevronRight, ExternalLink } from "lucide-react";
+import { ArrowLeft, Package, Calendar, ChevronRight, ExternalLink, Clock, CheckCircle, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Progress } from "@/components/ui/progress";
 
 interface Purchase {
   id: string;
@@ -22,6 +23,9 @@ interface Purchase {
     price: number;
     image: string;
   }[];
+  isPaid: boolean;
+  shippingDeadline: string;
+  escrowStatus: "held" | "released" | "refunded";
 }
 
 const samplePurchases: Purchase[] = [
@@ -46,7 +50,10 @@ const samplePurchases: Purchase[] = [
         price: 79.99,
         image: "/placeholder.svg"
       }
-    ]
+    ],
+    isPaid: true,
+    shippingDeadline: "2025-04-06",
+    escrowStatus: "released"
   },
   {
     id: "2",
@@ -69,7 +76,10 @@ const samplePurchases: Purchase[] = [
         price: 34.99,
         image: "/placeholder.svg"
       }
-    ]
+    ],
+    isPaid: true,
+    shippingDeadline: "2025-03-20",
+    escrowStatus: "held"
   },
   {
     id: "3",
@@ -85,7 +95,10 @@ const samplePurchases: Purchase[] = [
         price: 199.99,
         image: "/placeholder.svg"
       }
-    ]
+    ],
+    isPaid: true,
+    shippingDeadline: "2025-03-05",
+    escrowStatus: "released"
   }
 ];
 
@@ -141,6 +154,69 @@ const PurchasesPage = () => {
       month: 'short',
       day: 'numeric'
     }).format(date);
+  };
+  
+  const getShippingDeadlineStatus = (purchase: Purchase) => {
+    // If already shipped or delivered, no need to show deadline
+    if (purchase.status === "shipped" || purchase.status === "delivered") {
+      return null;
+    }
+    
+    const deadlineDate = new Date(purchase.shippingDeadline);
+    const currentDate = new Date();
+    const diffTime = deadlineDate.getTime() - currentDate.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays < 0) {
+      return {
+        label: "Shipping overdue",
+        color: "text-red-600",
+        progress: 100
+      };
+    } else if (diffDays === 0) {
+      return {
+        label: "Shipping due today",
+        color: "text-orange-600",
+        progress: 80
+      };
+    } else if (diffDays <= 2) {
+      return {
+        label: `${diffDays} day${diffDays !== 1 ? 's' : ''} until shipping deadline`,
+        color: "text-orange-600",
+        progress: 60
+      };
+    } else {
+      return {
+        label: `Seller has ${diffDays} days to ship`,
+        color: "text-blue-600",
+        progress: 30
+      };
+    }
+  };
+  
+  const getEscrowStatus = (purchase: Purchase) => {
+    switch (purchase.escrowStatus) {
+      case "held":
+        return {
+          label: "Payment in escrow",
+          description: "Will be released to seller after shipping",
+          icon: <Clock className="h-4 w-4 text-blue-500" />
+        };
+      case "released":
+        return {
+          label: "Payment released to seller",
+          description: "Transaction complete",
+          icon: <CheckCircle className="h-4 w-4 text-green-500" />
+        };
+      case "refunded":
+        return {
+          label: "Payment refunded",
+          description: "Transaction cancelled",
+          icon: <ArrowLeft className="h-4 w-4 text-red-500" />
+        };
+      default:
+        return null;
+    }
   };
 
   return (
@@ -207,6 +283,35 @@ const PurchasesPage = () => {
                     ))}
 
                     <Separator className="my-3" />
+                    
+                    {/* Shipping Deadline Section */}
+                    {getShippingDeadlineStatus(purchase) && (
+                      <div className="mb-3 bg-gray-50 p-3 rounded-md">
+                        <div className="flex items-center mb-1">
+                          <Truck className="h-4 w-4 mr-1" />
+                          <p className={`text-xs font-medium ${getShippingDeadlineStatus(purchase)?.color}`}>
+                            {getShippingDeadlineStatus(purchase)?.label}
+                          </p>
+                        </div>
+                        <Progress 
+                          value={getShippingDeadlineStatus(purchase)?.progress} 
+                          className="h-1.5" 
+                        />
+                      </div>
+                    )}
+                    
+                    {/* Escrow Status Section */}
+                    {getEscrowStatus(purchase) && (
+                      <div className="mb-3 bg-gray-50 p-3 rounded-md">
+                        <div className="flex items-center">
+                          {getEscrowStatus(purchase)?.icon}
+                          <div className="ml-2">
+                            <p className="text-xs font-medium">{getEscrowStatus(purchase)?.label}</p>
+                            <p className="text-xs text-gray-500">{getEscrowStatus(purchase)?.description}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                     <div className="flex justify-between items-center">
                       <p className="font-semibold">Total: ${purchase.total.toFixed(2)}</p>

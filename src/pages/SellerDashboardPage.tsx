@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -15,7 +14,10 @@ import {
   ChevronRight,
   Bell,
   Trash2,
-  Eye
+  Eye,
+  DollarSign,
+  AlertTriangle,
+  Clock
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -74,6 +76,56 @@ const SellerDashboardPage = () => {
     salesCount: 0,
     reviewCount: 0
   });
+  const [escrowBalance, setEscrowBalance] = useState({
+    pendingBalance: 450,
+    availableBalance: 793
+  });
+  const [orders, setOrders] = useState([
+    {
+      id: "2345",
+      orderNumber: "WS-2345",
+      product: "Eco-friendly Water Bottle",
+      customer: "Sarah Johnson",
+      date: new Date("2025-04-06"),
+      status: "Processing",
+      amount: 24.99,
+      shippingDeadline: new Date(new Date("2025-04-06").getTime() + (5 * 24 * 60 * 60 * 1000)),
+      isPastDeadline: false
+    },
+    {
+      id: "2344",
+      orderNumber: "WS-2344",
+      product: "Bamboo Cutlery Set",
+      customer: "Michael Chen",
+      date: new Date("2025-04-05"),
+      status: "Shipped",
+      amount: 19.99,
+      shippingDeadline: new Date(new Date("2025-04-05").getTime() + (5 * 24 * 60 * 60 * 1000)),
+      isPastDeadline: false
+    },
+    {
+      id: "2343",
+      orderNumber: "WS-2343",
+      product: "Reusable Grocery Bags (3pk)",
+      customer: "Emily Wilson",
+      date: new Date("2025-04-03"),
+      status: "Delivered",
+      amount: 15.99,
+      shippingDeadline: new Date(new Date("2025-04-03").getTime() + (5 * 24 * 60 * 60 * 1000)),
+      isPastDeadline: false
+    },
+    {
+      id: "2342",
+      orderNumber: "WS-2342",
+      product: "Solar-Powered Charger",
+      customer: "James Thompson",
+      date: new Date("2025-04-02"),
+      status: "Delivered",
+      amount: 45.99,
+      shippingDeadline: new Date(new Date("2025-04-02").getTime() + (5 * 24 * 60 * 60 * 1000)),
+      isPastDeadline: false
+    }
+  ]);
   
   const currentDate = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
@@ -150,7 +202,28 @@ const SellerDashboardPage = () => {
         localStorage.setItem('userProfileStats', JSON.stringify(userProfileStats));
       }
     }
-  }, [isAuthenticated, navigate, toast, user, shopSettings]);
+    
+    // Check for shipping deadlines
+    const updatedOrders = orders.map(order => {
+      const now = new Date();
+      const isPastDeadline = order.status === "Processing" && now > order.shippingDeadline;
+      return { ...order, isPastDeadline };
+    });
+    setOrders(updatedOrders);
+    
+    // Load escrow balance data
+    const savedEscrowBalance = localStorage.getItem('escrowBalance');
+    if (savedEscrowBalance) {
+      setEscrowBalance(JSON.parse(savedEscrowBalance));
+    } else {
+      // Initialize with default values if not found
+      const defaultBalance = {
+        pendingBalance: 450,
+        availableBalance: 793
+      };
+      localStorage.setItem('escrowBalance', JSON.stringify(defaultBalance));
+    }
+  }, [isAuthenticated, navigate, toast, user, shopSettings, orders]);
 
   const handleBackClick = () => {
     navigate("/profile");
@@ -205,6 +278,56 @@ const SellerDashboardPage = () => {
     }
   };
 
+  const handleWithdrawFunds = () => {
+    const paymentMethod = JSON.parse(localStorage.getItem('sellerPaymentMethod') || '{"method": "bank"}');
+    
+    if (escrowBalance.availableBalance <= 0) {
+      toast({
+        title: "No funds to withdraw",
+        description: "You don't have any available balance to withdraw.",
+      });
+      return;
+    }
+    
+    toast({
+      title: "Withdrawal Initiated",
+      description: `$${escrowBalance.availableBalance.toFixed(2)} will be sent to your ${paymentMethod.method} account within 1-3 business days.`,
+    });
+    
+    // Reset available balance after withdrawal
+    const newBalance = {
+      pendingBalance: escrowBalance.pendingBalance,
+      availableBalance: 0
+    };
+    setEscrowBalance(newBalance);
+    localStorage.setItem('escrowBalance', JSON.stringify(newBalance));
+  };
+
+  const handleShipOrder = (orderId: string) => {
+    const updatedOrders = orders.map(order => 
+      order.id === orderId 
+        ? { ...order, status: "Shipped", isPastDeadline: false } 
+        : order
+    );
+    setOrders(updatedOrders);
+    
+    // When an order is shipped, move part of its value from pending to available
+    const shippedOrder = orders.find(order => order.id === orderId);
+    if (shippedOrder) {
+      const newBalance = {
+        pendingBalance: Math.max(0, escrowBalance.pendingBalance - shippedOrder.amount),
+        availableBalance: escrowBalance.availableBalance + shippedOrder.amount
+      };
+      setEscrowBalance(newBalance);
+      localStorage.setItem('escrowBalance', JSON.stringify(newBalance));
+    }
+    
+    toast({
+      title: "Order Shipped",
+      description: `Order #${orderId} has been marked as shipped.`,
+    });
+  };
+
   const handleAddDemoSale = () => {
     setSalesData(prev => ({
       ...prev,
@@ -234,6 +357,31 @@ const SellerDashboardPage = () => {
       userProfileStats[user.id].sales = (userProfileStats[user.id].sales || 0) + 1;
       localStorage.setItem('userProfileStats', JSON.stringify(userProfileStats));
     }
+    
+    // Add new order
+    const newOrderId = String(2345 + orders.length);
+    const orderAmount = Math.floor(Math.random() * 30) + 10;
+    const newOrder = {
+      id: newOrderId,
+      orderNumber: `WS-${newOrderId}`,
+      product: "New Demo Product",
+      customer: "Demo Customer",
+      date: new Date(),
+      status: "Processing",
+      amount: orderAmount,
+      shippingDeadline: new Date(new Date().getTime() + (5 * 24 * 60 * 60 * 1000)),
+      isPastDeadline: false
+    };
+    
+    setOrders([newOrder, ...orders]);
+    
+    // Update escrow balance
+    const newBalance = {
+      pendingBalance: escrowBalance.pendingBalance + orderAmount,
+      availableBalance: escrowBalance.availableBalance
+    };
+    setEscrowBalance(newBalance);
+    localStorage.setItem('escrowBalance', JSON.stringify(newBalance));
     
     toast({
       title: "New Sale!",
@@ -384,6 +532,8 @@ const SellerDashboardPage = () => {
               onAddDemoSale={handleAddDemoSale}
               onAddDemoReview={handleAddDemoReview}
               salesData={salesData}
+              escrowBalance={escrowBalance}
+              onWithdrawFunds={handleWithdrawFunds}
             />
           </TabsContent>
           
@@ -392,7 +542,7 @@ const SellerDashboardPage = () => {
           </TabsContent>
           
           <TabsContent value="orders" className="mt-4">
-            <OrdersTab />
+            <OrdersTab orders={orders} onShipOrder={handleShipOrder} />
           </TabsContent>
 
           <TabsContent value="messages" className="mt-4">
@@ -450,6 +600,11 @@ interface OverviewTabProps {
     salesCount: number;
     reviewCount: number;
   };
+  escrowBalance: {
+    pendingBalance: number;
+    availableBalance: number;
+  };
+  onWithdrawFunds: () => void;
 }
 
 const OverviewTab = ({ 
@@ -462,7 +617,9 @@ const OverviewTab = ({
   onViewAllMessages,
   onAddDemoSale,
   onAddDemoReview,
-  salesData
+  salesData,
+  escrowBalance,
+  onWithdrawFunds
 }: OverviewTabProps) => {
   const recentMessages = messages
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
@@ -504,6 +661,52 @@ const OverviewTab = ({
               Simulate Review
             </Button>
           </div>
+        </CardContent>
+      </Card>
+      
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="font-bold text-lg">Escrow Balance</h3>
+          </div>
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="border rounded-lg p-4 bg-yellow-50 flex flex-col">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Clock className="h-5 w-5 text-yellow-500 mr-2" />
+                  <h4 className="font-medium">Pending</h4>
+                </div>
+                <div className="text-yellow-500">
+                  <p className="text-lg font-bold">${escrowBalance.pendingBalance.toFixed(2)}</p>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                Funds held in escrow until orders are shipped
+              </p>
+            </div>
+            <div className="border rounded-lg p-4 bg-green-50 flex flex-col">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <DollarSign className="h-5 w-5 text-green-500 mr-2" />
+                  <h4 className="font-medium">Available</h4>
+                </div>
+                <div className="text-green-500">
+                  <p className="text-lg font-bold">${escrowBalance.availableBalance.toFixed(2)}</p>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                Ready to withdraw
+              </p>
+            </div>
+          </div>
+          <Button 
+            variant="default" 
+            className="w-full bg-wayscanner-blue" 
+            disabled={escrowBalance.availableBalance <= 0}
+            onClick={onWithdrawFunds}
+          >
+            Withdraw Funds
+          </Button>
         </CardContent>
       </Card>
       
@@ -638,232 +841,3 @@ const OverviewTab = ({
           </div>
         </CardContent>
       </Card>
-      
-      <Button 
-        className="w-full bg-wayscanner-blue" 
-        onClick={onAddNewProduct}
-      >
-        Add New Product
-      </Button>
-    </div>
-  );
-};
-
-interface ProductsTabProps {
-  products: any[];
-  onAddNewProduct: () => void;
-  onDeleteProduct: (id: string) => void;
-  onViewProduct: (id: string) => void;
-}
-
-const ProductsTab = ({ products, onAddNewProduct, onDeleteProduct, onViewProduct }: ProductsTabProps) => {
-  return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h3 className="font-bold text-lg">My Products ({products.length})</h3>
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="text-xs"
-          onClick={onAddNewProduct}
-        >
-          Add New
-        </Button>
-      </div>
-      
-      <div className="space-y-3">
-        {products.map((product) => (
-          <ProductItem
-            key={product.id}
-            id={product.id}
-            name={product.name}
-            price={product.price}
-            stock={product.stock}
-            image={product.image}
-            onDelete={onDeleteProduct}
-            onView={onViewProduct}
-          />
-        ))}
-      </div>
-      
-      {products.length === 0 && (
-        <div className="text-center py-8">
-          <p className="text-gray-500 mb-4">You don't have any products yet</p>
-          <Button onClick={onAddNewProduct}>Add Your First Product</Button>
-        </div>
-      )}
-    </div>
-  );
-};
-
-const OrdersTab = () => {
-  return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h3 className="font-bold text-lg">Recent Orders</h3>
-        <select className="text-xs border rounded p-1">
-          <option>All Orders</option>
-          <option>Processing</option>
-          <option>Shipped</option>
-          <option>Delivered</option>
-        </select>
-      </div>
-      
-      <div className="space-y-3">
-        <OrderItem
-          orderNumber="2345"
-          product="Eco-friendly Water Bottle"
-          customer="Sarah Johnson"
-          date="Apr 6, 2025"
-          status="Processing"
-          amount="$24.99"
-        />
-        <OrderItem
-          orderNumber="2344"
-          product="Bamboo Cutlery Set"
-          customer="Michael Chen"
-          date="Apr 5, 2025"
-          status="Shipped"
-          amount="$19.99"
-        />
-        <OrderItem
-          orderNumber="2343"
-          product="Reusable Grocery Bags (3pk)"
-          customer="Emily Wilson"
-          date="Apr 3, 2025"
-          status="Delivered"
-          amount="$15.99"
-        />
-        <OrderItem
-          orderNumber="2342"
-          product="Solar-Powered Charger"
-          customer="James Thompson"
-          date="Apr 2, 2025"
-          status="Delivered"
-          amount="$45.99"
-        />
-      </div>
-      
-      <Button variant="outline" className="w-full">
-        View All Orders
-      </Button>
-    </div>
-  );
-};
-
-interface MessagesTabProps {
-  messages: any[];
-  onViewAllMessages: () => void;
-}
-
-const MessagesTab = ({ messages, onViewAllMessages }: MessagesTabProps) => {
-  const navigate = useNavigate();
-  
-  useEffect(() => {
-    navigate("/profile/messages");
-  }, [navigate]);
-  
-  return (
-    <div className="text-center py-8">
-      <p className="text-gray-500 mb-4">Redirecting to messages page...</p>
-    </div>
-  );
-};
-
-interface ActivityItemProps {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  time: string;
-}
-
-const ActivityItem = ({ icon, title, description, time }: ActivityItemProps) => {
-  return (
-    <div className="flex items-start gap-3 pb-3 border-b border-gray-100">
-      <div className="bg-gray-100 p-2 rounded-full">
-        {icon}
-      </div>
-      <div className="flex-1">
-        <h4 className="font-medium">{title}</h4>
-        <p className="text-sm text-gray-500">{description}</p>
-      </div>
-      <span className="text-xs text-gray-400">{time}</span>
-    </div>
-  );
-};
-
-interface ProductItemProps {
-  id: string;
-  name: string;
-  price: string;
-  stock: number;
-  image: string;
-  onDelete: (id: string) => void;
-  onView: (id: string) => void;
-}
-
-const ProductItem = ({ id, name, price, stock, image, onDelete, onView }: ProductItemProps) => {
-  return (
-    <div className="flex items-center gap-3 p-3 border rounded-lg bg-white">
-      <img src={image} alt={name} className="w-12 h-12 object-cover rounded" />
-      <div className="flex-1">
-        <h4 className="font-medium">{name}</h4>
-        <p className="text-sm text-gray-500">
-          {price} • {stock} in stock
-        </p>
-      </div>
-      <div className="flex gap-2">
-        <button 
-          className="text-gray-500 hover:text-blue-500" 
-          onClick={() => onView(id)}
-        >
-          <Eye size={18} />
-        </button>
-        <button 
-          className="text-gray-500 hover:text-red-500" 
-          onClick={() => onDelete(id)}
-        >
-          <Trash2 size={18} />
-        </button>
-      </div>
-    </div>
-  );
-};
-
-interface OrderItemProps {
-  orderNumber: string;
-  product: string;
-  customer: string;
-  date: string;
-  status: "Processing" | "Shipped" | "Delivered";
-  amount: string;
-}
-
-const OrderItem = ({ orderNumber, product, customer, date, status, amount }: OrderItemProps) => {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Processing": return "bg-yellow-100 text-yellow-800";
-      case "Shipped": return "bg-blue-100 text-blue-800";
-      case "Delivered": return "bg-green-100 text-green-800";
-      default: return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  return (
-    <div className="p-3 border rounded-lg bg-white">
-      <div className="flex justify-between items-center mb-2">
-        <h4 className="font-medium">Order #{orderNumber}</h4>
-        <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(status)}`}>
-          {status}
-        </span>
-      </div>
-      <p className="text-sm">{product}</p>
-      <div className="flex justify-between items-center mt-2">
-        <p className="text-xs text-gray-500">{customer} • {date}</p>
-        <p className="font-medium">{amount}</p>
-      </div>
-    </div>
-  );
-};
-
-export default SellerDashboardPage;
