@@ -139,7 +139,7 @@ const PlantDetailPage = () => {
             </TabsList>
           </div>
           
-          {/* Description Tab Content */}
+          {/* Description Tab Content - Now includes all content */}
           <TabsContent value="description" className="mt-6 animate-in fade-in-50">
             <div className="space-y-6">
               <div>
@@ -176,221 +176,233 @@ const PlantDetailPage = () => {
                   ))}
                 </div>
               </div>
+
+              {/* Care section content moved here */}
+              <div className="mt-8">
+                <h3 className="text-3xl font-bold mb-4">Choose plant location</h3>
+                <div className="grid grid-cols-2 gap-3 mt-6 mb-8">
+                  <Button 
+                    variant={selectedLocation === 'indoor' ? 'default' : 'outline'}
+                    className={`py-4 px-6 rounded-full text-xl font-medium h-auto ${selectedLocation === 'indoor' ? 'bg-[#034AFF] text-white' : 'border-[#034AFF] text-[#034AFF]'}`}
+                    onClick={() => setSelectedLocation('indoor')}
+                  >
+                    Indoor
+                  </Button>
+                  <Button 
+                    variant={selectedLocation === 'outdoor' ? 'default' : 'outline'}
+                    className={`py-4 px-6 rounded-full text-xl font-medium h-auto ${selectedLocation === 'outdoor' ? 'bg-[#034AFF] text-white' : 'border-[#034AFF] text-[#034AFF]'}`}
+                    onClick={() => setSelectedLocation('outdoor')}
+                  >
+                    Outdoor
+                  </Button>
+                </div>
+                
+                <h3 className="text-3xl font-bold mb-6">Cares</h3>
+                
+                <div className="space-y-4">
+                  <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
+                    <div className="flex items-center">
+                      <div className="w-12 flex justify-center">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect x="4" y="4" width="16" height="16" rx="1.5" stroke="#696974" strokeWidth="1.5"/>
+                          <rect x="7" y="7" width="4" height="4" fill="#696974"/>
+                          <rect x="13" y="7" width="4" height="4" fill="#E5E5E5"/>
+                          <rect x="7" y="13" width="4" height="4" fill="#E5E5E5"/>
+                          <rect x="13" y="13" width="4" height="4" fill="#E5E5E5"/>
+                        </svg>
+                      </div>
+                      <div className="ml-4">
+                        <h4 className="text-xl font-medium">Difficulty</h4>
+                        <p className="text-[#034AFF]">{plant.care.difficulty}</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="text-gray-400" />
+                  </button>
+                  
+                  <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
+                    <div className="flex items-center">
+                      <div className="w-12 flex justify-center">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M12 22C16.4183 22 20 18.4183 20 14C20 10.5 17.4 7.26 12 2C6.6 7.26 4 10.5 4 14C4 18.4183 7.58172 22 12 22Z" stroke="#0EA5E9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
+                      <div className="ml-4">
+                        <h4 className="text-xl font-medium">Water</h4>
+                        <p className="text-[#034AFF]">{plant.care.water}</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="text-gray-400" />
+                  </button>
+                  
+                  <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
+                    <div className="flex items-center">
+                      <div className="w-12 flex justify-center">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <circle cx="12" cy="12" r="9" stroke="#0EA5E9" strokeWidth="2"/>
+                          <circle cx="12" cy="12" r="3" fill="#0EA5E9"/>
+                        </svg>
+                      </div>
+                      <div className="ml-4">
+                        <h4 className="text-xl font-medium">Fertilize</h4>
+                        <p className="text-[#034AFF]">{plant.care.fertilize}</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="text-gray-400" />
+                  </button>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3 mt-4">
+                  <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
+                    <div className="flex items-center">
+                      <div className="w-12 flex justify-center">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M6 7H18M6 12H18M6 17H18" stroke="#696974" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
+                      <div className="ml-2">
+                        <h4 className="text-xl font-medium">Prune</h4>
+                        <p className="text-[#034AFF]">{plant.care.prune}</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="text-gray-400" />
+                  </button>
+                  
+                  <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
+                    <div className="flex items-center">
+                      <div className="w-12 flex justify-center">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M8 21H16M12 21V11M12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7C16 9.20914 14.2091 11 12 11Z" stroke="#696974" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
+                      <div className="ml-2">
+                        <h4 className="text-xl font-medium">Repot</h4>
+                        <p className="text-[#034AFF]">{plant.care.repot}</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="text-gray-400" />
+                  </button>
+                </div>
+              </div>
+
+              {/* History section content moved here */}
+              <div className="mt-8">
+                <h3 className="text-3xl font-bold mb-6">Plant requirements</h3>
+                
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
+                    <div className="flex items-center">
+                      <div className="w-12 flex justify-center">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M12 10C12 8.89543 11.1046 8 10 8H6C4.89543 8 4 8.89543 4 10V19C4 20.1046 4.89543 21 6 21H10C11.1046 21 12 20.1046 12 19V10Z" fill="#FFC288"/>
+                          <path d="M20 18C20 19.1046 19.1046 20 18 20H14C12.8954 20 12 19.1046 12 18V10C12 8.89543 12.8954 8 14 8H18C19.1046 8 20 8.89543 20 10V18Z" fill="#FFC288"/>
+                          <path d="M13.3246 4.27679C12.8688 3.54691 11.1312 3.54691 10.6754 4.27679L9.25336 6.42198C9.09691 6.67087 9.26524 7 9.57853 7H14.4215C14.7348 7 14.9031 6.67087 14.7466 6.42198L13.3246 4.27679Z" fill="#FFC288"/>
+                        </svg>
+                      </div>
+                      <div className="ml-2">
+                        <h4 className="text-xl font-medium">Pot</h4>
+                        <p className="text-[#034AFF] text-sm">{plant.requirements.pot}</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="text-gray-400" />
+                  </button>
+                  
+                  <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
+                    <div className="flex items-center">
+                      <div className="w-12 flex justify-center">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect x="4" y="12" width="16" height="8" rx="1" fill="#D2B48C"/>
+                          <path d="M12 3L16 9H8L12 3Z" fill="#8BC34A"/>
+                        </svg>
+                      </div>
+                      <div className="ml-2">
+                        <h4 className="text-xl font-medium">Soil</h4>
+                        <p className="text-[#034AFF] text-sm">{plant.requirements.soil}</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="text-gray-400" />
+                  </button>
+                </div>
+                
+                <div className="space-y-4">
+                  <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
+                    <div className="flex items-center">
+                      <div className="w-12 flex justify-center">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <circle cx="12" cy="12" r="6" fill="#FDB813"/>
+                          <path d="M12 0V3M12 21V24M24 12H21M3 12H0M20.5 3.5L18.4 5.6M5.6 18.4L3.5 20.5M20.5 20.5L18.4 18.4M5.6 5.6L3.5 3.5" stroke="#FDB813" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
+                      <div className="ml-4">
+                        <h4 className="text-xl font-medium">Lighting</h4>
+                        <p className="text-[#034AFF]">{plant.requirements.lighting}</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="text-gray-400" />
+                  </button>
+                  
+                  <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
+                    <div className="flex items-center">
+                      <div className="w-12 flex justify-center">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M17 7L7 17M17 17L7 7" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
+                      <div className="ml-4">
+                        <h4 className="text-xl font-medium">Humidity</h4>
+                        <p className="text-[#034AFF]">{plant.requirements.humidity}</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="text-gray-400" />
+                  </button>
+                  
+                  <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
+                    <div className="flex items-center">
+                      <div className="w-12 flex justify-center">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M3 20.4V3.6C3 3.26863 3.26863 3 3.6 3H20.4C20.7314 3 21 3.26863 21 3.6V20.4C21 20.7314 20.7314 21 20.4 21H3.6C3.26863 21 3 20.7314 3 20.4Z" fill="#3B82F6"/>
+                          <path d="M14 16.5V11.5H16V16.5H14ZM11 16.5V7.5H13V16.5H11ZM8 16.5V13.5H10V16.5H8Z" fill="white"/>
+                        </svg>
+                      </div>
+                      <div className="ml-4">
+                        <h4 className="text-xl font-medium">Hardiness zone</h4>
+                        <p className="text-[#034AFF]">{plant.requirements.hardiness}</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="text-gray-400" />
+                  </button>
+                  
+                  <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
+                    <div className="flex items-center">
+                      <div className="w-12 flex justify-center">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect x="7" y="3" width="3" height="18" rx="1.5" fill="#CBD5E1"/>
+                          <rect x="7" y="6" width="3" height="8" rx="1.5" fill="#EF4444"/>
+                          <circle cx="8.5" cy="18.5" r="2.5" fill="#EF4444"/>
+                        </svg>
+                      </div>
+                      <div className="ml-4">
+                        <h4 className="text-xl font-medium">Temperature</h4>
+                        <p className="text-[#034AFF]">{plant.requirements.temperature}</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="text-gray-400" />
+                  </button>
+                </div>
+              </div>
             </div>
           </TabsContent>
           
-          {/* Care Tab Content - Improved formatting */}
+          {/* Care Tab Content - Now empty */}
           <TabsContent value="care" className="mt-6 animate-in fade-in-50">
-            <div>
-              <h3 className="text-3xl font-bold mb-4">Choose plant location</h3>
-              <div className="grid grid-cols-2 gap-3 mt-6 mb-8">
-                <Button 
-                  variant={selectedLocation === 'indoor' ? 'default' : 'outline'}
-                  className={`py-4 px-6 rounded-full text-xl font-medium h-auto ${selectedLocation === 'indoor' ? 'bg-[#034AFF] text-white' : 'border-[#034AFF] text-[#034AFF]'}`}
-                  onClick={() => setSelectedLocation('indoor')}
-                >
-                  Indoor
-                </Button>
-                <Button 
-                  variant={selectedLocation === 'outdoor' ? 'default' : 'outline'}
-                  className={`py-4 px-6 rounded-full text-xl font-medium h-auto ${selectedLocation === 'outdoor' ? 'bg-[#034AFF] text-white' : 'border-[#034AFF] text-[#034AFF]'}`}
-                  onClick={() => setSelectedLocation('outdoor')}
-                >
-                  Outdoor
-                </Button>
-              </div>
-              
-              <h3 className="text-3xl font-bold mb-6">Cares</h3>
-              
-              <div className="space-y-4">
-                <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
-                  <div className="flex items-center">
-                    <div className="w-12 flex justify-center">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="4" y="4" width="16" height="16" rx="1.5" stroke="#696974" strokeWidth="1.5"/>
-                        <rect x="7" y="7" width="4" height="4" fill="#696974"/>
-                        <rect x="13" y="7" width="4" height="4" fill="#E5E5E5"/>
-                        <rect x="7" y="13" width="4" height="4" fill="#E5E5E5"/>
-                        <rect x="13" y="13" width="4" height="4" fill="#E5E5E5"/>
-                      </svg>
-                    </div>
-                    <div className="ml-4">
-                      <h4 className="text-xl font-medium">Difficulty</h4>
-                      <p className="text-[#034AFF]">{plant.care.difficulty}</p>
-                    </div>
-                  </div>
-                  <ChevronRight className="text-gray-400" />
-                </button>
-                
-                <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
-                  <div className="flex items-center">
-                    <div className="w-12 flex justify-center">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 22C16.4183 22 20 18.4183 20 14C20 10.5 17.4 7.26 12 2C6.6 7.26 4 10.5 4 14C4 18.4183 7.58172 22 12 22Z" stroke="#0EA5E9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </div>
-                    <div className="ml-4">
-                      <h4 className="text-xl font-medium">Water</h4>
-                      <p className="text-[#034AFF]">{plant.care.water}</p>
-                    </div>
-                  </div>
-                  <ChevronRight className="text-gray-400" />
-                </button>
-                
-                <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
-                  <div className="flex items-center">
-                    <div className="w-12 flex justify-center">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="12" r="9" stroke="#0EA5E9" strokeWidth="2"/>
-                        <circle cx="12" cy="12" r="3" fill="#0EA5E9"/>
-                      </svg>
-                    </div>
-                    <div className="ml-4">
-                      <h4 className="text-xl font-medium">Fertilize</h4>
-                      <p className="text-[#034AFF]">{plant.care.fertilize}</p>
-                    </div>
-                  </div>
-                  <ChevronRight className="text-gray-400" />
-                </button>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-3 mt-4">
-                <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
-                  <div className="flex items-center">
-                    <div className="w-12 flex justify-center">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M6 7H18M6 12H18M6 17H18" stroke="#696974" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </div>
-                    <div className="ml-2">
-                      <h4 className="text-xl font-medium">Prune</h4>
-                      <p className="text-[#034AFF]">{plant.care.prune}</p>
-                    </div>
-                  </div>
-                  <ChevronRight className="text-gray-400" />
-                </button>
-                
-                <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
-                  <div className="flex items-center">
-                    <div className="w-12 flex justify-center">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M8 21H16M12 21V11M12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7C16 9.20914 14.2091 11 12 11Z" stroke="#696974" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </div>
-                    <div className="ml-2">
-                      <h4 className="text-xl font-medium">Repot</h4>
-                      <p className="text-[#034AFF]">{plant.care.repot}</p>
-                    </div>
-                  </div>
-                  <ChevronRight className="text-gray-400" />
-                </button>
-              </div>
+            <div className="flex justify-center items-center py-16">
+              <p className="text-gray-400 text-lg">No content in this tab. Please check the Description tab.</p>
             </div>
           </TabsContent>
           
-          {/* History Tab Content - Improved formatting */}
+          {/* History Tab Content - Now empty */}
           <TabsContent value="history" className="mt-6 animate-in fade-in-50">
-            <h3 className="text-3xl font-bold mb-6">Plant requirements</h3>
-            
-            <div className="grid grid-cols-2 gap-3 mb-4">
-              <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
-                <div className="flex items-center">
-                  <div className="w-12 flex justify-center">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M12 10C12 8.89543 11.1046 8 10 8H6C4.89543 8 4 8.89543 4 10V19C4 20.1046 4.89543 21 6 21H10C11.1046 21 12 20.1046 12 19V10Z" fill="#FFC288"/>
-                      <path d="M20 18C20 19.1046 19.1046 20 18 20H14C12.8954 20 12 19.1046 12 18V10C12 8.89543 12.8954 8 14 8H18C19.1046 8 20 8.89543 20 10V18Z" fill="#FFC288"/>
-                      <path d="M13.3246 4.27679C12.8688 3.54691 11.1312 3.54691 10.6754 4.27679L9.25336 6.42198C9.09691 6.67087 9.26524 7 9.57853 7H14.4215C14.7348 7 14.9031 6.67087 14.7466 6.42198L13.3246 4.27679Z" fill="#FFC288"/>
-                    </svg>
-                  </div>
-                  <div className="ml-2">
-                    <h4 className="text-xl font-medium">Pot</h4>
-                    <p className="text-[#034AFF] text-sm">{plant.requirements.pot}</p>
-                  </div>
-                </div>
-                <ChevronRight className="text-gray-400" />
-              </button>
-              
-              <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
-                <div className="flex items-center">
-                  <div className="w-12 flex justify-center">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <rect x="4" y="12" width="16" height="8" rx="1" fill="#D2B48C"/>
-                      <path d="M12 3L16 9H8L12 3Z" fill="#8BC34A"/>
-                    </svg>
-                  </div>
-                  <div className="ml-2">
-                    <h4 className="text-xl font-medium">Soil</h4>
-                    <p className="text-[#034AFF] text-sm">{plant.requirements.soil}</p>
-                  </div>
-                </div>
-                <ChevronRight className="text-gray-400" />
-              </button>
-            </div>
-            
-            <div className="space-y-4">
-              <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
-                <div className="flex items-center">
-                  <div className="w-12 flex justify-center">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <circle cx="12" cy="12" r="6" fill="#FDB813"/>
-                      <path d="M12 0V3M12 21V24M24 12H21M3 12H0M20.5 3.5L18.4 5.6M5.6 18.4L3.5 20.5M20.5 20.5L18.4 18.4M5.6 5.6L3.5 3.5" stroke="#FDB813" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                  <div className="ml-4">
-                    <h4 className="text-xl font-medium">Lighting</h4>
-                    <p className="text-[#034AFF]">{plant.requirements.lighting}</p>
-                  </div>
-                </div>
-                <ChevronRight className="text-gray-400" />
-              </button>
-              
-              <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
-                <div className="flex items-center">
-                  <div className="w-12 flex justify-center">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M17 7L7 17M17 17L7 7" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                  <div className="ml-4">
-                    <h4 className="text-xl font-medium">Humidity</h4>
-                    <p className="text-[#034AFF]">{plant.requirements.humidity}</p>
-                  </div>
-                </div>
-                <ChevronRight className="text-gray-400" />
-              </button>
-              
-              <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
-                <div className="flex items-center">
-                  <div className="w-12 flex justify-center">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M3 20.4V3.6C3 3.26863 3.26863 3 3.6 3H20.4C20.7314 3 21 3.26863 21 3.6V20.4C21 20.7314 20.7314 21 20.4 21H3.6C3.26863 21 3 20.7314 3 20.4Z" fill="#3B82F6"/>
-                      <path d="M14 16.5V11.5H16V16.5H14ZM11 16.5V7.5H13V16.5H11ZM8 16.5V13.5H10V16.5H8Z" fill="white"/>
-                    </svg>
-                  </div>
-                  <div className="ml-4">
-                    <h4 className="text-xl font-medium">Hardiness zone</h4>
-                    <p className="text-[#034AFF]">{plant.requirements.hardiness}</p>
-                  </div>
-                </div>
-                <ChevronRight className="text-gray-400" />
-              </button>
-              
-              <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
-                <div className="flex items-center">
-                  <div className="w-12 flex justify-center">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <rect x="7" y="3" width="3" height="18" rx="1.5" fill="#CBD5E1"/>
-                      <rect x="7" y="6" width="3" height="8" rx="1.5" fill="#EF4444"/>
-                      <circle cx="8.5" cy="18.5" r="2.5" fill="#EF4444"/>
-                    </svg>
-                  </div>
-                  <div className="ml-4">
-                    <h4 className="text-xl font-medium">Temperature</h4>
-                    <p className="text-[#034AFF]">{plant.requirements.temperature}</p>
-                  </div>
-                </div>
-                <ChevronRight className="text-gray-400" />
-              </button>
+            <div className="flex justify-center items-center py-16">
+              <p className="text-gray-400 text-lg">No content in this tab. Please check the Description tab.</p>
             </div>
           </TabsContent>
         </Tabs>
@@ -493,4 +505,3 @@ const PlantDetailPage = () => {
 };
 
 export default PlantDetailPage;
-
