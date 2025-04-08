@@ -45,9 +45,6 @@ import SellerDashboardSettingsPage from "./pages/SellerDashboardSettingsPage";
 import StoreFrontPage from "./pages/StoreFrontPage";
 import MessagesPage from "./pages/MessagesPage";
 import PlantDetailPage from "./pages/PlantDetailPage";
-import BlogPostsPage from "./pages/BlogPostsPage";
-import SavedArticlesPage from "./pages/SavedArticlesPage";
-import WritePostPage from "./pages/WritePostPage";
 
 const queryClient = new QueryClient();
 
@@ -99,12 +96,6 @@ function App() {
               <Route path="/seller-dashboard/settings" element={<SellerDashboardSettingsPage />} />
               <Route path="/store/:storeId" element={<StoreFrontPage />} />
               <Route path="/profile/messages" element={<MessagesPage />} />
-              
-              {/* Blog Routes */}
-              <Route path="/blog/my-posts" element={<BlogPostsPage />} />
-              <Route path="/blog/saved-articles" element={<SavedArticlesPage />} />
-              <Route path="/blog/write-post" element={<WritePostPage />} />
-              
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
