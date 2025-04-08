@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -383,7 +384,12 @@ const BlogDetailPage = () => {
           <img 
             src={blog.image} 
             alt={blog.title} 
-            className="w-full h-64 object-cover rounded-lg"
+            className="w-full h-64 object-cover rounded-lg shadow-md"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = "/placeholder.svg";
+              target.onerror = null;
+            }}
           />
         </div>
         
