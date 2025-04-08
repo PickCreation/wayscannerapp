@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -57,7 +56,6 @@ interface Comment {
   likes: number;
 }
 
-// Sample blog posts data - same as in BlogsPage.tsx
 const BLOGS: BlogPost[] = [
   {
     id: "1",
@@ -178,7 +176,6 @@ By implementing these changes, you can significantly reduce your carbon footprin
   },
 ];
 
-// Sample comments
 const SAMPLE_COMMENTS: Record<string, Comment[]> = {
   "1": [
     {
@@ -241,21 +238,17 @@ const BlogDetailPage = () => {
   const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
-    // Find the blog post by ID
     const foundBlog = BLOGS.find((b) => b.id === blogId);
     if (foundBlog) {
       setBlog(foundBlog);
       
-      // Get comments for this blog post if they exist
       const blogComments = SAMPLE_COMMENTS[blogId || ""] || [];
       setComments(blogComments);
       
-      // Reset states
       setNewComment("");
       setCopied(false);
       setIsLiked(false);
     } else {
-      // If blog not found, redirect to blogs listing page
       toast({
         title: "Blog not found",
         description: "The requested blog post could not be found.",
@@ -285,7 +278,6 @@ const BlogDetailPage = () => {
   };
 
   const handleCameraClick = () => {
-    // Implementation for camera click
   };
 
   const handleShareClick = () => {
@@ -332,13 +324,12 @@ const BlogDetailPage = () => {
       return;
     }
     
-    // Add new comment
     const newCommentObj: Comment = {
       id: `c${Date.now()}`,
       text: newComment,
       author: {
         name: user?.name || "Anonymous",
-        avatar: user?.avatar || "/lovable-uploads/e768a250-bf5b-4896-a83d-9b208130cc84.png",
+        avatar: "/lovable-uploads/e768a250-bf5b-4896-a83d-9b208130cc84.png",
       },
       date: new Date().toLocaleDateString('en-US', { 
         year: 'numeric', 
@@ -356,7 +347,6 @@ const BlogDetailPage = () => {
       description: "Your comment has been posted successfully",
     });
     
-    // Update comment count in blog object
     if (blog) {
       setBlog({
         ...blog,
@@ -486,10 +476,8 @@ const BlogDetailPage = () => {
         <div className="prose max-w-none">
           {blog.content.split('\n\n').map((paragraph, index) => {
             if (paragraph.startsWith('## ')) {
-              // It's a heading
               return <h2 key={index} className="text-xl font-bold mt-6 mb-3">{paragraph.substring(3)}</h2>;
             } else {
-              // It's a normal paragraph
               return <p key={index} className="mb-4 text-gray-700 leading-relaxed">{paragraph}</p>;
             }
           })}
