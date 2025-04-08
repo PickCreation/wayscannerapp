@@ -149,31 +149,31 @@ const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange })
               </div>
             </div>
             
-            {/* Category selection */}
+            {/* Category selection - Fixed padding and alignment */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Category
               </label>
               <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full h-11 px-4 py-2 text-base">
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-60">
                   {CATEGORIES.map(cat => (
-                    <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                    <SelectItem key={cat} value={cat} className="text-base py-2.5">{cat}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             
-            {/* Post content */}
+            {/* Post content - Fixed padding */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 What's on your mind?
               </label>
               <Textarea
                 placeholder="Write your post here..."
-                className="min-h-[120px]"
+                className="min-h-[120px] px-4 py-3 text-base"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
               />
@@ -193,7 +193,7 @@ const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange })
               </div>
             ) : (
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Add an Image
                 </label>
                 <label className="cursor-pointer flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 h-[120px]">
