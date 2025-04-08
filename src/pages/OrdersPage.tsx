@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Package, Calendar, ChevronRight, ExternalLink, Search, Clock, CheckCircle, Truck, AlertTriangle, XCircle } from "lucide-react";
@@ -149,22 +148,27 @@ const OrdersPage = () => {
   const [cancelReason, setCancelReason] = useState("");
 
   useEffect(() => {
-    // Load saved orders from localStorage if they exist
     const savedOrders = localStorage.getItem('buyerOrders');
     if (savedOrders) {
-      setOrders(JSON.parse(savedOrders));
+      const parsedOrders = JSON.parse(savedOrders);
+      
+      const validatedOrders = parsedOrders.map((order: any) => ({
+        ...order,
+        status: validateOrderStatus(order.status),
+        escrowStatus: validateEscrowStatus(order.escrowStatus)
+      }));
+      
+      setOrders(validatedOrders);
     }
     
-    // Check for auto-cancellation of orders past their deadline
     const now = new Date();
     const updatedOrders = orders.map(order => {
       const deadline = new Date(order.shippingDeadline);
       if (order.status === "pending" && now > deadline) {
-        // Auto-cancel the order and mark as refunded
         return {
           ...order,
-          status: "cancelled",
-          escrowStatus: "refunded"
+          status: "cancelled" as const,
+          escrowStatus: "refunded" as const
         };
       }
       return order;
@@ -181,6 +185,34 @@ const OrdersPage = () => {
       });
     }
   }, []);
+
+  const validateOrderStatus = (status: string): "pending" | "shipped" | "delivered" | "cancelled" => {
+    switch (status.toLowerCase()) {
+      case "pending":
+        return "pending";
+      case "shipped":
+        return "shipped";
+      case "delivered":
+        return "delivered";
+      case "cancelled":
+        return "cancelled";
+      default:
+        return "pending";
+    }
+  };
+  
+  const validateEscrowStatus = (status: string): "held" | "released" | "refunded" => {
+    switch (status?.toLowerCase()) {
+      case "held":
+        return "held";
+      case "released":
+        return "released";
+      case "refunded":
+        return "refunded";
+      default:
+        return "held";
+    }
+  };
 
   const handleBackClick = () => {
     navigate("/profile");
@@ -230,7 +262,7 @@ const OrdersPage = () => {
     
     const updatedOrders = orders.map(order => 
       order.id === selectedOrderId 
-        ? { ...order, status: "cancelled", escrowStatus: "refunded" } 
+        ? { ...order, status: "cancelled" as const, escrowStatus: "refunded" as const } 
         : order
     );
     
@@ -247,7 +279,6 @@ const OrdersPage = () => {
 
   const filteredOrders = orders
     .filter(order => {
-      // Filter by search query
       if (searchQuery) {
         return (
           order.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -259,7 +290,6 @@ const OrdersPage = () => {
       return true;
     })
     .filter(order => {
-      // Filter by tab
       return activeTab === "all" ? true : order.status === activeTab;
     });
 
@@ -283,7 +313,6 @@ const OrdersPage = () => {
   };
   
   const getShippingDeadlineStatus = (order: Order) => {
-    // If already shipped or delivered, no need to show deadline
     if (order.status === "shipped" || order.status === "delivered" || order.status === "cancelled") {
       return null;
     }
@@ -431,7 +460,6 @@ const OrdersPage = () => {
 
                     <Separator className="my-3" />
                     
-                    {/* Tracking Number Section */}
                     {order.trackingNumber && (
                       <div className="mb-3 bg-blue-50 p-3 rounded-md">
                         <div className="flex items-center justify-between">
@@ -456,7 +484,6 @@ const OrdersPage = () => {
                       </div>
                     )}
                     
-                    {/* Shipping Deadline Section */}
                     {getShippingDeadlineStatus(order) && (
                       <div className="mb-3 bg-gray-50 p-3 rounded-md">
                         <div className="flex items-center mb-1">
@@ -472,7 +499,6 @@ const OrdersPage = () => {
                       </div>
                     )}
                     
-                    {/* Escrow Status Section */}
                     {getEscrowStatus(order) && (
                       <div className="mb-3 bg-gray-50 p-3 rounded-md">
                         <div className="flex items-center">
@@ -535,7 +561,6 @@ const OrdersPage = () => {
         </div>
       </div>
 
-      {/* Cancel Order Dialog */}
       <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
