@@ -19,6 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/hooks/use-auth";
 import BottomNavigation from "@/components/BottomNavigation";
+import CameraSheet from "@/components/CameraSheet";
 import {
   Dialog,
   DialogContent,
@@ -28,6 +29,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
 interface BlogPost {
   id: string;
@@ -50,7 +52,6 @@ interface Comment {
   text: string;
   author: {
     name: string;
-    avatar: string;
   };
   date: string;
   likes: number;
@@ -183,7 +184,6 @@ const SAMPLE_COMMENTS: Record<string, Comment[]> = {
       text: "Great article! I've implemented several of these tips and have noticed a real difference in my energy bill.",
       author: {
         name: "Michael Brown",
-        avatar: "/lovable-uploads/a3386c5c-af28-42ee-96df-91008ff21cb5.png",
       },
       date: "Apr 3, 2025",
       likes: 7,
@@ -193,7 +193,6 @@ const SAMPLE_COMMENTS: Record<string, Comment[]> = {
       text: "I'd like to add that hanging your clothes to dry instead of using a dryer is another great way to reduce your carbon footprint!",
       author: {
         name: "Sarah Lee",
-        avatar: "/lovable-uploads/8fdd5ac8-39b5-43e6-86de-c8b27715d7c8.png",
       },
       date: "Apr 3, 2025",
       likes: 4,
@@ -203,7 +202,6 @@ const SAMPLE_COMMENTS: Record<string, Comment[]> = {
       text: "The tip about unplugging electronics was a game-changer for me. I had no idea they still used power when turned off!",
       author: {
         name: "David Wright",
-        avatar: "/lovable-uploads/1044c752-2d75-49e0-836c-39ab8130a173.png",
       },
       date: "Apr 4, 2025",
       likes: 2,
@@ -215,7 +213,6 @@ const SAMPLE_COMMENTS: Record<string, Comment[]> = {
       text: "I've been using a counter-top compost bin for 6 months now and it's fantastic! No smell if you manage it properly.",
       author: {
         name: "Taylor Kim",
-        avatar: "/lovable-uploads/dc7e6fce-2b21-472e-99f7-7f20be83b76f.png",
       },
       date: "Mar 29, 2025",
       likes: 9,
@@ -232,7 +229,9 @@ const BlogDetailPage = () => {
   const [blog, setBlog] = useState<BlogPost | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
+  const [commenterName, setCommenterName] = useState("");
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
+  const [isCameraSheetOpen, setIsCameraSheetOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [activeNavItem, setActiveNavItem] = useState("home");
   const [isLiked, setIsLiked] = useState(false);
@@ -278,6 +277,7 @@ const BlogDetailPage = () => {
   };
 
   const handleCameraClick = () => {
+    setIsCameraSheetOpen(true);
   };
 
   const handleShareClick = () => {
@@ -306,15 +306,6 @@ const BlogDetailPage = () => {
   };
 
   const handleSubmitComment = () => {
-    if (!isAuthenticated) {
-      toast({
-        title: "Login required",
-        description: "Please login to add a comment",
-        variant: "destructive",
-      });
-      return;
-    }
-    
     if (!newComment.trim()) {
       toast({
         title: "Empty comment",
@@ -324,12 +315,20 @@ const BlogDetailPage = () => {
       return;
     }
     
+    if (!commenterName.trim()) {
+      toast({
+        title: "Name required",
+        description: "Please enter your name",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     const newCommentObj: Comment = {
       id: `c${Date.now()}`,
       text: newComment,
       author: {
-        name: user?.name || "Anonymous",
-        avatar: "/lovable-uploads/e768a250-bf5b-4896-a83d-9b208130cc84.png",
+        name: commenterName,
       },
       date: new Date().toLocaleDateString('en-US', { 
         year: 'numeric', 
@@ -341,6 +340,7 @@ const BlogDetailPage = () => {
     
     setComments([newCommentObj, ...comments]);
     setNewComment("");
+    setCommenterName("");
     
     toast({
       title: "Comment added",
@@ -355,33 +355,7 @@ const BlogDetailPage = () => {
     }
   };
 
-  const handleLikeComment = (commentId: string) => {
-    if (!isAuthenticated) {
-      toast({
-        title: "Login required",
-        description: "Please login to like a comment",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    setComments(comments.map(comment => 
-      comment.id === commentId 
-        ? { ...comment, likes: comment.likes + 1 }
-        : comment
-    ));
-  };
-
   const toggleLike = () => {
-    if (!isAuthenticated) {
-      toast({
-        title: "Login required",
-        description: "Please login to like this article",
-        variant: "destructive",
-      });
-      return;
-    }
-    
     setIsLiked(!isLiked);
     
     toast({
@@ -408,37 +382,34 @@ const BlogDetailPage = () => {
             <ArrowLeft size={24} />
           </button>
           <h1 className="text-lg font-bold line-clamp-1">Article</h1>
-          <button className="p-2" onClick={handleShareClick}>
-            <Share size={24} />
-          </button>
+          <div className="w-8"></div>
         </div>
       </div>
 
-      <div className="relative">
-        <img 
-          src={blog.image} 
-          alt={blog.title} 
-          className="w-full h-64 object-cover"
-        />
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
-          <Badge className="mb-2 bg-blue-500 text-white">
-            {blog.category}
-          </Badge>
-          <h1 className="text-xl font-bold text-white mb-2">{blog.title}</h1>
-          <div className="flex items-center text-white">
-            <Avatar className="h-8 w-8 mr-2 border border-white">
-              <AvatarImage src={blog.author.avatar} />
-              <AvatarFallback>{blog.author.name.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <div>
-              <p className="text-xs font-medium">{blog.author.name}</p>
-              <p className="text-xs opacity-90">{blog.date} • {blog.readTime}</p>
-            </div>
+      <div className="px-4 py-4">
+        <Badge className="mb-2 bg-blue-500 text-white">
+          {blog.category}
+        </Badge>
+        <h1 className="text-2xl font-bold mb-2">{blog.title}</h1>
+        <div className="flex items-center mb-4">
+          <Avatar className="h-8 w-8 mr-2">
+            <AvatarImage src={blog.author.avatar} />
+            <AvatarFallback>{blog.author.name.charAt(0)}</AvatarFallback>
+          </Avatar>
+          <div>
+            <p className="text-xs font-medium">{blog.author.name}</p>
+            <p className="text-xs opacity-90">{blog.date} • {blog.readTime}</p>
           </div>
         </div>
-      </div>
-      
-      <div className="px-4 py-4">
+        
+        <div className="relative mb-6">
+          <img 
+            src={blog.image} 
+            alt={blog.title} 
+            className="w-full h-64 object-cover rounded-lg"
+          />
+        </div>
+        
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-2">
             <Button 
@@ -489,18 +460,23 @@ const BlogDetailPage = () => {
           <h2 className="text-xl font-bold mb-4">Comments ({comments.length})</h2>
           
           <div className="mb-6">
+            <Input
+              placeholder="Your name"
+              value={commenterName}
+              onChange={(e) => setCommenterName(e.target.value)}
+              className="w-full p-3 border rounded-lg mb-2"
+            />
             <Textarea
-              placeholder={isAuthenticated ? "Write a comment..." : "Login to write a comment..."}
+              placeholder="Write a comment..."
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              disabled={!isAuthenticated}
               className="w-full p-3 border rounded-lg resize-none mb-2"
               rows={3}
             />
             <div className="flex justify-end">
               <Button 
                 onClick={handleSubmitComment}
-                disabled={!isAuthenticated || !newComment.trim()}
+                disabled={!newComment.trim() || !commenterName.trim()}
                 className="bg-wayscanner-blue hover:bg-blue-700"
               >
                 Post Comment
@@ -514,27 +490,12 @@ const BlogDetailPage = () => {
                 <Card key={comment.id} className="border border-gray-200">
                   <CardContent className="p-4">
                     <div className="flex justify-between items-start mb-2">
-                      <div className="flex items-center">
-                        <Avatar className="h-8 w-8 mr-2">
-                          <AvatarImage src={comment.author.avatar} />
-                          <AvatarFallback>{comment.author.name.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="text-sm font-medium">{comment.author.name}</p>
-                          <p className="text-xs text-gray-500">{comment.date}</p>
-                        </div>
+                      <div>
+                        <p className="text-sm font-medium">{comment.author.name}</p>
+                        <p className="text-xs text-gray-500">{comment.date}</p>
                       </div>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="text-gray-500 flex items-center gap-1"
-                        onClick={() => handleLikeComment(comment.id)}
-                      >
-                        <Heart size={14} />
-                        <span className="text-xs">{comment.likes}</span>
-                      </Button>
                     </div>
-                    <p className="text-sm text-gray-700 pl-10">{comment.text}</p>
+                    <p className="text-sm text-gray-700">{comment.text}</p>
                   </CardContent>
                 </Card>
               ))}
@@ -596,6 +557,11 @@ const BlogDetailPage = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      
+      <CameraSheet 
+        open={isCameraSheetOpen} 
+        onOpenChange={setIsCameraSheetOpen}
+      />
 
       <BottomNavigation
         activeItem={activeNavItem as "home" | "forum" | "recipes" | "shop" | "profile"}
