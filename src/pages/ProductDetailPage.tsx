@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, Heart, Share2, Plus, Minus, Tag } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
@@ -170,6 +171,7 @@ const ProductDetailPage = () => {
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
   const [cartCount, setCartCount] = useState(0);
+  const [sellerPolicy, setSellerPolicy] = useState<string>("");
   
   const product = products.find(p => p.id === Number(productId));
   
@@ -184,6 +186,16 @@ const ProductDetailPage = () => {
     
     window.addEventListener('storage', updateCartCount);
     window.addEventListener('cartUpdated', updateCartCount);
+    
+    // Load seller policy from localStorage
+    const loadSellerPolicy = () => {
+      const shopSettings = JSON.parse(localStorage.getItem('shopSettings') || '{}');
+      if (shopSettings && shopSettings.shopPolicy) {
+        setSellerPolicy(shopSettings.shopPolicy);
+      }
+    };
+    
+    loadSellerPolicy();
     
     return () => {
       window.removeEventListener('storage', updateCartCount);
@@ -366,9 +378,10 @@ const ProductDetailPage = () => {
       
       <div className="px-4">
         <Tabs defaultValue="description">
-          <TabsList className="grid grid-cols-2 mb-2">
+          <TabsList className="grid grid-cols-3 mb-2">
             <TabsTrigger value="description">Description</TabsTrigger>
             <TabsTrigger value="reviews">Reviews ({product.reviews})</TabsTrigger>
+            <TabsTrigger value="policies">Policies</TabsTrigger>
           </TabsList>
           <TabsContent value="description" className="pt-2">
             <p className="text-gray-700 mb-4">{product.description}</p>
@@ -433,6 +446,18 @@ const ProductDetailPage = () => {
               </span>
             </div>
             <p className="text-sm text-gray-500">Reviews are coming soon!</p>
+          </TabsContent>
+          <TabsContent value="policies" className="pt-2">
+            <div className="space-y-4">
+              <h3 className="font-medium text-lg">Seller Policies</h3>
+              {sellerPolicy ? (
+                <div className="bg-gray-50 p-4 rounded-md border border-gray-200">
+                  <p className="text-sm text-gray-700 whitespace-pre-line">{sellerPolicy}</p>
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500">This seller has not specified any policies.</p>
+              )}
+            </div>
           </TabsContent>
         </Tabs>
       </div>
