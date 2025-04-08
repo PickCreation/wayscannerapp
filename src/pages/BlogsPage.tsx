@@ -1,12 +1,10 @@
-
 import React, { useState, useEffect } from "react";
-import { ArrowLeft, Search, FilterX, Share, Facebook, Copy, MessageSquare } from "lucide-react";
+import { ArrowLeft, Search, FilterX, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import BottomNavigation from "@/components/BottomNavigation";
@@ -40,7 +38,6 @@ const CATEGORIES = [
   "Environment",
 ];
 
-// Sample blog posts data
 const BLOGS: BlogPost[] = [
   {
     id: "1",
@@ -131,7 +128,6 @@ const BlogsPage = () => {
   useEffect(() => {
     let result = BLOGS;
     
-    // Apply search filter
     if (searchQuery) {
       result = result.filter(
         blog => 
@@ -141,7 +137,6 @@ const BlogsPage = () => {
       );
     }
     
-    // Apply category filter
     if (selectedCategory !== "All") {
       result = result.filter(blog => blog.category === selectedCategory);
     }
@@ -260,6 +255,11 @@ const BlogsPage = () => {
                         src={blog.image} 
                         alt={blog.title} 
                         className="object-cover w-full h-48 rounded-t-lg"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = "/placeholder.svg";
+                          target.onerror = null;
+                        }}
                       />
                     </div>
                     <CardContent className="pt-4">
@@ -268,21 +268,9 @@ const BlogsPage = () => {
                       </Badge>
                       <h3 className="text-lg font-semibold mb-2 line-clamp-2">{blog.title}</h3>
                       <p className="text-gray-600 text-sm mb-3 line-clamp-2">{blog.excerpt}</p>
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center">
-                          <Avatar className="h-8 w-8 mr-2">
-                            <AvatarImage src={blog.author.avatar} />
-                            <AvatarFallback>{blog.author.name.charAt(0)}</AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="text-xs font-medium">{blog.author.name}</p>
-                            <p className="text-xs text-gray-500">{blog.date} • {blog.readTime}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center text-gray-500 text-xs">
-                          <MessageSquare size={14} className="mr-1" />
-                          <span>{blog.commentsCount}</span>
-                        </div>
+                      <div className="flex items-center text-gray-500 text-xs">
+                        <MessageSquare size={14} className="mr-1" />
+                        <span>{blog.commentsCount}</span>
                       </div>
                     </CardContent>
                   </Card>
@@ -309,6 +297,11 @@ const BlogsPage = () => {
                         src={blog.image} 
                         alt={blog.title} 
                         className="object-cover w-full h-48 rounded-t-lg"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = "/placeholder.svg";
+                          target.onerror = null;
+                        }}
                       />
                     </div>
                     <CardContent className="pt-4">
@@ -317,21 +310,9 @@ const BlogsPage = () => {
                       </Badge>
                       <h3 className="text-lg font-semibold mb-2 line-clamp-2">{blog.title}</h3>
                       <p className="text-gray-600 text-sm mb-3 line-clamp-2">{blog.excerpt}</p>
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center">
-                          <Avatar className="h-8 w-8 mr-2">
-                            <AvatarImage src={blog.author.avatar} />
-                            <AvatarFallback>{blog.author.name.charAt(0)}</AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="text-xs font-medium">{blog.author.name}</p>
-                            <p className="text-xs text-gray-500">{blog.date} • {blog.readTime}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center text-gray-500 text-xs">
-                          <MessageSquare size={14} className="mr-1" />
-                          <span>{blog.commentsCount}</span>
-                        </div>
+                      <div className="flex items-center text-gray-500 text-xs">
+                        <MessageSquare size={14} className="mr-1" />
+                        <span>{blog.commentsCount}</span>
                       </div>
                     </CardContent>
                   </Card>
@@ -358,6 +339,11 @@ const BlogsPage = () => {
                         src={blog.image} 
                         alt={blog.title} 
                         className="object-cover w-full h-48 rounded-t-lg"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = "/placeholder.svg";
+                          target.onerror = null;
+                        }}
                       />
                     </div>
                     <CardContent className="pt-4">
@@ -366,21 +352,9 @@ const BlogsPage = () => {
                       </Badge>
                       <h3 className="text-lg font-semibold mb-2 line-clamp-2">{blog.title}</h3>
                       <p className="text-gray-600 text-sm mb-3 line-clamp-2">{blog.excerpt}</p>
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center">
-                          <Avatar className="h-8 w-8 mr-2">
-                            <AvatarImage src={blog.author.avatar} />
-                            <AvatarFallback>{blog.author.name.charAt(0)}</AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="text-xs font-medium">{blog.author.name}</p>
-                            <p className="text-xs text-gray-500">{blog.date} • {blog.readTime}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center text-gray-500 text-xs">
-                          <MessageSquare size={14} className="mr-1" />
-                          <span>{blog.commentsCount}</span>
-                        </div>
+                      <div className="flex items-center text-gray-500 text-xs">
+                        <MessageSquare size={14} className="mr-1" />
+                        <span>{blog.commentsCount}</span>
                       </div>
                     </CardContent>
                   </Card>
