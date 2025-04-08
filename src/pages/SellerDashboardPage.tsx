@@ -1015,7 +1015,7 @@ const OverviewTab = ({
         </CardContent>
       </Card>
       
-      {/* Escrow Balance card - updated styling to match image */}
+      {/* Escrow Balance card - updated layout with money below labels */}
       <Card>
         <CardContent className="p-4">
           <div className="flex justify-between items-center mb-3">
@@ -1023,22 +1023,22 @@ const OverviewTab = ({
           </div>
           <div className="grid grid-cols-2 gap-3 mb-4">
             <div className="border rounded-lg p-4 bg-yellow-50 flex flex-col">
-              <div className="flex items-center gap-2 mb-2">
-                <Clock className="h-6 w-6 text-yellow-500" />
-                <span className="font-semibold text-black">Pending</span>
-                <span className="text-yellow-500 font-bold ml-auto text-xl">${escrowBalance.pendingBalance.toFixed(2)}</span>
+              <div className="flex items-center gap-2 mb-1">
+                <Clock className="h-5 w-5 text-yellow-500" />
+                <span className="font-medium text-sm">Pending</span>
               </div>
-              <p className="text-xs text-gray-500">
+              <p className="text-yellow-500 font-bold text-xl mt-1">${escrowBalance.pendingBalance.toFixed(2)}</p>
+              <p className="text-xs text-gray-500 mt-1">
                 Funds held in escrow until orders are shipped
               </p>
             </div>
             <div className="border rounded-lg p-4 bg-green-50 flex flex-col">
-              <div className="flex items-center gap-2 mb-2">
-                <DollarSign className="h-6 w-6 text-green-500" />
-                <span className="font-semibold text-black">Available</span>
-                <span className="text-green-500 font-bold ml-auto text-xl">${escrowBalance.availableBalance.toFixed(2)}</span>
+              <div className="flex items-center gap-2 mb-1">
+                <DollarSign className="h-5 w-5 text-green-500" />
+                <span className="font-medium text-sm">Available</span>
               </div>
-              <p className="text-xs text-gray-500">
+              <p className="text-green-500 font-bold text-xl mt-1">${escrowBalance.availableBalance.toFixed(2)}</p>
+              <p className="text-xs text-gray-500 mt-1">
                 Ready to withdraw
               </p>
             </div>
