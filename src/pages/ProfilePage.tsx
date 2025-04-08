@@ -1,11 +1,10 @@
-
 import React, { useEffect, useState } from "react";
 import { 
   ArrowLeft, Edit, Lock, Store, Bookmark, Heart, 
   ShoppingCart, Truck, Ticket, Globe, HelpCircle, Info, 
   Shield, LogOut, FileText, ChevronRight, User,
   CreditCard, MapPin, Package, MessageSquare, Crown,
-  LogIn
+  LogIn, BookOpen
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
@@ -69,27 +68,23 @@ const ProfilePage = () => {
         email: user.email
       });
       
-      // Load user stats
       const savedUserStats = JSON.parse(localStorage.getItem('userProfileStats') || '{}');
       if (savedUserStats[user.id]) {
         setUserStats(savedUserStats[user.id]);
       }
       
-      // Load shop sales data
       const shopSalesData = JSON.parse(localStorage.getItem('shopSalesData') || '{}');
       const shopSettings = JSON.parse(localStorage.getItem('shopSettings') || '{}');
       
       if (shopSalesData[shopSettings.shopName]) {
         const salesData = shopSalesData[shopSettings.shopName];
         
-        // Update sales count from shop data
         setUserStats(prev => ({
           ...prev,
           sales: salesData.salesCount || 0,
           reviews: salesData.reviewCount || 0
         }));
         
-        // Persist these stats
         const allUserStats = JSON.parse(localStorage.getItem('userProfileStats') || '{}');
         if (!allUserStats[user.id]) {
           allUserStats[user.id] = { followers: 0, sales: 0, reviews: 0 };
@@ -101,7 +96,6 @@ const ProfilePage = () => {
         localStorage.setItem('userProfileStats', JSON.stringify(allUserStats));
       }
       
-      // Get follower count from store followers
       const storeFollowers = JSON.parse(localStorage.getItem('storeFollowers') || '{}');
       if (shopSettings && storeFollowers[shopSettings.shopName]) {
         setUserStats(prev => ({
@@ -109,7 +103,6 @@ const ProfilePage = () => {
           followers: storeFollowers[shopSettings.shopName] || 0
         }));
         
-        // Persist these stats
         const allUserStats = JSON.parse(localStorage.getItem('userProfileStats') || '{}');
         if (!allUserStats[user.id]) {
           allUserStats[user.id] = { followers: 0, sales: 0, reviews: 0 };
@@ -409,6 +402,13 @@ const ProfilePage = () => {
           title="Bookmarks" 
           description="Your saved content"
           onClick={() => handleMenuItemClick("Bookmarks")}
+        />
+        
+        <ProfileMenuItem 
+          icon={<BookOpen className="h-5 w-5 text-wayscanner-blue" />} 
+          title="Blogs and Post" 
+          description="Your blog posts and articles"
+          onClick={() => handleMenuItemClick("Blogs")}
         />
         
         <ProfileMenuItem 
