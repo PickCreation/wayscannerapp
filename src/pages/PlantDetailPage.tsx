@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { X, Settings, ChevronRight, ChevronDown, ChevronUp, ThumbsUp, ThumbsDown } from 'lucide-react';
@@ -5,6 +6,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
 
 // Plant data (would come from API in real app)
 const plantData = {
@@ -112,31 +114,31 @@ const PlantDetailPage = () => {
           <p className="text-2xl text-gray-600 mt-1">{plant.scientificName}</p>
         </div>
         
-        {/* Tabs Section */}
+        {/* Tabs Section - Improved formatting */}
         <Tabs defaultValue="description" value={activeTab} onValueChange={setActiveTab} className="mt-4">
-          <TabsList className="grid grid-cols-3 rounded-full bg-gray-100">
+          <TabsList className="grid grid-cols-3 rounded-full bg-gray-100 p-1">
             <TabsTrigger 
               value="description" 
-              className="data-[state=active]:bg-[#034AFF] data-[state=active]:text-white rounded-full py-3"
+              className="rounded-full py-2.5 px-4 data-[state=active]:bg-[#034AFF] data-[state=active]:text-white data-[state=active]:shadow transition-all"
             >
               Description
             </TabsTrigger>
             <TabsTrigger 
               value="care" 
-              className="data-[state=active]:bg-[#034AFF] data-[state=active]:text-white rounded-full py-3"
+              className="rounded-full py-2.5 px-4 data-[state=active]:bg-[#034AFF] data-[state=active]:text-white data-[state=active]:shadow transition-all"
             >
               Care
             </TabsTrigger>
             <TabsTrigger 
               value="history" 
-              className="data-[state=active]:bg-[#034AFF] data-[state=active]:text-white rounded-full py-3"
+              className="rounded-full py-2.5 px-4 data-[state=active]:bg-[#034AFF] data-[state=active]:text-white data-[state=active]:shadow transition-all"
             >
               History
             </TabsTrigger>
           </TabsList>
           
           {/* Description Tab Content */}
-          <TabsContent value="description" className="mt-6">
+          <TabsContent value="description" className="mt-6 animate-in fade-in-50">
             <div className="space-y-6">
               <div>
                 <p className="text-gray-500">Latin name:</p>
@@ -175,29 +177,31 @@ const PlantDetailPage = () => {
             </div>
           </TabsContent>
           
-          {/* Care Tab Content */}
-          <TabsContent value="care" className="mt-6">
+          {/* Care Tab Content - Improved formatting */}
+          <TabsContent value="care" className="mt-6 animate-in fade-in-50">
             <div>
               <h3 className="text-3xl font-bold mb-4">Choose plant location</h3>
               <div className="grid grid-cols-2 gap-3 mt-6 mb-8">
-                <button 
-                  className={`py-4 px-6 rounded-full text-xl font-medium ${selectedLocation === 'indoor' ? 'bg-[#034AFF] text-white' : 'bg-gray-100 text-[#034AFF]'}`}
+                <Button 
+                  variant={selectedLocation === 'indoor' ? 'default' : 'outline'}
+                  className={`py-4 px-6 rounded-full text-xl font-medium h-auto ${selectedLocation === 'indoor' ? 'bg-[#034AFF] text-white' : 'border-[#034AFF] text-[#034AFF]'}`}
                   onClick={() => setSelectedLocation('indoor')}
                 >
                   Indoor
-                </button>
-                <button 
-                  className={`py-4 px-6 rounded-full text-xl font-medium ${selectedLocation === 'outdoor' ? 'bg-[#034AFF] text-white' : 'bg-gray-100 text-[#034AFF]'}`}
+                </Button>
+                <Button 
+                  variant={selectedLocation === 'outdoor' ? 'default' : 'outline'}
+                  className={`py-4 px-6 rounded-full text-xl font-medium h-auto ${selectedLocation === 'outdoor' ? 'bg-[#034AFF] text-white' : 'border-[#034AFF] text-[#034AFF]'}`}
                   onClick={() => setSelectedLocation('outdoor')}
                 >
                   Outdoor
-                </button>
+                </Button>
               </div>
               
               <h3 className="text-3xl font-bold mb-6">Cares</h3>
               
               <div className="space-y-4">
-                <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg">
+                <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
                   <div className="flex items-center">
                     <div className="w-12 flex justify-center">
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -214,9 +218,9 @@ const PlantDetailPage = () => {
                     </div>
                   </div>
                   <ChevronRight className="text-gray-400" />
-                </div>
+                </button>
                 
-                <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg">
+                <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
                   <div className="flex items-center">
                     <div className="w-12 flex justify-center">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -229,9 +233,9 @@ const PlantDetailPage = () => {
                     </div>
                   </div>
                   <ChevronRight className="text-gray-400" />
-                </div>
+                </button>
                 
-                <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg">
+                <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
                   <div className="flex items-center">
                     <div className="w-12 flex justify-center">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -245,11 +249,11 @@ const PlantDetailPage = () => {
                     </div>
                   </div>
                   <ChevronRight className="text-gray-400" />
-                </div>
+                </button>
               </div>
               
               <div className="grid grid-cols-2 gap-3 mt-4">
-                <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg">
+                <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
                   <div className="flex items-center">
                     <div className="w-12 flex justify-center">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -262,9 +266,9 @@ const PlantDetailPage = () => {
                     </div>
                   </div>
                   <ChevronRight className="text-gray-400" />
-                </div>
+                </button>
                 
-                <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg">
+                <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
                   <div className="flex items-center">
                     <div className="w-12 flex justify-center">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -277,17 +281,17 @@ const PlantDetailPage = () => {
                     </div>
                   </div>
                   <ChevronRight className="text-gray-400" />
-                </div>
+                </button>
               </div>
             </div>
           </TabsContent>
           
-          {/* History Tab Content */}
-          <TabsContent value="history" className="mt-6">
+          {/* History Tab Content - Improved formatting */}
+          <TabsContent value="history" className="mt-6 animate-in fade-in-50">
             <h3 className="text-3xl font-bold mb-6">Plant requirements</h3>
             
             <div className="grid grid-cols-2 gap-3 mb-4">
-              <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg">
+              <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
                 <div className="flex items-center">
                   <div className="w-12 flex justify-center">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -298,12 +302,13 @@ const PlantDetailPage = () => {
                   </div>
                   <div className="ml-2">
                     <h4 className="text-xl font-medium">Pot</h4>
+                    <p className="text-[#034AFF] text-sm">{plant.requirements.pot}</p>
                   </div>
                 </div>
                 <ChevronRight className="text-gray-400" />
-              </div>
+              </button>
               
-              <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg">
+              <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
                 <div className="flex items-center">
                   <div className="w-12 flex justify-center">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -313,14 +318,15 @@ const PlantDetailPage = () => {
                   </div>
                   <div className="ml-2">
                     <h4 className="text-xl font-medium">Soil</h4>
+                    <p className="text-[#034AFF] text-sm">{plant.requirements.soil}</p>
                   </div>
                 </div>
                 <ChevronRight className="text-gray-400" />
-              </div>
+              </button>
             </div>
             
             <div className="space-y-4">
-              <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg">
+              <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
                 <div className="flex items-center">
                   <div className="w-12 flex justify-center">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -334,9 +340,9 @@ const PlantDetailPage = () => {
                   </div>
                 </div>
                 <ChevronRight className="text-gray-400" />
-              </div>
+              </button>
               
-              <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg">
+              <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
                 <div className="flex items-center">
                   <div className="w-12 flex justify-center">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -349,9 +355,9 @@ const PlantDetailPage = () => {
                   </div>
                 </div>
                 <ChevronRight className="text-gray-400" />
-              </div>
+              </button>
               
-              <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg">
+              <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
                 <div className="flex items-center">
                   <div className="w-12 flex justify-center">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -365,9 +371,9 @@ const PlantDetailPage = () => {
                   </div>
                 </div>
                 <ChevronRight className="text-gray-400" />
-              </div>
+              </button>
               
-              <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg">
+              <button className="w-full flex items-center justify-between bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
                 <div className="flex items-center">
                   <div className="w-12 flex justify-center">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -382,7 +388,7 @@ const PlantDetailPage = () => {
                   </div>
                 </div>
                 <ChevronRight className="text-gray-400" />
-              </div>
+              </button>
             </div>
           </TabsContent>
         </Tabs>
@@ -463,18 +469,20 @@ const PlantDetailPage = () => {
             <p className="text-xl">Was this information helpful?</p>
           </div>
           <div className="flex justify-center gap-8">
-            <button 
-              className={`w-16 h-16 rounded-full flex items-center justify-center ${isHelpful === false ? 'bg-red-500 text-white' : 'bg-gray-100 text-gray-600'}`}
+            <Button 
+              variant="outline"
+              className={`w-16 h-16 rounded-full flex items-center justify-center p-0 ${isHelpful === false ? 'bg-red-500 text-white border-red-500' : 'bg-gray-100 text-gray-600'}`}
               onClick={() => setIsHelpful(false)}
             >
               <ThumbsDown className="h-8 w-8" />
-            </button>
-            <button 
-              className={`w-16 h-16 rounded-full flex items-center justify-center ${isHelpful === true ? 'bg-[#034AFF] text-white' : 'bg-gray-100 text-gray-600'}`}
+            </Button>
+            <Button 
+              variant="outline"
+              className={`w-16 h-16 rounded-full flex items-center justify-center p-0 ${isHelpful === true ? 'bg-[#034AFF] text-white border-[#034AFF]' : 'bg-gray-100 text-gray-600'}`}
               onClick={() => setIsHelpful(true)}
             >
               <ThumbsUp className="h-8 w-8" />
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -483,3 +491,4 @@ const PlantDetailPage = () => {
 };
 
 export default PlantDetailPage;
+
