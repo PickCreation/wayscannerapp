@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ChevronLeft, AlertTriangle, PawPrint, Utensils, Moon, PhoneCall, Info, MapPin, Camera, Share2, Bell, HelpCircle } from "lucide-react";
+import { ChevronLeft, AlertTriangle, PawPrint, Utensils, Moon, PhoneCall, Info, MapPin, Camera, Share2, HelpCircle } from "lucide-react";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
 import { Badge } from "@/components/ui/badge";
@@ -142,7 +142,6 @@ const AnimalDetailPage = () => {
   const [animal, setAnimal] = useState<AnimalDetails | null>(null);
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("home");
   const [cameraSheetOpen, setCameraSheetOpen] = useState(false);
-  const [isNotifying, setIsNotifying] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -182,11 +181,6 @@ const AnimalDetailPage = () => {
     toast.success("Link copied to clipboard!");
   };
 
-  const toggleNotifications = () => {
-    setIsNotifying(!isNotifying);
-    toast.success(isNotifying ? "Notifications turned off" : "You'll be notified about Bengal Tiger sightings in your area");
-  };
-
   const reportSighting = () => {
     toast.success("Thanks for your report! Wildlife authorities have been notified.");
   };
@@ -208,9 +202,6 @@ const AnimalDetailPage = () => {
         <div className="flex">
           <button onClick={handleShare} className="mr-2">
             <Share2 className="h-5 w-5" color="white" />
-          </button>
-          <button onClick={toggleNotifications}>
-            <Bell className={`h-5 w-5 ${isNotifying ? "text-yellow-300" : "text-white"}`} />
           </button>
         </div>
       </header>
