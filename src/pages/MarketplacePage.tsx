@@ -183,7 +183,7 @@ const MarketplacePage = () => {
         </button>
       </header>
 
-      <div className="px-4 py-4 bg-gray-50 pt-16">
+      <div className="px-4 py-4 bg-gray-50 pt-20">
         <div className="relative mb-4">
           <Input
             placeholder="Search products..."
@@ -205,7 +205,7 @@ const MarketplacePage = () => {
         
         <div className="mt-4">
           <h2 className="text-base font-bold mb-3 text-gray-800 text-[16px]">Categories</h2>
-          <div className="flex space-x-4 overflow-x-auto py-2 no-scrollbar">
+          <div className="flex space-x-4 overflow-x-auto py-2 no-scrollbar pl-2">
             {categories.map((category) => (
               <div
                 key={category.id}
