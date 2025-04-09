@@ -2,7 +2,6 @@
 import React from "react";
 import { X } from "lucide-react";
 import { Sheet, SheetContent, SheetClose } from "@/components/ui/sheet";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 
@@ -107,8 +106,8 @@ const AlternativesSheet: React.FC<AlternativesSheetProps> = ({
           </div>
         </div>
         
-        <ScrollArea className="h-[calc(85vh-140px)]">
-          <div className="p-4 space-y-5">
+        <div className="overflow-auto h-[calc(85vh-140px)]">
+          <div className="p-4 space-y-5 pb-10">
             {alternativeFoods.map((food, index) => (
               <div key={index} className="bg-white rounded-lg border p-3">
                 <div className="flex">
@@ -172,7 +171,7 @@ const AlternativesSheet: React.FC<AlternativesSheetProps> = ({
               </ul>
             </div>
           </div>
-        </ScrollArea>
+        </div>
       </SheetContent>
     </Sheet>
   );

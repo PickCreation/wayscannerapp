@@ -147,7 +147,7 @@ const ComparisonSheet: React.FC<ComparisonSheetProps> = ({
         </div>
         
         {!compareFood ? (
-          <ScrollArea className="h-[calc(85vh-105px)]">
+          <div className="overflow-auto max-h-[calc(85vh-105px)]">
             <div className="p-4 space-y-3">
               {filteredFoods.map((food) => (
                 <button
@@ -179,10 +179,10 @@ const ComparisonSheet: React.FC<ComparisonSheetProps> = ({
                 </div>
               )}
             </div>
-          </ScrollArea>
+          </div>
         ) : (
-          <ScrollArea className="h-[calc(85vh-135px)]">
-            <div className="p-4 space-y-6">
+          <div className="overflow-auto h-[calc(85vh-135px)]">
+            <div className="p-4 space-y-6 pb-14">
               <div>
                 <h3 className="text-lg font-semibold mb-3">Nutritional Score</h3>
                 <div className="grid grid-cols-2 gap-4">
@@ -305,7 +305,7 @@ const ComparisonSheet: React.FC<ComparisonSheetProps> = ({
                 </div>
               </div>
             </div>
-          </ScrollArea>
+          </div>
         )}
         
         {compareFood && (
