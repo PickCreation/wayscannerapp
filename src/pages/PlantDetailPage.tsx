@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ChevronRight, ChevronDown, ChevronUp, ThumbsUp, ThumbsDown, Check } from 'lucide-react';
@@ -12,6 +11,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 // Plant data (would come from API in real app)
 const plantData = {
@@ -89,14 +94,14 @@ const PlantDetailPage = () => {
   return (
     <div className="bg-white min-h-screen pb-8 text-gray-800">
       {/* App Bar */}
-      <div className="fixed top-0 left-0 right-0 bg-white z-10 h-16 flex items-center px-4 shadow-sm">
+      <div className="fixed top-0 left-0 right-0 bg-[#034AFF] z-10 h-16 flex items-center px-4 shadow-sm">
         <button 
           onClick={handleBack}
           className="w-10 h-10 rounded-full flex items-center justify-center"
         >
-          <ArrowLeft className="h-6 w-6 text-gray-800" />
+          <ArrowLeft className="h-6 w-6 text-white" />
         </button>
-        <h1 className="ml-4 text-xl font-semibold">Plant Details</h1>
+        <h1 className="ml-4 text-xl font-semibold text-white">Plant Details</h1>
       </div>
       
       {/* Hero Section with Image */}
@@ -146,18 +151,18 @@ const PlantDetailPage = () => {
           <TabsContent value="description" className="mt-4 animate-in fade-in-50">
             <div className="space-y-4">
               <div>
-                <p className="text-gray-500 text-sm">Latin name:</p>
+                <p className="text-gray-500 text-sm text-green-600">Latin name:</p>
                 <p className="text-base">{plant.scientificName}</p>
               </div>
               
               <div>
-                <p className="text-gray-500 text-sm">Also known as:</p>
+                <p className="text-gray-500 text-sm text-[#034AFF]">Also known as:</p>
                 <p className="text-base">{plant.alsoKnownAs.join(', ')}</p>
               </div>
               
               {plant.isPoisonous && (
-                <Popover>
-                  <PopoverTrigger asChild>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
                     <div className="flex items-center py-3 px-4 rounded-lg bg-gray-100 mt-2 cursor-pointer">
                       <div className="bg-amber-500 rounded-full p-2 mr-4">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -169,8 +174,8 @@ const PlantDetailPage = () => {
                       <span className="text-gray-800 font-medium">Poisonous</span>
                       <ChevronRight className="ml-auto text-gray-400" />
                     </div>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[320px] p-0 border-gray-200" align="start" sideOffset={10}>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-[320px] p-0 border-gray-200 bg-white" align="start" sideOffset={10}>
                     <div className="p-4">
                       <div className="flex items-center border-b border-gray-200 pb-3 mb-3">
                         <div className="bg-amber-500 rounded-full p-2 mr-3">
@@ -227,8 +232,8 @@ const PlantDetailPage = () => {
                         </div>
                       </div>
                     </div>
-                  </PopoverContent>
-                </Popover>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               )}
               
               <div className="mt-4">
