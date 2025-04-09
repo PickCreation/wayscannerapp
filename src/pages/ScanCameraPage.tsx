@@ -5,15 +5,51 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { identifyAnimal, getAnimalDetails } from "@/services/animalRecognitionService";
+import { Progress } from "@/components/ui/progress";
+import { fileToBase64 } from "@/utils/imageProcessing";
 
 const ScanCameraPage = () => {
   const [captureMode, setCaptureMode] = useState<"camera" | "upload">("camera");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [processingStage, setProcessingStage] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
   const scanType = location.state?.scanType || "general";
+
+  // Progress simulation effect
+  useEffect(() => {
+    let progressInterval: NodeJS.Timeout;
+    
+    if (isProcessing) {
+      setProgress(0);
+      setProcessingStage("Analyzing image...");
+      
+      progressInterval = setInterval(() => {
+        setProgress((prevProgress) => {
+          if (prevProgress >= 40) {
+            setProcessingStage("Identifying animal species...");
+          }
+          if (prevProgress >= 70) {
+            setProcessingStage("Gathering detailed information...");
+          }
+          if (prevProgress >= 95) {
+            clearInterval(progressInterval);
+            return 95;
+          }
+          return prevProgress + 5;
+        });
+      }, 300);
+    } else {
+      setProgress(0);
+    }
+    
+    return () => {
+      if (progressInterval) clearInterval(progressInterval);
+    };
+  }, [isProcessing]);
 
   const handleCapture = () => {
     // In a real implementation, this would access the device camera
@@ -25,14 +61,16 @@ const ScanCameraPage = () => {
     }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      try {
+        const base64Image = await fileToBase64(file);
+        setImagePreview(base64Image);
+      } catch (error) {
+        console.error("Error processing file:", error);
+        toast.error("Failed to process the image. Please try again.");
+      }
     }
   };
 
@@ -45,42 +83,39 @@ const ScanCameraPage = () => {
 
     try {
       setIsProcessing(true);
-      toast.info("Analyzing image...");
 
-      if (scanType === "animal") {
-        // First identify the animal using Google Vision API
-        const animalName = await identifyAnimal(imagePreview);
-        
-        if (!animalName) {
-          toast.error("Could not identify animal in image. Please try again.");
-          setIsProcessing(false);
-          return;
-        }
-        
-        // Then get details from OpenAI
-        const animalDetails = await getAnimalDetails(animalName);
-        
-        if (!animalDetails) {
-          toast.error("Could not retrieve animal details. Please try again.");
-          setIsProcessing(false);
-          return;
-        }
-        
-        // For demo purposes, we'll just navigate to one of our preset animals
-        // In a real implementation, we would save the new animal data and navigate to it
-        const sampleAnimalIds = ["1", "2", "3"];
-        const randomAnimalId = sampleAnimalIds[Math.floor(Math.random() * sampleAnimalIds.length)];
-        
-        toast.success(`Animal identified: ${animalName}`);
-        navigate(`/animal/${randomAnimalId}`);
-      } else {
-        // Handle other scan types
-        navigate("/scan?tab=animals");
+      // First identify the animal using Google Vision API
+      const animalName = await identifyAnimal(imagePreview);
+      
+      if (!animalName) {
+        toast.error("Could not identify animal in image. Please try again.");
+        setIsProcessing(false);
+        return;
       }
+      
+      // Then get details from OpenAI
+      const animalDetails = await getAnimalDetails(animalName);
+      
+      if (!animalDetails) {
+        toast.error("Could not retrieve animal details. Please try again.");
+        setIsProcessing(false);
+        return;
+      }
+      
+      // Set progress to 100% to indicate completion
+      setProgress(100);
+      setProcessingStage("Analysis complete!");
+      
+      // Wait a moment for the user to see the 100% completion
+      setTimeout(() => {
+        toast.success(`Animal identified: ${animalName}`);
+        
+        // Navigate to the animal detail page
+        navigate(`/animal/${animalDetails.id}`);
+      }, 500);
     } catch (error) {
       console.error("Error processing image:", error);
       toast.error("There was an error processing your image. Please try again.");
-    } finally {
       setIsProcessing(false);
     }
   };
@@ -110,20 +145,24 @@ const ScanCameraPage = () => {
               alt="Preview" 
               className="w-full h-full object-contain"
             />
-            <div className="absolute bottom-4 left-0 right-0 flex justify-center">
-              <Button 
-                className="bg-wayscanner-blue hover:bg-blue-700 text-white rounded-full px-8 py-2 flex items-center"
-                onClick={handleSubmit}
-                disabled={isProcessing}
-              >
-                {isProcessing ? (
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                ) : (
+            {isProcessing ? (
+              <div className="absolute bottom-0 left-0 right-0 bg-black/70 p-6 flex flex-col items-center">
+                <p className="text-white text-lg mb-3">{processingStage}</p>
+                <Progress className="w-full h-2 mb-4" value={progress} indicatorColor="bg-blue-500" />
+                <p className="text-white text-sm">{progress}% complete</p>
+              </div>
+            ) : (
+              <div className="absolute bottom-4 left-0 right-0 flex justify-center">
+                <Button 
+                  className="bg-wayscanner-blue hover:bg-blue-700 text-white rounded-full px-8 py-2 flex items-center"
+                  onClick={handleSubmit}
+                  disabled={isProcessing}
+                >
                   <Check className="mr-2" size={20} />
-                )}
-                {isProcessing ? "Processing..." : "Use this image"}
-              </Button>
-            </div>
+                  Use this image
+                </Button>
+              </div>
+            )}
           </div>
         ) : (
           <div className="relative w-full h-full flex items-center justify-center">

@@ -87,3 +87,45 @@ export const compressImage = (base64: string, quality: number = 0.7): Promise<st
     img.onerror = () => reject(new Error('Failed to load image'));
   });
 };
+
+/**
+ * Safely load an image and get its data
+ * @param src The image source URL or base64 string
+ * @returns A promise that resolves to the image element
+ */
+export const loadImage = (src: string): Promise<HTMLImageElement> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous'; // This helps with CORS issues
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('Failed to load image'));
+    img.src = src;
+  });
+};
+
+/**
+ * Creates a thumbnail from an image
+ * @param base64 The base64 string to create thumbnail from
+ * @param size The size of the thumbnail (width and height)
+ * @returns A promise that resolves to the thumbnail as a base64 string
+ */
+export const createThumbnail = async (base64: string, size: number = 100): Promise<string> => {
+  const img = await loadImage(base64);
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  
+  // Calculate dimensions to maintain aspect ratio while fitting in the square
+  const scale = Math.max(img.width, img.height) / size;
+  const width = img.width / scale;
+  const height = img.height / scale;
+  const x = (size - width) / 2;
+  const y = (size - height) / 2;
+  
+  ctx?.fillStyle = '#ffffff';
+  ctx?.fillRect(0, 0, size, size);
+  ctx?.drawImage(img, x, y, width, height);
+  
+  return canvas.toDataURL('image/jpeg', 0.85);
+};
