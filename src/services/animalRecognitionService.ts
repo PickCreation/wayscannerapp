@@ -21,7 +21,6 @@ export interface AnimalDetails {
   diet: string;
   behavioralTraits: string;
   legalRestrictions: string;
-  timestamp?: Date;
   interestingFacts: {
     fact: string;
   }[];
@@ -133,6 +132,7 @@ const animalScanHistory: AnimalDetails[] = [
 ];
 
 // This function simulates sending an image to Google Vision API
+// In a real implementation, you would call the actual API with the proper API key
 export const identifyAnimal = async (imageData: string): Promise<string | null> => {
   try {
     console.log("Simulating Google Vision API call for animal identification");
@@ -140,23 +140,54 @@ export const identifyAnimal = async (imageData: string): Promise<string | null> 
     // Compress the image before sending it to the API (to save bandwidth)
     const compressedImage = await compressImage(imageData, 0.7);
     
+    // In a real implementation, you would uncomment the following code
+    // and replace the placeholders with actual API calls
+    /*
+    const apiKey = getApiKey("googleVision");
+    const endpoint = apiConfig.googleVision.baseUrl;
+    
+    const response = await fetch(`${endpoint}?key=${apiKey}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        requests: [
+          {
+            image: {
+              content: compressedImage.split(',')[1]
+            },
+            features: [
+              {
+                type: 'LABEL_DETECTION',
+                maxResults: apiConfig.googleVision.maxResults
+              },
+            ]
+          }
+        ]
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (data.responses && data.responses[0].labelAnnotations) {
+      const animals = data.responses[0].labelAnnotations
+        .filter(label => label.description && label.score > 0.7)
+        .map(label => label.description);
+        
+      if (animals.length > 0) {
+        return animals[0];
+      }
+    }
+    */
+    
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 2500));
     
-    // Direct image URL matching for demonstration
-    if (imageData.includes("a3386c5c-af28-42ee-96df-91008ff21cb5")) {
-      return "Bengal Tiger";
-    } else if (imageData.includes("4c436a75-e04b-4265-8025-91e7bb146566")) {
-      return "Gray Wolf";
-    } else if (imageData.includes("dc7e6fce-2b21-472e-99f7-7f20be83b76f")) {
-      return "Labrador Retriever";
-    } else if (imageData.includes("69501614-b92c-43f9-89e5-85971b5b6ede")) {
-      // This is the sample image from handleCapture
-      return "Bengal Tiger";
-    }
-    
-    // If still here, return a default animal
-    return "Bengal Tiger";
+    // Simulate a success response
+    const animals = ["Tiger", "Wolf", "Labrador Retriever", "Elephant", "Giraffe", "Lion"];
+    const randomIndex = Math.floor(Math.random() * animals.length);
+    return animals[randomIndex];
   } catch (error) {
     console.error("Error identifying animal:", error);
     toast.error("Failed to identify animal. Please try again.");
@@ -164,47 +195,96 @@ export const identifyAnimal = async (imageData: string): Promise<string | null> 
   }
 };
 
-// This function simulates getting detailed information about an animal
+// This function simulates getting detailed information from OpenAI
+// In a real implementation, you would call the actual OpenAI API with the proper API key
 export const getAnimalDetails = async (animalName: string): Promise<AnimalDetails | null> => {
   try {
     console.log(`Simulating OpenAI API call for details about: ${animalName}`);
     
+    // In a real implementation, you would uncomment the following code
+    // and replace the placeholders with actual API calls
+    /*
+    const apiKey = getApiKey("openAI");
+    const model = apiConfig.openAI.model;
+    const maxTokens = apiConfig.openAI.maxTokens;
+    
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: model,
+        messages: [
+          {
+            role: "system",
+            content: "You are an expert zoologist and animal specialist. Provide detailed information about animals in JSON format."
+          },
+          {
+            role: "user",
+            content: `Provide detailed information about ${animalName} in the following JSON format: 
+            {
+              "name": "Common name",
+              "scientificName": "Scientific name",
+              "riskLevel": "High/Moderate/Low",
+              "type": "Animal type (mammal, reptile, etc.)",
+              "dietary": "Carnivore/Herbivore/Omnivore",
+              "behavior": "Nocturnal/Diurnal/Crepuscular",
+              "dangerText": "Description of potential dangers",
+              "safetyMeasures": "Safety measures for encounters",
+              "about": "General description",
+              "habitat": "Natural habitat description",
+              "healthAdvice": "Health advice related to this animal",
+              "diet": "Detailed diet information",
+              "behavioralTraits": "Notable behavioral characteristics",
+              "legalRestrictions": "Any legal restrictions",
+              "interestingFacts": [{"fact": "Interesting fact 1"}, {"fact": "Interesting fact 2"}, {"fact": "Interesting fact 3"}],
+              "emergencyContacts": [{"name": "Contact name 1", "phone": "Contact phone 1"}, {"name": "Contact name 2", "phone": "Contact phone 2"}]
+            }`
+          }
+        ],
+        max_tokens: maxTokens,
+        temperature: 0.7
+      })
+    });
+    
+    const data = await response.json();
+    const animalDetails = JSON.parse(data.choices[0].message.content);
+    
+    // Add an ID and save to history
+    const newAnimal = {
+      ...animalDetails,
+      id: (animalScanHistory.length + 1).toString(),
+      imageUrl: "/path/to/generated/image.jpg", // In a real app, you'd generate or fetch an image
+      similarSpecies: [] // In a real app, you'd get this data
+    };
+    
+    // Save to history
+    animalScanHistory.push(newAnimal);
+    return newAnimal;
+    */
+    
     // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise(resolve => setTimeout(resolve, 3000));
     
-    // Direct name matching (case insensitive)
-    const animalKey = animalName.toLowerCase().trim();
-    let matchedAnimal: AnimalDetails | null = null;
+    // For demo purposes, return a predefined animal that matches our existing data
+    const animalKey = animalName.toLowerCase();
+    let matchedAnimal = null;
     
-    if (animalKey.includes("tiger") || animalKey.includes("bengal")) {
+    if (animalKey.includes("tiger") || animalKey.includes("cat")) {
       matchedAnimal = {...animalScanHistory[0]};
-    } else if (animalKey.includes("wolf") || animalKey.includes("gray")) {
+    } else if (animalKey.includes("wolf") || animalKey.includes("dog") || animalKey.includes("coyote")) {
       matchedAnimal = {...animalScanHistory[1]};
-    } else if (animalKey.includes("lab") || animalKey.includes("retriever") || animalKey.includes("dog")) {
+    } else if (animalKey.includes("lab") || animalKey.includes("retriever")) {
       matchedAnimal = {...animalScanHistory[2]};
+    } else {
+      // Default to a random animal if no match
+      const randomIndex = Math.floor(Math.random() * animalScanHistory.length);
+      matchedAnimal = {...animalScanHistory[randomIndex]};
     }
     
-    // If no match found, default to the Bengal Tiger
-    if (!matchedAnimal) {
-      matchedAnimal = {...animalScanHistory[0]};
-    }
-    
-    // For new scans, create a new ID and add to history
-    if (window.location.pathname === "/scan-camera") {
-      const newId = (animalScanHistory.length + 1).toString();
-      matchedAnimal = {
-        ...matchedAnimal,
-        id: newId,
-        timestamp: new Date() // Add a timestamp for the scan
-      };
-      
-      // Add a copy to our history
-      const newAnimalCopy = {...matchedAnimal};
-      animalScanHistory.push(newAnimalCopy);
-      
-      console.log(`New animal scan saved with ID: ${newId}`);
-    }
-    
+    // Return the matched animal
     return matchedAnimal;
   } catch (error) {
     console.error("Error getting animal details:", error);
@@ -214,9 +294,49 @@ export const getAnimalDetails = async (animalName: string): Promise<AnimalDetail
 };
 
 // This function would handle getting local emergency contacts using the Google Places API
+// In a real implementation, you would call the actual API
 export const getLocalEmergencyContacts = async (location: GeolocationPosition): Promise<{name: string, phone: string}[]> => {
   try {
     console.log("Simulating Google Places API call for local emergency contacts");
+    
+    // In a real implementation, you would uncomment the following code
+    // and replace the placeholders with actual API calls
+    /*
+    const apiKey = getApiKey("googlePlaces");
+    const { latitude, longitude } = location.coords;
+    const radius = apiConfig.googlePlaces.radius;
+    const types = apiConfig.googlePlaces.types;
+    
+    const response = await fetch(
+      `${apiConfig.googlePlaces.baseUrl}/nearbysearch/json?location=${latitude},${longitude}&radius=${radius}&types=${types}&key=${apiKey}`
+    );
+    
+    const data = await response.json();
+    
+    if (data.results && data.results.length > 0) {
+      const contacts = [];
+      
+      for (const place of data.results.slice(0, 3)) {
+        // Get place details to get phone number
+        const detailsResponse = await fetch(
+          `${apiConfig.googlePlaces.baseUrl}/details/json?place_id=${place.place_id}&fields=name,formatted_phone_number&key=${apiKey}`
+        );
+        
+        const detailsData = await detailsResponse.json();
+        
+        if (detailsData.result && detailsData.result.formatted_phone_number) {
+          contacts.push({
+            name: detailsData.result.name,
+            phone: detailsData.result.formatted_phone_number
+          });
+        }
+      }
+      
+      if (contacts.length > 0) {
+        return contacts;
+      }
+    }
+    */
     
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1000));

@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { ChevronLeft, Camera, Upload, Check, Loader2 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -54,7 +55,7 @@ const ScanCameraPage = () => {
     // In a real implementation, this would access the device camera
     // For now, we'll simulate capturing by showing a sample image
     if (scanType === "animal") {
-      setImagePreview("/lovable-uploads/a3386c5c-af28-42ee-96df-91008ff21cb5.png");
+      setImagePreview("/lovable-uploads/69501614-b92c-43f9-89e5-85971b5b6ede.png");
     } else {
       setImagePreview("/lovable-uploads/69501614-b92c-43f9-89e5-85971b5b6ede.png");
     }
@@ -82,13 +83,9 @@ const ScanCameraPage = () => {
 
     try {
       setIsProcessing(true);
-      
-      // Log the image preview URL to help with debugging
-      console.log("Processing image:", imagePreview);
 
       // First identify the animal using Google Vision API
       const animalName = await identifyAnimal(imagePreview);
-      console.log("Identified animal:", animalName);
       
       if (!animalName) {
         toast.error("Could not identify animal in image. Please try again.");
@@ -98,7 +95,6 @@ const ScanCameraPage = () => {
       
       // Then get details from OpenAI
       const animalDetails = await getAnimalDetails(animalName);
-      console.log("Animal details received:", animalDetails?.id, animalDetails?.name);
       
       if (!animalDetails) {
         toast.error("Could not retrieve animal details. Please try again.");
@@ -112,9 +108,10 @@ const ScanCameraPage = () => {
       
       // Wait a moment for the user to see the 100% completion
       setTimeout(() => {
+        toast.success(`Animal identified: ${animalName}`);
+        
         // Navigate to the animal detail page
         navigate(`/animal/${animalDetails.id}`);
-        toast.success(`Animal identified: ${animalName}`);
       }, 500);
     } catch (error) {
       console.error("Error processing image:", error);
