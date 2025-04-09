@@ -1,8 +1,12 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ChevronLeft, AlertTriangle, PawPrint, Utensils, Moon, PhoneCall, Info } from "lucide-react";
+import { ChevronLeft, AlertTriangle, PawPrint, Utensils, Moon, PhoneCall, Info, MapPin, Camera, Share2, Bell, HelpCircle } from "lucide-react";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface AnimalDetails {
   id: string;
@@ -44,14 +48,14 @@ const animalDetailsData: AnimalDetails[] = [
     type: "Mammal",
     dietary: "Carnivore",
     behavior: "Nocturnal",
-    dangerText: "The Bengal Tiger is regarded as extremely dangerous due to its immense power and predatory skills. This apex predator has the capability to cause fatal harm to humans, utilizing its strong muscular build, razor-sharp teeth, and retractable claws designed to kill. Tiger attacks, although rare, can be provoked by human encroachment into their territories or in situations where tigers feel threatened or cornered. These encounters can lead to deadly outcomes, with victims suffering severe injuries or death. Additionally, tiger-induced injuries carry the risk of serious infections, heightening the peril during any interaction with this majestic yet formidable animal.",
-    safetyMeasures: "If you encounter a Bengal Tiger, it's crucial to remain calm and avoid making sudden movements. Do not run, as this can trigger the tiger's instinct to chase. Instead, slowly back away while facing the tiger, maintaining a quiet demeanor to avoid provoking it. If possible, find shelter in a vehicle or secure structure. Do not approach the tiger or attempt to feed it. Being aware of your surroundings and avoiding tiger habitats during their active hours (dusk and dawn) can significantly reduce the risk of an encounter.",
-    about: "The Bengal Tiger (Panthera tigris tigris) is an endangered apex predator known for its striking orange coat with black stripes. Adult males weigh up to 260 kg and use their powerful claws and sharp teeth to hunt deer, wild boar, and other large mammals. These solitary creatures are excellent swimmers and are found across diverse habitats in India, Bangladesh, Nepal, and Bhutan. Threatened by habitat loss and poaching, they are crucial for ecosystem balance as they help control herbivore populations. Conservation efforts are vital to protect these majestic animals and their habitats.",
-    habitat: "Tigers inhabit a wide range of habitats including tropical rainforests, mangrove swamps, grasslands, and taiga. They require access to water, sufficient cover, and abundant prey.",
-    healthAdvice: "If an animal appears sick, immediately contact a wildlife veterinarian or local animal rescue. Avoid handling wild animals yourself. For pets, consult a specialized veterinarian, describe the symptoms accurately, and follow their advice carefully. Prioritize professional care to ensure proper treatment and safety.",
-    diet: "Bengal tigers are apex predators and primarily hunt large mammals such as deer, wild boar, and water buffalo. They can consume up to 40 kg of meat in a single meal and may hunt every 2-3 days.",
-    behavioralTraits: "Tigers are solitary animals that mark and defend territories. They are excellent swimmers and climbers. While typically avoiding humans, they may become aggressive if threatened, injured, or protecting cubs.",
-    legalRestrictions: "Bengal tigers are protected under CITES Appendix I, prohibiting international trade. National laws in range countries provide additional protection. Keeping tigers as pets is illegal in most jurisdictions without proper permits and facilities.",
+    dangerText: "Bengal Tigers are extremely dangerous predators with powerful builds, sharp teeth, and retractable claws. Attacks, though rare, can be fatal. Human encroachment into their territory increases risk of encounters.",
+    safetyMeasures: "If encountered, remain calm, don't run, and back away slowly while facing the tiger. Avoid tiger habitats during dawn and dusk. Never approach or attempt to feed them.",
+    about: "The Bengal Tiger is an endangered apex predator with an orange coat and black stripes. Adults weigh up to 260kg and are excellent swimmers. Found in India, Bangladesh, Nepal, and Bhutan, they face threats from habitat loss and poaching.",
+    habitat: "Found in tropical rainforests, mangrove swamps, grasslands, and taiga. Requires access to water, sufficient cover, and abundant prey.",
+    healthAdvice: "For sick wild animals, contact wildlife specialists immediately. For pets, consult a veterinarian, describe symptoms accurately, and follow professional advice.",
+    diet: "Hunts large mammals like deer, wild boar, and water buffalo. Can consume up to 40kg in a single meal and hunts every 2-3 days.",
+    behavioralTraits: "Solitary animals that mark territories. Excellent swimmers and climbers. Generally avoid humans but may become aggressive if threatened or protecting cubs.",
+    legalRestrictions: "Protected under CITES Appendix I, prohibiting international trade. Additional protection under national laws. Keeping as pets is illegal without proper permits.",
     interestingFacts: [
       { fact: "Each tiger has a unique stripe pattern, like human fingerprints." },
       { fact: "Tigers can leap distances of up to 6 meters and jump up to 5 meters vertically." },
@@ -76,14 +80,14 @@ const animalDetailsData: AnimalDetails[] = [
     type: "Mammal",
     dietary: "Carnivore",
     behavior: "Crepuscular",
-    dangerText: "Gray wolves pose a moderate risk to humans. While wolf attacks are rare, they can be dangerous when habituated to humans, rabid, or defending territory. Their strong jaws and pack hunting strategy make them formidable predators.",
-    safetyMeasures: "If you encounter a wolf, maintain eye contact, make yourself look large, make loud noises, and back away slowly. Never run from a wolf as it may trigger a chase response. Always keep food secured when in wolf territory and don't feed wolves under any circumstances.",
-    about: "The Gray Wolf is one of the world's most widely distributed predators. They typically live in packs of 6-10 individuals with a complex social hierarchy. Adult wolves weigh between 40-80 kg and can run up to 60 km/h. Their howling is used for communication within the pack.",
-    habitat: "Gray wolves adapt to many habitats including forests, mountains, tundra, taiga, and grasslands. They typically establish territories of 80-300 square miles depending on prey availability.",
-    healthAdvice: "If an animal appears sick, immediately contact a wildlife veterinarian or local animal rescue. Avoid handling wild animals yourself. For pets, consult a specialized veterinarian, describe the symptoms accurately, and follow their advice carefully.",
-    diet: "Wolves are carnivores that primarily hunt ungulates like deer, elk, and moose. A pack can consume 20 pounds of meat in a single feeding. They also eat smaller mammals, birds, and sometimes berries.",
-    behavioralTraits: "Wolves are highly social animals that live in family groups. They communicate through howling, body language, and scent marking. They're intelligent problem-solvers with strong family bonds and cooperative hunting strategies.",
-    legalRestrictions: "Gray wolves are protected under the Endangered Species Act in many regions. Hunting and trapping regulations vary by location, with some areas allowing controlled hunting. Keeping wolves as pets is illegal in most jurisdictions.",
+    dangerText: "Gray wolves pose moderate risk to humans. Attacks are rare but possible when wolves are habituated to humans, rabid, or defending territory. Their pack hunting makes them formidable.",
+    safetyMeasures: "If encountered, maintain eye contact, appear large, make noise, and back away slowly. Never run. Keep food secured in wolf territory and never feed them.",
+    about: "Widely distributed predators living in packs of 6-10 with complex social hierarchy. Adults weigh 40-80kg and can run up to 60km/h. Howling is used for pack communication.",
+    habitat: "Adaptable to forests, mountains, tundra, taiga, and grasslands. Establish territories of 80-300 square miles depending on prey availability.",
+    healthAdvice: "For sick wild animals, contact wildlife specialists immediately. For pets, consult a veterinarian, describe symptoms accurately, and follow professional advice.",
+    diet: "Primarily hunt ungulates like deer, elk, and moose. A pack can consume 9kg of meat in one feeding. Also eat smaller mammals, birds, and sometimes berries.",
+    behavioralTraits: "Highly social animals living in family groups. Communicate through howling, body language, and scent marking. Intelligent with strong family bonds and cooperative hunting.",
+    legalRestrictions: "Protected under the Endangered Species Act in many regions. Hunting regulations vary by location. Keeping as pets is illegal in most jurisdictions.",
     interestingFacts: [
       { fact: "Wolf packs have a complex social hierarchy led by an alpha pair." },
       { fact: "Wolves can travel up to 30 miles a day when hunting." },
@@ -108,14 +112,14 @@ const animalDetailsData: AnimalDetails[] = [
     type: "Mammal",
     dietary: "Omnivore",
     behavior: "Diurnal",
-    dangerText: "Labrador Retrievers pose a low risk to humans. They are known for their friendly temperament and are rarely aggressive. However, any dog can bite if provoked, scared, or ill. Always approach unfamiliar dogs with caution.",
-    safetyMeasures: "When interacting with Labradors, allow the dog to sniff your hand first, avoid sudden movements, and never disturb a dog while eating. Supervise interactions with children and teach them proper handling techniques.",
-    about: "The Labrador Retriever is one of the most popular dog breeds worldwide, known for its friendly nature and versatility. Originally bred as working dogs for fishermen in Newfoundland, they excel as family pets, service dogs, and in various working roles. They typically weigh 55-80 pounds and live 10-12 years.",
-    habitat: "As domesticated animals, Labradors adapt well to various living environments from apartments to rural settings, though they thrive with adequate space and exercise opportunities. They enjoy water and are natural swimmers.",
-    healthAdvice: "Regular veterinary check-ups are essential for Labradors. They're prone to hip and elbow dysplasia, obesity, and eye conditions. Maintain a healthy diet, regular exercise, and weight management. Contact your vet immediately if your Labrador shows signs of illness.",
-    diet: "Labradors should eat high-quality commercial dog food appropriate for their age, size, and activity level. They require about 2-3 cups of dry food daily, divided into two meals. Always provide fresh water and limit treats to prevent obesity.",
-    behavioralTraits: "Labradors are intelligent, friendly, and outgoing dogs with a strong desire to please. They're energetic, especially in youth, requiring regular exercise and mental stimulation. They get along well with children and other pets, making them excellent family companions.",
-    legalRestrictions: "Unlike wild animals, Labradors have few legal restrictions. However, local leash laws, licensing requirements, and breed-specific legislation may apply in some areas. Always follow responsible pet ownership guidelines.",
+    dangerText: "Labradors pose low risk to humans. Known for friendly temperament and rarely aggressive. However, any dog may bite if provoked, scared, or ill. Approach unfamiliar dogs with caution.",
+    safetyMeasures: "Let the dog sniff your hand first, avoid sudden movements, and never disturb while eating. Supervise interactions with children and teach proper handling.",
+    about: "One of the most popular dog breeds worldwide, known for friendliness and versatility. Originally bred as working dogs for fishermen. Typically weigh 25-36kg and live 10-12 years.",
+    habitat: "Domesticated animals that adapt to various environments from apartments to rural settings. Enjoy water and are natural swimmers.",
+    healthAdvice: "Regular vet check-ups essential. Prone to hip/elbow dysplasia, obesity, and eye conditions. Maintain healthy diet, exercise, and weight. Contact vet if showing illness signs.",
+    diet: "Should eat high-quality dog food suitable for age, size, and activity level. Need about 2-3 cups daily, divided into two meals. Always provide fresh water.",
+    behavioralTraits: "Intelligent, friendly, and outgoing with strong desire to please. Energetic, especially when young. Good with children and other pets, making excellent family companions.",
+    legalRestrictions: "Few legal restrictions compared to wild animals. Local leash laws, licensing requirements, and breed-specific legislation may apply. Follow responsible ownership guidelines.",
     interestingFacts: [
       { fact: "Labradors were originally bred to help fishermen retrieve nets and catch." },
       { fact: "They come in three recognized colors: black, yellow, and chocolate." },
@@ -138,6 +142,7 @@ const AnimalDetailPage = () => {
   const [animal, setAnimal] = useState<AnimalDetails | null>(null);
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("home");
   const [cameraSheetOpen, setCameraSheetOpen] = useState(false);
+  const [isNotifying, setIsNotifying] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -171,6 +176,21 @@ const AnimalDetailPage = () => {
     return "bg-green-500";
   };
 
+  const handleShare = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url);
+    toast.success("Link copied to clipboard!");
+  };
+
+  const toggleNotifications = () => {
+    setIsNotifying(!isNotifying);
+    toast.success(isNotifying ? "Notifications turned off" : "You'll be notified about Bengal Tiger sightings in your area");
+  };
+
+  const reportSighting = () => {
+    toast.success("Thanks for your report! Wildlife authorities have been notified.");
+  };
+
   if (!animal) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
@@ -185,15 +205,30 @@ const AnimalDetailPage = () => {
           <ChevronLeft className="h-6 w-6" color="white" />
         </button>
         <h1 className="text-[20px] font-semibold">Animal Details</h1>
-        <div className="w-10 h-10"></div>
+        <div className="flex">
+          <button onClick={handleShare} className="mr-2">
+            <Share2 className="h-5 w-5" color="white" />
+          </button>
+          <button onClick={toggleNotifications}>
+            <Bell className={`h-5 w-5 ${isNotifying ? "text-yellow-300" : "text-white"}`} />
+          </button>
+        </div>
       </header>
 
-      <div className="w-full h-[250px] overflow-hidden">
+      <div className="w-full h-[250px] overflow-hidden relative">
         <img 
           src={animal.imageUrl} 
           alt={animal.name} 
           className="w-full h-full object-cover"
         />
+        <div className="absolute bottom-3 right-3">
+          <button 
+            onClick={reportSighting}
+            className="bg-white/80 backdrop-blur-sm p-2 rounded-full"
+          >
+            <Camera className="h-5 w-5 text-blue-600" />
+          </button>
+        </div>
       </div>
 
       <div className="p-4 pb-2">
@@ -228,6 +263,11 @@ const AnimalDetailPage = () => {
           <p className="text-black text-xs font-medium">Behavior</p>
           <p className="text-blue-600 text-xs font-medium">{animal.behavior}</p>
         </div>
+        <div className="border border-gray-300 rounded-lg p-2 flex flex-col items-center justify-center">
+          <MapPin className="text-blue-600 mb-1" size={20} />
+          <p className="text-black text-xs font-medium">Habitat</p>
+          <p className="text-blue-600 text-xs font-medium">Various</p>
+        </div>
       </div>
 
       <div className="px-4 py-3 bg-red-100 mx-4 rounded-lg mb-3">
@@ -243,26 +283,6 @@ const AnimalDetailPage = () => {
       <div className="px-4 py-3 border border-gray-300 mx-4 rounded-lg mb-3">
         <h3 className="text-base font-semibold mb-1">About</h3>
         <p className="text-xs">{animal.about}</p>
-      </div>
-
-      <div className="px-4 py-3 bg-purple-100 mx-4 rounded-lg mb-3">
-        <h3 className="text-base font-semibold mb-1">Habitat</h3>
-        <p className="text-xs">{animal.habitat}</p>
-      </div>
-
-      <div className="px-4 py-3 bg-yellow-100 mx-4 rounded-lg mb-3">
-        <h3 className="text-base font-semibold mb-1">Health Advice</h3>
-        <p className="text-xs">{animal.healthAdvice}</p>
-      </div>
-
-      <div className="px-4 py-3 bg-pink-100 mx-4 rounded-lg mb-3">
-        <h3 className="text-base font-semibold mb-1">Diet</h3>
-        <p className="text-xs">{animal.diet}</p>
-      </div>
-
-      <div className="px-4 py-3 bg-green-100 mx-4 rounded-lg mb-3">
-        <h3 className="text-base font-semibold mb-1">Behavioral Traits</h3>
-        <p className="text-xs">{animal.behavioralTraits}</p>
       </div>
 
       <div className="px-4 py-3 bg-blue-100 mx-4 rounded-lg mb-3">
@@ -311,6 +331,17 @@ const AnimalDetailPage = () => {
             </div>
           ))}
         </div>
+      </div>
+      
+      <div className="px-4 py-3 mx-4 mb-6">
+        <Button 
+          variant="outline" 
+          className="w-full flex items-center justify-center gap-2 border-blue-500 text-blue-500"
+          onClick={() => navigate("/forum")}
+        >
+          <HelpCircle size={16} />
+          <span>Ask Community About This Animal</span>
+        </Button>
       </div>
 
       <BottomNavigation
