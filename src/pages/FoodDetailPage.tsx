@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ChevronLeft, Bookmark, CircleCheck, Vegan, Fish, Edit, Info, ChevronRight, Compare, ListCheck, Calendar } from "lucide-react";
+import { ChevronLeft, Bookmark, CircleCheck, Vegan, Fish, Edit, Info, ChevronRight, BarChart2, ListCheck, Calendar } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
@@ -476,7 +476,7 @@ const FoodDetailPage = () => {
           onClick={() => setComparisonOpen(true)}
         >
           <div className="flex items-center">
-            <Compare className="h-5 w-5 mx-3" />
+            <BarChart2 className="h-5 w-5 mx-3" />
             <span className="font-medium text-base">Compare Foods</span>
           </div>
           <ChevronRight className="h-5 w-5 mx-3 text-gray-400" />

@@ -11,8 +11,33 @@ interface NutrientInfoSheetProps {
   onOpenChange: (open: boolean) => void;
 }
 
+// Define proper TypeScript interfaces for our nutrient items
+interface BaseNutrientItem {
+  name: string;
+  icon: string;
+  description: string;
+  goodAmount: string;
+}
+
+interface MacroMicroNutrientItem extends BaseNutrientItem {
+  excessRisks: string;
+  deficiencyRisks: string;
+}
+
+interface QuestionableIngredientItem extends BaseNutrientItem {
+  whyBad: string;
+  foundIn: string;
+}
+
+type NutrientItem = MacroMicroNutrientItem | QuestionableIngredientItem;
+
+interface NutrientCategory {
+  category: string;
+  items: NutrientItem[];
+}
+
 // Educational content about nutrients and ingredients
-const nutrientEducation = [
+const nutrientEducation: NutrientCategory[] = [
   {
     category: "Macronutrients",
     items: [
@@ -169,6 +194,11 @@ const NutrientInfoSheet: React.FC<NutrientInfoSheetProps> = ({
     };
   }).filter(category => category.items.length > 0);
 
+  // Helper function to determine if an item is a MacroMicroNutrient
+  const isMacroMicroNutrient = (item: NutrientItem): item is MacroMicroNutrientItem => {
+    return 'excessRisks' in item && 'deficiencyRisks' in item;
+  };
+
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="max-h-[90vh] overflow-auto">
@@ -217,12 +247,13 @@ const NutrientInfoSheet: React.FC<NutrientInfoSheetProps> = ({
                           
                           {expandedItem === item.name && (
                             <div className="mt-3 pt-3 border-t border-gray-200">
-                              {category.category !== "Questionable Ingredients" ? (
+                              <div className="mb-2">
+                                <span className="text-sm font-semibold">Recommended amount: </span>
+                                <span className="text-sm">{item.goodAmount}</span>
+                              </div>
+                              
+                              {isMacroMicroNutrient(item) ? (
                                 <>
-                                  <div className="mb-2">
-                                    <span className="text-sm font-semibold">Recommended amount: </span>
-                                    <span className="text-sm">{item.goodAmount}</span>
-                                  </div>
                                   <div className="mb-2">
                                     <span className="text-sm font-semibold">Risks of excess: </span>
                                     <span className="text-sm">{item.excessRisks}</span>
@@ -234,10 +265,6 @@ const NutrientInfoSheet: React.FC<NutrientInfoSheetProps> = ({
                                 </>
                               ) : (
                                 <>
-                                  <div className="mb-2">
-                                    <span className="text-sm font-semibold">Recommended amount: </span>
-                                    <span className="text-sm">{item.goodAmount}</span>
-                                  </div>
                                   <div className="mb-2">
                                     <span className="text-sm font-semibold">Why it's concerning: </span>
                                     <span className="text-sm">{item.whyBad}</span>
