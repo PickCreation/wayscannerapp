@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ChevronLeft, Bookmark, CircleCheck, Vegan, Fish, Edit, Info, ChevronRight, BarChart2, ListCheck, Calendar } from "lucide-react";
+import { ChevronLeft, Bookmark, CircleCheck, Vegan, Fish, Edit, Info, ChevronRight, BarChart2, ListCheck, Calendar, Leaf } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +13,7 @@ import ComparisonSheet from "@/components/ComparisonSheet";
 import AlternativesSheet from "@/components/AlternativesSheet";
 import NutrientInfoSheet from "@/components/NutrientInfoSheet";
 import MealPlanningSheet from "@/components/MealPlanningSheet";
+import EnvironmentSheet from "@/components/EnvironmentSheet";
 import { toast } from "sonner";
 
 const foodItems = [
@@ -165,6 +166,7 @@ const FoodDetailPage = () => {
   const [alternativesOpen, setAlternativesOpen] = useState(false);
   const [nutrientInfoOpen, setNutrientInfoOpen] = useState(false);
   const [mealPlanningOpen, setMealPlanningOpen] = useState(false);
+  const [environmentOpen, setEnvironmentOpen] = useState(false);
   const [userDiet, setUserDiet] = useState<Diet>(null);
   const [userAllergies, setUserAllergies] = useState<Allergy[]>([]);
   
@@ -506,6 +508,17 @@ const FoodDetailPage = () => {
         
         <button 
           className="w-full py-3 flex items-center justify-between bg-gray-100 rounded-lg mb-3"
+          onClick={() => setEnvironmentOpen(true)}
+        >
+          <div className="flex items-center">
+            <Leaf className="h-5 w-5 mx-3 text-green-500" />
+            <span className="font-medium text-base">Environment</span>
+          </div>
+          <ChevronRight className="h-5 w-5 mx-3 text-gray-400" />
+        </button>
+        
+        <button 
+          className="w-full py-3 flex items-center justify-between bg-gray-100 rounded-lg mb-3"
           onClick={() => setMealPlanningOpen(true)}
         >
           <div className="flex items-center">
@@ -569,6 +582,12 @@ const FoodDetailPage = () => {
       <NutrientInfoSheet 
         open={nutrientInfoOpen}
         onOpenChange={setNutrientInfoOpen}
+      />
+      
+      <EnvironmentSheet
+        open={environmentOpen}
+        onOpenChange={setEnvironmentOpen}
+        currentFood={food}
       />
       
       <MealPlanningSheet 
