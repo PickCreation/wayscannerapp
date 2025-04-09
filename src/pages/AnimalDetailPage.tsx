@@ -197,7 +197,7 @@ const AnimalDetailPage = () => {
 
   return (
     <div className="pb-20 bg-white min-h-screen">
-      <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
+      <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center fixed top-0 left-0 right-0 z-10">
         <button 
           className="p-2" 
           onClick={() => navigate("/scan?tab=animals")}
@@ -215,133 +215,135 @@ const AnimalDetailPage = () => {
         </div>
       </header>
 
-      <div className="w-full h-[280px] overflow-hidden relative">
-        <img 
-          src={animal.imageUrl} 
-          alt={animal.name} 
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute bottom-3 right-3">
-          <button 
-            onClick={reportSighting}
-            className="bg-white/80 backdrop-blur-sm p-2 rounded-full"
-          >
-            <Camera className="h-5 w-5 text-blue-600" />
-          </button>
-        </div>
-      </div>
-
-      <ScrollArea className="h-[calc(100vh-350px)] pb-4">
-        <div className="p-5">
-          <h2 className="text-2xl font-bold">{animal.name}</h2>
+      <ScrollArea className="h-[calc(100vh-118px)] w-full mt-[64px]">
+        <div className="w-full">
+          <div className="w-full h-[280px] overflow-hidden relative">
+            <img 
+              src={animal.imageUrl} 
+              alt={animal.name} 
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute bottom-3 right-3">
+              <button 
+                onClick={reportSighting}
+                className="bg-white/80 backdrop-blur-sm p-2 rounded-full"
+              >
+                <Camera className="h-5 w-5 text-blue-600" />
+              </button>
+            </div>
+          </div>
         
-          <div className="mt-2 mb-3">
-            <h3 className="text-base text-green-600 font-medium">Scientific Name</h3>
-            <p className="text-blue-600 text-sm font-medium">{animal.scientificName}</p>
-            
-            <div className={`mt-2 ${getRiskColor(animal.riskLevel)} text-white px-3 py-1.5 rounded-full inline-flex items-center text-sm`}>
-              <AlertTriangle className="mr-2" size={16} />
-              <span className="font-medium">{animal.riskLevel} Risk</span>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-200 my-4"></div>
-
-          <div className="grid grid-cols-4 gap-2 mb-6">
-            <div className="border border-gray-300 rounded-lg p-3 flex flex-col items-center justify-center">
-              <PawPrint className="text-blue-600 mb-1" size={24} />
-              <p className="text-black text-xs font-medium">Type</p>
-              <p className="text-blue-600 text-xs font-medium">{animal.type}</p>
-            </div>
-            <div className="border border-gray-300 rounded-lg p-3 flex flex-col items-center justify-center">
-              <Utensils className="text-blue-600 mb-1" size={24} />
-              <p className="text-black text-xs font-medium">Dietary</p>
-              <p className="text-blue-600 text-xs font-medium">{animal.dietary}</p>
-            </div>
-            <div className="border border-gray-300 rounded-lg p-3 flex flex-col items-center justify-center">
-              <Moon className="text-blue-600 mb-1" size={24} />
-              <p className="text-black text-xs font-medium">Behavior</p>
-              <p className="text-blue-600 text-xs font-medium">{animal.behavior}</p>
-            </div>
-            <div className="border border-gray-300 rounded-lg p-3 flex flex-col items-center justify-center">
-              <MapPin className="text-blue-600 mb-1" size={24} />
-              <p className="text-black text-xs font-medium">Habitat</p>
-              <p className="text-blue-600 text-xs font-medium">Various</p>
-            </div>
-          </div>
-
-          <div className="px-4 py-4 bg-red-100 rounded-lg mb-5">
-            <h3 className="text-lg font-semibold mb-2">Danger Level</h3>
-            <p className="text-sm">{animal.dangerText}</p>
-          </div>
-
-          <div className="px-4 py-4 bg-green-100 rounded-lg mb-5">
-            <h3 className="text-lg font-semibold mb-2">Safety Measures</h3>
-            <p className="text-sm">{animal.safetyMeasures}</p>
-          </div>
-
-          <div className="px-4 py-4 border border-gray-300 rounded-lg mb-5">
-            <h3 className="text-lg font-semibold mb-2">About</h3>
-            <p className="text-sm">{animal.about}</p>
-          </div>
-
-          <div className="px-4 py-4 bg-blue-100 rounded-lg mb-5">
-            <h3 className="text-lg font-semibold mb-2">Legal Restrictions</h3>
-            <p className="text-sm">{animal.legalRestrictions}</p>
-          </div>
-
-          <div className="px-4 py-4 border border-gray-300 rounded-lg mb-5">
-            <h3 className="text-lg font-semibold mb-2">Interesting Facts</h3>
-            <ul className="space-y-3">
-              {animal.interestingFacts.map((item, index) => (
-                <li key={index} className="flex items-start">
-                  <div className="flex-shrink-0 h-6 w-6 rounded-full bg-blue-500 flex items-center justify-center mr-3 mt-0.5">
-                    <Info className="h-3.5 w-3.5 text-white" />
-                  </div>
-                  <p className="text-sm">{item.fact}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="px-4 py-4 bg-red-100 rounded-lg mb-5">
-            <h3 className="text-lg font-semibold mb-2">Emergency Contacts</h3>
-            <ul className="space-y-3">
-              {animal.emergencyContacts.map((contact, index) => (
-                <li key={index} className="flex items-center">
-                  <PhoneCall className="h-5 w-5 text-red-600 mr-3" />
-                  <div>
-                    <p className="text-sm font-semibold">{contact.name}</p>
-                    <p className="text-sm">{contact.phone}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="px-4 py-4 rounded-lg mb-5">
-            <h3 className="text-lg font-semibold mb-3">Similar Species</h3>
-            <div className="flex space-x-5 overflow-x-auto pb-2">
-              {animal.similarSpecies.map((species, index) => (
-                <div key={index} className="flex flex-col items-center">
-                  <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-gray-200">
-                    <img src={species.imageUrl} alt={species.name} className="w-full h-full object-cover" />
-                  </div>
-                  <p className="text-sm text-center mt-2">{species.name}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+          <div className="p-5">
+            <h2 className="text-2xl font-bold">{animal.name}</h2>
           
-          <div className="mb-6">
-            <Button 
-              variant="outline" 
-              className="w-full flex items-center justify-center gap-2 border-blue-500 text-blue-500 py-3 text-base"
-              onClick={() => navigate("/forum")}
-            >
-              <HelpCircle size={18} />
-              <span>Ask Community About This Animal</span>
-            </Button>
+            <div className="mt-2 mb-3">
+              <h3 className="text-base text-green-600 font-medium">Scientific Name</h3>
+              <p className="text-blue-600 text-sm font-medium">{animal.scientificName}</p>
+              
+              <div className={`mt-2 ${getRiskColor(animal.riskLevel)} text-white px-3 py-1.5 rounded-full inline-flex items-center text-sm`}>
+                <AlertTriangle className="mr-2" size={16} />
+                <span className="font-medium">{animal.riskLevel} Risk</span>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-200 my-4"></div>
+
+            <div className="grid grid-cols-4 gap-2 mb-6">
+              <div className="border border-gray-300 rounded-lg p-3 flex flex-col items-center justify-center">
+                <PawPrint className="text-blue-600 mb-1" size={24} />
+                <p className="text-black text-xs font-medium">Type</p>
+                <p className="text-blue-600 text-xs font-medium">{animal.type}</p>
+              </div>
+              <div className="border border-gray-300 rounded-lg p-3 flex flex-col items-center justify-center">
+                <Utensils className="text-blue-600 mb-1" size={24} />
+                <p className="text-black text-xs font-medium">Dietary</p>
+                <p className="text-blue-600 text-xs font-medium">{animal.dietary}</p>
+              </div>
+              <div className="border border-gray-300 rounded-lg p-3 flex flex-col items-center justify-center">
+                <Moon className="text-blue-600 mb-1" size={24} />
+                <p className="text-black text-xs font-medium">Behavior</p>
+                <p className="text-blue-600 text-xs font-medium">{animal.behavior}</p>
+              </div>
+              <div className="border border-gray-300 rounded-lg p-3 flex flex-col items-center justify-center">
+                <MapPin className="text-blue-600 mb-1" size={24} />
+                <p className="text-black text-xs font-medium">Habitat</p>
+                <p className="text-blue-600 text-xs font-medium">Various</p>
+              </div>
+            </div>
+
+            <div className="px-4 py-4 bg-red-100 rounded-lg mb-5">
+              <h3 className="text-lg font-semibold mb-2">Danger Level</h3>
+              <p className="text-sm">{animal.dangerText}</p>
+            </div>
+
+            <div className="px-4 py-4 bg-green-100 rounded-lg mb-5">
+              <h3 className="text-lg font-semibold mb-2">Safety Measures</h3>
+              <p className="text-sm">{animal.safetyMeasures}</p>
+            </div>
+
+            <div className="px-4 py-4 bg-blue-100 rounded-lg mb-5">
+              <h3 className="text-lg font-semibold mb-2">About</h3>
+              <p className="text-sm">{animal.about}</p>
+            </div>
+
+            <div className="px-4 py-4 bg-red-100 rounded-lg mb-5">
+              <h3 className="text-lg font-semibold mb-2">Legal Restrictions</h3>
+              <p className="text-sm">{animal.legalRestrictions}</p>
+            </div>
+
+            <div className="px-4 py-4 border border-gray-300 rounded-lg mb-5">
+              <h3 className="text-lg font-semibold mb-2">Interesting Facts</h3>
+              <ul className="space-y-3">
+                {animal.interestingFacts.map((item, index) => (
+                  <li key={index} className="flex items-start">
+                    <div className="flex-shrink-0 h-6 w-6 rounded-full bg-blue-500 flex items-center justify-center mr-3 mt-0.5">
+                      <Info className="h-3.5 w-3.5 text-white" />
+                    </div>
+                    <p className="text-sm">{item.fact}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="px-4 py-4 bg-red-100 rounded-lg mb-5">
+              <h3 className="text-lg font-semibold mb-2">Emergency Contacts</h3>
+              <ul className="space-y-3">
+                {animal.emergencyContacts.map((contact, index) => (
+                  <li key={index} className="flex items-center">
+                    <PhoneCall className="h-5 w-5 text-red-600 mr-3" />
+                    <div>
+                      <p className="text-sm font-semibold">{contact.name}</p>
+                      <p className="text-sm">{contact.phone}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="px-4 py-4 rounded-lg mb-5">
+              <h3 className="text-lg font-semibold mb-3">Similar Species</h3>
+              <div className="flex space-x-5 overflow-x-auto pb-2">
+                {animal.similarSpecies.map((species, index) => (
+                  <div key={index} className="flex flex-col items-center">
+                    <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-gray-200">
+                      <img src={species.imageUrl} alt={species.name} className="w-full h-full object-cover" />
+                    </div>
+                    <p className="text-sm text-center mt-2">{species.name}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div className="mb-6">
+              <Button 
+                variant="outline" 
+                className="w-full flex items-center justify-center gap-2 border-blue-500 text-blue-500 py-3 text-base"
+                onClick={() => navigate("/forum")}
+              >
+                <HelpCircle size={18} />
+                <span>Ask Community About This Animal</span>
+              </Button>
+            </div>
           </div>
         </div>
       </ScrollArea>
