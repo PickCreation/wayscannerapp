@@ -1,27 +1,33 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { AlertTriangle } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
 
-// Define the animal scan result interface
-interface AnimalScanResult {
+import React from "react";
+import { ChevronRight, AlertTriangle, Camera, PawPrint } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
+interface AnimalItem {
   id: string;
   name: string;
   scientificName: string;
   riskLevel: "High" | "Moderate" | "Low";
   imageUrl: string;
-  timestamp?: Date;
+  borderColor: string;
+  icon: "mammal" | "bird" | "fish";
+  type: string;
+  dietary: string;
+  behavior: string;
 }
 
-// Mock data for animal scan results
-const animalScanResults: AnimalScanResult[] = [
+const animalItems: AnimalItem[] = [
   {
     id: "1",
     name: "Bengal Tiger",
     scientificName: "Panthera tigris tigris",
     riskLevel: "High",
     imageUrl: "/lovable-uploads/a3386c5c-af28-42ee-96df-91008ff21cb5.png",
-    timestamp: new Date("2025-04-08T15:30:00")
+    borderColor: "border-red-200",
+    icon: "mammal",
+    type: "Mammal",
+    dietary: "Carnivore",
+    behavior: "Nocturnal"
   },
   {
     id: "2",
@@ -29,7 +35,11 @@ const animalScanResults: AnimalScanResult[] = [
     scientificName: "Canis lupus",
     riskLevel: "Moderate",
     imageUrl: "/lovable-uploads/4c436a75-e04b-4265-8025-91e7bb146566.png",
-    timestamp: new Date("2025-04-07T10:15:00")
+    borderColor: "border-orange-200",
+    icon: "mammal",
+    type: "Mammal",
+    dietary: "Carnivore",
+    behavior: "Crepuscular"
   },
   {
     id: "3",
@@ -37,111 +47,86 @@ const animalScanResults: AnimalScanResult[] = [
     scientificName: "Canis lupus familiaris",
     riskLevel: "Low",
     imageUrl: "/lovable-uploads/dc7e6fce-2b21-472e-99f7-7f20be83b76f.png",
-    timestamp: new Date("2025-04-05T09:45:00")
-  }
+    borderColor: "border-green-200",
+    icon: "mammal",
+    type: "Mammal",
+    dietary: "Omnivore",
+    behavior: "Diurnal"
+  },
 ];
 
-const AnimalScanTab: React.FC = () => {
+// Set this to false to show animal items for testing
+const SHOW_WELCOME_SCREEN = false;
+
+const AnimalScanTab = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [scanResults, setScanResults] = React.useState<AnimalScanResult[]>([]);
-  
-  React.useEffect(() => {
-    // Simulate loading data
-    const timer = setTimeout(() => {
-      setScanResults(animalScanResults);
-      setIsLoading(false);
-    }, 1000);
-    
-    return () => clearTimeout(timer);
-  }, []);
-  
-  const handleAnimalClick = (animalId: string) => {
-    navigate(`/animal/${animalId}`);
-  };
   
   const getRiskColor = (risk: "High" | "Moderate" | "Low") => {
-    if (risk === "High") return "bg-red-500 text-white";
-    if (risk === "Moderate") return "bg-yellow-500 text-white";
-    return "bg-green-500 text-white";
+    if (risk === "High") return "bg-red-500";
+    if (risk === "Moderate") return "bg-yellow-500";
+    return "bg-green-500";
   };
-  
-  const formatDate = (date?: Date) => {
-    if (!date) return "Unknown date";
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
+
+  const getBorderColor = (risk: "High" | "Moderate" | "Low") => {
+    if (risk === "High") return "border-red-200";
+    if (risk === "Moderate") return "border-orange-200";
+    return "border-green-200";
   };
-  
-  const handleScanNewAnimal = () => {
-    navigate('/scan-camera', { state: { scanType: 'animal' } });
+
+  const handleAnimalClick = (id: string) => {
+    navigate(`/animal/${id}`);
   };
-  
-  if (isLoading) {
+
+  if (SHOW_WELCOME_SCREEN) {
     return (
-      <div className="space-y-4">
-        {[...Array(3)].map((_, index) => (
-          <div key={index} className="flex items-center space-x-4 border border-gray-200 rounded-lg p-3">
-            <Skeleton className="h-16 w-16 rounded-md" />
-            <div className="space-y-2 flex-1">
-              <Skeleton className="h-4 w-32" />
-              <Skeleton className="h-3 w-40" />
-              <Skeleton className="h-5 w-16" />
+      <div className="flex flex-col items-center justify-center py-8 px-4 text-center h-[70vh]">
+        <h2 className="text-2xl font-medium text-gray-400 mb-2">Welcome to WayScanner</h2>
+        <p className="text-lg text-gray-400 mb-8">Scan an item to learn more!</p>
+        
+        <div className="border-2 border-gray-300 rounded-3xl p-8 mb-12 w-full max-w-xs flex flex-col items-center">
+          <p className="text-3xl text-gray-400 mb-4">Tap</p>
+          <Camera size={64} className="text-gray-400 mb-4" />
+          <p className="text-3xl text-gray-400">to scan</p>
+        </div>
+        
+        <div className="flex w-full justify-around items-center">
+          <div className="flex flex-col items-center">
+            <div className="bg-gray-200 p-4 rounded-full">
+              <PawPrint size={32} className="text-gray-400" />
             </div>
+            <p className="mt-2 text-gray-400">Animals</p>
           </div>
-        ))}
+        </div>
       </div>
     );
   }
-  
+
   return (
-    <div>
-      <div className="mb-4">
-        <button 
-          onClick={handleScanNewAnimal}
-          className="w-full py-3 px-4 bg-wayscanner-blue text-white rounded-lg font-medium flex items-center justify-center"
+    <div className="space-y-3">
+      {animalItems.map((item) => (
+        <div 
+          key={item.id} 
+          className={`p-3 rounded-xl border-2 ${getBorderColor(item.riskLevel)} shadow-sm bg-white flex items-center justify-between cursor-pointer`}
+          onClick={() => handleAnimalClick(item.id)}
         >
-          <span className="mr-2">Scan New Animal</span>
-        </button>
-      </div>
-      
-      <div className="space-y-4">
-        {scanResults.length === 0 ? (
-          <div className="text-center py-10 border border-gray-200 rounded-lg">
-            <p className="text-gray-500">No animal scans yet.</p>
-            <p className="text-gray-400 text-sm mt-1">Tap the button above to scan an animal.</p>
+          <div className="h-14 w-14 mr-3 flex-shrink-0 rounded-xl overflow-hidden">
+            <img 
+              src={item.imageUrl} 
+              alt={item.name} 
+              className="h-full w-full object-cover rounded-[12px]"
+            />
           </div>
-        ) : (
-          scanResults.map((animal) => (
-            <div 
-              key={animal.id} 
-              className="flex items-center space-x-4 border border-gray-200 rounded-lg p-3 cursor-pointer hover:bg-gray-50"
-              onClick={() => handleAnimalClick(animal.id)}
-            >
-              <div className="h-16 w-16 rounded-md overflow-hidden">
-                <img 
-                  src={animal.imageUrl} 
-                  alt={animal.name} 
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-medium text-lg">{animal.name}</h3>
-                <p className="text-sm text-gray-500">{animal.scientificName}</p>
-                <div className="flex items-center justify-between mt-1">
-                  <div className={`px-2 py-0.5 rounded-full text-xs flex items-center ${getRiskColor(animal.riskLevel)}`}>
-                    <AlertTriangle className="h-3 w-3 mr-1" />
-                    <span>{animal.riskLevel} Risk</span>
-                  </div>
-                  <span className="text-xs text-gray-400">{formatDate(animal.timestamp)}</span>
-                </div>
-              </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-bold text-gray-900">{item.name}</h3>
+            <p className="text-md text-blue-500">{item.scientificName}</p>
+            <div className={`${getRiskColor(item.riskLevel)} text-white px-2 py-1 rounded-full inline-flex items-center text-sm mt-2`}>
+              <AlertTriangle className="mr-1" size={14} />
+              <span>{item.riskLevel} Risk</span>
             </div>
-          ))
-        )}
-      </div>
+          </div>
+          <ChevronRight className="text-gray-400 h-5 w-5" />
+        </div>
+      ))}
     </div>
   );
 };

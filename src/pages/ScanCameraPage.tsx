@@ -1,83 +1,29 @@
-import React, { useState, useRef, useEffect } from "react";
-import { ChevronLeft, Camera, Upload, Check, Loader2 } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
+
+import React, { useState, useRef } from "react";
+import { ChevronLeft, Camera, Upload, Check } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { identifyAnimal, getAnimalDetails } from "@/services/animalRecognitionService";
-import { Progress } from "@/components/ui/progress";
-import { fileToBase64, compressImage } from "@/utils/imageProcessing";
 
 const ScanCameraPage = () => {
   const [captureMode, setCaptureMode] = useState<"camera" | "upload">("camera");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [processingStage, setProcessingStage] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
-  const location = useLocation();
-  const scanType = location.state?.scanType || "general";
-
-  // Progress simulation effect
-  useEffect(() => {
-    let progressInterval: NodeJS.Timeout;
-    
-    if (isProcessing) {
-      setProgress(0);
-      setProcessingStage("Analyzing image...");
-      
-      progressInterval = setInterval(() => {
-        setProgress((prevProgress) => {
-          if (prevProgress >= 40) {
-            setProcessingStage("Identifying animal species...");
-          }
-          if (prevProgress >= 70) {
-            setProcessingStage("Gathering detailed information...");
-          }
-          if (prevProgress >= 95) {
-            clearInterval(progressInterval);
-            return 95;
-          }
-          return prevProgress + 5;
-        });
-      }, 300);
-    } else {
-      setProgress(0);
-    }
-    
-    return () => {
-      if (progressInterval) clearInterval(progressInterval);
-    };
-  }, [isProcessing]);
 
   const handleCapture = () => {
-    // Simulate capturing by showing a sample image based on the scan type
-    if (scanType === "animal") {
-      // Use different sample images to test different animal identification
-      const sampleImages = [
-        "/lovable-uploads/a3386c5c-af28-42ee-96df-91008ff21cb5.png", // Tiger
-        "/lovable-uploads/4c436a75-e04b-4265-8025-91e7bb146566.png", // Wolf
-        "/lovable-uploads/dc7e6fce-2b21-472e-99f7-7f20be83b76f.png"  // Lab
-      ];
-      // For testing, let's use the tiger image as default
-      setImagePreview(sampleImages[0]);
-    } else {
-      setImagePreview("/lovable-uploads/69501614-b92c-43f9-89e5-85971b5b6ede.png");
-    }
+    // In a real implementation, this would access the device camera
+    // For now, we'll simulate capturing by showing a sample image
+    setImagePreview("/lovable-uploads/69501614-b92c-43f9-89e5-85971b5b6ede.png");
   };
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      try {
-        const base64Image = await fileToBase64(file);
-        // Compress the image before previewing
-        const compressedImage = await compressImage(base64Image, 0.8);
-        setImagePreview(compressedImage);
-      } catch (error) {
-        console.error("Error processing file:", error);
-        toast.error("Failed to process the image. Please try again.");
-      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -85,49 +31,10 @@ const ScanCameraPage = () => {
     fileInputRef.current?.click();
   };
 
-  const handleSubmit = async () => {
-    if (!imagePreview) return;
-
-    try {
-      setIsProcessing(true);
-      console.log("Starting animal identification process");
-
-      // First identify the animal using our enhanced method
-      const animalName = await identifyAnimal(imagePreview);
-      
-      if (!animalName) {
-        toast.error("Could not identify animal in image. Please try again.");
-        setIsProcessing(false);
-        return;
-      }
-      
-      console.log(`Identified animal: ${animalName}`);
-      
-      // Then get details about the animal
-      const animalDetails = await getAnimalDetails(animalName);
-      
-      if (!animalDetails) {
-        toast.error("Could not retrieve animal details. Please try again.");
-        setIsProcessing(false);
-        return;
-      }
-      
-      // Set progress to 100% to indicate completion
-      setProgress(100);
-      setProcessingStage("Analysis complete!");
-      
-      // Wait a moment for the user to see the 100% completion
-      setTimeout(() => {
-        toast.success(`Animal identified: ${animalName}`);
-        
-        // Navigate to the animal detail page
-        navigate(`/animal/${animalDetails.id}`);
-      }, 500);
-    } catch (error) {
-      console.error("Error processing image:", error);
-      toast.error("There was an error processing your image. Please try again.");
-      setIsProcessing(false);
-    }
+  const handleSubmit = () => {
+    // In a real app, you would send the image to an API for processing
+    // Navigate to animal scan results with simulated success
+    navigate("/scan?tab=animals");
   };
 
   return (
@@ -137,13 +44,10 @@ const ScanCameraPage = () => {
         <button 
           className="p-2" 
           onClick={() => navigate(-1)}
-          disabled={isProcessing}
         >
           <ChevronLeft className="h-6 w-6" color="white" />
         </button>
-        <h1 className="text-[20px] font-medium ml-2">
-          {scanType === "animal" ? "Scan Animal" : captureMode === "camera" ? "Scan Animal" : "Upload Image"}
-        </h1>
+        <h1 className="text-[20px] font-medium ml-2">{captureMode === "camera" ? "Scan Animal" : "Upload Image"}</h1>
       </header>
 
       {/* Camera/Preview Area */}
@@ -155,24 +59,15 @@ const ScanCameraPage = () => {
               alt="Preview" 
               className="w-full h-full object-contain"
             />
-            {isProcessing ? (
-              <div className="absolute bottom-0 left-0 right-0 bg-black/70 p-6 flex flex-col items-center">
-                <p className="text-white text-lg mb-3">{processingStage}</p>
-                <Progress className="w-full h-2 mb-4" value={progress} indicatorColor="bg-blue-500" />
-                <p className="text-white text-sm">{progress}% complete</p>
-              </div>
-            ) : (
-              <div className="absolute bottom-4 left-0 right-0 flex justify-center">
-                <Button 
-                  className="bg-wayscanner-blue hover:bg-blue-700 text-white rounded-full px-8 py-2 flex items-center"
-                  onClick={handleSubmit}
-                  disabled={isProcessing}
-                >
-                  <Check className="mr-2" size={20} />
-                  Use this image
-                </Button>
-              </div>
-            )}
+            <div className="absolute bottom-4 left-0 right-0 flex justify-center">
+              <Button 
+                className="bg-wayscanner-blue hover:bg-blue-700 text-white rounded-full px-8 py-2 flex items-center"
+                onClick={handleSubmit}
+              >
+                <Check className="mr-2" size={20} />
+                Use this image
+              </Button>
+            </div>
           </div>
         ) : (
           <div className="relative w-full h-full flex items-center justify-center">
@@ -210,7 +105,7 @@ const ScanCameraPage = () => {
       </div>
 
       {/* Bottom Controls */}
-      {!imagePreview && !isProcessing && (
+      {!imagePreview && (
         <div className="bg-black py-6 px-4">
           <div className="flex justify-around mb-4">
             <Button 

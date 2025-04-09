@@ -53,7 +53,7 @@ const CameraSheet: React.FC<CameraSheetProps> = ({
     onOpenChange(false);
     
     if (type === "Animal") {
-      navigate("/scan-camera", { state: { scanType: "animal" } });
+      navigate("/scan-camera");
       return;
     }
     
