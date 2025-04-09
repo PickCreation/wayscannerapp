@@ -87,7 +87,7 @@ const foodItems = [
     name: "Greek Yogurt",
     brand: "Chobani",
     score: 50,
-    imageUrl: "/lovable-uploads/dc7e6fce-2b21-472e-99f7-7f20be83b76f.png",
+    imageUrl: "/lovable-uploads/4c436a75-e04b-4265-8025-91e7bb146566.png",
     serving: "150g",
     nutrients: {
       negatives: [
@@ -121,7 +121,7 @@ const foodItems = [
     name: "Chocolate Bar",
     brand: "Hershey's",
     score: 23,
-    imageUrl: "/lovable-uploads/dc7e6fce-2b21-472e-99f7-7f20be83b76f.png",
+    imageUrl: "/lovable-uploads/8fdd5ac8-39b5-43e6-86de-c8b27715d7c8.png",
     serving: "43g",
     nutrients: {
       negatives: [

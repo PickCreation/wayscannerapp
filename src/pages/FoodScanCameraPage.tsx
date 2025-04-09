@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { ChevronLeft, Camera, Upload, Check, Barcode } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -13,7 +12,7 @@ const FoodScanCameraPage = () => {
   const handleCapture = () => {
     // In a real implementation, this would access the device camera
     // For now, we'll simulate capturing by showing a sample image
-    setImagePreview("/lovable-uploads/dc7e6fce-2b21-472e-99f7-7f20be83b76f.png");
+    setImagePreview("/lovable-uploads/5cf63fd0-114b-490f-96f9-b6b8dcc0b573.png");
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
