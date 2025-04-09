@@ -1,17 +1,20 @@
-
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ChevronLeft, Bookmark, CircleCheck, Vegan, Fish, Edit, Info, ChevronRight } from "lucide-react";
+import { ChevronLeft, Bookmark, CircleCheck, Vegan, Fish, Edit, Info, ChevronRight, Compare, ListCheck, Calendar } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
 import EditPreferencesSheet from "@/components/EditPreferencesSheet";
 import HowWeScoreSheet from "@/components/HowWeScoreSheet";
+import ComparisonSheet from "@/components/ComparisonSheet";
+import AlternativesSheet from "@/components/AlternativesSheet";
+import NutrientInfoSheet from "@/components/NutrientInfoSheet";
+import MealPlanningSheet from "@/components/MealPlanningSheet";
 import { toast } from "sonner";
 
-// Sample food data to simulate fetching from API
 const foodItems = [
   {
     id: "1",
@@ -158,6 +161,10 @@ const FoodDetailPage = () => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [editPreferencesOpen, setEditPreferencesOpen] = useState(false);
   const [howWeScoreOpen, setHowWeScoreOpen] = useState(false);
+  const [comparisonOpen, setComparisonOpen] = useState(false);
+  const [alternativesOpen, setAlternativesOpen] = useState(false);
+  const [nutrientInfoOpen, setNutrientInfoOpen] = useState(false);
+  const [mealPlanningOpen, setMealPlanningOpen] = useState(false);
   const [userDiet, setUserDiet] = useState<Diet>(null);
   const [userAllergies, setUserAllergies] = useState<Allergy[]>([]);
   
@@ -219,7 +226,6 @@ const FoodDetailPage = () => {
     }
   };
 
-  // Fixed color mapping for nutrition categories
   const getNutrientColor = (nutrientName: string, index: number) => {
     const colorMap: Record<string, string> = {
       "Sodium": "bg-red-500",
@@ -232,12 +238,10 @@ const FoodDetailPage = () => {
       "Potassium": "bg-pink-600"
     };
 
-    // If we have a predefined color, use it
     if (colorMap[nutrientName]) {
       return colorMap[nutrientName];
     }
 
-    // Fallback colors for any other nutrients
     const fallbackColors = [
       "bg-indigo-500", "bg-orange-500", "bg-lime-500", 
       "bg-emerald-500", "bg-sky-500", "bg-fuchsia-500"
@@ -311,11 +315,24 @@ const FoodDetailPage = () => {
                 <span className="font-medium text-base">{nutrient.name}</span>
               </div>
               <div className="flex-1 mx-4">
-                <Progress 
-                  value={nutrient.progress} 
-                  className="h-2.5 bg-gray-200" 
-                  indicatorColor={getNutrientColor(nutrient.name, index)}
-                />
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div>
+                        <Progress 
+                          value={nutrient.progress} 
+                          className="h-2.5 bg-gray-200" 
+                          indicatorColor={getNutrientColor(nutrient.name, index)}
+                        />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-sm">
+                        {nutrient.name === "Sodium" ? "High sodium can lead to high blood pressure" : "High sugar can lead to weight gain"}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
               <div className="w-16 text-right font-medium text-base">{nutrient.value}</div>
             </div>
@@ -349,11 +366,28 @@ const FoodDetailPage = () => {
                   <span className="font-medium text-base">{nutrient.name}</span>
                 </div>
                 <div className="flex-1 mx-4">
-                  <Progress 
-                    value={nutrient.progress} 
-                    className="h-2.5 bg-gray-200" 
-                    indicatorColor={getNutrientColor(nutrient.name, index)}
-                  />
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div>
+                          <Progress 
+                            value={nutrient.progress} 
+                            className="h-2.5 bg-gray-200" 
+                            indicatorColor={getNutrientColor(nutrient.name, index)}
+                          />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="text-sm">
+                          {nutrient.name === "Fiber" && "Fiber aids digestion and helps you feel full"}
+                          {nutrient.name === "Protein" && "Protein helps build and repair muscles"}
+                          {nutrient.name === "Calcium" && "Calcium strengthens bones and teeth"}
+                          {nutrient.name === "Vitamin D" && "Vitamin D helps calcium absorption"}
+                          {nutrient.name === "Potassium" && "Potassium regulates heartbeat and nerve signals"}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
                 <div className="w-16 text-right font-medium text-base">{nutrient.value}</div>
               </div>
@@ -438,6 +472,50 @@ const FoodDetailPage = () => {
         </button>
         
         <button 
+          className="w-full py-3 flex items-center justify-between bg-gray-100 rounded-lg mb-3"
+          onClick={() => setComparisonOpen(true)}
+        >
+          <div className="flex items-center">
+            <Compare className="h-5 w-5 mx-3" />
+            <span className="font-medium text-base">Compare Foods</span>
+          </div>
+          <ChevronRight className="h-5 w-5 mx-3 text-gray-400" />
+        </button>
+        
+        <button 
+          className="w-full py-3 flex items-center justify-between bg-gray-100 rounded-lg mb-3"
+          onClick={() => setAlternativesOpen(true)}
+        >
+          <div className="flex items-center">
+            <ListCheck className="h-5 w-5 mx-3" />
+            <span className="font-medium text-base">Healthier Alternatives</span>
+          </div>
+          <ChevronRight className="h-5 w-5 mx-3 text-gray-400" />
+        </button>
+        
+        <button 
+          className="w-full py-3 flex items-center justify-between bg-gray-100 rounded-lg mb-3"
+          onClick={() => setNutrientInfoOpen(true)}
+        >
+          <div className="flex items-center">
+            <Info className="h-5 w-5 mx-3" />
+            <span className="font-medium text-base">Nutrition Education</span>
+          </div>
+          <ChevronRight className="h-5 w-5 mx-3 text-gray-400" />
+        </button>
+        
+        <button 
+          className="w-full py-3 flex items-center justify-between bg-gray-100 rounded-lg mb-3"
+          onClick={() => setMealPlanningOpen(true)}
+        >
+          <div className="flex items-center">
+            <Calendar className="h-5 w-5 mx-3" />
+            <span className="font-medium text-base">Meal Planning Suggestions</span>
+          </div>
+          <ChevronRight className="h-5 w-5 mx-3 text-gray-400" />
+        </button>
+        
+        <button 
           className="w-full py-3 flex items-center justify-between bg-gray-100 rounded-lg mb-5"
           onClick={() => setHowWeScoreOpen(true)}
         >
@@ -474,6 +552,29 @@ const FoodDetailPage = () => {
       <HowWeScoreSheet
         open={howWeScoreOpen}
         onOpenChange={setHowWeScoreOpen}
+      />
+      
+      <ComparisonSheet 
+        open={comparisonOpen}
+        onOpenChange={setComparisonOpen}
+        currentFoodId={foodId as string}
+      />
+      
+      <AlternativesSheet 
+        open={alternativesOpen}
+        onOpenChange={setAlternativesOpen}
+        currentFood={food}
+      />
+      
+      <NutrientInfoSheet 
+        open={nutrientInfoOpen}
+        onOpenChange={setNutrientInfoOpen}
+      />
+      
+      <MealPlanningSheet 
+        open={mealPlanningOpen}
+        onOpenChange={setMealPlanningOpen}
+        currentFood={food}
       />
     </div>
   );
