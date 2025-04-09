@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Search, ShoppingCart, Filter } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -134,29 +133,21 @@ const MarketplacePage = () => {
   };
 
   const filteredProducts = products.filter(product => {
-    // Filter by category
     const matchesCategory = activeCategory === "all" || 
                            product.category.toLowerCase() === activeCategory.replace("-", " ");
     
-    // Filter by search term
     const matchesSearch = product.title.toLowerCase().includes(searchTerm.toLowerCase());
     
-    // If no additional filters applied, just use category and search
     if (!appliedFilters) {
       return matchesCategory && matchesSearch;
     }
     
-    // Filter by price range
     const matchesPrice = product.price >= appliedFilters.priceRange[0] && 
                          product.price <= (appliedFilters.priceRange[1] === 100 ? Number.MAX_SAFE_INTEGER : appliedFilters.priceRange[1]);
-    
-    // Basic filtering - in a real app, these would be proper properties of the product
-    // Currently just using these as example filters
     
     return matchesCategory && matchesSearch && matchesPrice;
   });
 
-  // Sort products based on applied filters
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     if (!appliedFilters || appliedFilters.sortBy === "Relevance") {
       return 0;
@@ -164,7 +155,6 @@ const MarketplacePage = () => {
     
     switch (appliedFilters.sortBy) {
       case "Recent":
-        // In a real app, we'd use a timestamp property
         return b.id - a.id;
       case "Price: Low to High":
         return a.price - b.price;
@@ -180,8 +170,8 @@ const MarketplacePage = () => {
   });
 
   return (
-    <div className="pb-20 bg-white min-h-screen">
-      <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
+    <div className="pb-20 bg-white min-h-screen w-full max-w-[100vw] overflow-x-hidden">
+      <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center fixed top-0 left-0 right-0 z-10" style={{ backgroundColor: "#034AFF" }}>
         <h1 className="text-xl font-bold">Marketplace</h1>
         <button className="p-2 relative" onClick={() => navigate('/cart')}>
           <ShoppingCart size={24} className="text-white" fill="white" />
@@ -193,7 +183,7 @@ const MarketplacePage = () => {
         </button>
       </header>
 
-      <div className="px-4 py-4 bg-gray-50">
+      <div className="px-4 py-4 bg-gray-50 pt-16">
         <div className="relative mb-4">
           <Input
             placeholder="Search products..."
@@ -215,7 +205,7 @@ const MarketplacePage = () => {
         
         <div className="mt-4">
           <h2 className="text-base font-bold mb-3 text-gray-800 text-[16px]">Categories</h2>
-          <div className="flex space-x-3 overflow-x-auto py-2 px-2 no-scrollbar">
+          <div className="flex space-x-4 overflow-x-auto py-2 no-scrollbar">
             {categories.map((category) => (
               <div
                 key={category.id}
@@ -223,12 +213,12 @@ const MarketplacePage = () => {
                 onClick={() => handleCategoryClick(category.id)}
               >
                 <div 
-                  className={`w-12 h-12 rounded-full flex items-center justify-center mb-1 ${activeCategory === category.id ? 'ring-2 ring-offset-1 ring-blue-500' : ''}`} 
+                  className={`w-14 h-14 rounded-full flex items-center justify-center mb-1 ${activeCategory === category.id ? 'ring-2 ring-offset-1 ring-blue-500' : ''}`} 
                   style={{ backgroundColor: category.bgColor }}
                 >
                   <span className="text-lg" style={{ color: category.color }}>{category.icon}</span>
                 </div>
-                <span className={`text-xs ${activeCategory === category.id ? 'font-bold text-blue-500' : 'text-gray-700'}`}>
+                <span className={`text-sm ${activeCategory === category.id ? 'font-bold text-blue-500' : 'text-gray-700'}`}>
                   {category.name}
                 </span>
               </div>
@@ -243,34 +233,33 @@ const MarketplacePage = () => {
             categories.find(cat => cat.id === activeCategory)?.name || "Products"}
         </h2>
         
-        {/* Applied Filters Section (if any) */}
         {appliedFilters && (
-          <div className="mb-4 flex items-center">
-            <span className="text-sm text-gray-500 mr-2">Filters:</span>
+          <div className="mb-4 flex items-center overflow-x-auto no-scrollbar">
+            <span className="text-sm text-gray-500 mr-2 whitespace-nowrap">Filters:</span>
             {appliedFilters.sortBy !== "Relevance" && (
-              <Badge variant="outline" className="mr-2 bg-gray-100">
+              <Badge variant="outline" className="mr-2 bg-gray-100 whitespace-nowrap">
                 {appliedFilters.sortBy}
               </Badge>
             )}
             {appliedFilters.priceRange[0] > 0 || appliedFilters.priceRange[1] < 100 && (
-              <Badge variant="outline" className="mr-2 bg-gray-100">
+              <Badge variant="outline" className="mr-2 bg-gray-100 whitespace-nowrap">
                 ${appliedFilters.priceRange[0]}-${appliedFilters.priceRange[1] === 100 ? '100+' : appliedFilters.priceRange[1]}
               </Badge>
             )}
             {appliedFilters.condition !== "Any" && (
-              <Badge variant="outline" className="mr-2 bg-gray-100">
+              <Badge variant="outline" className="mr-2 bg-gray-100 whitespace-nowrap">
                 {appliedFilters.condition}
               </Badge>
             )}
             {appliedFilters.inStock && (
-              <Badge variant="outline" className="mr-2 bg-gray-100">
+              <Badge variant="outline" className="mr-2 bg-gray-100 whitespace-nowrap">
                 In Stock
               </Badge>
             )}
             <Button 
               variant="ghost" 
               size="sm"
-              className="text-xs text-blue-500 h-7 px-2"
+              className="text-xs text-blue-500 h-7 px-2 whitespace-nowrap"
               onClick={() => setAppliedFilters(null)}
             >
               Clear All
@@ -278,7 +267,7 @@ const MarketplacePage = () => {
           </div>
         )}
         
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           {sortedProducts.map(product => (
             <ProductCard
               key={product.id}
