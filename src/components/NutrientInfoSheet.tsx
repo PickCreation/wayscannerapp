@@ -202,8 +202,8 @@ const NutrientInfoSheet: React.FC<NutrientInfoSheetProps> = ({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="h-[85vh] rounded-t-xl p-0">
-        <div className="sticky top-0 bg-white z-10 p-4 border-b">
+      <SheetContent side="bottom" className="h-[85vh] rounded-t-xl p-0 flex flex-col">
+        <div className="bg-white z-10 p-4 border-b">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold">Nutrition Education</h2>
             <SheetClose className="rounded-full p-1 hover:bg-gray-100">
@@ -222,8 +222,8 @@ const NutrientInfoSheet: React.FC<NutrientInfoSheetProps> = ({
           </div>
         </div>
 
-        <ScrollArea className="h-[calc(85vh-130px)] px-4">
-          <div className="space-y-6 py-4">
+        <ScrollArea className="flex-1 overflow-y-auto">
+          <div className="space-y-6 py-4 px-4">
             {filteredCategories.map((category, categoryIndex) => (
               <div key={categoryIndex}>
                 <h3 className="text-lg font-semibold mb-3">{category.category}</h3>
@@ -297,10 +297,13 @@ const NutrientInfoSheet: React.FC<NutrientInfoSheetProps> = ({
                 <p className="text-gray-500">No matching nutrients found</p>
               </div>
             )}
+            
+            {/* Add bottom padding for scrolling */}
+            <div className="h-4"></div>
           </div>
         </ScrollArea>
         
-        <div className="sticky bottom-0 bg-blue-50 p-3 border-t">
+        <div className="bg-blue-50 p-3 border-t mt-auto">
           <p className="text-sm text-blue-800">
             This information is for educational purposes only. Consult a healthcare professional for personalized nutrition advice.
           </p>
