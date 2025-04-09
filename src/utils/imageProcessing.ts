@@ -85,8 +85,11 @@ export const compressImage = (base64: string, quality: number = 0.7): Promise<st
       canvas.height = img.height;
       if (ctx) {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      } else {
+        // If context is null, return the original image
+        resolve(base64);
       }
-      resolve(canvas.toDataURL('image/jpeg', quality));
     };
     img.onerror = () => reject(new Error('Failed to load image'));
   });
@@ -120,6 +123,10 @@ export const createThumbnail = async (base64: string, size: number = 100): Promi
   canvas.height = size;
   const ctx = canvas.getContext('2d');
   
+  if (!ctx) {
+    return base64; // Return original if context is null
+  }
+  
   // Calculate dimensions to maintain aspect ratio while fitting in the square
   const scale = Math.max(img.width, img.height) / size;
   const width = img.width / scale;
@@ -127,11 +134,9 @@ export const createThumbnail = async (base64: string, size: number = 100): Promi
   const x = (size - width) / 2;
   const y = (size - height) / 2;
   
-  if (ctx) {
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, size, size);
-    ctx.drawImage(img, x, y, width, height);
-  }
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, size, size);
+  ctx.drawImage(img, x, y, width, height);
   
   return canvas.toDataURL('image/jpeg', 0.85);
 };
