@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { 
   ArrowLeft, User, Bell, BookmarkCheck, Heart, MessageSquare, Bookmark,
@@ -136,13 +137,13 @@ const BookmarksPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 flex flex-col w-full max-w-[100vw] overflow-x-hidden">
       <div className="bg-wayscanner-blue text-white p-4 relative">
         <div className="flex justify-between items-center mb-2">
           <button className="p-2" onClick={handleBackClick} type="button">
             <ArrowLeft size={24} />
           </button>
-          <h1 className="text-base font-bold">My Bookmarks</h1>
+          <h1 className="text-xl font-bold">My Bookmarks</h1>
           <div className="flex items-center space-x-3">
             <button className="p-2" type="button">
               <Bell size={24} fill="white" strokeWidth={1.5} />
@@ -157,13 +158,13 @@ const BookmarksPage = () => {
       <div className="p-4">
         <Tabs defaultValue="forum" className="w-full" onValueChange={setActiveTab}>
           <TabsList className="grid grid-cols-3 w-full mb-6">
-            <TabsTrigger value="forum" className="data-[state=active]:bg-wayscanner-blue data-[state=active]:text-white">
+            <TabsTrigger value="forum" className="text-base py-2 data-[state=active]:bg-wayscanner-blue data-[state=active]:text-white">
               Forum
             </TabsTrigger>
-            <TabsTrigger value="scan" className="data-[state=active]:bg-wayscanner-blue data-[state=active]:text-white">
+            <TabsTrigger value="scan" className="text-base py-2 data-[state=active]:bg-wayscanner-blue data-[state=active]:text-white">
               Scan
             </TabsTrigger>
-            <TabsTrigger value="recipes" className="data-[state=active]:bg-wayscanner-blue data-[state=active]:text-white">
+            <TabsTrigger value="recipes" className="text-base py-2 data-[state=active]:bg-wayscanner-blue data-[state=active]:text-white">
               Recipes
             </TabsTrigger>
           </TabsList>
@@ -199,7 +200,7 @@ const BookmarksPage = () => {
                       </div>
                     </div>
                     
-                    <p className="text-[14px] text-gray-700 mb-4">{post.content}</p>
+                    <p className="text-[16px] text-gray-700 mb-4">{post.content}</p>
                     
                     {post.imageUrl && (
                       <div className="mb-4 border rounded-lg overflow-hidden">
@@ -243,7 +244,7 @@ const BookmarksPage = () => {
               ) : (
                 <div className="flex flex-col items-center justify-center py-10 px-4 bg-white rounded-lg shadow">
                   <FolderOpen size={48} className="text-gray-400 mb-2" />
-                  <p className="text-gray-600 text-center">No bookmarked forum posts yet.</p>
+                  <p className="text-gray-600 text-center text-[16px]">No bookmarked forum posts yet.</p>
                   <p className="text-gray-400 text-sm text-center mt-1">
                     Bookmark posts in the forum to save them here.
                   </p>
@@ -259,7 +260,7 @@ const BookmarksPage = () => {
                   <Card key={scan.id} className="overflow-hidden">
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium">{scan.title}</h3>
+                        <h3 className="font-medium text-[16px]">{scan.title}</h3>
                         <span className={`px-2 py-1 rounded-full text-xs ${
                           scan.score >= 90 ? "bg-green-100 text-green-700" :
                           scan.score >= 70 ? "bg-yellow-100 text-yellow-700" :
@@ -268,8 +269,8 @@ const BookmarksPage = () => {
                           Score: {scan.score}
                         </span>
                       </div>
-                      <div className="text-sm text-gray-500">Category: {scan.category}</div>
-                      <div className="text-sm text-gray-500">Scanned on: {scan.date}</div>
+                      <div className="text-[14px] text-gray-500">Category: {scan.category}</div>
+                      <div className="text-[14px] text-gray-500">Scanned on: {scan.date}</div>
                       <button 
                         className="mt-4 flex items-center text-wayscanner-blue"
                         onClick={() => setBookmarkedScans(prev => prev.filter(s => s.id !== scan.id))}
@@ -284,7 +285,7 @@ const BookmarksPage = () => {
               ) : (
                 <div className="flex flex-col items-center justify-center py-10 px-4 bg-white rounded-lg shadow">
                   <FolderOpen size={48} className="text-gray-400 mb-2" />
-                  <p className="text-gray-600 text-center">No bookmarked scans yet.</p>
+                  <p className="text-gray-600 text-center text-[16px]">No bookmarked scans yet.</p>
                   <p className="text-gray-400 text-sm text-center mt-1">
                     Bookmark scans to save them here.
                   </p>
@@ -304,7 +305,7 @@ const BookmarksPage = () => {
                     />
                     <div className="px-4 pb-3">
                       <button 
-                        className="flex items-center text-blue-500 py-2"
+                        className="flex items-center text-blue-500 py-2 text-[16px]"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleRemoveRecipeBookmark(recipe.id);
@@ -320,7 +321,7 @@ const BookmarksPage = () => {
               ) : (
                 <div className="flex flex-col items-center justify-center py-10 px-4 bg-white rounded-lg shadow">
                   <FolderOpen size={48} className="text-gray-400 mb-2" />
-                  <p className="text-gray-600 text-center">No bookmarked recipes yet.</p>
+                  <p className="text-gray-600 text-center text-[16px]">No bookmarked recipes yet.</p>
                   <p className="text-gray-400 text-sm text-center mt-1">
                     Bookmark recipes to save them here.
                   </p>

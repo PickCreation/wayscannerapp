@@ -168,9 +168,9 @@ const RecipesPage = () => {
   };
 
   return (
-    <div className="pb-20 bg-white min-h-screen">
+    <div className="pb-20 bg-white min-h-screen w-full max-w-[100vw] overflow-x-hidden">
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center fixed top-0 left-0 right-0 z-10" style={{ backgroundColor: "#034AFF" }}>
-        <h1 className="text-lg font-semibold text-white">Recipes</h1>
+        <h1 className="text-xl font-semibold text-white">Recipes</h1>
         <div className="flex items-center space-x-3">
           <button className="p-2">
             <Bell size={24} fill="white" strokeWidth={1.5} />
@@ -182,13 +182,13 @@ const RecipesPage = () => {
       </header>
       
       <div className="pt-16">
-        <div className="px-4 my-4">
+        <div className="px-4 my-4 w-full">
           <form onSubmit={handleSearch}>
-            <div className="relative">
+            <div className="relative w-full">
               <Input
                 type="text"
                 placeholder="Search for recipes..."
-                className="pl-10 pr-10 py-2 bg-gray-100 rounded-full focus:border-wayscanner-blue focus:ring-1 focus:ring-wayscanner-blue"
+                className="pl-10 pr-10 py-2 bg-gray-100 rounded-full focus:border-wayscanner-blue focus:ring-1 focus:ring-wayscanner-blue w-full"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -203,22 +203,22 @@ const RecipesPage = () => {
         </div>
 
         <div className="px-4 mt-2 mb-4">
-          <h2 className="text-base font-bold mb-3 text-gray-800 text-[16px] text-center">Categories</h2>
-          <div className="flex justify-center space-x-3 overflow-x-auto py-2 px-2 no-scrollbar">
+          <h2 className="text-lg font-bold mb-3 text-gray-800 text-center">Categories</h2>
+          <div className="flex justify-center space-x-4 overflow-x-auto py-2 px-2 no-scrollbar">
             {categories.map((category) => (
               <div
                 key={category.id}
                 className={`flex flex-col items-center cursor-pointer transition-transform duration-200 ${selectedCategory === category.id ? 'scale-105' : ''}`}
                 onClick={() => handleCategoryClick(category.id)}
               >
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-1 ${selectedCategory === category.id ? 'ring-2 ring-offset-1 ring-blue-500' : ''}`} 
+                <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-1 ${selectedCategory === category.id ? 'ring-2 ring-offset-1 ring-blue-500' : ''}`} 
                   style={{ backgroundColor: category.id === "all" ? "#E3F2FD" :
                                           category.id === "breakfast" ? "#FFF3E0" : 
                                           category.id === "lunch" ? "#E8F5E9" :
                                           category.id === "dinner" ? "#F3E5F5" : "#FCE4EC" }}>
-                  {category.icon}
+                  {React.cloneElement(category.icon, { size: 24 })}
                 </div>
-                <span className={`text-xs ${selectedCategory === category.id ? 'font-bold text-blue-500' : 'text-gray-700'}`}>
+                <span className={`text-sm ${selectedCategory === category.id ? 'font-bold text-blue-500' : 'text-gray-700'}`}>
                   {category.name}
                 </span>
               </div>
@@ -227,8 +227,8 @@ const RecipesPage = () => {
         </div>
 
         <div className="px-4 mb-6">
-          <div className="flex justify-between items-center mb-2">
-            <h2 className="text-base font-bold text-gray-800 text-[16px]">
+          <div className="flex justify-between items-center mb-3">
+            <h2 className="text-lg font-bold text-gray-800">
               {selectedCategory && selectedCategory !== "all"
                 ? `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Recipes` 
                 : "All Recipes"}
@@ -242,7 +242,7 @@ const RecipesPage = () => {
           </div>
           
           {displayedRecipes.length > 0 ? (
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-1 gap-4">
               {displayedRecipes.map((recipe) => (
                 <RecipeCard 
                   key={recipe.id}

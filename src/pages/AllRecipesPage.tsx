@@ -163,9 +163,9 @@ const AllRecipesPage = () => {
   };
 
   return (
-    <div className="pb-20 bg-white min-h-screen">
+    <div className="pb-20 bg-white min-h-screen w-full max-w-[100vw] overflow-x-hidden">
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center fixed top-0 left-0 right-0 z-10" style={{ backgroundColor: "#034AFF" }}>
-        <h1 className="text-lg font-semibold text-white">All Recipes</h1>
+        <h1 className="text-xl font-semibold text-white">All Recipes</h1>
         <div className="flex items-center space-x-3">
           <button className="p-2">
             <Bell size={24} fill="white" strokeWidth={1.5} />
@@ -177,13 +177,13 @@ const AllRecipesPage = () => {
       </header>
       
       <div className="pt-16">
-        <div className="px-4 my-4">
+        <div className="px-4 my-4 w-full">
           <form onSubmit={handleSearch}>
-            <div className="relative">
+            <div className="relative w-full">
               <Input
                 type="text"
                 placeholder="Search for recipes..."
-                className="pl-10 pr-10 py-2 bg-gray-100 rounded-full focus:border-wayscanner-blue focus:ring-1 focus:ring-wayscanner-blue focus:border-[1px]"
+                className="w-full pl-10 pr-10 py-2 bg-gray-100 rounded-full focus:border-wayscanner-blue focus:ring-1 focus:ring-wayscanner-blue focus:border-[1px]"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{ borderColor: "#e5e7eb", borderWidth: "1px" }}
@@ -203,10 +203,10 @@ const AllRecipesPage = () => {
         </div>
 
         <div className="px-4 mb-8">
-          <h2 className="text-base font-medium mb-2">
+          <h2 className="text-lg font-medium mb-3">
             All Available Recipes
           </h2>
-          <div className="grid grid-cols-1 gap-3">
+          <div className="grid grid-cols-1 gap-4">
             {allRecipes.map((recipe) => (
               <RecipeCard 
                 key={recipe.id}
