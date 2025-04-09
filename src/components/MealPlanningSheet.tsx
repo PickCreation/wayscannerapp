@@ -1,3 +1,4 @@
+
 import React from "react";
 import { X, Info } from "lucide-react";
 import { Sheet, SheetContent, SheetClose } from "@/components/ui/sheet";
@@ -203,8 +204,8 @@ const MealPlanningSheet: React.FC<MealPlanningSheetProps> = ({
   
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="h-[85vh] rounded-t-xl p-0">
-        <div className="sticky top-0 bg-white z-10 p-4 border-b">
+      <SheetContent side="bottom" className="h-[85vh] rounded-t-xl p-0 flex flex-col">
+        <div className="bg-white z-10 p-4 border-b">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold">Meal Planning Suggestions</h2>
             <SheetClose className="rounded-full p-1 hover:bg-gray-100">
@@ -231,7 +232,7 @@ const MealPlanningSheet: React.FC<MealPlanningSheetProps> = ({
           </div>
         </div>
 
-        <ScrollArea className="h-[calc(85vh-160px)]">
+        <ScrollArea className="flex-1 overflow-y-auto">
           <div className="space-y-6 p-4">
             {/* Breakfast Ideas */}
             {mealIdeas.breakfast && (
@@ -498,10 +499,13 @@ const MealPlanningSheet: React.FC<MealPlanningSheetProps> = ({
                 </div>
               </div>
             )}
+            
+            {/* Add bottom padding for scrolling */}
+            <div className="h-4"></div>
           </div>
         </ScrollArea>
         
-        <div className="sticky bottom-0 bg-green-50 p-3 border-t">
+        <div className="bg-green-50 p-3 border-t mt-auto">
           <p className="text-sm text-green-800">
             Tip: Building balanced meals helps moderate the impact of less nutritious foods. Try to pair foods with protein, fiber, and healthy fats.
           </p>
