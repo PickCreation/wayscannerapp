@@ -1,8 +1,6 @@
-
 import React, { useState } from "react";
 import { X, Search, Plus } from "lucide-react";
 import { Sheet, SheetContent, SheetClose } from "@/components/ui/sheet";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -182,7 +180,7 @@ const ComparisonSheet: React.FC<ComparisonSheetProps> = ({
           </div>
         ) : (
           <div className="overflow-auto h-[calc(85vh-135px)]">
-            <div className="p-4 space-y-6 pb-14">
+            <div className="p-4 space-y-6 pb-24">
               <div>
                 <h3 className="text-lg font-semibold mb-3">Nutritional Score</h3>
                 <div className="grid grid-cols-2 gap-4">
@@ -309,7 +307,7 @@ const ComparisonSheet: React.FC<ComparisonSheetProps> = ({
         )}
         
         {compareFood && (
-          <div className="sticky bottom-0 border-t bg-white p-4">
+          <div className="sticky bottom-0 border-t bg-white p-4 pb-6">
             <Button 
               variant="outline" 
               className="w-full" 
