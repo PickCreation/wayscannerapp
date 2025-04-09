@@ -27,7 +27,7 @@ const EnvironmentSheet: React.FC<EnvironmentSheetProps> = ({
 }) => {
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[600px] overflow-auto">
+      <DrawerContent className="max-h-[600px]">
         <div className="mx-auto w-full max-w-md">
           <DrawerHeader className="mb-4">
             <DrawerTitle className="text-xl flex items-center">
@@ -54,7 +54,7 @@ const EnvironmentSheet: React.FC<EnvironmentSheetProps> = ({
             </div>
           </div>
           
-          <div className="px-4">
+          <div className="px-4 pb-6">
             <h3 className="font-semibold text-md mb-2">Storage Guide</h3>
             
             <Accordion type="single" collapsible className="mb-4">
@@ -137,7 +137,7 @@ const EnvironmentSheet: React.FC<EnvironmentSheetProps> = ({
             
             <h3 className="font-semibold text-md mb-2">Environmental Impact</h3>
             
-            <div className="space-y-3 mb-4 pb-6">
+            <div className="space-y-3 mb-4">
               <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
                 <h4 className="font-medium text-gray-800 mb-1 text-sm">Reducing Food Waste</h4>
                 <p className="text-xs text-gray-700">
