@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, ChevronRight, ChevronDown, ChevronUp, ThumbsUp, ThumbsDown, Check } from 'lucide-react';
+import { ArrowLeft, ChevronRight, ChevronDown, ChevronUp, ThumbsUp, ThumbsDown, Check, Leaf, Building2 } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Separator } from '@/components/ui/separator';
@@ -68,6 +69,38 @@ const plantData = {
       'Keep warm and humid until roots develop'
     ]
   },
+  sowing: {
+    seeds: 'Ti plants are rarely grown from seeds in cultivation',
+    whenToSow: 'Spring to early summer if available',
+    howToSow: [
+      'Use fresh seeds as viability decreases rapidly',
+      'Sow seeds in a well-draining seed starting mix',
+      'Maintain temperature around 70-75°F (21-24°C)',
+      'Keep soil consistently moist but not soggy',
+      'Germination can take 2-8 weeks',
+      'Seedlings are delicate and slow-growing initially'
+    ],
+    successRate: 'Low to moderate due to seed viability issues'
+  },
+  greenhouse: {
+    benefits: [
+      'Provides ideal temperature and humidity control',
+      'Protection from pests and diseases',
+      'Extends growing season',
+      'Allows for propagation year-round'
+    ],
+    idealConditions: {
+      temperature: '65-85°F (18-29°C)',
+      humidity: '60-80%',
+      lighting: 'Bright, indirect light or 30-50% shade cloth',
+      airflow: 'Good ventilation to prevent fungal issues'
+    },
+    commonIssues: [
+      'Heat stress during summer (requires ventilation)',
+      'Fungal problems if humidity is too high with poor airflow',
+      'Pest infestations can spread quickly in greenhouse environments'
+    ]
+  },
   funFact: 'In Hawaiian culture, Ti leaves are considered sacred and are used in traditional ceremonies. They are believed to bring good luck and ward off evil spirits.',
   toxicInfo: {
     isPoisonous: true,
@@ -84,6 +117,8 @@ const PlantDetailPage = () => {
   const [activeTab, setActiveTab] = useState('description');
   const [selectedLocation, setSelectedLocation] = useState('indoor');
   const [isHelpful, setIsHelpful] = useState<boolean | null>(null);
+  const [sowingSheetOpen, setSowingSheetOpen] = useState(false);
+  const [greenhouseSheetOpen, setGreenhouseSheetOpen] = useState(false);
   
   // In a real app, fetch plant data based on plantId
   const plant = plantData;
@@ -490,6 +525,153 @@ const PlantDetailPage = () => {
                 {plant.description.map((paragraph, index) => (
                   <p key={index} className="mb-3">{paragraph}</p>
                 ))}
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* New Sowing Section */}
+            <AccordionItem value="sowing" className="border-none">
+              <AccordionTrigger className="flex items-center bg-gray-100 p-3 rounded-lg hover:no-underline">
+                <div className="flex items-center">
+                  <div className="bg-green-200 p-1.5 rounded mr-3">
+                    <Leaf className="h-4 w-4 text-green-700" />
+                  </div>
+                  <span className="text-base font-medium">Sowing</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="pt-3 px-1 text-gray-700 text-sm">
+                <Sheet open={sowingSheetOpen} onOpenChange={setSowingSheetOpen}>
+                  <SheetTrigger asChild>
+                    <Button variant="outline" className="w-full">
+                      View Sowing Information
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent side="bottom" className="h-[80vh] rounded-t-[16px] pt-6">
+                    <SheetHeader className="text-left pb-4 border-b border-gray-200">
+                      <div className="flex items-center">
+                        <div className="bg-green-200 p-1.5 rounded mr-3">
+                          <Leaf className="h-4 w-4 text-green-700" />
+                        </div>
+                        <SheetTitle className="text-lg font-semibold">Sowing Information</SheetTitle>
+                      </div>
+                    </SheetHeader>
+                    
+                    <div className="space-y-4 mt-4">
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <p className="text-base font-medium mb-2">Seeds:</p>
+                        <p className="text-sm text-gray-700">{plant.sowing.seeds}</p>
+                      </div>
+                      
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <p className="text-base font-medium mb-2">When to Sow:</p>
+                        <p className="text-sm text-gray-700">{plant.sowing.whenToSow}</p>
+                      </div>
+                      
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <p className="text-base font-medium mb-2">How to Sow:</p>
+                        <ul className="space-y-2">
+                          {plant.sowing.howToSow.map((step, index) => (
+                            <li key={index} className="flex items-start">
+                              <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                <Check className="h-4 w-4 text-green-600" />
+                              </div>
+                              <span className="text-sm text-gray-700">{step}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <p className="text-base font-medium mb-2">Success Rate:</p>
+                        <p className="text-sm text-gray-700">{plant.sowing.successRate}</p>
+                      </div>
+                    </div>
+                  </SheetContent>
+                </Sheet>
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* New Greenhouse Section */}
+            <AccordionItem value="greenhouse" className="border-none">
+              <AccordionTrigger className="flex items-center bg-gray-100 p-3 rounded-lg hover:no-underline">
+                <div className="flex items-center">
+                  <div className="bg-blue-200 p-1.5 rounded mr-3">
+                    <Building2 className="h-4 w-4 text-blue-700" />
+                  </div>
+                  <span className="text-base font-medium">Greenhouse</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="pt-3 px-1 text-gray-700 text-sm">
+                <Sheet open={greenhouseSheetOpen} onOpenChange={setGreenhouseSheetOpen}>
+                  <SheetTrigger asChild>
+                    <Button variant="outline" className="w-full">
+                      View Greenhouse Information
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent side="bottom" className="h-[80vh] rounded-t-[16px] pt-6">
+                    <SheetHeader className="text-left pb-4 border-b border-gray-200">
+                      <div className="flex items-center">
+                        <div className="bg-blue-200 p-1.5 rounded mr-3">
+                          <Building2 className="h-4 w-4 text-blue-700" />
+                        </div>
+                        <SheetTitle className="text-lg font-semibold">Greenhouse Growing</SheetTitle>
+                      </div>
+                    </SheetHeader>
+                    
+                    <div className="space-y-4 mt-4">
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <p className="text-base font-medium mb-2">Benefits:</p>
+                        <ul className="space-y-2">
+                          {plant.greenhouse.benefits.map((benefit, index) => (
+                            <li key={index} className="flex items-start">
+                              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                <Check className="h-4 w-4 text-blue-600" />
+                              </div>
+                              <span className="text-sm text-gray-700">{benefit}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <p className="text-base font-medium mb-2">Ideal Conditions:</p>
+                        <div className="space-y-2">
+                          <div className="flex items-start">
+                            <span className="text-sm font-medium w-28">Temperature:</span>
+                            <span className="text-sm text-gray-700">{plant.greenhouse.idealConditions.temperature}</span>
+                          </div>
+                          <div className="flex items-start">
+                            <span className="text-sm font-medium w-28">Humidity:</span>
+                            <span className="text-sm text-gray-700">{plant.greenhouse.idealConditions.humidity}</span>
+                          </div>
+                          <div className="flex items-start">
+                            <span className="text-sm font-medium w-28">Lighting:</span>
+                            <span className="text-sm text-gray-700">{plant.greenhouse.idealConditions.lighting}</span>
+                          </div>
+                          <div className="flex items-start">
+                            <span className="text-sm font-medium w-28">Airflow:</span>
+                            <span className="text-sm text-gray-700">{plant.greenhouse.idealConditions.airflow}</span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <p className="text-base font-medium mb-2">Common Issues:</p>
+                        <ul className="space-y-2">
+                          {plant.greenhouse.commonIssues.map((issue, index) => (
+                            <li key={index} className="flex items-start">
+                              <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M12 8v4M12 16h.01M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10z" stroke="#EF4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                              </div>
+                              <span className="text-sm text-gray-700">{issue}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </SheetContent>
+                </Sheet>
               </AccordionContent>
             </AccordionItem>
             
