@@ -1,3 +1,4 @@
+
 import { toast } from "sonner";
 import { getApiKey, apiConfig } from "@/config/environment";
 import { compressImage } from "@/utils/imageProcessing";
@@ -20,6 +21,7 @@ export interface AnimalDetails {
   diet: string;
   behavioralTraits: string;
   legalRestrictions: string;
+  timestamp?: Date;
   interestingFacts: {
     fact: string;
   }[];
