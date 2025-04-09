@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { ChevronLeft, Camera, Upload, Check, Loader2 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";

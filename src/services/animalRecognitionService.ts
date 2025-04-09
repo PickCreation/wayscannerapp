@@ -184,8 +184,33 @@ export const identifyAnimal = async (imageData: string): Promise<string | null> 
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 2500));
     
-    // Simulate a success response
-    const animals = ["Tiger", "Wolf", "Labrador Retriever", "Elephant", "Giraffe", "Lion"];
+    // Improved simulation logic - look for patterns in the image URL to determine animal type
+    // For demonstration purposes, we'll use the current route to determine which animal to return
+    const currentPath = window.location.pathname;
+    
+    // If we're on a specific animal detail page, return that animal
+    if (currentPath.includes("/animal/1")) {
+      return "Bengal Tiger";
+    } else if (currentPath.includes("/animal/2")) {
+      return "Gray Wolf";
+    } else if (currentPath.includes("/animal/3")) {
+      return "Labrador Retriever";
+    }
+    
+    // For scanning new animals, match based on the image URL if possible
+    if (imageData.includes("a3386c5c-af28-42ee-96df-91008ff21cb5")) {
+      return "Bengal Tiger";
+    } else if (imageData.includes("4c436a75-e04b-4265-8025-91e7bb146566")) {
+      return "Gray Wolf";
+    } else if (imageData.includes("dc7e6fce-2b21-472e-99f7-7f20be83b76f")) {
+      return "Labrador Retriever";
+    } else if (imageData.includes("69501614-b92c-43f9-89e5-85971b5b6ede")) {
+      // This is the sample image from handleCapture
+      return "Bengal Tiger";
+    }
+    
+    // Default to a random animal if no match is found
+    const animals = ["Labrador Retriever", "Gray Wolf", "Bengal Tiger"];
     const randomIndex = Math.floor(Math.random() * animals.length);
     return animals[randomIndex];
   } catch (error) {
@@ -268,20 +293,31 @@ export const getAnimalDetails = async (animalName: string): Promise<AnimalDetail
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 3000));
     
-    // For demo purposes, return a predefined animal that matches our existing data
+    // Improved matching logic - make it case insensitive and match partial names
     const animalKey = animalName.toLowerCase();
+    
+    // Look for matches in the existing animal scan history
     let matchedAnimal = null;
     
-    if (animalKey.includes("tiger") || animalKey.includes("cat")) {
+    if (animalKey.includes("tiger") || animalKey.includes("cat") || animalKey.includes("bengal")) {
       matchedAnimal = {...animalScanHistory[0]};
-    } else if (animalKey.includes("wolf") || animalKey.includes("dog") || animalKey.includes("coyote")) {
+    } else if (animalKey.includes("wolf") || animalKey.includes("coyote") || animalKey.includes("gray")) {
       matchedAnimal = {...animalScanHistory[1]};
-    } else if (animalKey.includes("lab") || animalKey.includes("retriever")) {
+    } else if (animalKey.includes("lab") || animalKey.includes("retriever") || animalKey.includes("dog")) {
       matchedAnimal = {...animalScanHistory[2]};
     } else {
       // Default to a random animal if no match
       const randomIndex = Math.floor(Math.random() * animalScanHistory.length);
       matchedAnimal = {...animalScanHistory[randomIndex]};
+    }
+    
+    // Generate a new ID if this is a newly scanned animal
+    if (window.location.pathname === "/scan-camera") {
+      matchedAnimal.id = (animalScanHistory.length + 1).toString();
+      
+      // Add to history if it's a new scan
+      const newAnimalCopy = {...matchedAnimal};
+      animalScanHistory.push(newAnimalCopy);
     }
     
     // Return the matched animal
