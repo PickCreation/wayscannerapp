@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ChevronLeft, AlertTriangle, PawPrint, Utensils, Moon, PhoneCall, Info, MapPin, Camera, Share2, HelpCircle } from "lucide-react";
@@ -275,6 +276,18 @@ const AnimalDetailPage = () => {
             <div className="px-4 py-4 bg-blue-100 rounded-lg mb-5">
               <h3 className="text-lg font-semibold mb-2">About</h3>
               <p className="text-sm">{animal.about}</p>
+            </div>
+
+            {/* New Health Advice Section */}
+            <div className="px-4 py-4 bg-amber-100 rounded-lg mb-5">
+              <h3 className="text-lg font-semibold mb-2">Health Advice</h3>
+              <p className="text-sm">{animal.healthAdvice}</p>
+            </div>
+
+            {/* New Diet Section */}
+            <div className="px-4 py-4 bg-pink-100 rounded-lg mb-5">
+              <h3 className="text-lg font-semibold mb-2">Diet</h3>
+              <p className="text-sm">{animal.diet}</p>
             </div>
 
             <div className="px-4 py-4 bg-red-100 rounded-lg mb-5">
