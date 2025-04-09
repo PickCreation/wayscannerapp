@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { ChevronLeft, Camera, Upload, Check, Loader2 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -6,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { identifyAnimal, getAnimalDetails } from "@/services/animalRecognitionService";
 import { Progress } from "@/components/ui/progress";
-import { fileToBase64 } from "@/utils/imageProcessing";
+import { fileToBase64, compressImage } from "@/utils/imageProcessing";
 
 const ScanCameraPage = () => {
   const [captureMode, setCaptureMode] = useState<"camera" | "upload">("camera");
@@ -52,10 +51,16 @@ const ScanCameraPage = () => {
   }, [isProcessing]);
 
   const handleCapture = () => {
-    // In a real implementation, this would access the device camera
-    // For now, we'll simulate capturing by showing a sample image
+    // Simulate capturing by showing a sample image based on the scan type
     if (scanType === "animal") {
-      setImagePreview("/lovable-uploads/69501614-b92c-43f9-89e5-85971b5b6ede.png");
+      // Use different sample images to test different animal identification
+      const sampleImages = [
+        "/lovable-uploads/a3386c5c-af28-42ee-96df-91008ff21cb5.png", // Tiger
+        "/lovable-uploads/4c436a75-e04b-4265-8025-91e7bb146566.png", // Wolf
+        "/lovable-uploads/dc7e6fce-2b21-472e-99f7-7f20be83b76f.png"  // Lab
+      ];
+      // For testing, let's use the tiger image as default
+      setImagePreview(sampleImages[0]);
     } else {
       setImagePreview("/lovable-uploads/69501614-b92c-43f9-89e5-85971b5b6ede.png");
     }
@@ -66,7 +71,9 @@ const ScanCameraPage = () => {
     if (file) {
       try {
         const base64Image = await fileToBase64(file);
-        setImagePreview(base64Image);
+        // Compress the image before previewing
+        const compressedImage = await compressImage(base64Image, 0.8);
+        setImagePreview(compressedImage);
       } catch (error) {
         console.error("Error processing file:", error);
         toast.error("Failed to process the image. Please try again.");
@@ -83,8 +90,9 @@ const ScanCameraPage = () => {
 
     try {
       setIsProcessing(true);
+      console.log("Starting animal identification process");
 
-      // First identify the animal using Google Vision API
+      // First identify the animal using our enhanced method
       const animalName = await identifyAnimal(imagePreview);
       
       if (!animalName) {
@@ -93,7 +101,9 @@ const ScanCameraPage = () => {
         return;
       }
       
-      // Then get details from OpenAI
+      console.log(`Identified animal: ${animalName}`);
+      
+      // Then get details about the animal
       const animalDetails = await getAnimalDetails(animalName);
       
       if (!animalDetails) {

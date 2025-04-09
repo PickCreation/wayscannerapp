@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { AlertTriangle } from "lucide-react";
@@ -11,7 +10,7 @@ interface AnimalScanResult {
   scientificName: string;
   riskLevel: "High" | "Moderate" | "Low";
   imageUrl: string;
-  timestamp: Date;
+  timestamp?: Date;
 }
 
 // Mock data for animal scan results
@@ -67,7 +66,8 @@ const AnimalScanTab: React.FC = () => {
     return "bg-green-500 text-white";
   };
   
-  const formatDate = (date: Date) => {
+  const formatDate = (date?: Date) => {
+    if (!date) return "Unknown date";
     return date.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',

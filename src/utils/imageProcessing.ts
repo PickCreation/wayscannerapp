@@ -135,3 +135,98 @@ export const createThumbnail = async (base64: string, size: number = 100): Promi
   
   return canvas.toDataURL('image/jpeg', 0.85);
 };
+
+/**
+ * Extracts dominant colors from an image
+ * @param imageUrl The URL or base64 of the image
+ * @returns A promise that resolves to an array of dominant RGB color values
+ */
+export const extractDominantColors = async (imageUrl: string): Promise<string[]> => {
+  try {
+    const img = await loadImage(imageUrl);
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    
+    // Use a smaller canvas for processing efficiency
+    const processingSize = 100;
+    canvas.width = processingSize;
+    canvas.height = processingSize;
+    
+    if (!ctx) {
+      throw new Error('Could not get canvas context');
+    }
+    
+    // Draw the image on the canvas
+    ctx.drawImage(img, 0, 0, processingSize, processingSize);
+    
+    // Get the image data
+    const imageData = ctx.getImageData(0, 0, processingSize, processingSize).data;
+    
+    // Simple color counting for dominant colors
+    const colorCounts: Record<string, number> = {};
+    
+    for (let i = 0; i < imageData.length; i += 4) {
+      // Round the RGB values to reduce the number of unique colors
+      const r = Math.round(imageData[i] / 10) * 10;
+      const g = Math.round(imageData[i + 1] / 10) * 10;
+      const b = Math.round(imageData[i + 2] / 10) * 10;
+      
+      const colorKey = `rgb(${r},${g},${b})`;
+      colorCounts[colorKey] = (colorCounts[colorKey] || 0) + 1;
+    }
+    
+    // Sort colors by frequency
+    const sortedColors = Object.entries(colorCounts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([color]) => color)
+      .slice(0, 5); // Get top 5 colors
+    
+    return sortedColors;
+  } catch (error) {
+    console.error('Error extracting dominant colors:', error);
+    return [];
+  }
+};
+
+/**
+ * Compare two images and return a similarity score (0-1)
+ * @param imageUrl1 The URL or base64 of the first image
+ * @param imageUrl2 The URL or base64 of the second image
+ * @returns A promise that resolves to a similarity score (0-1)
+ */
+export const compareImages = async (imageUrl1: string, imageUrl2: string): Promise<number> => {
+  try {
+    const colors1 = await extractDominantColors(imageUrl1);
+    const colors2 = await extractDominantColors(imageUrl2);
+    
+    // Simple color matching score
+    let matches = 0;
+    for (const color1 of colors1) {
+      if (colors2.some(color2 => colorDistance(color1, color2) < 50)) {
+        matches++;
+      }
+    }
+    
+    return matches / Math.max(colors1.length, 1);
+  } catch (error) {
+    console.error('Error comparing images:', error);
+    return 0;
+  }
+};
+
+/**
+ * Calculate the distance between two RGB colors
+ * @param color1 The first color in rgb format
+ * @param color2 The second color in rgb format
+ * @returns The distance between the two colors
+ */
+const colorDistance = (color1: string, color2: string): number => {
+  const rgb1 = color1.match(/\d+/g)?.map(Number) || [0, 0, 0];
+  const rgb2 = color2.match(/\d+/g)?.map(Number) || [0, 0, 0];
+  
+  return Math.sqrt(
+    Math.pow(rgb1[0] - rgb2[0], 2) +
+    Math.pow(rgb1[1] - rgb2[1], 2) +
+    Math.pow(rgb1[2] - rgb2[2], 2)
+  );
+};
