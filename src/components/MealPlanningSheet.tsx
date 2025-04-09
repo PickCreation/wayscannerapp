@@ -1,10 +1,10 @@
-
-import React, { useState } from "react";
+import React from "react";
 import { X, Info } from "lucide-react";
-import { Drawer, DrawerContent } from "@/components/ui/drawer";
+import { Sheet, SheetContent, SheetClose } from "@/components/ui/sheet";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Food {
   id: string;
@@ -202,20 +202,17 @@ const MealPlanningSheet: React.FC<MealPlanningSheetProps> = ({
   const mealIdeas = generateMealIdeas(currentFood);
   
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[90vh] overflow-auto">
-        <div className="p-4 space-y-5">
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent side="bottom" className="h-[85vh] rounded-t-xl p-0">
+        <div className="sticky top-0 bg-white z-10 p-4 border-b">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold">Meal Planning Suggestions</h2>
-            <button 
-              onClick={() => onOpenChange(false)}
-              className="p-1 rounded-full hover:bg-gray-100"
-            >
+            <SheetClose className="rounded-full p-1 hover:bg-gray-100">
               <X size={20} />
-            </button>
+            </SheetClose>
           </div>
 
-          <div className="bg-blue-50 p-3 rounded-lg">
+          <div className="bg-blue-50 p-3 rounded-lg mt-4">
             <div className="flex">
               <div className="w-12 h-12 rounded-md overflow-hidden mr-3">
                 <img 
@@ -232,8 +229,10 @@ const MealPlanningSheet: React.FC<MealPlanningSheetProps> = ({
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="space-y-6">
+        <ScrollArea className="h-[calc(85vh-160px)]">
+          <div className="space-y-6 p-4">
             {/* Breakfast Ideas */}
             {mealIdeas.breakfast && (
               <div>
@@ -500,17 +499,15 @@ const MealPlanningSheet: React.FC<MealPlanningSheetProps> = ({
               </div>
             )}
           </div>
-
-          <Separator className="my-2" />
-
-          <div className="bg-green-50 p-3 rounded-lg">
-            <p className="text-sm text-green-800">
-              Tip: Building balanced meals helps moderate the impact of less nutritious foods. Try to pair foods with protein, fiber, and healthy fats to create nutritionally complete meals.
-            </p>
-          </div>
+        </ScrollArea>
+        
+        <div className="sticky bottom-0 bg-green-50 p-3 border-t">
+          <p className="text-sm text-green-800">
+            Tip: Building balanced meals helps moderate the impact of less nutritious foods. Try to pair foods with protein, fiber, and healthy fats.
+          </p>
         </div>
-      </DrawerContent>
-    </Drawer>
+      </SheetContent>
+    </Sheet>
   );
 };
 

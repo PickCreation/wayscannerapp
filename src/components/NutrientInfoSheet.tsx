@@ -1,10 +1,11 @@
 
 import React, { useState } from "react";
 import { X, Search } from "lucide-react";
-import { Drawer, DrawerContent } from "@/components/ui/drawer";
+import { Sheet, SheetContent, SheetClose } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface NutrientInfoSheetProps {
   open: boolean;
@@ -200,20 +201,17 @@ const NutrientInfoSheet: React.FC<NutrientInfoSheetProps> = ({
   };
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[90vh] overflow-auto">
-        <div className="p-4 space-y-5">
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent side="bottom" className="h-[85vh] rounded-t-xl p-0">
+        <div className="sticky top-0 bg-white z-10 p-4 border-b">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold">Nutrition Education</h2>
-            <button 
-              onClick={() => onOpenChange(false)}
-              className="p-1 rounded-full hover:bg-gray-100"
-            >
+            <SheetClose className="rounded-full p-1 hover:bg-gray-100">
               <X size={20} />
-            </button>
+            </SheetClose>
           </div>
 
-          <div className="relative">
+          <div className="relative mt-4">
             <Input
               placeholder="Search nutrients or ingredients..."
               value={searchTerm}
@@ -222,8 +220,10 @@ const NutrientInfoSheet: React.FC<NutrientInfoSheetProps> = ({
             />
             <Search className="h-4 w-4 absolute right-3 top-3 text-gray-400" />
           </div>
+        </div>
 
-          <div className="space-y-6">
+        <ScrollArea className="h-[calc(85vh-130px)] px-4">
+          <div className="space-y-6 py-4">
             {filteredCategories.map((category, categoryIndex) => (
               <div key={categoryIndex}>
                 <h3 className="text-lg font-semibold mb-3">{category.category}</h3>
@@ -298,15 +298,15 @@ const NutrientInfoSheet: React.FC<NutrientInfoSheetProps> = ({
               </div>
             )}
           </div>
-          
-          <div className="bg-blue-50 p-3 rounded-lg mb-4">
-            <p className="text-sm text-blue-800">
-              This information is for educational purposes only. Consult a healthcare professional for personalized nutrition advice.
-            </p>
-          </div>
+        </ScrollArea>
+        
+        <div className="sticky bottom-0 bg-blue-50 p-3 border-t">
+          <p className="text-sm text-blue-800">
+            This information is for educational purposes only. Consult a healthcare professional for personalized nutrition advice.
+          </p>
         </div>
-      </DrawerContent>
-    </Drawer>
+      </SheetContent>
+    </Sheet>
   );
 };
 
