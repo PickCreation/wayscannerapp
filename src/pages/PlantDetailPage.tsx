@@ -12,11 +12,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 // Plant data (would come from API in real app)
 const plantData = {
@@ -161,8 +162,8 @@ const PlantDetailPage = () => {
               </div>
               
               {plant.isPoisonous && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
+                <Sheet>
+                  <SheetTrigger asChild>
                     <div className="flex items-center py-3 px-4 rounded-lg bg-gray-100 mt-2 cursor-pointer">
                       <div className="bg-amber-500 rounded-full p-2 mr-4">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -174,10 +175,10 @@ const PlantDetailPage = () => {
                       <span className="text-gray-800 font-medium">Poisonous</span>
                       <ChevronRight className="ml-auto text-gray-400" />
                     </div>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-[320px] p-0 border-gray-200 bg-white" align="start" sideOffset={10}>
-                    <div className="p-4">
-                      <div className="flex items-center border-b border-gray-200 pb-3 mb-3">
+                  </SheetTrigger>
+                  <SheetContent side="bottom" className="h-[80vh] rounded-t-[16px] pt-6">
+                    <SheetHeader className="text-left pb-4 border-b border-gray-200">
+                      <div className="flex items-center">
                         <div className="bg-amber-500 rounded-full p-2 mr-3">
                           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 12C13.6569 12 15 10.6569 15 9C15 7.34315 13.6569 6 12 6C10.3431 6 9 7.34315 9 9C9 10.6569 10.3431 12 12 12Z" fill="#FFFFFF"/>
@@ -185,55 +186,55 @@ const PlantDetailPage = () => {
                             <path d="M15.8 21.2C15.3 21.8 14.7 22 14 22H10C9.3 22 8.7 21.8 8.2 21.2C7.7 20.6 7.5 19.9 7.6 19.2L8.2 14.8C8.3 14.4 8.7 14.1 9.1 14.1H14.9C15.3 14.1 15.7 14.4 15.8 14.8L16.4 19.2C16.5 19.9 16.3 20.6 15.8 21.2ZM18.4 5.6C17.6 5.6 16.8 5.9 16.1 6.4C15.4 5 14 4 12.3 4C10.2 4 8.4 5.4 8 7.3C6.4 7.1 4.8 8.1 4.2 9.6C3.6 11.1 4.1 12.7 5.3 13.7C5.8 14.1 6.4 14.3 7 14.3H7.5C7.8 14.3 8 14.1 8 13.8C8 13.5 7.8 13.3 7.5 13.3C7.5 13.3 7.4 13.3 7 13.3C6.6 13.3 6.2 13.1 5.9 12.9C4.9 12.1 4.5 10.8 5 9.6C5.5 8.4 6.7 7.7 8 8.1C8.3 8.2 8.6 7.9 8.7 7.6C8.9 6 10.5 5 12.1 5.2C13.6 5.4 14.7 6.8 14.7 8.4C14.7 8.7 14.9 8.9 15.2 8.9C15.5 8.9 15.7 8.7 15.7 8.4C15.7 8.2 15.7 8.1 15.7 8.1C15.7 7.4 16.5 6.6 17.2 6.6C18.3 6.6 19.2 7.4 19.2 8.6C19.2 9.7 18.4 10.6 17.3 10.6H16.8C16.5 10.6 16.3 10.8 16.3 11.1C16.3 11.4 16.5 11.6 16.8 11.6H17.3C18.9 11.6 20.3 10.2 20.3 8.6C20.1 6.9 19 5.6 18.4 5.6Z" fill="#FFFFFF"/>
                           </svg>
                         </div>
-                        <span className="text-lg font-semibold">Poisonous</span>
+                        <SheetTitle className="text-lg font-semibold">Poisonous</SheetTitle>
+                      </div>
+                    </SheetHeader>
+                    
+                    <div className="space-y-4 mt-4">
+                      <div className="flex items-center">
+                        <p className="text-base font-medium">Poisonous:</p>
+                        <p className="ml-2">Yes</p>
                       </div>
                       
-                      <div className="space-y-4">
+                      <div className="flex items-center">
+                        <p className="text-base font-medium">Toxic to Animals</p>
+                      </div>
+                      
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <p className="text-base font-medium mb-2">Effects:</p>
+                        <p className="text-sm text-gray-700">
+                          {plant.toxicInfo.effects}
+                        </p>
+                      </div>
+                      
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <p className="text-base font-medium mb-2">Toxic Parts:</p>
+                        <ul className="space-y-2">
+                          {plant.toxicInfo.toxicParts.map((part, index) => (
+                            <li key={index} className="flex items-center">
+                              <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-2">
+                                <Check className="h-4 w-4 text-green-600" />
+                              </div>
+                              <span>{part}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <p className="text-base font-medium mb-2">Toxin:</p>
                         <div className="flex items-center">
-                          <p className="text-base font-medium">Poisonous:</p>
-                          <p className="ml-2">Yes</p>
-                        </div>
-                        
-                        <div className="flex items-center">
-                          <p className="text-base font-medium">Toxic to Animals</p>
-                        </div>
-                        
-                        <div className="bg-gray-50 p-4 rounded-lg">
-                          <p className="text-base font-medium mb-2">Effects:</p>
-                          <p className="text-sm text-gray-700">
-                            {plant.toxicInfo.effects}
-                          </p>
-                        </div>
-                        
-                        <div className="bg-gray-50 p-4 rounded-lg">
-                          <p className="text-base font-medium mb-2">Toxic Parts:</p>
-                          <ul className="space-y-2">
-                            {plant.toxicInfo.toxicParts.map((part, index) => (
-                              <li key={index} className="flex items-center">
-                                <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-2">
-                                  <Check className="h-4 w-4 text-green-600" />
-                                </div>
-                                <span>{part}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                        
-                        <div className="bg-gray-50 p-4 rounded-lg">
-                          <p className="text-base font-medium mb-2">Toxin:</p>
-                          <div className="flex items-center">
-                            <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center mr-2">
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="5" y="5" width="14" height="14" rx="2" fill="#FF4D6D"/>
-                              </svg>
-                            </div>
-                            <span>{plant.toxicInfo.toxin}</span>
+                          <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center mr-2">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <rect x="5" y="5" width="14" height="14" rx="2" fill="#FF4D6D"/>
+                            </svg>
                           </div>
+                          <span>{plant.toxicInfo.toxin}</span>
                         </div>
                       </div>
                     </div>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                  </SheetContent>
+                </Sheet>
               )}
               
               <div className="mt-4">
