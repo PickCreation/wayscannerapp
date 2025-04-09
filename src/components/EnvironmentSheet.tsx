@@ -27,144 +27,130 @@ const EnvironmentSheet: React.FC<EnvironmentSheetProps> = ({
 }) => {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full sm:max-w-md overflow-auto">
-        <SheetHeader className="mb-5">
+      <SheetContent className="w-full sm:max-w-md overflow-auto" style={{ maxHeight: "600px" }}>
+        <SheetHeader className="mb-4">
           <SheetTitle className="text-xl flex items-center">
             <Leaf className="mr-2 h-5 w-5 text-green-500" />
             Environmental Information
           </SheetTitle>
           <SheetDescription>
-            Proper storage and sustainability information for {currentFood?.name || "this food"}
+            Storage tips for {currentFood?.name || "this food"}
           </SheetDescription>
           <SheetClose className="absolute top-4 right-4 rounded-full p-2 hover:bg-gray-100">
             <X className="h-5 w-5 text-gray-500" />
           </SheetClose>
         </SheetHeader>
         
-        <div className="mb-6">
-          <div className="bg-green-50 p-4 rounded-lg border border-green-100 mb-6">
-            <h3 className="font-semibold text-green-700 mb-2 flex items-center">
-              <Leaf className="mr-2 h-5 w-5" />
-              Sustainability Impact
+        <div className="mb-5">
+          <div className="bg-green-50 p-3 rounded-lg border border-green-100 mb-4">
+            <h3 className="font-semibold text-green-700 mb-1 flex items-center text-sm">
+              <Leaf className="mr-2 h-4 w-4" />
+              Sustainability Tip
             </h3>
-            <p className="text-sm text-gray-700">
-              Making informed choices about food storage not only keeps your food fresh longer
-              but also helps reduce food waste, which is a significant contributor to greenhouse gas emissions.
+            <p className="text-xs text-gray-700">
+              Proper food storage reduces waste and greenhouse gas emissions from landfills.
             </p>
           </div>
         </div>
         
-        <h3 className="font-semibold text-lg mb-3">Storage Recommendations</h3>
+        <h3 className="font-semibold text-md mb-2">Storage Guide</h3>
         
-        <Accordion type="single" collapsible className="mb-6">
+        <Accordion type="single" collapsible className="mb-4">
           <AccordionItem value="refrigeration">
-            <AccordionTrigger className="py-3">
+            <AccordionTrigger className="py-2">
               <div className="flex items-center">
-                <Refrigerator className="mr-2 h-5 w-5 text-blue-500" />
-                <span>Refrigeration</span>
+                <Refrigerator className="mr-2 h-4 w-4 text-blue-500" />
+                <span className="text-sm">Refrigeration</span>
               </div>
             </AccordionTrigger>
             <AccordionContent>
-              <div className="space-y-2 pl-7">
-                <p className="text-sm text-gray-700">
-                  Store in refrigerator at 34-40°F (1-4°C) for optimal freshness.
+              <div className="space-y-1 pl-6">
+                <p className="text-xs text-gray-700">
+                  Store at 34-40°F (1-4°C) in airtight containers.
                 </p>
-                <p className="text-sm text-gray-700">
-                  Keep in original packaging or transfer to an airtight container to prevent odor transfer.
-                </p>
-                <div className="bg-blue-50 p-2 rounded text-xs text-blue-700 mt-2">
-                  <span className="font-semibold">Tip:</span> Store on middle or upper shelves, not in the door where temperature fluctuates.
+                <div className="bg-blue-50 p-2 rounded text-xs text-blue-700 mt-1">
+                  <span className="font-semibold">Tip:</span> Middle shelves maintain most consistent temperature.
                 </div>
               </div>
             </AccordionContent>
           </AccordionItem>
           
           <AccordionItem value="pantry">
-            <AccordionTrigger className="py-3">
+            <AccordionTrigger className="py-2">
               <div className="flex items-center">
-                <Sun className="mr-2 h-5 w-5 text-orange-500" />
-                <span>Pantry Storage</span>
+                <Sun className="mr-2 h-4 w-4 text-orange-500" />
+                <span className="text-sm">Pantry Storage</span>
               </div>
             </AccordionTrigger>
             <AccordionContent>
-              <div className="space-y-2 pl-7">
-                <p className="text-sm text-gray-700">
-                  Store in a cool, dry place away from direct sunlight at 50-70°F (10-21°C).
+              <div className="space-y-1 pl-6">
+                <p className="text-xs text-gray-700">
+                  Keep in cool, dry place (50-70°F) away from sunlight in airtight containers.
                 </p>
-                <p className="text-sm text-gray-700">
-                  Keep in airtight containers to maintain freshness and prevent pest infestation.
-                </p>
-                <div className="bg-orange-50 p-2 rounded text-xs text-orange-700 mt-2">
-                  <span className="font-semibold">Tip:</span> Label containers with purchase date to track freshness.
+                <div className="bg-orange-50 p-2 rounded text-xs text-orange-700 mt-1">
+                  <span className="font-semibold">Tip:</span> Label with purchase date.
                 </div>
               </div>
             </AccordionContent>
           </AccordionItem>
           
           <AccordionItem value="freezer">
-            <AccordionTrigger className="py-3">
+            <AccordionTrigger className="py-2">
               <div className="flex items-center">
-                <Thermometer className="mr-2 h-5 w-5 text-indigo-500" />
-                <span>Freezer Storage</span>
+                <Thermometer className="mr-2 h-4 w-4 text-indigo-500" />
+                <span className="text-sm">Freezer Storage</span>
               </div>
             </AccordionTrigger>
             <AccordionContent>
-              <div className="space-y-2 pl-7">
-                <p className="text-sm text-gray-700">
-                  Store at 0°F (-18°C) or below for long-term preservation.
+              <div className="space-y-1 pl-6">
+                <p className="text-xs text-gray-700">
+                  Store at 0°F (-18°C) in freezer-safe containers with air removed.
                 </p>
-                <p className="text-sm text-gray-700">
-                  Use freezer-safe containers or heavy-duty freezer bags with air removed before sealing.
-                </p>
-                <div className="bg-indigo-50 p-2 rounded text-xs text-indigo-700 mt-2">
-                  <span className="font-semibold">Tip:</span> Label with contents and date frozen. Most foods maintain quality for 3-6 months.
+                <div className="bg-indigo-50 p-2 rounded text-xs text-indigo-700 mt-1">
+                  <span className="font-semibold">Tip:</span> Label with contents and date. Best quality: 3-6 months.
                 </div>
               </div>
             </AccordionContent>
           </AccordionItem>
           
           <AccordionItem value="humidity">
-            <AccordionTrigger className="py-3">
+            <AccordionTrigger className="py-2">
               <div className="flex items-center">
-                <Droplets className="mr-2 h-5 w-5 text-teal-500" />
-                <span>Humidity Considerations</span>
+                <Droplets className="mr-2 h-4 w-4 text-teal-500" />
+                <span className="text-sm">Humidity Guide</span>
               </div>
             </AccordionTrigger>
             <AccordionContent>
-              <div className="space-y-2 pl-7">
-                <p className="text-sm text-gray-700">
-                  Some produce retains freshness better in high humidity (leafy greens, berries).
+              <div className="space-y-1 pl-6">
+                <p className="text-xs text-gray-700">
+                  High humidity: leafy greens, berries. Low humidity: onions, garlic, potatoes.
                 </p>
-                <p className="text-sm text-gray-700">
-                  Others benefit from low humidity (onions, garlic, potatoes).
-                </p>
-                <div className="bg-teal-50 p-2 rounded text-xs text-teal-700 mt-2">
-                  <span className="font-semibold">Tip:</span> Use the crisper drawer settings in your refrigerator to control humidity levels.
+                <div className="bg-teal-50 p-2 rounded text-xs text-teal-700 mt-1">
+                  <span className="font-semibold">Tip:</span> Use crisper drawer settings to control humidity.
                 </div>
               </div>
             </AccordionContent>
           </AccordionItem>
         </Accordion>
         
-        <h3 className="font-semibold text-lg mb-3">Environmental Impact</h3>
+        <h3 className="font-semibold text-md mb-2">Environmental Impact</h3>
         
-        <div className="space-y-4 mb-6">
-          <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-800 mb-2">Reducing Food Waste</h4>
-            <p className="text-sm text-gray-700">
-              Proper storage extends the life of your food and reduces waste. Food waste in landfills produces methane, a potent greenhouse gas.
+        <div className="space-y-3 mb-4">
+          <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-800 mb-1 text-sm">Reducing Food Waste</h4>
+            <p className="text-xs text-gray-700">
+              Proper storage prevents food waste which reduces methane emissions from landfills.
             </p>
-            <ul className="text-sm text-gray-700 list-disc pl-5 mt-2 space-y-1">
-              <li>Plan your meals to use perishable items promptly</li>
-              <li>Freeze excess food before it spoils</li>
-              <li>Learn to properly interpret date labels on packaging</li>
+            <ul className="text-xs text-gray-700 list-disc pl-4 mt-1 space-y-0.5">
+              <li>Plan meals to use perishables promptly</li>
+              <li>Freeze excess food before spoiling</li>
             </ul>
           </div>
           
-          <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-            <h4 className="font-medium text-gray-800 mb-2">Packaging Considerations</h4>
-            <p className="text-sm text-gray-700">
-              When possible, choose products with minimal or recyclable packaging. Properly recycle or reuse food packaging.
+          <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-800 mb-1 text-sm">Packaging Tips</h4>
+            <p className="text-xs text-gray-700">
+              Choose products with minimal or recyclable packaging. Reuse containers when possible.
             </p>
           </div>
         </div>
