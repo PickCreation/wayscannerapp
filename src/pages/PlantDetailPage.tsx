@@ -406,7 +406,7 @@ const PlantDetailPage = () => {
                     onOpenChange={() => toggleCareItem('difficulty')}
                     className="w-full border rounded-lg overflow-hidden"
                   >
-                    <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-gray-100">
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-gray-100">
                       <div className="flex items-center">
                         <div className="w-10 flex justify-center">
                           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -449,7 +449,7 @@ const PlantDetailPage = () => {
                     onOpenChange={() => toggleCareItem('water')}
                     className="w-full border rounded-lg overflow-hidden"
                   >
-                    <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-gray-100">
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-gray-100">
                       <div className="flex items-center">
                         <div className="w-10 flex justify-center">
                           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -509,7 +509,7 @@ const PlantDetailPage = () => {
                     onOpenChange={() => toggleCareItem('fertilize')}
                     className="w-full border rounded-lg overflow-hidden"
                   >
-                    <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-gray-100">
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-gray-100">
                       <div className="flex items-center">
                         <div className="w-10 flex justify-center">
                           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -557,7 +557,7 @@ const PlantDetailPage = () => {
                     onOpenChange={() => toggleCareItem('prune')}
                     className="w-full border rounded-lg overflow-hidden"
                   >
-                    <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-gray-100">
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-gray-100">
                       <div className="flex items-center">
                         <div className="w-10 flex justify-center">
                           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -609,7 +609,7 @@ const PlantDetailPage = () => {
                     onOpenChange={() => toggleCareItem('repot')}
                     className="w-full border rounded-lg overflow-hidden"
                   >
-                    <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-gray-100">
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-gray-100">
                       <div className="flex items-center">
                         <div className="w-10 flex justify-center">
                           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -649,6 +649,229 @@ const PlantDetailPage = () => {
                                 <span className="text-sm">{sign}</span>
                               </li>
                             ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                </div>
+              )}
+              
+              {selectedLocation === 'outdoor' && (
+                <div className="mt-4 space-y-3">
+                  <h3 className="text-lg font-bold mb-3">Outdoor Care Information</h3>
+                  
+                  <Collapsible
+                    open={openCareItem === 'outdoor-difficulty'}
+                    onOpenChange={() => toggleCareItem('outdoor-difficulty')}
+                    className="w-full border rounded-lg overflow-hidden"
+                  >
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-gray-100">
+                      <div className="flex items-center">
+                        <div className="w-10 flex justify-center">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="4" y="4" width="16" height="16" rx="1.5" stroke="#696974" strokeWidth="1.5"/>
+                            <rect x="7" y="7" width="4" height="4" fill="#696974"/>
+                            <rect x="13" y="7" width="4" height="4" fill="#E5E5E5"/>
+                            <rect x="7" y="13" width="4" height="4" fill="#E5E5E5"/>
+                            <rect x="13" y="13" width="4" height="4" fill="#E5E5E5"/>
+                          </svg>
+                        </div>
+                        <div className="ml-3">
+                          <h4 className="text-base font-medium">Difficulty</h4>
+                          <p className="text-[#034AFF] text-sm">Moderate</p>
+                        </div>
+                      </div>
+                      {openCareItem === 'outdoor-difficulty' ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="bg-white p-4">
+                      <div className="space-y-3">
+                        <p className="text-gray-700">When grown outdoors, Ti Leaf requires a bit more attention to thrive, especially in regions with variable climate. It does best in tropical and subtropical climates with consistent temperatures.</p>
+                        <div className="mt-3">
+                          <h5 className="font-medium mb-2">Outdoor Growing Tips:</h5>
+                          <ul className="space-y-2">
+                            <li className="flex items-start">
+                              <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                <Check className="h-3 w-3 text-green-600" />
+                              </div>
+                              <span className="text-sm">Choose a location with partial shade, especially in hot climates</span>
+                            </li>
+                            <li className="flex items-start">
+                              <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                <Check className="h-3 w-3 text-green-600" />
+                              </div>
+                              <span className="text-sm">Protect from strong winds that can damage the leaves</span>
+                            </li>
+                            <li className="flex items-start">
+                              <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                <Check className="h-3 w-3 text-green-600" />
+                              </div>
+                              <span className="text-sm">In colder regions, consider growing in containers to bring indoors during winter</span>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                  
+                  <Collapsible
+                    open={openCareItem === 'outdoor-water'}
+                    onOpenChange={() => toggleCareItem('outdoor-water')}
+                    className="w-full border rounded-lg overflow-hidden"
+                  >
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-gray-100">
+                      <div className="flex items-center">
+                        <div className="w-10 flex justify-center">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 22C16.4183 22 20 18.4183 20 14C20 10.5 17.4 7.26 12 2C6.6 7.26 4 10.5 4 14C4 18.4183 7.58172 22 12 22Z" stroke="#0EA5E9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </div>
+                        <div className="ml-3">
+                          <h4 className="text-base font-medium">Water</h4>
+                          <p className="text-[#034AFF] text-sm">Every 7-10 days</p>
+                        </div>
+                      </div>
+                      {openCareItem === 'outdoor-water' ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="bg-white p-4">
+                      <div className="space-y-3">
+                        <p className="text-gray-700">Outdoor Ti Leaf plants may need more frequent watering than indoor ones, especially during hot, dry periods. The soil should be kept consistently moist but not waterlogged.</p>
+                        <div className="mt-3">
+                          <h5 className="font-medium mb-2">Outdoor Watering Tips:</h5>
+                          <ul className="space-y-2">
+                            <li className="flex items-start">
+                              <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                <Check className="h-3 w-3 text-blue-600" />
+                              </div>
+                              <span className="text-sm">Water deeply at the base of the plant rather than overhead</span>
+                            </li>
+                            <li className="flex items-start">
+                              <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                <Check className="h-3 w-3 text-blue-600" />
+                              </div>
+                              <span className="text-sm">Apply a 2-3 inch layer of mulch to help retain soil moisture</span>
+                            </li>
+                            <li className="flex items-start">
+                              <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                <Check className="h-3 w-3 text-blue-600" />
+                              </div>
+                              <span className="text-sm">Increase watering frequency during hot, dry periods</span>
+                            </li>
+                            <li className="flex items-start">
+                              <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                <Check className="h-3 w-3 text-blue-600" />
+                              </div>
+                              <span className="text-sm">Reduce watering during rainy seasons to prevent root rot</span>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                  
+                  <Collapsible
+                    open={openCareItem === 'outdoor-fertilize'}
+                    onOpenChange={() => toggleCareItem('outdoor-fertilize')}
+                    className="w-full border rounded-lg overflow-hidden"
+                  >
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-gray-100">
+                      <div className="flex items-center">
+                        <div className="w-10 flex justify-center">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="9" stroke="#0EA5E9" strokeWidth="2"/>
+                            <circle cx="12" cy="12" r="3" fill="#0EA5E9"/>
+                          </svg>
+                        </div>
+                        <div className="ml-3">
+                          <h4 className="text-base font-medium">Fertilize</h4>
+                          <p className="text-[#034AFF] text-sm">Monthly during growing season</p>
+                        </div>
+                      </div>
+                      {openCareItem === 'outdoor-fertilize' ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="bg-white p-4">
+                      <div className="space-y-3">
+                        <p className="text-gray-700">Outdoor Ti Leaf plants benefit from regular fertilization to promote vibrant foliage color and healthy growth. Use a balanced, slow-release fertilizer during the growing season.</p>
+                        <div className="bg-green-50 p-3 rounded-lg">
+                          <p className="text-sm font-medium text-green-800 mb-1">Recommended Fertilizer:</p>
+                          <p className="text-sm">Balanced 10-10-10 slow-release fertilizer or organic alternatives like compost</p>
+                        </div>
+                        <div className="mt-3">
+                          <h5 className="font-medium mb-2">Outdoor Fertilizing Tips:</h5>
+                          <ul className="space-y-2">
+                            <li className="flex items-start">
+                              <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                <Check className="h-3 w-3 text-green-600" />
+                              </div>
+                              <span className="text-sm">Apply fertilizer monthly during the growing season (spring and summer)</span>
+                            </li>
+                            <li className="flex items-start">
+                              <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                <Check className="h-3 w-3 text-green-600" />
+                              </div>
+                              <span className="text-sm">Reduce or stop fertilizing in fall and winter when growth slows</span>
+                            </li>
+                            <li className="flex items-start">
+                              <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                <Check className="h-3 w-3 text-green-600" />
+                              </div>
+                              <span className="text-sm">Consider using compost as a natural fertilizer alternative</span>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                  
+                  <Collapsible
+                    open={openCareItem === 'outdoor-prune'}
+                    onOpenChange={() => toggleCareItem('outdoor-prune')}
+                    className="w-full border rounded-lg overflow-hidden"
+                  >
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-gray-100">
+                      <div className="flex items-center">
+                        <div className="w-10 flex justify-center">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 7H18M6 12H18M6 17H18" stroke="#696974" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </div>
+                        <div className="ml-3">
+                          <h4 className="text-base font-medium">Prune</h4>
+                          <p className="text-[#034AFF] text-sm">Seasonally</p>
+                        </div>
+                      </div>
+                      {openCareItem === 'outdoor-prune' ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="bg-white p-4">
+                      <div className="space-y-3">
+                        <p className="text-gray-700">Outdoor Ti Leaf plants may require more frequent pruning than indoor specimens, especially in optimal growing conditions where they can become quite large. Regular pruning helps maintain plant shape and encourages lush growth.</p>
+                        <div className="mt-3">
+                          <h5 className="font-medium mb-2">Outdoor Pruning Tips:</h5>
+                          <ul className="space-y-2">
+                            <li className="flex items-start">
+                              <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                <Check className="h-3 w-3 text-green-600" />
+                              </div>
+                              <span className="text-sm">Prune in early spring to shape the plant before active growth begins</span>
+                            </li>
+                            <li className="flex items-start">
+                              <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                <Check className="h-3 w-3 text-green-600" />
+                              </div>
+                              <span className="text-sm">Remove damaged or discolored leaves throughout the growing season</span>
+                            </li>
+                            <li className="flex items-start">
+                              <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                <Check className="h-3 w-3 text-green-600" />
+                              </div>
+                              <span className="text-sm">Cut back leggy stems to encourage bushier growth</span>
+                            </li>
+                            <li className="flex items-start">
+                              <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                <Check className="h-3 w-3 text-green-600" />
+                              </div>
+                              <span className="text-sm">Use clean, sharp tools to prevent disease transmission</span>
+                            </li>
                           </ul>
                         </div>
                       </div>
