@@ -143,7 +143,7 @@ const PlantDetailPage = () => {
           alt={plant.name} 
           className="w-full h-full object-cover rounded-lg px-5 pt-5"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white opacity-70"></div>
       </div>
       
       <div className="px-4 pb-4 max-w-md mx-auto">
