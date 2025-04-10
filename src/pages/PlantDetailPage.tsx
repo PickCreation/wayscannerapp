@@ -382,16 +382,14 @@ const PlantDetailPage = () => {
                 <div className="grid grid-cols-2 gap-3 mt-2">
                   <Button 
                     variant={selectedLocation === 'indoor' ? 'default' : 'outline'}
-                    size="pill"
-                    className={`font-medium ${selectedLocation === 'indoor' ? 'bg-[#034AFF] text-white' : 'border-[#034AFF] text-[#034AFF]'}`}
+                    className={`py-2 px-4 rounded-full font-medium h-auto ${selectedLocation === 'indoor' ? 'bg-[#034AFF] text-white' : 'border-[#034AFF] text-[#034AFF]'}`}
                     onClick={() => setSelectedLocation('indoor')}
                   >
                     Indoor
                   </Button>
                   <Button 
                     variant={selectedLocation === 'outdoor' ? 'default' : 'outline'}
-                    size="pill"
-                    className={`font-medium ${selectedLocation === 'outdoor' ? 'bg-[#034AFF] text-white' : 'border-[#034AFF] text-[#034AFF]'}`}
+                    className={`py-2 px-4 rounded-full font-medium h-auto ${selectedLocation === 'outdoor' ? 'bg-[#034AFF] text-white' : 'border-[#034AFF] text-[#034AFF]'}`}
                     onClick={() => setSelectedLocation('outdoor')}
                   >
                     Outdoor
@@ -481,6 +479,27 @@ const PlantDetailPage = () => {
                             ))}
                           </ul>
                         </div>
+                        <div className="mt-3">
+                          <h5 className="font-medium mb-2">Warning Signs:</h5>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="bg-amber-50 p-3 rounded-lg">
+                              <p className="text-sm font-medium text-amber-800 mb-1">Overwatering:</p>
+                              <ul className="space-y-1">
+                                {plant.careInfo.water.signs.overwatering.map((sign, index) => (
+                                  <li key={index} className="text-xs text-gray-700">{sign}</li>
+                                ))}
+                              </ul>
+                            </div>
+                            <div className="bg-orange-50 p-3 rounded-lg">
+                              <p className="text-sm font-medium text-orange-800 mb-1">Underwatering:</p>
+                              <ul className="space-y-1">
+                                {plant.careInfo.water.signs.underwatering.map((sign, index) => (
+                                  <li key={index} className="text-xs text-gray-700">{sign}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </CollapsibleContent>
                   </Collapsible>
@@ -494,8 +513,8 @@ const PlantDetailPage = () => {
                       <div className="flex items-center">
                         <div className="w-10 flex justify-center">
                           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#22C55E" strokeWidth="2"/>
-                            <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" fill="#22C55E"/>
+                            <circle cx="12" cy="12" r="9" stroke="#0EA5E9" strokeWidth="2"/>
+                            <circle cx="12" cy="12" r="3" fill="#0EA5E9"/>
                           </svg>
                         </div>
                         <div className="ml-3">
@@ -508,6 +527,10 @@ const PlantDetailPage = () => {
                     <CollapsibleContent className="bg-white p-4">
                       <div className="space-y-3">
                         <p className="text-gray-700">{plant.careInfo.fertilize.description}</p>
+                        <div className="bg-green-50 p-3 rounded-lg">
+                          <p className="text-sm font-medium text-green-800 mb-1">Recommended Fertilizer:</p>
+                          <p className="text-sm">{plant.careInfo.fertilize.recommended}</p>
+                        </div>
                         <div className="mt-3">
                           <h5 className="font-medium mb-2">Fertilizing Tips:</h5>
                           <ul className="space-y-2">
@@ -521,12 +544,9 @@ const PlantDetailPage = () => {
                             ))}
                           </ul>
                         </div>
-                        <div className="mt-3">
-                          <h5 className="font-medium mb-2">Recommended Fertilizer:</h5>
-                          <p className="text-sm">{plant.careInfo.fertilize.recommended}</p>
-                        </div>
-                        <div className="mt-3 bg-amber-50 p-3 rounded-md">
-                          <p className="text-sm text-amber-800">⚠️ {plant.careInfo.fertilize.warning}</p>
+                        <div className="bg-red-50 p-3 rounded-lg">
+                          <p className="text-sm font-medium text-red-800 mb-1">Warning:</p>
+                          <p className="text-sm">{plant.careInfo.fertilize.warning}</p>
                         </div>
                       </div>
                     </CollapsibleContent>
@@ -540,12 +560,8 @@ const PlantDetailPage = () => {
                     <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-gray-100">
                       <div className="flex items-center">
                         <div className="w-10 flex justify-center">
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9 6L20 17" stroke="#6366F1" strokeWidth="2" strokeLinecap="round"/>
-                            <path d="M17 11L20 8L16 4L13 7" stroke="#6366F1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M11 13L8 16L4 12L7 9" stroke="#6366F1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M8 16L4 20" stroke="#6366F1" strokeWidth="2" strokeLinecap="round"/>
-                            <path d="M20 4L16 8" stroke="#6366F1" strokeWidth="2" strokeLinecap="round"/>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 7H18M6 12H18M6 17H18" stroke="#696974" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                           </svg>
                         </div>
                         <div className="ml-3">
@@ -563,8 +579,8 @@ const PlantDetailPage = () => {
                           <ul className="space-y-2">
                             {plant.careInfo.prune.tips.map((tip, index) => (
                               <li key={index} className="flex items-start">
-                                <div className="w-5 h-5 bg-indigo-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
-                                  <Check className="h-3 w-3 text-indigo-600" />
+                                <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                  <Check className="h-3 w-3 text-green-600" />
                                 </div>
                                 <span className="text-sm">{tip}</span>
                               </li>
@@ -576,8 +592,8 @@ const PlantDetailPage = () => {
                           <ul className="space-y-2">
                             {plant.careInfo.prune.benefits.map((benefit, index) => (
                               <li key={index} className="flex items-start">
-                                <div className="w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
-                                  <Check className="h-3 w-3 text-purple-600" />
+                                <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                  <Check className="h-3 w-3 text-blue-600" />
                                 </div>
                                 <span className="text-sm">{benefit}</span>
                               </li>
@@ -596,16 +612,8 @@ const PlantDetailPage = () => {
                     <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-gray-100">
                       <div className="flex items-center">
                         <div className="w-10 flex justify-center">
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M10 9.01L10.01 8.99889" stroke="#C2410C" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M14 9.01L14.01 8.99889" stroke="#C2410C" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M10 13.01L10.01 12.9989" stroke="#C2410C" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M14 13.01L14.01 12.9989" stroke="#C2410C" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M10 17.01L10.01 16.9989" stroke="#C2410C" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M14 17.01L14.01 16.9989" stroke="#C2410C" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M6 20.4V5.6C6 5.26863 6.26863 5 6.6 5H17.4C17.7314 5 18 5.26863 18 5.6V20.4C18 20.7314 17.7314 21 17.4 21H6.6C6.26863 21 6 20.7314 6 20.4Z" stroke="#B45309" strokeWidth="2"/>
-                            <path d="M6 21C4.34315 21 3 19.6569 3 18V17H6" stroke="#B45309" strokeWidth="2"/>
-                            <path d="M18 21C19.6569 21 21 19.6569 21 18V17H18" stroke="#B45309" strokeWidth="2"/>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 21H16M12 21V11M12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7C16 9.20914 14.2091 11 12 11Z" stroke="#696974" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                           </svg>
                         </div>
                         <div className="ml-3">
@@ -618,6 +626,10 @@ const PlantDetailPage = () => {
                     <CollapsibleContent className="bg-white p-4">
                       <div className="space-y-3">
                         <p className="text-gray-700">{plant.careInfo.repot.description}</p>
+                        <div className="bg-amber-50 p-3 rounded-lg">
+                          <p className="text-sm font-medium text-amber-800 mb-1">Best Time to Repot:</p>
+                          <p className="text-sm">{plant.careInfo.repot.bestTime}</p>
+                        </div>
                         <div className="mt-3">
                           <h5 className="font-medium mb-2">Repotting Steps:</h5>
                           <ol className="space-y-2 list-decimal pl-5">
@@ -627,16 +639,12 @@ const PlantDetailPage = () => {
                           </ol>
                         </div>
                         <div className="mt-3">
-                          <h5 className="font-medium mb-2">Best Time to Repot:</h5>
-                          <p className="text-sm">{plant.careInfo.repot.bestTime}</p>
-                        </div>
-                        <div className="mt-3">
                           <h5 className="font-medium mb-2">Signs Your Plant Needs Repotting:</h5>
                           <ul className="space-y-2">
                             {plant.careInfo.repot.signs.map((sign, index) => (
                               <li key={index} className="flex items-start">
-                                <div className="w-5 h-5 bg-amber-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
-                                  <Check className="h-3 w-3 text-amber-600" />
+                                <div className="w-5 h-5 bg-orange-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                  <Check className="h-3 w-3 text-orange-600" />
                                 </div>
                                 <span className="text-sm">{sign}</span>
                               </li>
@@ -650,94 +658,451 @@ const PlantDetailPage = () => {
               )}
             </div>
           </TabsContent>
-
+          
           <TabsContent value="care" className="mt-4 animate-in fade-in-50">
             <div className="space-y-4">
-              <h3 className="text-lg font-bold">Care Requirements</h3>
-              <div className="bg-gray-50 p-4 rounded-lg space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">Pot:</span>
-                  <span>{plant.requirements.pot}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">Soil:</span>
-                  <span>{plant.requirements.soil}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">Lighting:</span>
-                  <span>{plant.requirements.lighting}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">Humidity:</span>
-                  <span>{plant.requirements.humidity}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">Hardiness:</span>
-                  <span>{plant.requirements.hardiness}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">Temperature:</span>
-                  <span>{plant.requirements.temperature}</span>
-                </div>
+              <h3 className="text-lg font-bold mb-2">Cares</h3>
+              <div className="space-y-3">
+                <button className="w-full flex items-center justify-between bg-gray-100 p-3 rounded-lg hover:bg-gray-200 transition-colors">
+                  <div className="flex items-center">
+                    <div className="w-10 flex justify-center">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="4" y="4" width="16" height="16" rx="1.5" stroke="#696974" strokeWidth="1.5"/>
+                        <rect x="7" y="7" width="4" height="4" fill="#696974"/>
+                        <rect x="13" y="7" width="4" height="4" fill="#E5E5E5"/>
+                        <rect x="7" y="13" width="4" height="4" fill="#E5E5E5"/>
+                        <rect x="13" y="13" width="4" height="4" fill="#E5E5E5"/>
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <h4 className="text-base font-medium">Difficulty</h4>
+                      <p className="text-[#034AFF] text-sm">{plant.care.difficulty}</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="text-gray-400" size={18} />
+                </button>
+                
+                <button className="w-full flex items-center justify-between bg-gray-100 p-3 rounded-lg hover:bg-gray-200 transition-colors">
+                  <div className="flex items-center">
+                    <div className="w-10 flex justify-center">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 22C16.4183 22 20 18.4183 20 14C20 10.5 17.4 7.26 12 2C6.6 7.26 4 10.5 4 14C4 18.4183 7.58172 22 12 22Z" stroke="#0EA5E9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <h4 className="text-base font-medium">Water</h4>
+                      <p className="text-[#034AFF] text-sm">{plant.care.water}</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="text-gray-400" size={18} />
+                </button>
+                
+                <button className="w-full flex items-center justify-between bg-gray-100 p-3 rounded-lg hover:bg-gray-200 transition-colors">
+                  <div className="flex items-center">
+                    <div className="w-10 flex justify-center">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="9" stroke="#0EA5E9" strokeWidth="2"/>
+                        <circle cx="12" cy="12" r="3" fill="#0EA5E9"/>
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <h4 className="text-base font-medium">Fertilize</h4>
+                      <p className="text-[#034AFF] text-sm">{plant.care.fertilize}</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="text-gray-400" size={18} />
+                </button>
               </div>
-
-              <h3 className="text-lg font-bold mt-6">Propagation</h3>
-              <div className="bg-gray-50 p-4 rounded-lg space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">Methods:</span>
-                  <span>{plant.propagation.methods.join(', ')}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">Difficulty:</span>
-                  <span>{plant.propagation.difficulty}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">Best Time:</span>
-                  <span>{plant.propagation.bestTime}</span>
-                </div>
-                <div className="mt-4">
-                  <span className="font-medium mb-2 block">Steps:</span>
-                  <ol className="list-decimal pl-5 space-y-2">
-                    {plant.propagation.steps.map((step, index) => (
-                      <li key={index}>{step}</li>
-                    ))}
-                  </ol>
-                </div>
+              
+              <div className="grid grid-cols-2 gap-3 mt-1">
+                <button className="w-full flex items-center justify-between bg-gray-100 p-3 rounded-lg hover:bg-gray-200 transition-colors">
+                  <div className="flex items-center">
+                    <div className="w-8 flex justify-center">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 7H18M6 12H18M6 17H18" stroke="#696974" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                    <div className="ml-2">
+                      <h4 className="text-base font-medium">Prune</h4>
+                      <p className="text-[#034AFF] text-sm">{plant.care.prune}</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="text-gray-400" size={16} />
+                </button>
+                
+                <button className="w-full flex items-center justify-between bg-gray-100 p-3 rounded-lg hover:bg-gray-200 transition-colors">
+                  <div className="flex items-center">
+                    <div className="w-8 flex justify-center">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 21H16M12 21V11M12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7C16 9.20914 14.2091 11 12 11Z" stroke="#696974" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                    <div className="ml-2">
+                      <h4 className="text-base font-medium">Repot</h4>
+                      <p className="text-[#034AFF] text-sm">{plant.care.repot}</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="text-gray-400" size={16} />
+                </button>
               </div>
             </div>
           </TabsContent>
-
+          
           <TabsContent value="history" className="mt-4 animate-in fade-in-50">
             <div className="space-y-4">
-              <h3 className="text-lg font-bold">Description</h3>
-              <div className="space-y-4">
-                {plant.description.map((paragraph, index) => (
-                  <p key={index} className="text-base text-gray-700">
-                    {paragraph}
-                  </p>
-                ))}
+              <h3 className="text-lg font-bold mb-2">Plant requirements</h3>
+              
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <button className="w-full flex items-center justify-between bg-gray-100 p-3 rounded-lg hover:bg-gray-200 transition-colors">
+                  <div className="flex items-center">
+                    <div className="w-8 flex justify-center">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 10C12 8.89543 11.1046 8 10 8H6C4.89543 8 4 8.89543 4 10V19C4 20.1046 4.89543 21 6 21H10C11.1046 21 12 20.1046 12 19V10Z" fill="#FFC288"/>
+                        <path d="M20 18C20 19.1046 19.1046 20 18 20H14C12.8954 20 12 19.1046 12 18V10C12 8.89543 12.8954 8 14 8H18C19.1046 8 20 8.89546 20 10V18Z" fill="#FFC288"/>
+                        <path d="M13.3246 4.27679C12.8688 3.54691 11.1312 3.54691 10.6754 4.27679L9.25336 6.42198C9.09691 6.67087 9.26524 7 9.57853 7H14.4215C14.7348 7 14.9031 6.67087 14.7466 6.42198L13.3246 4.27679Z" fill="#FFC288"/>
+                      </svg>
+                    </div>
+                    <div className="ml-2">
+                      <h4 className="text-base font-medium">Pot</h4>
+                      <p className="text-[#034AFF] text-xs">{plant.requirements.pot}</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="text-gray-400" size={16} />
+                </button>
+                
+                <button className="w-full flex items-center justify-between bg-gray-100 p-3 rounded-lg hover:bg-gray-200 transition-colors">
+                  <div className="flex items-center">
+                    <div className="w-8 flex justify-center">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="4" y="12" width="16" height="8" rx="1" fill="#D2B48C"/>
+                        <path d="M12 3L16 9H8L12 3Z" fill="#8BC34A"/>
+                      </svg>
+                    </div>
+                    <div className="ml-2">
+                      <h4 className="text-base font-medium">Soil</h4>
+                      <p className="text-[#034AFF] text-xs">{plant.requirements.soil}</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="text-gray-400" size={16} />
+                </button>
               </div>
               
-              <div className="mt-6">
-                <h3 className="text-lg font-bold mb-3">Fun Fact</h3>
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <p className="text-base text-blue-800">
-                    {plant.funFact}
-                  </p>
-                </div>
+              <div className="space-y-3">
+                <button className="w-full flex items-center justify-between bg-gray-100 p-3 rounded-lg hover:bg-gray-200 transition-colors">
+                  <div className="flex items-center">
+                    <div className="w-10 flex justify-center">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="6" fill="#FDB813"/>
+                        <path d="M12 0V3M12 21V24M24 12H21M3 12H0M20.5 3.5L18.4 5.6M5.6 18.4L3.5 20.5M20.5 20.5L18.4 18.4M5.6 5.6L3.5 3.5" stroke="#FDB813" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <h4 className="text-base font-medium">Lighting</h4>
+                      <p className="text-[#034AFF] text-sm">{plant.requirements.lighting}</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="text-gray-400" size={18} />
+                </button>
+                
+                <button className="w-full flex items-center justify-between bg-gray-100 p-3 rounded-lg hover:bg-gray-200 transition-colors">
+                  <div className="flex items-center">
+                    <div className="w-10 flex justify-center">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17 7L7 17M17 17L7 7" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <h4 className="text-base font-medium">Humidity</h4>
+                      <p className="text-[#034AFF] text-sm">{plant.requirements.humidity}</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="text-gray-400" size={18} />
+                </button>
+                
+                <button className="w-full flex items-center justify-between bg-gray-100 p-3 rounded-lg hover:bg-gray-200 transition-colors">
+                  <div className="flex items-center">
+                    <div className="w-10 flex justify-center">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 20.4V3.6C3 3.26863 3.26863 3 3.6 3H20.4C20.7314 3 21 3.26863 21 3.6V20.4C21 20.7314 20.7314 21 20.4 21H3.6C3.26863 21 3 20.7314 3 20.4Z" fill="#3B82F6"/>
+                        <path d="M14 16.5V11.5H16V16.5H14ZM11 16.5V7.5H13V16.5H11ZM8 16.5V13.5H10V16.5H8Z" fill="white"/>
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <h4 className="text-base font-medium">Hardiness zone</h4>
+                      <p className="text-[#034AFF] text-sm">{plant.requirements.hardiness}</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="text-gray-400" size={18} />
+                </button>
+                
+                <button className="w-full flex items-center justify-between bg-gray-100 p-3 rounded-lg hover:bg-gray-200 transition-colors">
+                  <div className="flex items-center">
+                    <div className="w-10 flex justify-center">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="7" y="3" width="3" height="18" rx="1.5" fill="#CBD5E1"/>
+                        <rect x="7" y="6" width="3" height="8" rx="1.5" fill="#EF4444"/>
+                        <circle cx="8.5" cy="18.5" r="2.5" fill="#EF4444"/>
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <h4 className="text-base font-medium">Temperature</h4>
+                      <p className="text-[#034AFF] text-sm">{plant.requirements.temperature}</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="text-gray-400" size={18} />
+                </button>
               </div>
             </div>
           </TabsContent>
         </Tabs>
+        
+        <div className="mt-6 py-2">
+          <h2 className="text-xl font-bold mb-4">General information</h2>
+          
+          <Accordion type="single" collapsible className="space-y-2">
+            <AccordionItem value="description" className="border-none">
+              <AccordionTrigger className="flex items-center bg-gray-100 p-3 rounded-lg hover:no-underline">
+                <div className="flex items-center">
+                  <div className="bg-amber-200 p-1.5 rounded mr-3">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M4 6H20M4 12H20M4 18H12" stroke="#1E1F24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <span className="text-base font-medium">Description</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="pt-3 px-1 text-gray-700 text-sm">
+                {plant.description.map((paragraph, index) => (
+                  <p key={index} className="mb-3">{paragraph}</p>
+                ))}
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="sowing" className="border-none">
+              <AccordionTrigger className="flex items-center bg-gray-100 p-3 rounded-lg hover:no-underline">
+                <div className="flex items-center">
+                  <div className="bg-green-200 p-1.5 rounded mr-3">
+                    <Leaf className="h-4 w-4 text-green-700" />
+                  </div>
+                  <span className="text-base font-medium">Sowing</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="pt-3 px-1 text-gray-700 text-sm">
+                <Sheet open={sowingSheetOpen} onOpenChange={setSowingSheetOpen}>
+                  <SheetTrigger asChild>
+                    <Button variant="outline" className="w-full">
+                      View Sowing Information
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent side="bottom" className="h-[80vh] rounded-t-[16px] pt-6">
+                    <SheetHeader className="text-left pb-4 border-b border-gray-200">
+                      <div className="flex items-center">
+                        <div className="bg-green-200 p-1.5 rounded mr-3">
+                          <Leaf className="h-4 w-4 text-green-700" />
+                        </div>
+                        <SheetTitle className="text-lg font-semibold">Sowing Information</SheetTitle>
+                      </div>
+                    </SheetHeader>
+                    
+                    <div className="space-y-4 mt-4">
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <p className="text-base font-medium mb-2">Seeds:</p>
+                        <p className="text-sm text-gray-700">{plant.sowing.seeds}</p>
+                      </div>
+                      
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <p className="text-base font-medium mb-2">When to Sow:</p>
+                        <p className="text-sm text-gray-700">{plant.sowing.whenToSow}</p>
+                      </div>
+                      
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <p className="text-base font-medium mb-2">How to Sow:</p>
+                        <ul className="space-y-2">
+                          {plant.sowing.howToSow.map((step, index) => (
+                            <li key={index} className="flex items-start">
+                              <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                <Check className="h-4 w-4 text-green-600" />
+                              </div>
+                              <span className="text-sm text-gray-700">{step}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <p className="text-base font-medium mb-2">Success Rate:</p>
+                        <p className="text-sm text-gray-700">{plant.sowing.successRate}</p>
+                      </div>
+                    </div>
+                  </SheetContent>
+                </Sheet>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="greenhouse" className="border-none">
+              <AccordionTrigger className="flex items-center bg-gray-100 p-3 rounded-lg hover:no-underline">
+                <div className="flex items-center">
+                  <div className="bg-blue-200 p-1.5 rounded mr-3">
+                    <Building2 className="h-4 w-4 text-blue-700" />
+                  </div>
+                  <span className="text-base font-medium">Greenhouse</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="pt-3 px-1 text-gray-700 text-sm">
+                <Sheet open={greenhouseSheetOpen} onOpenChange={setGreenhouseSheetOpen}>
+                  <SheetTrigger asChild>
+                    <Button variant="outline" className="w-full">
+                      View Greenhouse Information
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent side="bottom" className="h-[80vh] rounded-t-[16px] pt-6">
+                    <SheetHeader className="text-left pb-4 border-b border-gray-200">
+                      <div className="flex items-center">
+                        <div className="bg-blue-200 p-1.5 rounded mr-3">
+                          <Building2 className="h-4 w-4 text-blue-700" />
+                        </div>
+                        <SheetTitle className="text-lg font-semibold">Greenhouse Growing</SheetTitle>
+                      </div>
+                    </SheetHeader>
+                    
+                    <div className="space-y-4 mt-4">
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <p className="text-base font-medium mb-2">Benefits:</p>
+                        <ul className="space-y-2">
+                          {plant.greenhouse.benefits.map((benefit, index) => (
+                            <li key={index} className="flex items-start">
+                              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                <Check className="h-4 w-4 text-blue-600" />
+                              </div>
+                              <span className="text-sm text-gray-700">{benefit}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <p className="text-base font-medium mb-2">Ideal Conditions:</p>
+                        <div className="space-y-2">
+                          <div className="flex items-start">
+                            <span className="text-sm font-medium w-28">Temperature:</span>
+                            <span className="text-sm text-gray-700">{plant.greenhouse.idealConditions.temperature}</span>
+                          </div>
+                          <div className="flex items-start">
+                            <span className="text-sm font-medium w-28">Humidity:</span>
+                            <span className="text-sm text-gray-700">{plant.greenhouse.idealConditions.humidity}</span>
+                          </div>
+                          <div className="flex items-start">
+                            <span className="text-sm font-medium w-28">Lighting:</span>
+                            <span className="text-sm text-gray-700">{plant.greenhouse.idealConditions.lighting}</span>
+                          </div>
+                          <div className="flex items-start">
+                            <span className="text-sm font-medium w-28">Airflow:</span>
+                            <span className="text-sm text-gray-700">{plant.greenhouse.idealConditions.airflow}</span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <p className="text-base font-medium mb-2">Common Issues:</p>
+                        <ul className="space-y-2">
+                          {plant.greenhouse.commonIssues.map((issue, index) => (
+                            <li key={index} className="flex items-start">
+                              <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M12 8v4M12 16h.01M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10z" stroke="#EF4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                              </div>
+                              <span className="text-sm text-gray-700">{issue}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </SheetContent>
+                </Sheet>
+              </AccordionContent>
+            </AccordionItem>
+            
+            <AccordionItem value="propagation" className="border-none">
+              <AccordionTrigger className="flex items-center bg-gray-100 p-3 rounded-lg hover:no-underline">
+                <div className="flex items-center">
+                  <div className="bg-blue-200 p-1.5 rounded mr-3">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 3L4 9V21H20V9L12 3Z" stroke="#1E1F24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M8 14V21M16 14V21" stroke="#1E1F24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <span className="text-base font-medium">Propagation</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="pt-3 px-1 text-sm">
+                <p className="mb-2">Methods: {plant.propagation.methods.join(', ')}</p>
+                <p className="mb-2">Difficulty: {plant.propagation.difficulty}</p>
+                <p className="mb-3">Best time: {plant.propagation.bestTime}</p>
+                <h4 className="font-medium mb-2">Steps:</h4>
+                <ul className="list-disc pl-5 space-y-1">
+                  {plant.propagation.steps.map((step, index) => (
+                    <li key={index}>{step}</li>
+                  ))}
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+            
+            <AccordionItem value="funFact" className="border-none">
+              <AccordionTrigger className="flex items-center bg-gray-100 p-3 rounded-lg hover:no-underline">
+                <div className="flex items-center">
+                  <div className="bg-yellow-200 p-1.5 rounded mr-3">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="12" cy="12" r="9" fill="#FFE91F"/>
+                      <circle cx="9" cy="10" r="1.5" fill="#1E1F24"/>
+                      <circle cx="15" cy="10" r="1.5" fill="#1E1F24"/>
+                      <path d="M8 15C8 15 9.5 17 12 17C14.5 17 16 15 16 15" stroke="#1E1F24" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                  </div>
+                  <span className="text-base font-medium">Fun fact</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="pt-3 px-1 text-sm">
+                <p>{plant.funFact}</p>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
+        
+        <div className="mt-6 py-2">
+          <Separator className="bg-gray-200 mb-4" />
+          <div className="text-center mb-4">
+            <p className="text-base">Was this information helpful?</p>
+          </div>
+          <div className="flex justify-center gap-6">
+            <Button 
+              variant="outline"
+              className={`w-12 h-12 rounded-full flex items-center justify-center p-0 ${isHelpful === false ? 'bg-red-500 text-white border-red-500' : 'bg-gray-100 text-gray-600'}`}
+              onClick={() => setIsHelpful(false)}
+            >
+              <ThumbsDown className="h-6 w-6" />
+            </Button>
+            <Button 
+              variant="outline"
+              className={`w-12 h-12 rounded-full flex items-center justify-center p-0 ${isHelpful === true ? 'bg-[#034AFF] text-white border-[#034AFF]' : 'bg-gray-100 text-gray-600'}`}
+              onClick={() => setIsHelpful(true)}
+            >
+              <ThumbsUp className="h-6 w-6" />
+            </Button>
+          </div>
+        </div>
       </div>
       
-      <BottomNavigation
-        activeItem="home"
+      <BottomNavigation 
+        activeItem="home" 
         onItemClick={handleNavigationClick}
         onCameraClick={handleCameraClick}
       />
-
-      <CameraSheet open={cameraSheetOpen} onOpenChange={setCameraSheetOpen} />
+      
+      <CameraSheet 
+        open={cameraSheetOpen} 
+        onOpenChange={setCameraSheetOpen} 
+      />
     </div>
   );
 };
