@@ -7,6 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import BottomNavigation from '@/components/BottomNavigation';
+import CameraSheet from '@/components/CameraSheet';
 import {
   Popover,
   PopoverContent,
@@ -118,6 +119,7 @@ const PlantDetailPage = () => {
   const [isHelpful, setIsHelpful] = useState<boolean | null>(null);
   const [sowingSheetOpen, setSowingSheetOpen] = useState(false);
   const [greenhouseSheetOpen, setGreenhouseSheetOpen] = useState(false);
+  const [cameraSheetOpen, setCameraSheetOpen] = useState(false);
   
   const plant = plantData;
   const bestAlternativeNames = plant.alsoKnownAs.slice(0, 2);
@@ -149,7 +151,7 @@ const PlantDetailPage = () => {
   };
 
   const handleCameraClick = () => {
-    navigate("/scan-camera");
+    setCameraSheetOpen(true);
   };
 
   return (
@@ -762,6 +764,11 @@ const PlantDetailPage = () => {
         activeItem="home" 
         onItemClick={handleNavigationClick}
         onCameraClick={handleCameraClick}
+      />
+      
+      <CameraSheet 
+        open={cameraSheetOpen} 
+        onOpenChange={setCameraSheetOpen} 
       />
     </div>
   );
