@@ -1,3 +1,4 @@
+
 import React, { useEffect } from "react";
 import { injectPlantRequirements } from "@/utils/plantRequirementsInjector";
 import { Button } from "@/components/ui/button";
@@ -15,20 +16,19 @@ import { Shell } from "@/components/Shell";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import {
   getPlant,
   updatePlant,
   deletePlant,
 } from "@/lib/api/plants/plants.api";
-import { Plant } from "@/lib/db/schema";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 
 const PlantDetailPage = () => {
-  const router = useRouter();
+  const navigate = useNavigate();
   const params = useParams();
   const plantId = String(params?.plantId);
   const { toast } = useToast();
@@ -54,7 +54,7 @@ const PlantDetailPage = () => {
       toast({
         title: "Plant deleted successfully!",
       });
-      router.push("/dashboard");
+      navigate("/dashboard");
     },
   });
 
@@ -83,7 +83,7 @@ const PlantDetailPage = () => {
       <Shell>
         <div className="flex flex-col gap-4">
           <p>Could not find plant.</p>
-          <Link href="/dashboard" className="text-blue-500">
+          <Link to="/dashboard" className="text-blue-500">
             Go back to dashboard
           </Link>
         </div>
@@ -94,7 +94,7 @@ const PlantDetailPage = () => {
   return (
     <Shell>
       <div className="flex flex-col gap-4">
-        <Link href="/dashboard" className="w-fit">
+        <Link to="/dashboard" className="w-fit">
           <Button variant="ghost">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Dashboard
@@ -149,7 +149,7 @@ const PlantDetailPage = () => {
             >
               Delete
             </Button>
-            <Link href={`/plant/${plant.id}/edit`}>
+            <Link to={`/plant/${plant.id}/edit`}>
               <Button>Edit Plant</Button>
             </Link>
           </CardFooter>

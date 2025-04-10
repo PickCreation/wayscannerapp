@@ -38,7 +38,7 @@ export const injectPlantRequirements = () => {
         
         // Create root and render using React 18 createRoot API
         const root = createRoot(container);
-        root.render(<PlantRequirements />);
+        root.render(React.createElement(PlantRequirements));
       } else {
         console.error("Could not find 'General information' heading to inject PlantRequirements");
       }
