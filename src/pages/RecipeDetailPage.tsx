@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { 
@@ -24,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import BottomNavigation from "@/components/BottomNavigation";
+import CameraSheet from "@/components/CameraSheet";
 import {
   Drawer,
   DrawerContent,
@@ -210,6 +212,7 @@ const RecipeDetailPage = () => {
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [userComments, setUserComments] = useState<any[]>([]);
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("recipes");
+  const [cameraSheetOpen, setCameraSheetOpen] = useState(false);
   const isMobile = useIsMobile();
 
   const recipe = recipeData[recipeId as keyof typeof recipeData] || getDefaultRecipe(recipeId || "unknown");
@@ -375,8 +378,10 @@ const RecipeDetailPage = () => {
   };
 
   const handleCameraClick = () => {
-    navigate("/scan-camera");
+    setCameraSheetOpen(true);
   };
+
+  const allComments = [...(recipe.comments || []), ...userComments];
 
   return (
     <div className="pb-20 bg-white min-h-screen">
@@ -754,7 +759,12 @@ const RecipeDetailPage = () => {
           onItemClick={handleNavItemClick}
           onCameraClick={handleCameraClick}
         />
-      </div>
+      
+      {/* Add CameraSheet component */}
+      <CameraSheet 
+        open={cameraSheetOpen}
+        onOpenChange={setCameraSheetOpen}
+      />
     </div>
   );
 };
