@@ -12,20 +12,43 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Shell } from "@/components/Shell";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import {
-  getPlant,
-  updatePlant,
-  deletePlant,
-} from "@/lib/api/plants/plants.api";
-import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import Image from "next/image";
+
+// Mock API functions since they don't exist
+const getPlant = async (id: string) => {
+  // This is a mock implementation
+  return {
+    id,
+    name: "Monstera Deliciosa",
+    family: "Araceae",
+    genus: "Monstera",
+    imageUrl: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07",
+  };
+};
+
+const updatePlant = async (plant: any) => {
+  // Mock implementation
+  return plant;
+};
+
+const deletePlant = async (id: string) => {
+  // Mock implementation
+  return { id };
+};
+
+// Shell component replacement
+const Shell = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <div className="container mx-auto px-4 py-8 max-w-5xl">
+      {children}
+    </div>
+  );
+};
 
 const PlantDetailPage = () => {
   const navigate = useNavigate();
@@ -109,11 +132,9 @@ const PlantDetailPage = () => {
           </CardHeader>
           <CardContent className="grid gap-6">
             <div className="flex flex-col gap-2">
-              <Image
+              <img
                 src={plant.imageUrl || "/placeholder.svg"}
                 alt={plant.name}
-                width={500}
-                height={300}
                 className="h-80 w-full rounded-md object-cover"
               />
               <div className="flex gap-2">

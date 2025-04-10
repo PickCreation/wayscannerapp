@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Pot, Soil, Sun, Droplets, Thermometer, MapPin } from "lucide-react";
+import { Flower2, Leaf, Sun, Droplets, Thermometer, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface RequirementItem {
@@ -13,12 +13,12 @@ interface RequirementItem {
 const PlantRequirements = () => {
   const requirements: RequirementItem[] = [
     {
-      icon: <Pot />,
+      icon: <Flower2 />,
       title: "Pot",
       content: "Use a pot that is 1-2 inches larger than the root ball with good drainage holes. Terracotta pots are ideal as they allow soil to dry between waterings."
     },
     {
-      icon: <Soil />,
+      icon: <Leaf />,
       title: "Soil",
       content: "Well-draining potting mix with perlite or sand. A mix designed for indoor plants or succulents works well for most houseplants."
     },
