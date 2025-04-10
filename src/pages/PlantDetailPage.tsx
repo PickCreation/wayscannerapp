@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ChevronRight, ChevronDown, ChevronUp, ThumbsUp, ThumbsDown, Check, Leaf, Building2 } from 'lucide-react';
@@ -479,3 +480,266 @@ const PlantDetailPage = () => {
                               </li>
                             ))}
                           </ul>
+                        </div>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                  
+                  <Collapsible
+                    open={openCareItem === 'fertilize'}
+                    onOpenChange={() => toggleCareItem('fertilize')}
+                    className="w-full border rounded-lg overflow-hidden"
+                  >
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-gray-100">
+                      <div className="flex items-center">
+                        <div className="w-10 flex justify-center">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#22C55E" strokeWidth="2"/>
+                            <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" fill="#22C55E"/>
+                          </svg>
+                        </div>
+                        <div className="ml-3">
+                          <h4 className="text-base font-medium">Fertilize</h4>
+                          <p className="text-[#034AFF] text-sm">{plant.care.fertilize}</p>
+                        </div>
+                      </div>
+                      {openCareItem === 'fertilize' ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="bg-white p-4">
+                      <div className="space-y-3">
+                        <p className="text-gray-700">{plant.careInfo.fertilize.description}</p>
+                        <div className="mt-3">
+                          <h5 className="font-medium mb-2">Fertilizing Tips:</h5>
+                          <ul className="space-y-2">
+                            {plant.careInfo.fertilize.tips.map((tip, index) => (
+                              <li key={index} className="flex items-start">
+                                <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                  <Check className="h-3 w-3 text-green-600" />
+                                </div>
+                                <span className="text-sm">{tip}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="mt-3">
+                          <h5 className="font-medium mb-2">Recommended Fertilizer:</h5>
+                          <p className="text-sm">{plant.careInfo.fertilize.recommended}</p>
+                        </div>
+                        <div className="mt-3 bg-amber-50 p-3 rounded-md">
+                          <p className="text-sm text-amber-800">⚠️ {plant.careInfo.fertilize.warning}</p>
+                        </div>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                  
+                  <Collapsible
+                    open={openCareItem === 'prune'}
+                    onOpenChange={() => toggleCareItem('prune')}
+                    className="w-full border rounded-lg overflow-hidden"
+                  >
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-gray-100">
+                      <div className="flex items-center">
+                        <div className="w-10 flex justify-center">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 6L20 17" stroke="#6366F1" strokeWidth="2" strokeLinecap="round"/>
+                            <path d="M17 11L20 8L16 4L13 7" stroke="#6366F1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M11 13L8 16L4 12L7 9" stroke="#6366F1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M8 16L4 20" stroke="#6366F1" strokeWidth="2" strokeLinecap="round"/>
+                            <path d="M20 4L16 8" stroke="#6366F1" strokeWidth="2" strokeLinecap="round"/>
+                          </svg>
+                        </div>
+                        <div className="ml-3">
+                          <h4 className="text-base font-medium">Prune</h4>
+                          <p className="text-[#034AFF] text-sm">{plant.care.prune}</p>
+                        </div>
+                      </div>
+                      {openCareItem === 'prune' ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="bg-white p-4">
+                      <div className="space-y-3">
+                        <p className="text-gray-700">{plant.careInfo.prune.description}</p>
+                        <div className="mt-3">
+                          <h5 className="font-medium mb-2">Pruning Tips:</h5>
+                          <ul className="space-y-2">
+                            {plant.careInfo.prune.tips.map((tip, index) => (
+                              <li key={index} className="flex items-start">
+                                <div className="w-5 h-5 bg-indigo-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                  <Check className="h-3 w-3 text-indigo-600" />
+                                </div>
+                                <span className="text-sm">{tip}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="mt-3">
+                          <h5 className="font-medium mb-2">Benefits of Pruning:</h5>
+                          <ul className="space-y-2">
+                            {plant.careInfo.prune.benefits.map((benefit, index) => (
+                              <li key={index} className="flex items-start">
+                                <div className="w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                  <Check className="h-3 w-3 text-purple-600" />
+                                </div>
+                                <span className="text-sm">{benefit}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                  
+                  <Collapsible
+                    open={openCareItem === 'repot'}
+                    onOpenChange={() => toggleCareItem('repot')}
+                    className="w-full border rounded-lg overflow-hidden"
+                  >
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-gray-100">
+                      <div className="flex items-center">
+                        <div className="w-10 flex justify-center">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 9.01L10.01 8.99889" stroke="#C2410C" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M14 9.01L14.01 8.99889" stroke="#C2410C" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M10 13.01L10.01 12.9989" stroke="#C2410C" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M14 13.01L14.01 12.9989" stroke="#C2410C" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M10 17.01L10.01 16.9989" stroke="#C2410C" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M14 17.01L14.01 16.9989" stroke="#C2410C" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M6 20.4V5.6C6 5.26863 6.26863 5 6.6 5H17.4C17.7314 5 18 5.26863 18 5.6V20.4C18 20.7314 17.7314 21 17.4 21H6.6C6.26863 21 6 20.7314 6 20.4Z" stroke="#B45309" strokeWidth="2"/>
+                            <path d="M6 21C4.34315 21 3 19.6569 3 18V17H6" stroke="#B45309" strokeWidth="2"/>
+                            <path d="M18 21C19.6569 21 21 19.6569 21 18V17H18" stroke="#B45309" strokeWidth="2"/>
+                          </svg>
+                        </div>
+                        <div className="ml-3">
+                          <h4 className="text-base font-medium">Repot</h4>
+                          <p className="text-[#034AFF] text-sm">{plant.care.repot}</p>
+                        </div>
+                      </div>
+                      {openCareItem === 'repot' ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="bg-white p-4">
+                      <div className="space-y-3">
+                        <p className="text-gray-700">{plant.careInfo.repot.description}</p>
+                        <div className="mt-3">
+                          <h5 className="font-medium mb-2">Repotting Steps:</h5>
+                          <ol className="space-y-2 list-decimal pl-5">
+                            {plant.careInfo.repot.steps.map((step, index) => (
+                              <li key={index} className="text-sm">{step}</li>
+                            ))}
+                          </ol>
+                        </div>
+                        <div className="mt-3">
+                          <h5 className="font-medium mb-2">Best Time to Repot:</h5>
+                          <p className="text-sm">{plant.careInfo.repot.bestTime}</p>
+                        </div>
+                        <div className="mt-3">
+                          <h5 className="font-medium mb-2">Signs Your Plant Needs Repotting:</h5>
+                          <ul className="space-y-2">
+                            {plant.careInfo.repot.signs.map((sign, index) => (
+                              <li key={index} className="flex items-start">
+                                <div className="w-5 h-5 bg-amber-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                  <Check className="h-3 w-3 text-amber-600" />
+                                </div>
+                                <span className="text-sm">{sign}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                </div>
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="care" className="mt-4 animate-in fade-in-50">
+            <div className="space-y-4">
+              <h3 className="text-lg font-bold">Care Requirements</h3>
+              <div className="bg-gray-50 p-4 rounded-lg space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">Pot:</span>
+                  <span>{plant.requirements.pot}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">Soil:</span>
+                  <span>{plant.requirements.soil}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">Lighting:</span>
+                  <span>{plant.requirements.lighting}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">Humidity:</span>
+                  <span>{plant.requirements.humidity}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">Hardiness:</span>
+                  <span>{plant.requirements.hardiness}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">Temperature:</span>
+                  <span>{plant.requirements.temperature}</span>
+                </div>
+              </div>
+
+              <h3 className="text-lg font-bold mt-6">Propagation</h3>
+              <div className="bg-gray-50 p-4 rounded-lg space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">Methods:</span>
+                  <span>{plant.propagation.methods.join(', ')}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">Difficulty:</span>
+                  <span>{plant.propagation.difficulty}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">Best Time:</span>
+                  <span>{plant.propagation.bestTime}</span>
+                </div>
+                <div className="mt-4">
+                  <span className="font-medium mb-2 block">Steps:</span>
+                  <ol className="list-decimal pl-5 space-y-2">
+                    {plant.propagation.steps.map((step, index) => (
+                      <li key={index}>{step}</li>
+                    ))}
+                  </ol>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="history" className="mt-4 animate-in fade-in-50">
+            <div className="space-y-4">
+              <h3 className="text-lg font-bold">Description</h3>
+              <div className="space-y-4">
+                {plant.description.map((paragraph, index) => (
+                  <p key={index} className="text-base text-gray-700">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+              
+              <div className="mt-6">
+                <h3 className="text-lg font-bold mb-3">Fun Fact</h3>
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <p className="text-base text-blue-800">
+                    {plant.funFact}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+      
+      <BottomNavigation
+        activeItem="home"
+        onItemClick={handleNavigationClick}
+        onCameraClick={handleCameraClick}
+      />
+
+      <CameraSheet open={cameraSheetOpen} onOpenChange={setCameraSheetOpen} />
+    </div>
+  );
+};
+
+export default PlantDetailPage;
