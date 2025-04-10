@@ -16,9 +16,14 @@ export const injectPlantRequirements = () => {
         if (isPlantDetailPage) {
           // Find the right spot to inject our component
           // For example, before the "General Information" section
-          const generalInfoHeader = document.querySelector('h2.text-xl.font-semibold.mb-4:contains("General Information")');
+          const generalInfoHeader = document.querySelector('h2.text-xl.font-semibold.mb-4');
           
-          if (generalInfoHeader && !document.getElementById('plant-requirements-section')) {
+          // Check if the header exists and contains the text "General Information"
+          if (generalInfoHeader && 
+              generalInfoHeader.textContent && 
+              generalInfoHeader.textContent.includes("General Information") &&
+              !document.getElementById('plant-requirements-section')) {
+            
             const container = document.createElement('div');
             container.id = 'plant-requirements-section';
             
