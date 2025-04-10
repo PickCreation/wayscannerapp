@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { 
@@ -353,370 +352,375 @@ const RecipeDetailPage = () => {
 
   return (
     <div className="pb-6 bg-white min-h-screen">
-      <div className="relative h-72 bg-gray-200">
-        <img 
-          src={recipe.image || "https://via.placeholder.com/800x600?text=No+Image"}
-          alt={recipe.title}
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-        
-        <div className="absolute top-0 left-0 right-0 bg-primary/20 backdrop-blur-sm p-4 flex justify-between items-center">
-          <button 
-            onClick={handleBack}
-            className="bg-white/20 backdrop-blur-sm rounded-full p-2"
-          >
-            <ArrowLeft size={16} color="white" />
-          </button>
+      <div className="fixed top-0 left-0 right-0 z-10 bg-[#034AFF] text-white p-4 flex items-center shadow-md">
+        <button 
+          onClick={handleBack}
+          className="mr-4"
+        >
+          <ArrowLeft size={24} />
+        </button>
+        <h1 className="text-lg font-medium">Recipe Details</h1>
+      </div>
+      
+      <div className="pt-16">
+        <div className="relative h-72 bg-gray-200">
+          <img 
+            src={recipe.image || "https://via.placeholder.com/800x600?text=No+Image"}
+            alt={recipe.title}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
           
-          <div className="flex space-x-2">
-            <button 
-              onClick={handleSave}
-              className="bg-white/20 backdrop-blur-sm rounded-full p-2"
-            >
-              <BookmarkPlus 
-                size={16} 
-                color="white"
-                fill={isSaved ? "white" : "none"}
-              />
-            </button>
-            <Popover open={showShareOptions} onOpenChange={setShowShareOptions}>
-              <PopoverTrigger asChild>
-                <button 
-                  onClick={handleShare}
-                  className="bg-white/20 backdrop-blur-sm rounded-full p-2"
-                >
-                  <Share2 size={16} color="white" />
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-48 p-0" align={isMobile ? "end" : "center"} sideOffset={5}>
-                <div className="flex flex-col">
+          <div className="absolute top-0 left-0 right-0 bg-primary/20 backdrop-blur-sm p-4 flex justify-end items-center">
+            <div className="flex space-x-2">
+              <button 
+                onClick={handleSave}
+                className="bg-white/20 backdrop-blur-sm rounded-full p-2"
+              >
+                <BookmarkPlus 
+                  size={16} 
+                  color="white"
+                  fill={isSaved ? "white" : "none"}
+                />
+              </button>
+              <Popover open={showShareOptions} onOpenChange={setShowShareOptions}>
+                <PopoverTrigger asChild>
                   <button 
-                    onClick={handleCopyLink}
-                    className="flex items-center px-4 py-2 hover:bg-gray-100 text-sm"
+                    onClick={handleShare}
+                    className="bg-white/20 backdrop-blur-sm rounded-full p-2"
                   >
-                    <Copy size={16} className="mr-2" />
-                    Copy Link
+                    <Share2 size={16} color="white" />
                   </button>
-                  <button 
-                    onClick={handleFacebookShare}
-                    className="flex items-center px-4 py-2 hover:bg-gray-100 text-sm text-blue-600"
-                  >
-                    <Facebook size={16} className="mr-2" />
-                    Share on Facebook
-                  </button>
-                </div>
-              </PopoverContent>
-            </Popover>
-          </div>
-        </div>
-      </div>
-
-      <div className="px-4 pt-4">
-        <h1 className="text-2xl font-semibold mb-3 text-[28px]">{recipe.title}</h1>
-        
-        <div className="flex flex-wrap gap-2 mb-3">
-          {recipe.tags.map(tag => (
-            <Badge key={tag} variant="secondary" className="capitalize text-xs">
-              {tag}
-            </Badge>
-          ))}
-        </div>
-      </div>
-
-      <div className="px-4 grid grid-cols-4 gap-2 mb-4">
-        <div className="flex flex-col items-center">
-          <div className="bg-blue-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
-            <Clock size={16} className="text-blue-500" />
-          </div>
-          <p className="text-xs text-blue-500 font-medium">{recipe.time}</p>
-          <p className="text-[10px] text-gray-500">Cook Time</p>
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="bg-green-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
-            <Tags size={16} className="text-green-500" />
-          </div>
-          <p className="text-xs text-green-500 font-medium">Category</p>
-          <p className="text-[10px] text-gray-500">Type</p>
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="bg-orange-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
-            <Users size={16} className="text-orange-500" />
-          </div>
-          <p className="text-xs text-orange-500 font-medium">{recipe.servings}</p>
-          <p className="text-[10px] text-gray-500">Servings</p>
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="bg-yellow-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
-            <LightbulbIcon size={16} className="text-yellow-500" />
-          </div>
-          <p className="text-xs text-yellow-500 font-medium">{recipe.rating > 4 ? "Delicious" : recipe.rating > 3 ? "Tasty" : recipe.rating > 2 ? "Just Okay" : "Not Great"}</p>
-          <p className="text-[10px] text-gray-500">Rating</p>
-        </div>
-      </div>
-
-      <div className="px-4 py-2">
-        <h3 className="text-base font-semibold mb-2">Description</h3>
-        <div className="border border-gray-200 bg-gray-50 rounded-lg p-3 mb-4">
-          <p className="text-sm text-gray-700">{recipe.description}</p>
-        </div>
-      </div>
-
-      <div className="px-4">
-        <Tabs defaultValue="ingredients" value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="ingredients">Ingredients</TabsTrigger>
-            <TabsTrigger value="instructions">Instructions</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="ingredients" className="mt-4">
-            <h3 className="text-base font-semibold mb-3 flex items-center">
-              <ChefHat className="mr-2" size={14} />
-              Ingredients
-            </h3>
-            <ul className="space-y-2">
-              {recipe.ingredients.map((ingredient, index) => (
-                <li key={index} className="flex items-start">
-                  <div className="h-6 w-6 rounded-full border border-gray-300 flex-shrink-0 flex items-center justify-center mr-3 mt-0.5">
-                    <span className="text-xs text-gray-500">{index + 1}</span>
+                </PopoverTrigger>
+                <PopoverContent className="w-48 p-0" align={isMobile ? "end" : "center"} sideOffset={5}>
+                  <div className="flex flex-col">
+                    <button 
+                      onClick={handleCopyLink}
+                      className="flex items-center px-4 py-2 hover:bg-gray-100 text-sm"
+                    >
+                      <Copy size={16} className="mr-2" />
+                      Copy Link
+                    </button>
+                    <button 
+                      onClick={handleFacebookShare}
+                      className="flex items-center px-4 py-2 hover:bg-gray-100 text-sm text-blue-600"
+                    >
+                      <Facebook size={16} className="mr-2" />
+                      Share on Facebook
+                    </button>
                   </div>
-                  <span className="text-sm text-gray-700">{ingredient}</span>
-                </li>
-              ))}
-            </ul>
-          </TabsContent>
-          
-          <TabsContent value="instructions" className="mt-4">
-            <h3 className="text-base font-semibold mb-3 flex items-center">
-              <CircleCheck className="mr-2" size={14} />
-              Instructions
-            </h3>
-            <ol className="space-y-4">
-              {recipe.instructions.map((instruction, index) => (
-                <li key={index} className="flex">
-                  <div className="h-6 w-6 bg-primary text-white rounded-full flex-shrink-0 flex items-center justify-center mr-3 mt-0.5">
-                    <span className="text-xs">{index + 1}</span>
-                  </div>
-                  <span className="text-sm text-gray-700">{instruction}</span>
-                </li>
-              ))}
-            </ol>
-          </TabsContent>
-        </Tabs>
-      </div>
-
-      <div className="px-4 mt-6">
-        <h3 className="text-base font-semibold mb-3">Nutrition Information</h3>
-        <div className="flex justify-between mb-2">
-          <div className="flex flex-col items-center">
-            <div className="bg-red-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
-              <span className="text-red-500 text-xs font-semibold">{recipe.nutrition.calories}</span>
+                </PopoverContent>
+              </Popover>
             </div>
-            <p className="text-xs text-gray-600">Calories</p>
           </div>
+        </div>
+
+        <div className="px-4 pt-4">
+          <h1 className="text-2xl font-semibold mb-3 text-[28px]">{recipe.title}</h1>
+          
+          <div className="flex flex-wrap gap-2 mb-3">
+            {recipe.tags.map(tag => (
+              <Badge key={tag} variant="secondary" className="capitalize text-xs">
+                {tag}
+              </Badge>
+            ))}
+          </div>
+        </div>
+
+        <div className="px-4 grid grid-cols-4 gap-2 mb-4">
           <div className="flex flex-col items-center">
-            <div className="bg-purple-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
-              <span className="text-purple-600 text-xs font-semibold">{recipe.nutrition.protein}</span>
+            <div className="bg-blue-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
+              <Clock size={16} className="text-blue-500" />
             </div>
-            <p className="text-xs text-gray-600">Protein</p>
+            <p className="text-xs text-blue-500 font-medium">{recipe.time}</p>
+            <p className="text-[10px] text-gray-500">Cook Time</p>
           </div>
           <div className="flex flex-col items-center">
             <div className="bg-green-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
-              <span className="text-green-500 text-xs font-semibold">{recipe.nutrition.carbs}</span>
+              <Tags size={16} className="text-green-500" />
             </div>
-            <p className="text-xs text-gray-600">Carbs</p>
+            <p className="text-xs text-green-500 font-medium">Category</p>
+            <p className="text-[10px] text-gray-500">Type</p>
+          </div>
+          <div className="flex flex-col items-center">
+            <div className="bg-orange-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
+              <Users size={16} className="text-orange-500" />
+            </div>
+            <p className="text-xs text-orange-500 font-medium">{recipe.servings}</p>
+            <p className="text-[10px] text-gray-500">Servings</p>
           </div>
           <div className="flex flex-col items-center">
             <div className="bg-yellow-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
-              <span className="text-yellow-600 text-xs font-semibold">{recipe.nutrition.fat}</span>
+              <LightbulbIcon size={16} className="text-yellow-500" />
             </div>
-            <p className="text-xs text-gray-600">Fat</p>
+            <p className="text-xs text-yellow-500 font-medium">{recipe.rating > 4 ? "Delicious" : recipe.rating > 3 ? "Tasty" : recipe.rating > 2 ? "Just Okay" : "Not Great"}</p>
+            <p className="text-[10px] text-gray-500">Rating</p>
           </div>
-        </div>
-        <div className="bg-gray-100 p-2 rounded-lg text-center">
-          <div className="flex items-center justify-center">
-            <Info size={12} className="mr-1 text-gray-500" />
-            <p className="text-xs text-gray-500">Values are per serving and are approximate.</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="px-4 mt-6">
-        <h3 className="text-base font-semibold mb-3">Tips</h3>
-        <div className="bg-yellow-50 border border-yellow-100 rounded-lg p-4">
-          <div className="flex items-start mb-2">
-            <LightbulbIcon size={14} className="text-yellow-500 mr-2 mt-0.5" />
-            <h4 className="text-sm font-semibold text-yellow-600">Chef Tips</h4>
-          </div>
-          <ul className="space-y-2 ml-2">
-            {recipe.tips && recipe.tips.map((tip, index) => (
-              <li key={index} className="flex items-start">
-                <span className="text-gray-700 mr-2">•</span>
-                <span className="text-sm text-gray-700">{tip}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      <div className="px-4 mt-6">
-        <div className="flex justify-between items-center mb-3">
-          <div className="flex items-center">
-            <MessageSquare size={14} className="mr-2 text-blue-500" />
-            <h3 className="text-base font-semibold">Comments ({allComments.length})</h3>
-          </div>
-          <button 
-            className="text-blue-500 text-sm font-medium"
-            onClick={handleViewAllComments}
-          >
-            View All
-          </button>
         </div>
 
-        <div className="mt-4">
-          <h3 className="text-base font-semibold mb-4">Add Your Comment</h3>
-          
-          <Textarea 
-            placeholder="Share your experience with this recipe..." 
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            className="mb-4 bg-gray-50"
-          />
-          
-          <div className="mb-4">
-            <h4 className="text-sm text-gray-700 mb-2">Rate this recipe:</h4>
-            <div className="flex flex-wrap gap-2">
-              <div className={`flex items-center border ${selectedRating === 'delicious' ? 'bg-green-100 border-green-500' : 'bg-gray-50 border-gray-200'} rounded-full px-4 py-2`}>
-                <input
-                  type="radio"
-                  id="delicious"
-                  name="rating"
-                  value="delicious"
-                  checked={selectedRating === 'delicious'}
-                  onChange={() => setSelectedRating('delicious')}
-                  className="sr-only"
-                />
-                <label 
-                  htmlFor="delicious" 
-                  className="flex items-center cursor-pointer"
-                  onClick={() => setSelectedRating('delicious')}
-                >
-                  {selectedRating === 'delicious' && <Check size={16} className="mr-1 text-green-500" />}
-                  <span className={`text-sm ${selectedRating === 'delicious' ? 'text-green-700' : 'text-gray-700'}`}>Delicious</span>
-                </label>
-              </div>
-              
-              <div className={`flex items-center border ${selectedRating === 'tasty' ? 'bg-blue-100 border-blue-500' : 'bg-gray-50 border-gray-200'} rounded-full px-4 py-2`}>
-                <input
-                  type="radio"
-                  id="tasty"
-                  name="rating"
-                  value="tasty"
-                  checked={selectedRating === 'tasty'}
-                  onChange={() => setSelectedRating('tasty')}
-                  className="sr-only"
-                />
-                <label 
-                  htmlFor="tasty" 
-                  className="flex items-center cursor-pointer"
-                  onClick={() => setSelectedRating('tasty')}
-                >
-                  {selectedRating === 'tasty' && <Check size={16} className="mr-1 text-blue-500" />}
-                  <span className={`text-sm ${selectedRating === 'tasty' ? 'text-blue-700' : 'text-gray-700'}`}>Tasty</span>
-                </label>
-              </div>
-              
-              <div className={`flex items-center border ${selectedRating === 'just-okay' ? 'bg-yellow-100 border-yellow-500' : 'bg-gray-50 border-gray-200'} rounded-full px-4 py-2`}>
-                <input
-                  type="radio"
-                  id="just-okay"
-                  name="rating"
-                  value="just-okay"
-                  checked={selectedRating === 'just-okay'}
-                  onChange={() => setSelectedRating('just-okay')}
-                  className="sr-only"
-                />
-                <label 
-                  htmlFor="just-okay" 
-                  className="flex items-center cursor-pointer"
-                  onClick={() => setSelectedRating('just-okay')}
-                >
-                  {selectedRating === 'just-okay' && <Check size={16} className="mr-1 text-yellow-500" />}
-                  <span className={`text-sm ${selectedRating === 'just-okay' ? 'text-yellow-700' : 'text-gray-700'}`}>Just Okay</span>
-                </label>
-              </div>
-              
-              <div className={`flex items-center border ${selectedRating === 'not-great' ? 'bg-red-100 border-red-500' : 'bg-gray-50 border-gray-200'} rounded-full px-4 py-2`}>
-                <input
-                  type="radio"
-                  id="not-great"
-                  name="rating"
-                  value="not-great"
-                  checked={selectedRating === 'not-great'}
-                  onChange={() => setSelectedRating('not-great')}
-                  className="sr-only"
-                />
-                <label 
-                  htmlFor="not-great" 
-                  className="flex items-center cursor-pointer"
-                  onClick={() => setSelectedRating('not-great')}
-                >
-                  {selectedRating === 'not-great' && <Check size={16} className="mr-1 text-red-500" />}
-                  <span className={`text-sm ${selectedRating === 'not-great' ? 'text-red-700' : 'text-gray-700'}`}>Not Great</span>
-                </label>
-              </div>
-            </div>
+        <div className="px-4 py-2">
+          <h3 className="text-base font-semibold mb-2">Description</h3>
+          <div className="border border-gray-200 bg-gray-50 rounded-lg p-3 mb-4">
+            <p className="text-sm text-gray-700">{recipe.description}</p>
           </div>
-          
-          <Button 
-            className="w-full bg-blue-500 hover:bg-blue-600"
-            onClick={handlePostComment}
-          >
-            Post Comment
-          </Button>
         </div>
-      </div>
 
-      <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-        <DrawerContent className="p-4 max-h-[90vh]">
-          <DrawerHeader className="relative">
-            <DrawerTitle className="text-center">All Comments ({allComments.length})</DrawerTitle>
-            <DrawerClose className="absolute right-2 top-2">
-              <X className="h-5 w-5" />
-            </DrawerClose>
-          </DrawerHeader>
-          
-          <div className="mt-4 space-y-4 overflow-auto max-h-[70vh] p-2">
-            {allComments.map((comment) => (
-              <div key={comment.id} className="bg-gray-50 p-4 rounded-lg border border-gray-100">
-                <div className="flex items-start">
-                  <div className="bg-blue-100 w-10 h-10 rounded-full flex items-center justify-center text-blue-500 font-semibold mr-3">
-                    {comment.author.charAt(0)}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex justify-between mb-1">
-                      <div className="font-medium text-sm">{comment.author}</div>
-                      <div className="text-xs text-gray-500">{comment.date}</div>
+        <div className="px-4">
+          <Tabs defaultValue="ingredients" value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="ingredients">Ingredients</TabsTrigger>
+              <TabsTrigger value="instructions">Instructions</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="ingredients" className="mt-4">
+              <h3 className="text-base font-semibold mb-3 flex items-center">
+                <ChefHat className="mr-2" size={14} />
+                Ingredients
+              </h3>
+              <ul className="space-y-2">
+                {recipe.ingredients.map((ingredient, index) => (
+                  <li key={index} className="flex items-start">
+                    <div className="h-6 w-6 rounded-full border border-gray-300 flex-shrink-0 flex items-center justify-center mr-3 mt-0.5">
+                      <span className="text-xs text-gray-500">{index + 1}</span>
                     </div>
-                    <p className="text-sm text-gray-700 mb-2">{comment.text}</p>
-                    {comment.ratingLabel && (
-                      <div className={`inline-block px-3 py-1 rounded-full text-xs ${getRatingLabelColor(comment.ratingLabel)}`}>
-                        {comment.ratingLabel}
-                      </div>
-                    )}
-                  </div>
+                    <span className="text-sm text-gray-700">{ingredient}</span>
+                  </li>
+                ))}
+              </ul>
+            </TabsContent>
+            
+            <TabsContent value="instructions" className="mt-4">
+              <h3 className="text-base font-semibold mb-3 flex items-center">
+                <CircleCheck className="mr-2" size={14} />
+                Instructions
+              </h3>
+              <ol className="space-y-4">
+                {recipe.instructions.map((instruction, index) => (
+                  <li key={index} className="flex">
+                    <div className="h-6 w-6 bg-primary text-white rounded-full flex-shrink-0 flex items-center justify-center mr-3 mt-0.5">
+                      <span className="text-xs">{index + 1}</span>
+                    </div>
+                    <span className="text-sm text-gray-700">{instruction}</span>
+                  </li>
+                ))}
+              </ol>
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        <div className="px-4 mt-6">
+          <h3 className="text-base font-semibold mb-3">Nutrition Information</h3>
+          <div className="flex justify-between mb-2">
+            <div className="flex flex-col items-center">
+              <div className="bg-red-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
+                <span className="text-red-500 text-xs font-semibold">{recipe.nutrition.calories}</span>
+              </div>
+              <p className="text-xs text-gray-600">Calories</p>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="bg-purple-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
+                <span className="text-purple-600 text-xs font-semibold">{recipe.nutrition.protein}</span>
+              </div>
+              <p className="text-xs text-gray-600">Protein</p>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="bg-green-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
+                <span className="text-green-500 text-xs font-semibold">{recipe.nutrition.carbs}</span>
+              </div>
+              <p className="text-xs text-gray-600">Carbs</p>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="bg-yellow-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
+                <span className="text-yellow-600 text-xs font-semibold">{recipe.nutrition.fat}</span>
+              </div>
+              <p className="text-xs text-gray-600">Fat</p>
+            </div>
+          </div>
+          <div className="bg-gray-100 p-2 rounded-lg text-center">
+            <div className="flex items-center justify-center">
+              <Info size={12} className="mr-1 text-gray-500" />
+              <p className="text-xs text-gray-500">Values are per serving and are approximate.</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="px-4 mt-6">
+          <h3 className="text-base font-semibold mb-3">Tips</h3>
+          <div className="bg-yellow-50 border border-yellow-100 rounded-lg p-4">
+            <div className="flex items-start mb-2">
+              <LightbulbIcon size={14} className="text-yellow-500 mr-2 mt-0.5" />
+              <h4 className="text-sm font-semibold text-yellow-600">Chef Tips</h4>
+            </div>
+            <ul className="space-y-2 ml-2">
+              {recipe.tips && recipe.tips.map((tip, index) => (
+                <li key={index} className="flex items-start">
+                  <span className="text-gray-700 mr-2">•</span>
+                  <span className="text-sm text-gray-700">{tip}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className="px-4 mt-6">
+          <div className="flex justify-between items-center mb-3">
+            <div className="flex items-center">
+              <MessageSquare size={14} className="mr-2 text-blue-500" />
+              <h3 className="text-base font-semibold">Comments ({allComments.length})</h3>
+            </div>
+            <button 
+              className="text-blue-500 text-sm font-medium"
+              onClick={handleViewAllComments}
+            >
+              View All
+            </button>
+          </div>
+
+          <div className="mt-4">
+            <h3 className="text-base font-semibold mb-4">Add Your Comment</h3>
+            
+            <Textarea 
+              placeholder="Share your experience with this recipe..." 
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              className="mb-4 bg-gray-50"
+            />
+            
+            <div className="mb-4">
+              <h4 className="text-sm text-gray-700 mb-2">Rate this recipe:</h4>
+              <div className="flex flex-wrap gap-2">
+                <div className={`flex items-center border ${selectedRating === 'delicious' ? 'bg-green-100 border-green-500' : 'bg-gray-50 border-gray-200'} rounded-full px-4 py-2`}>
+                  <input
+                    type="radio"
+                    id="delicious"
+                    name="rating"
+                    value="delicious"
+                    checked={selectedRating === 'delicious'}
+                    onChange={() => setSelectedRating('delicious')}
+                    className="sr-only"
+                  />
+                  <label 
+                    htmlFor="delicious" 
+                    className="flex items-center cursor-pointer"
+                    onClick={() => setSelectedRating('delicious')}
+                  >
+                    {selectedRating === 'delicious' && <Check size={16} className="mr-1 text-green-500" />}
+                    <span className={`text-sm ${selectedRating === 'delicious' ? 'text-green-700' : 'text-gray-700'}`}>Delicious</span>
+                  </label>
+                </div>
+                
+                <div className={`flex items-center border ${selectedRating === 'tasty' ? 'bg-blue-100 border-blue-500' : 'bg-gray-50 border-gray-200'} rounded-full px-4 py-2`}>
+                  <input
+                    type="radio"
+                    id="tasty"
+                    name="rating"
+                    value="tasty"
+                    checked={selectedRating === 'tasty'}
+                    onChange={() => setSelectedRating('tasty')}
+                    className="sr-only"
+                  />
+                  <label 
+                    htmlFor="tasty" 
+                    className="flex items-center cursor-pointer"
+                    onClick={() => setSelectedRating('tasty')}
+                  >
+                    {selectedRating === 'tasty' && <Check size={16} className="mr-1 text-blue-500" />}
+                    <span className={`text-sm ${selectedRating === 'tasty' ? 'text-blue-700' : 'text-gray-700'}`}>Tasty</span>
+                  </label>
+                </div>
+                
+                <div className={`flex items-center border ${selectedRating === 'just-okay' ? 'bg-yellow-100 border-yellow-500' : 'bg-gray-50 border-gray-200'} rounded-full px-4 py-2`}>
+                  <input
+                    type="radio"
+                    id="just-okay"
+                    name="rating"
+                    value="just-okay"
+                    checked={selectedRating === 'just-okay'}
+                    onChange={() => setSelectedRating('just-okay')}
+                    className="sr-only"
+                  />
+                  <label 
+                    htmlFor="just-okay" 
+                    className="flex items-center cursor-pointer"
+                    onClick={() => setSelectedRating('just-okay')}
+                  >
+                    {selectedRating === 'just-okay' && <Check size={16} className="mr-1 text-yellow-500" />}
+                    <span className={`text-sm ${selectedRating === 'just-okay' ? 'text-yellow-700' : 'text-gray-700'}`}>Just Okay</span>
+                  </label>
+                </div>
+                
+                <div className={`flex items-center border ${selectedRating === 'not-great' ? 'bg-red-100 border-red-500' : 'bg-gray-50 border-gray-200'} rounded-full px-4 py-2`}>
+                  <input
+                    type="radio"
+                    id="not-great"
+                    name="rating"
+                    value="not-great"
+                    checked={selectedRating === 'not-great'}
+                    onChange={() => setSelectedRating('not-great')}
+                    className="sr-only"
+                  />
+                  <label 
+                    htmlFor="not-great" 
+                    className="flex items-center cursor-pointer"
+                    onClick={() => setSelectedRating('not-great')}
+                  >
+                    {selectedRating === 'not-great' && <Check size={16} className="mr-1 text-red-500" />}
+                    <span className={`text-sm ${selectedRating === 'not-great' ? 'text-red-700' : 'text-gray-700'}`}>Not Great</span>
+                  </label>
                 </div>
               </div>
-            ))}
-
-            {allComments.length === 0 && (
-              <div className="text-center py-8 text-gray-500">
-                No comments yet. Be the first to add one!
-              </div>
-            )}
+            </div>
+            
+            <Button 
+              className="w-full bg-blue-500 hover:bg-blue-600"
+              onClick={handlePostComment}
+            >
+              Post Comment
+            </Button>
           </div>
-        </DrawerContent>
-      </Drawer>
+        </div>
+
+        <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+          <DrawerContent className="p-4 max-h-[90vh]">
+            <DrawerHeader className="relative">
+              <DrawerTitle className="text-center">All Comments ({allComments.length})</DrawerTitle>
+              <DrawerClose className="absolute right-2 top-2">
+                <X className="h-5 w-5" />
+              </DrawerClose>
+            </DrawerHeader>
+            
+            <div className="mt-4 space-y-4 overflow-auto max-h-[70vh] p-2">
+              {allComments.map((comment) => (
+                <div key={comment.id} className="bg-gray-50 p-4 rounded-lg border border-gray-100">
+                  <div className="flex items-start">
+                    <div className="bg-blue-100 w-10 h-10 rounded-full flex items-center justify-center text-blue-500 font-semibold mr-3">
+                      {comment.author.charAt(0)}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between mb-1">
+                        <div className="font-medium text-sm">{comment.author}</div>
+                        <div className="text-xs text-gray-500">{comment.date}</div>
+                      </div>
+                      <p className="text-sm text-gray-700 mb-2">{comment.text}</p>
+                      {comment.ratingLabel && (
+                        <div className={`inline-block px-3 py-1 rounded-full text-xs ${getRatingLabelColor(comment.ratingLabel)}`}>
+                          {comment.ratingLabel}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {allComments.length === 0 && (
+                <div className="text-center py-8 text-gray-500">
+                  No comments yet. Be the first to add one!
+                </div>
+              )}
+            </div>
+          </DrawerContent>
+        </Drawer>
+      </div>
     </div>
   );
 };
