@@ -141,7 +141,7 @@ const PlantDetailPage = () => {
         <img 
           src={plant.mainImage} 
           alt={plant.name} 
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover rounded-lg px-5 pt-5"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white"></div>
       </div>
