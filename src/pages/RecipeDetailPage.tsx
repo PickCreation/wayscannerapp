@@ -23,6 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import BottomNavigation from "@/components/BottomNavigation";
 import {
   Drawer,
   DrawerContent,
@@ -208,6 +209,7 @@ const RecipeDetailPage = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [userComments, setUserComments] = useState<any[]>([]);
+  const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("recipes");
   const isMobile = useIsMobile();
 
   const recipe = recipeData[recipeId as keyof typeof recipeData] || getDefaultRecipe(recipeId || "unknown");
@@ -350,8 +352,34 @@ const RecipeDetailPage = () => {
 
   const allComments = [...(recipe.comments || []), ...userComments];
 
+  const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop" | "profile") => {
+    setActiveNavItem(item);
+    
+    switch (item) {
+      case "home":
+        navigate("/");
+        break;
+      case "forum":
+        navigate("/forum");
+        break;
+      case "recipes":
+        navigate("/recipes");
+        break;
+      case "shop":
+        navigate("/marketplace");
+        break;
+      case "profile":
+        navigate("/profile");
+        break;
+    }
+  };
+
+  const handleCameraClick = () => {
+    navigate("/scan-camera");
+  };
+
   return (
-    <div className="pb-6 bg-white min-h-screen">
+    <div className="pb-20 bg-white min-h-screen">
       <div className="fixed top-0 left-0 right-0 z-10 bg-[#034AFF] text-white p-4 flex items-center shadow-md">
         <button 
           onClick={handleBack}
@@ -531,7 +559,7 @@ const RecipeDetailPage = () => {
             </div>
             <div className="flex flex-col items-center">
               <div className="bg-yellow-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
-                <span className="text-yellow-600 text-xs font-semibold">{recipe.nutrition.fat}</span>
+                <span className="text-yellow-500 text-xs font-semibold">{recipe.nutrition.fat}</span>
               </div>
               <p className="text-xs text-gray-600">Fat</p>
             </div>
@@ -720,6 +748,12 @@ const RecipeDetailPage = () => {
             </div>
           </DrawerContent>
         </Drawer>
+
+        <BottomNavigation
+          activeItem={activeNavItem}
+          onItemClick={handleNavItemClick}
+          onCameraClick={handleCameraClick}
+        />
       </div>
     </div>
   );
