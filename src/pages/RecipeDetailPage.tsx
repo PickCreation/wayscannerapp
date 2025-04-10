@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { 
@@ -381,8 +380,6 @@ const RecipeDetailPage = () => {
     setCameraSheetOpen(true);
   };
 
-  const allComments = [...(recipe.comments || []), ...userComments];
-
   return (
     <div className="pb-20 bg-white min-h-screen">
       <div className="fixed top-0 left-0 right-0 z-10 bg-[#034AFF] text-white p-4 flex items-center shadow-md">
@@ -760,7 +757,6 @@ const RecipeDetailPage = () => {
           onCameraClick={handleCameraClick}
         />
       
-      {/* Add CameraSheet component */}
       <CameraSheet 
         open={cameraSheetOpen}
         onOpenChange={setCameraSheetOpen}
