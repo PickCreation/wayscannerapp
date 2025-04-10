@@ -185,7 +185,7 @@ const PlantDetailPage = () => {
               
               <div>
                 <p className="text-[#034AFF] text-sm font-semibold">Also known as:</p>
-                <p className="text-base font-semibold">{bestAlternativeNames.join(', ')}</p>
+                <p className="text-base">{bestAlternativeNames.join(', ')}</p>
               </div>
               
               {plant.isPoisonous && (
