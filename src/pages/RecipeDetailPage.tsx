@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import BottomNavigation from "@/components/BottomNavigation";
+import CameraSheet from "@/components/CameraSheet";
 import {
   Drawer,
   DrawerContent,
@@ -210,6 +211,7 @@ const RecipeDetailPage = () => {
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [userComments, setUserComments] = useState<any[]>([]);
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("recipes");
+  const [cameraSheetOpen, setCameraSheetOpen] = useState(false);
   const isMobile = useIsMobile();
 
   const recipe = recipeData[recipeId as keyof typeof recipeData] || getDefaultRecipe(recipeId || "unknown");
@@ -375,7 +377,7 @@ const RecipeDetailPage = () => {
   };
 
   const handleCameraClick = () => {
-    navigate("/scan-camera");
+    setCameraSheetOpen(true);
   };
 
   return (
@@ -753,6 +755,11 @@ const RecipeDetailPage = () => {
           activeItem={activeNavItem}
           onItemClick={handleNavItemClick}
           onCameraClick={handleCameraClick}
+        />
+
+        <CameraSheet 
+          open={cameraSheetOpen}
+          onOpenChange={setCameraSheetOpen}
         />
       </div>
     </div>
