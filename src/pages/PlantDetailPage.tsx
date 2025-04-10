@@ -119,6 +119,7 @@ const PlantDetailPage = () => {
   const [greenhouseSheetOpen, setGreenhouseSheetOpen] = useState(false);
   
   const plant = plantData;
+  const bestAlternativeNames = plant.alsoKnownAs.slice(0, 2);
 
   const handleBack = () => {
     navigate(-1);
@@ -184,7 +185,7 @@ const PlantDetailPage = () => {
               
               <div>
                 <p className="text-[#034AFF] text-sm font-semibold">Also known as:</p>
-                <p className="text-base">{plant.alsoKnownAs.join(', ')}</p>
+                <p className="text-base font-semibold">{bestAlternativeNames.join(', ')}</p>
               </div>
               
               {plant.isPoisonous && (
