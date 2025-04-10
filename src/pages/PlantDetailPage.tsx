@@ -25,9 +25,9 @@ const plantData = {
   scientificName: 'Cordyline fruticosa',
   alsoKnownAs: ['Ti Plant', 'Good Luck Plant', 'Cabbage Palm', 'Palm Lily'],
   isPoisonous: true,
-  mainImage: '/lovable-uploads/81f6d068-8c80-4e65-9ad0-2d3fe0a6f480.png',
+  mainImage: '/lovable-uploads/1f7ad51d-b73f-4008-99f5-a320f60304dc.png',
   galleryImages: [
-    '/lovable-uploads/1485fb6f-36f0-4eee-98e1-0a56eb978616.png',
+    '/lovable-uploads/1f7ad51d-b73f-4008-99f5-a320f60304dc.png',
     '/lovable-uploads/4c436a75-e04b-4265-8025-91e7bb146566.png',
     '/lovable-uploads/81f6d068-8c80-4e65-9ad0-2d3fe0a6f480.png',
   ],
