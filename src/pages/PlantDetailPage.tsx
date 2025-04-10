@@ -6,6 +6,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
+import BottomNavigation from '@/components/BottomNavigation';
 import {
   Popover,
   PopoverContent,
@@ -125,8 +126,34 @@ const PlantDetailPage = () => {
     navigate(-1);
   };
 
+  const handleNavigationClick = (item: "home" | "forum" | "recipes" | "shop" | "profile") => {
+    switch (item) {
+      case "home":
+        navigate("/");
+        break;
+      case "forum":
+        navigate("/forum");
+        break;
+      case "recipes":
+        navigate("/recipes");
+        break;
+      case "shop":
+        navigate("/marketplace");
+        break;
+      case "profile":
+        navigate("/profile");
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleCameraClick = () => {
+    navigate("/scan-camera");
+  };
+
   return (
-    <div className="bg-white min-h-screen pb-8 text-gray-800">
+    <div className="bg-white min-h-screen pb-16 text-gray-800">
       <div className="fixed top-0 left-0 right-0 bg-[#034AFF] z-10 h-16 flex items-center px-4 shadow-sm">
         <button 
           onClick={handleBack}
@@ -730,6 +757,12 @@ const PlantDetailPage = () => {
           </div>
         </div>
       </div>
+      
+      <BottomNavigation 
+        activeItem="home" 
+        onItemClick={handleNavigationClick}
+        onCameraClick={handleCameraClick}
+      />
     </div>
   );
 };
