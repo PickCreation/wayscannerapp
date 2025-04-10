@@ -178,7 +178,7 @@ const PlantDetailPage = () => {
           <TabsContent value="description" className="mt-4 animate-in fade-in-50">
             <div className="space-y-4">
               <div>
-                <p className="text-gray-500 text-sm text-green-600">Latin name:</p>
+                <p className="text-green-600 text-sm font-semibold">Latin name:</p>
                 <p className="text-base">{plant.scientificName}</p>
               </div>
               
@@ -395,7 +395,7 @@ const PlantDetailPage = () => {
                     <div className="w-8 flex justify-center">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 10C12 8.89543 11.1046 8 10 8H6C4.89543 8 4 8.89543 4 10V19C4 20.1046 4.89543 21 6 21H10C11.1046 21 12 20.1046 12 19V10Z" fill="#FFC288"/>
-                        <path d="M20 18C20 19.1046 19.1046 20 18 20H14C12.8954 20 12 19.1046 12 18V10C12 8.89543 12.8954 8 14 8H18C19.1046 8 20 8.89543 20 10V18Z" fill="#FFC288"/>
+                        <path d="M20 18C20 19.1046 19.1046 20 18 20H14C12.8954 20 12 19.1046 12 18V10C12 8.89543 12.8954 8 14 8H18C19.1046 8 20 8.89546 20 10V18Z" fill="#FFC288"/>
                         <path d="M13.3246 4.27679C12.8688 3.54691 11.1312 3.54691 10.6754 4.27679L9.25336 6.42198C9.09691 6.67087 9.26524 7 9.57853 7H14.4215C14.7348 7 14.9031 6.67087 14.7466 6.42198L13.3246 4.27679Z" fill="#FFC288"/>
                       </svg>
                     </div>
