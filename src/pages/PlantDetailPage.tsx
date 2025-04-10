@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ChevronRight, ChevronDown, ChevronUp, ThumbsUp, ThumbsDown, Check, Leaf, Building2 } from 'lucide-react';
@@ -20,6 +21,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 const plantData = {
   id: '1',
@@ -108,6 +114,64 @@ const plantData = {
     effects: 'Contact with the sap of the Ti leaf can cause mild skin irritation in sensitive individuals. Ingestion of the leaves is generally considered non-toxic but may result in mild stomach upset in some cases. It is not known to have severe toxic effects.',
     toxicParts: ['Roots', 'Flowers', 'Fruit', 'Sterms', 'Foliage'],
     toxin: 'Foliage'
+  },
+  careInfo: {
+    difficulty: {
+      level: 'Easy',
+      description: 'The Ti Leaf is considered an easy plant to care for, making it perfect for beginners. It adapts well to various indoor conditions and is quite forgiving if you occasionally forget to water it.',
+      tips: [
+        'Keep away from drafts and sudden temperature changes',
+        'Rotate occasionally for even growth',
+        'Wipe leaves with a damp cloth to remove dust'
+      ]
+    },
+    water: {
+      frequency: 'Every 10 days',
+      description: 'Ti Leaf prefers consistently moist soil but is susceptible to root rot if overwatered. Allow the top inch of soil to dry out between waterings.',
+      tips: [
+        'Reduce watering in winter months',
+        'Increase frequency during hot summer days',
+        'Use filtered water if possible as they can be sensitive to chlorine and fluoride',
+        'Water thoroughly until water drains out of the bottom of the pot'
+      ],
+      signs: {
+        overwatering: ['Yellowing leaves', 'Soft, mushy stems', 'Foul smell from soil'],
+        underwatering: ['Crispy brown leaf edges', 'Drooping leaves', 'Slow growth']
+      }
+    },
+    fertilize: {
+      frequency: 'Every month',
+      description: 'Feed your Ti Leaf with a balanced, water-soluble fertilizer diluted to half the recommended strength during the growing season (spring and summer).',
+      tips: [
+        'Avoid fertilizing newly repotted plants',
+        'Don\'t fertilize if the plant is stressed or showing signs of disease',
+        'Flush the soil occasionally to prevent salt buildup'
+      ],
+      recommended: 'Balanced 10-10-10 or 20-20-20 fertilizer',
+      warning: 'Over-fertilizing can lead to leaf burn and root damage.'
+    },
+    prune: {
+      frequency: 'Regularly',
+      description: 'Pruning helps maintain the plant\'s shape and encourages bushier growth. Remove any dead, damaged, or yellowing leaves by cutting them close to the stem with clean, sharp scissors.',
+      tips: [
+        'Sterilize cutting tools before and after pruning',
+        'Prune in spring or early summer for best results',
+        'You can use pruned stems for propagation'
+      ],
+      benefits: ['Improves plant appearance', 'Prevents disease spread', 'Encourages new growth']
+    },
+    repot: {
+      frequency: 'Every year',
+      description: 'Ti Leaf benefits from annual repotting to refresh the soil and provide more space for root growth. Choose a pot that is 1-2 inches larger in diameter than the current one.',
+      steps: [
+        'Water the plant a day before repotting',
+        'Gently remove from current pot and loosen root ball',
+        'Place in new pot with fresh potting mix',
+        'Water thoroughly and place in indirect light for a few days'
+      ],
+      bestTime: 'Spring or early summer',
+      signs: ['Roots growing out of drainage holes', 'Plant becoming top-heavy', 'Water draining too quickly']
+    }
   }
 };
 
@@ -120,6 +184,7 @@ const PlantDetailPage = () => {
   const [sowingSheetOpen, setSowingSheetOpen] = useState(false);
   const [greenhouseSheetOpen, setGreenhouseSheetOpen] = useState(false);
   const [cameraSheetOpen, setCameraSheetOpen] = useState(false);
+  const [openCareItem, setOpenCareItem] = useState<string | null>(null);
   
   const plant = plantData;
   const bestAlternativeNames = plant.alsoKnownAs.slice(0, 2);
@@ -152,6 +217,14 @@ const PlantDetailPage = () => {
 
   const handleCameraClick = () => {
     setCameraSheetOpen(true);
+  };
+  
+  const toggleCareItem = (item: string) => {
+    if (openCareItem === item) {
+      setOpenCareItem(null);
+    } else {
+      setOpenCareItem(item);
+    }
   };
 
   return (
@@ -323,6 +396,266 @@ const PlantDetailPage = () => {
                   </Button>
                 </div>
               </div>
+              
+              {selectedLocation === 'indoor' && (
+                <div className="mt-4 space-y-3">
+                  <h3 className="text-lg font-bold mb-3">Care Information</h3>
+                  
+                  <Collapsible
+                    open={openCareItem === 'difficulty'}
+                    onOpenChange={() => toggleCareItem('difficulty')}
+                    className="w-full border rounded-lg overflow-hidden"
+                  >
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-gray-100">
+                      <div className="flex items-center">
+                        <div className="w-10 flex justify-center">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="4" y="4" width="16" height="16" rx="1.5" stroke="#696974" strokeWidth="1.5"/>
+                            <rect x="7" y="7" width="4" height="4" fill="#696974"/>
+                            <rect x="13" y="7" width="4" height="4" fill="#E5E5E5"/>
+                            <rect x="7" y="13" width="4" height="4" fill="#E5E5E5"/>
+                            <rect x="13" y="13" width="4" height="4" fill="#E5E5E5"/>
+                          </svg>
+                        </div>
+                        <div className="ml-3">
+                          <h4 className="text-base font-medium">Difficulty</h4>
+                          <p className="text-[#034AFF] text-sm">{plant.care.difficulty}</p>
+                        </div>
+                      </div>
+                      {openCareItem === 'difficulty' ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="bg-white p-4">
+                      <div className="space-y-3">
+                        <p className="text-gray-700">{plant.careInfo.difficulty.description}</p>
+                        <div className="mt-3">
+                          <h5 className="font-medium mb-2">Helpful Tips:</h5>
+                          <ul className="space-y-2">
+                            {plant.careInfo.difficulty.tips.map((tip, index) => (
+                              <li key={index} className="flex items-start">
+                                <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                  <Check className="h-3 w-3 text-green-600" />
+                                </div>
+                                <span className="text-sm">{tip}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                  
+                  <Collapsible
+                    open={openCareItem === 'water'}
+                    onOpenChange={() => toggleCareItem('water')}
+                    className="w-full border rounded-lg overflow-hidden"
+                  >
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-gray-100">
+                      <div className="flex items-center">
+                        <div className="w-10 flex justify-center">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 22C16.4183 22 20 18.4183 20 14C20 10.5 17.4 7.26 12 2C6.6 7.26 4 10.5 4 14C4 18.4183 7.58172 22 12 22Z" stroke="#0EA5E9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </div>
+                        <div className="ml-3">
+                          <h4 className="text-base font-medium">Water</h4>
+                          <p className="text-[#034AFF] text-sm">{plant.care.water}</p>
+                        </div>
+                      </div>
+                      {openCareItem === 'water' ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="bg-white p-4">
+                      <div className="space-y-3">
+                        <p className="text-gray-700">{plant.careInfo.water.description}</p>
+                        <div className="mt-3">
+                          <h5 className="font-medium mb-2">Watering Tips:</h5>
+                          <ul className="space-y-2">
+                            {plant.careInfo.water.tips.map((tip, index) => (
+                              <li key={index} className="flex items-start">
+                                <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                  <Check className="h-3 w-3 text-blue-600" />
+                                </div>
+                                <span className="text-sm">{tip}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="mt-3">
+                          <h5 className="font-medium mb-2">Warning Signs:</h5>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="bg-amber-50 p-3 rounded-lg">
+                              <p className="text-sm font-medium text-amber-800 mb-1">Overwatering:</p>
+                              <ul className="space-y-1">
+                                {plant.careInfo.water.signs.overwatering.map((sign, index) => (
+                                  <li key={index} className="text-xs text-gray-700">{sign}</li>
+                                ))}
+                              </ul>
+                            </div>
+                            <div className="bg-orange-50 p-3 rounded-lg">
+                              <p className="text-sm font-medium text-orange-800 mb-1">Underwatering:</p>
+                              <ul className="space-y-1">
+                                {plant.careInfo.water.signs.underwatering.map((sign, index) => (
+                                  <li key={index} className="text-xs text-gray-700">{sign}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                  
+                  <Collapsible
+                    open={openCareItem === 'fertilize'}
+                    onOpenChange={() => toggleCareItem('fertilize')}
+                    className="w-full border rounded-lg overflow-hidden"
+                  >
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-gray-100">
+                      <div className="flex items-center">
+                        <div className="w-10 flex justify-center">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="9" stroke="#0EA5E9" strokeWidth="2"/>
+                            <circle cx="12" cy="12" r="3" fill="#0EA5E9"/>
+                          </svg>
+                        </div>
+                        <div className="ml-3">
+                          <h4 className="text-base font-medium">Fertilize</h4>
+                          <p className="text-[#034AFF] text-sm">{plant.care.fertilize}</p>
+                        </div>
+                      </div>
+                      {openCareItem === 'fertilize' ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="bg-white p-4">
+                      <div className="space-y-3">
+                        <p className="text-gray-700">{plant.careInfo.fertilize.description}</p>
+                        <div className="bg-green-50 p-3 rounded-lg">
+                          <p className="text-sm font-medium text-green-800 mb-1">Recommended Fertilizer:</p>
+                          <p className="text-sm">{plant.careInfo.fertilize.recommended}</p>
+                        </div>
+                        <div className="mt-3">
+                          <h5 className="font-medium mb-2">Fertilizing Tips:</h5>
+                          <ul className="space-y-2">
+                            {plant.careInfo.fertilize.tips.map((tip, index) => (
+                              <li key={index} className="flex items-start">
+                                <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                  <Check className="h-3 w-3 text-green-600" />
+                                </div>
+                                <span className="text-sm">{tip}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="bg-red-50 p-3 rounded-lg">
+                          <p className="text-sm font-medium text-red-800 mb-1">Warning:</p>
+                          <p className="text-sm">{plant.careInfo.fertilize.warning}</p>
+                        </div>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                  
+                  <Collapsible
+                    open={openCareItem === 'prune'}
+                    onOpenChange={() => toggleCareItem('prune')}
+                    className="w-full border rounded-lg overflow-hidden"
+                  >
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-gray-100">
+                      <div className="flex items-center">
+                        <div className="w-10 flex justify-center">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 7H18M6 12H18M6 17H18" stroke="#696974" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </div>
+                        <div className="ml-3">
+                          <h4 className="text-base font-medium">Prune</h4>
+                          <p className="text-[#034AFF] text-sm">{plant.care.prune}</p>
+                        </div>
+                      </div>
+                      {openCareItem === 'prune' ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="bg-white p-4">
+                      <div className="space-y-3">
+                        <p className="text-gray-700">{plant.careInfo.prune.description}</p>
+                        <div className="mt-3">
+                          <h5 className="font-medium mb-2">Pruning Tips:</h5>
+                          <ul className="space-y-2">
+                            {plant.careInfo.prune.tips.map((tip, index) => (
+                              <li key={index} className="flex items-start">
+                                <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                  <Check className="h-3 w-3 text-green-600" />
+                                </div>
+                                <span className="text-sm">{tip}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="mt-3">
+                          <h5 className="font-medium mb-2">Benefits of Pruning:</h5>
+                          <ul className="space-y-2">
+                            {plant.careInfo.prune.benefits.map((benefit, index) => (
+                              <li key={index} className="flex items-start">
+                                <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                  <Check className="h-3 w-3 text-blue-600" />
+                                </div>
+                                <span className="text-sm">{benefit}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                  
+                  <Collapsible
+                    open={openCareItem === 'repot'}
+                    onOpenChange={() => toggleCareItem('repot')}
+                    className="w-full border rounded-lg overflow-hidden"
+                  >
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-gray-100">
+                      <div className="flex items-center">
+                        <div className="w-10 flex justify-center">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 21H16M12 21V11M12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7C16 9.20914 14.2091 11 12 11Z" stroke="#696974" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </div>
+                        <div className="ml-3">
+                          <h4 className="text-base font-medium">Repot</h4>
+                          <p className="text-[#034AFF] text-sm">{plant.care.repot}</p>
+                        </div>
+                      </div>
+                      {openCareItem === 'repot' ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="bg-white p-4">
+                      <div className="space-y-3">
+                        <p className="text-gray-700">{plant.careInfo.repot.description}</p>
+                        <div className="bg-amber-50 p-3 rounded-lg">
+                          <p className="text-sm font-medium text-amber-800 mb-1">Best Time to Repot:</p>
+                          <p className="text-sm">{plant.careInfo.repot.bestTime}</p>
+                        </div>
+                        <div className="mt-3">
+                          <h5 className="font-medium mb-2">Repotting Steps:</h5>
+                          <ol className="space-y-2 list-decimal pl-5">
+                            {plant.careInfo.repot.steps.map((step, index) => (
+                              <li key={index} className="text-sm">{step}</li>
+                            ))}
+                          </ol>
+                        </div>
+                        <div className="mt-3">
+                          <h5 className="font-medium mb-2">Signs Your Plant Needs Repotting:</h5>
+                          <ul className="space-y-2">
+                            {plant.careInfo.repot.signs.map((sign, index) => (
+                              <li key={index} className="flex items-start">
+                                <div className="w-5 h-5 bg-orange-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
+                                  <Check className="h-3 w-3 text-orange-600" />
+                                </div>
+                                <span className="text-sm">{sign}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                </div>
+              )}
             </div>
           </TabsContent>
           
