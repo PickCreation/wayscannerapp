@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ChevronRight, ChevronDown, ChevronUp, ThumbsUp, ThumbsDown, Check, Leaf, Building2 } from 'lucide-react';
@@ -473,4 +474,43 @@ const PlantDetailPage = () => {
                                 <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
                                   <Check className="h-3 w-3 text-blue-600" />
                                 </div>
-                                <span className="text-sm">{
+                                <span className="text-sm">{tip}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                </div>
+              )}
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="care" className="space-y-6 pt-1 pb-8">
+            {/* Care tab content */}
+            <p className="text-gray-500 text-center text-sm">Coming soon...</p>
+          </TabsContent>
+          
+          <TabsContent value="history" className="space-y-6 pt-1 pb-8">
+            {/* History tab content */}
+            <p className="text-gray-500 text-center text-sm">Coming soon...</p>
+          </TabsContent>
+        </Tabs>
+      </div>
+      
+      <BottomNavigation
+        activeItem="home"
+        onItemClick={handleNavigationClick}
+        onCameraClick={handleCameraClick}
+      />
+      
+      <CameraSheet 
+        open={cameraSheetOpen} 
+        onOpenChange={setCameraSheetOpen} 
+      />
+    </div>
+  );
+};
+
+export default PlantDetailPage;
