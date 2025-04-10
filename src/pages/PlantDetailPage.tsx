@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ChevronRight, ChevronDown, ChevronUp, ThumbsUp, ThumbsDown, Check, Leaf, Building2 } from 'lucide-react';
@@ -20,7 +19,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-// Plant data (would come from API in real app)
 const plantData = {
   id: '1',
   name: 'Ti Leaf',
@@ -120,7 +118,6 @@ const PlantDetailPage = () => {
   const [sowingSheetOpen, setSowingSheetOpen] = useState(false);
   const [greenhouseSheetOpen, setGreenhouseSheetOpen] = useState(false);
   
-  // In a real app, fetch plant data based on plantId
   const plant = plantData;
 
   const handleBack = () => {
@@ -129,7 +126,6 @@ const PlantDetailPage = () => {
 
   return (
     <div className="bg-white min-h-screen pb-8 text-gray-800">
-      {/* App Bar */}
       <div className="fixed top-0 left-0 right-0 bg-[#034AFF] z-10 h-16 flex items-center px-4 shadow-sm">
         <button 
           onClick={handleBack}
@@ -140,7 +136,6 @@ const PlantDetailPage = () => {
         <h1 className="ml-4 text-xl font-semibold text-white">Plant Details</h1>
       </div>
       
-      {/* Hero Section with Image */}
       <div className="relative w-full h-[35vh] mt-16">
         <img 
           src={plant.mainImage} 
@@ -150,15 +145,12 @@ const PlantDetailPage = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white"></div>
       </div>
       
-      {/* Main Content Area */}
       <div className="px-4 pb-4 max-w-md mx-auto">
-        {/* Plant Name and Scientific Name */}
         <div className="mt-4 mb-5">
           <h1 className="text-3xl font-bold text-gray-800">{plant.name}</h1>
           <p className="text-xl text-gray-600 mt-1">{plant.scientificName}</p>
         </div>
         
-        {/* Tabs Section */}
         <Tabs defaultValue="description" value={activeTab} onValueChange={setActiveTab} className="mt-4">
           <div className="flex justify-center mb-4">
             <TabsList className="grid grid-cols-3 rounded-full bg-gray-100 p-1 w-full">
@@ -183,7 +175,6 @@ const PlantDetailPage = () => {
             </TabsList>
           </div>
           
-          {/* Description Tab Content */}
           <TabsContent value="description" className="mt-4 animate-in fade-in-50">
             <div className="space-y-4">
               <div>
@@ -192,7 +183,7 @@ const PlantDetailPage = () => {
               </div>
               
               <div>
-                <p className="text-gray-500 text-sm text-[#034AFF]">Also known as:</p>
+                <p className="text-[#034AFF] text-sm font-semibold">Also known as:</p>
                 <p className="text-base">{plant.alsoKnownAs.join(', ')}</p>
               </div>
               
@@ -283,7 +274,6 @@ const PlantDetailPage = () => {
                 </div>
               </div>
 
-              {/* Location selection */}
               <div className="mt-4">
                 <h3 className="text-lg font-bold mb-3">Choose plant location</h3>
                 <div className="grid grid-cols-2 gap-3 mt-2">
@@ -306,7 +296,6 @@ const PlantDetailPage = () => {
             </div>
           </TabsContent>
           
-          {/* Care Tab Content */}
           <TabsContent value="care" className="mt-4 animate-in fade-in-50">
             <div className="space-y-4">
               <h3 className="text-lg font-bold mb-2">Cares</h3>
@@ -396,7 +385,6 @@ const PlantDetailPage = () => {
             </div>
           </TabsContent>
           
-          {/* History Tab Content */}
           <TabsContent value="history" className="mt-4 animate-in fade-in-50">
             <div className="space-y-4">
               <h3 className="text-lg font-bold mb-2">Plant requirements</h3>
@@ -505,7 +493,6 @@ const PlantDetailPage = () => {
           </TabsContent>
         </Tabs>
         
-        {/* General Information Section */}
         <div className="mt-6 py-2">
           <h2 className="text-xl font-bold mb-4">General information</h2>
           
@@ -528,7 +515,6 @@ const PlantDetailPage = () => {
               </AccordionContent>
             </AccordionItem>
 
-            {/* New Sowing Section */}
             <AccordionItem value="sowing" className="border-none">
               <AccordionTrigger className="flex items-center bg-gray-100 p-3 rounded-lg hover:no-underline">
                 <div className="flex items-center">
@@ -590,7 +576,6 @@ const PlantDetailPage = () => {
               </AccordionContent>
             </AccordionItem>
 
-            {/* New Greenhouse Section */}
             <AccordionItem value="greenhouse" className="border-none">
               <AccordionTrigger className="flex items-center bg-gray-100 p-3 rounded-lg hover:no-underline">
                 <div className="flex items-center">
@@ -721,7 +706,6 @@ const PlantDetailPage = () => {
           </Accordion>
         </div>
         
-        {/* Feedback Section */}
         <div className="mt-6 py-2">
           <Separator className="bg-gray-200 mb-4" />
           <div className="text-center mb-4">
