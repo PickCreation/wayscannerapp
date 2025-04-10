@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ChevronRight, ChevronDown, ChevronUp, ThumbsUp, ThumbsDown, Check, Leaf, Building2 } from 'lucide-react';
@@ -473,4 +474,121 @@ const PlantDetailPage = () => {
                                 <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center mr-2 mt-0.5">
                                   <Check className="h-3 w-3 text-blue-600" />
                                 </div>
-                                <span className="text-sm">{
+                                <span className="text-sm">{tip}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                </div>
+              )}
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="care" className="mt-4 animate-in fade-in-50">
+            <div className="space-y-4">
+              <div>
+                <p className="text-lg font-semibold">Care Requirements</p>
+                <div className="bg-gray-50 rounded-lg p-4 mt-2 space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Pot Size:</span>
+                    <span className="font-medium">{plant.requirements.pot}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Soil Type:</span>
+                    <span className="font-medium">{plant.requirements.soil}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Light:</span>
+                    <span className="font-medium">{plant.requirements.lighting}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Humidity:</span>
+                    <span className="font-medium">{plant.requirements.humidity}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Hardiness Zone:</span>
+                    <span className="font-medium">{plant.requirements.hardiness}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Temperature:</span>
+                    <span className="font-medium">{plant.requirements.temperature}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-lg font-semibold">Care Schedule</p>
+                <div className="bg-gray-50 rounded-lg p-4 mt-2 space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Watering:</span>
+                    <span className="font-medium">{plant.care.water}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Fertilizing:</span>
+                    <span className="font-medium">{plant.care.fertilize}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Pruning:</span>
+                    <span className="font-medium">{plant.care.prune}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Repotting:</span>
+                    <span className="font-medium">{plant.care.repot}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="history" className="mt-4 animate-in fade-in-50">
+            <div className="space-y-4">
+              {plant.description.map((paragraph, index) => (
+                <p key={index} className="text-gray-700">{paragraph}</p>
+              ))}
+              
+              <div className="mt-4 bg-gray-50 p-4 rounded-lg">
+                <h3 className="text-base font-semibold mb-2">Fun Fact:</h3>
+                <p className="text-sm text-gray-700">{plant.funFact}</p>
+              </div>
+              
+              <div className="mt-4">
+                <h3 className="text-base font-semibold mb-2">Propagation:</h3>
+                <div className="bg-gray-50 p-4 rounded-lg space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Methods:</span>
+                    <span className="font-medium">{plant.propagation.methods.join(', ')}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Difficulty:</span>
+                    <span className="font-medium">{plant.propagation.difficulty}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Best Time:</span>
+                    <span className="font-medium">{plant.propagation.bestTime}</span>
+                  </div>
+                  <div className="mt-2">
+                    <p className="text-gray-600 mb-1">Steps:</p>
+                    <ol className="list-decimal pl-5 space-y-1">
+                      {plant.propagation.steps.map((step, index) => (
+                        <li key={index} className="text-sm">{step}</li>
+                      ))}
+                    </ol>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+      
+      <BottomNavigation activeItem="home" onItemClick={handleNavigationClick} onCameraClick={handleCameraClick} />
+      
+      <CameraSheet open={cameraSheetOpen} onOpenChange={setCameraSheetOpen} />
+    </div>
+  );
+};
+
+export default PlantDetailPage;
