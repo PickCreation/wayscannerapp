@@ -382,16 +382,14 @@ const PlantDetailPage = () => {
                 <div className="grid grid-cols-2 gap-3 mt-2">
                   <Button 
                     variant={selectedLocation === 'indoor' ? 'default' : 'outline'}
-                    size="pill"
-                    className={`font-medium ${selectedLocation === 'indoor' ? 'bg-[#034AFF] text-white' : 'border-[#034AFF] text-[#034AFF]'}`}
+                    className={`py-2 px-4 rounded-full font-medium h-auto ${selectedLocation === 'indoor' ? 'bg-[#034AFF] text-white' : 'border-[#034AFF] text-[#034AFF]'}`}
                     onClick={() => setSelectedLocation('indoor')}
                   >
                     Indoor
                   </Button>
                   <Button 
                     variant={selectedLocation === 'outdoor' ? 'default' : 'outline'}
-                    size="pill"
-                    className={`font-medium ${selectedLocation === 'outdoor' ? 'bg-[#034AFF] text-white' : 'border-[#034AFF] text-[#034AFF]'}`}
+                    className={`py-2 px-4 rounded-full font-medium h-auto ${selectedLocation === 'outdoor' ? 'bg-[#034AFF] text-white' : 'border-[#034AFF] text-[#034AFF]'}`}
                     onClick={() => setSelectedLocation('outdoor')}
                   >
                     Outdoor
