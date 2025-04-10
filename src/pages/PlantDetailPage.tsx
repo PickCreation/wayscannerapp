@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, Heart, Share2, Plus, Minus, Tag } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
@@ -166,13 +167,14 @@ const products = [
 
 const PlantDetailPage = () => {
   const navigate = useNavigate();
-  const { productId } = useParams();
+  const { plantId } = useParams();
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
   const [cartCount, setCartCount] = useState(0);
   const [sellerPolicy, setSellerPolicy] = useState<string>("");
   
-  const product = products.find(p => p.id === Number(productId));
+  // Convert plantId to number and find the product
+  const product = products.find(p => p.id === Number(plantId));
   
   useEffect(() => {
     const updateCartCount = () => {
@@ -205,7 +207,7 @@ const PlantDetailPage = () => {
   if (!product) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p>Product not found</p>
+        <p>Plant not found</p>
       </div>
     );
   }
@@ -281,7 +283,7 @@ const PlantDetailPage = () => {
         >
           <ChevronLeft size={24} color="white" />
         </button>
-        <h1 className="text-xl font-bold">Product Details</h1>
+        <h1 className="text-xl font-bold">Plant Details</h1>
         <button className="p-2 relative" onClick={() => navigate('/cart')}>
           <ShoppingCart size={24} color="white" fill="white" />
           {cartCount > 0 && (
