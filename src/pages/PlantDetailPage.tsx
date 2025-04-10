@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ChevronRight, ChevronDown, ChevronUp, ThumbsUp, ThumbsDown, Check, Leaf, Building2 } from 'lucide-react';
@@ -479,3 +480,43 @@ const PlantDetailPage = () => {
                               </li>
                             ))}
                           </ul>
+                        </div>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                </div>
+              )}
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="care" className="mt-4 animate-in fade-in-50">
+            <div className="space-y-4">
+              <p>Care information tab content goes here.</p>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="history" className="mt-4 animate-in fade-in-50">
+            <div className="space-y-4">
+              <p>History tab content goes here.</p>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+      
+      <BottomNavigation
+        activeItem="home"
+        onItemClick={handleNavigationClick}
+        onCameraClick={handleCameraClick}
+      />
+      
+      {cameraSheetOpen && (
+        <CameraSheet 
+          isOpen={cameraSheetOpen}
+          onClose={() => setCameraSheetOpen(false)}
+        />
+      )}
+    </div>
+  );
+};
+
+export default PlantDetailPage;
