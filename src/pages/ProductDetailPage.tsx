@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, Heart, Share2, Plus, Minus, Tag } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
@@ -303,7 +302,7 @@ const ProductDetailPage = () => {
                     <img 
                       src={image} 
                       alt={`${product.title} - view ${index + 1}`} 
-                      className="h-full object-contain"
+                      className="h-full object-contain rounded-lg"
                     />
                   </div>
                 </CarouselItem>
@@ -317,7 +316,7 @@ const ProductDetailPage = () => {
             <img 
               src={product.image} 
               alt={product.title} 
-              className="w-full h-full object-contain"
+              className="w-full h-full object-contain rounded-lg"
             />
           </div>
         )}
@@ -328,7 +327,7 @@ const ProductDetailPage = () => {
           {product.images.map((img, index) => (
             <button 
               key={index} 
-              className="w-14 h-14 border border-gray-300 rounded-md overflow-hidden flex-shrink-0"
+              className="w-14 h-14 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0"
               aria-label={`View image ${index + 1}`}
             >
               <img 
