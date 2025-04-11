@@ -86,7 +86,7 @@ const Index = () => {
         {showSplash && <SplashScreen onClose={handleCloseSplash} />}
       </AnimatePresence>
 
-      <header className="text-white py-4 px-4 flex justify-between items-center bg-[#034aff]">
+      <header className="text-white py-4 px-4 flex justify-between items-center bg-white">
         <img alt="WayScanner Logo" className="h-10" src="/lovable-uploads/0d65399a-0d61-4303-b110-a67005ca7e27.png" />
         <div className="flex items-center space-x-3">
           <button className="p-2">
