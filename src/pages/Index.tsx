@@ -1,9 +1,10 @@
+
 import React, { useState, useEffect } from "react";
 import ScannerCard from "@/components/ScannerCard";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
 import SplashScreen from "@/components/SplashScreen";
-import { Bell, User, Utensils, Leaf, PawPrint, ShoppingBag, BookOpen } from "lucide-react";
+import { BellIcon, UserIcon, Utensils, Leaf, PawPrint, ShoppingBag, BookOpen } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { AnimatePresence } from "framer-motion";
@@ -96,10 +97,10 @@ const Index = () => {
         <img alt="WayScanner Logo" className="h-10" src="/lovable-uploads/0d65399a-0d61-4303-b110-a67005ca7e27.png" />
         <div className="flex items-center space-x-3">
           <button className="p-2">
-            <Bell size={24} color="#034AFF" strokeWidth={1.5} />
+            <BellIcon size={24} color="#034AFF" strokeWidth={2.5} fill="#034AFF" />
           </button>
           <button className="p-2" onClick={handleProfileClick}>
-            <User size={24} color="#034AFF" strokeWidth={1.5} />
+            <UserIcon size={24} color="#034AFF" strokeWidth={2.5} fill="#034AFF" />
           </button>
         </div>
       </header>
