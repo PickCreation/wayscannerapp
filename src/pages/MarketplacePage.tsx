@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Search, ShoppingCart, Filter } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -74,7 +73,7 @@ const categories = [
   { id: "plants", name: "Plants", color: "#9C27B0", bgColor: "#F3E5F5", icon: "🌿" },
   { id: "plants-accessories", name: "Plants Accessories", color: "#E91E63", bgColor: "#FCE4EC", icon: "🪴" },
   { id: "kitchen-essentials", name: "Kitchen Essentials", color: "#3F51B5", bgColor: "#E8EAF6", icon: "🍽️" },
-  { id: "electronics", name: "Electronics", color: "#00BCD4", bgColor: "#E0F7FA", icon: "🔌" },
+  { id: "furniture", name: "Furniture", color: "#9b87f5", bgColor: "#E5DEFF", icon: "🪑" },
 ];
 
 const MarketplacePage = () => {
