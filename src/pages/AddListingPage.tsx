@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { ChevronLeft, Camera, Upload, Plus, X, Tag, Clock, DollarSign } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -382,6 +381,7 @@ const AddListingPage = () => {
                       <SelectItem value="Plants">Plants</SelectItem>
                       <SelectItem value="Plants Accessories">Plants Accessories</SelectItem>
                       <SelectItem value="Kitchen Essentials">Kitchen Essentials</SelectItem>
+                      <SelectItem value="Furniture">Furniture</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
