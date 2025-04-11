@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, Heart, Share2, Plus, Minus, Tag } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
@@ -302,7 +303,8 @@ const ProductDetailPage = () => {
                     <img 
                       src={image} 
                       alt={`${product.title} - view ${index + 1}`} 
-                      className="h-full object-contain rounded-lg"
+                      className="h-full object-contain rounded-lg overflow-hidden"
+                      style={{ borderRadius: "8px" }}
                     />
                   </div>
                 </CarouselItem>
@@ -316,7 +318,8 @@ const ProductDetailPage = () => {
             <img 
               src={product.image} 
               alt={product.title} 
-              className="w-full h-full object-contain rounded-lg"
+              className="w-full h-full object-contain rounded-lg overflow-hidden"
+              style={{ borderRadius: "8px" }}
             />
           </div>
         )}
