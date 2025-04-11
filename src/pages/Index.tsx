@@ -7,6 +7,7 @@ import { Bell, User, Utensils, Leaf, PawPrint, ShoppingBag, BookOpen } from "luc
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { AnimatePresence } from "framer-motion";
+
 const Index = () => {
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("home");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
@@ -16,6 +17,7 @@ const Index = () => {
   const {
     toast
   } = useToast();
+
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const tab = searchParams.get("tab");
@@ -23,18 +25,18 @@ const Index = () => {
       navigate(`/scan?tab=${tab}`);
     }
 
-    // Check if we've shown the splash screen before in this session
     const hasSeenSplash = sessionStorage.getItem("hasSeenSplash");
     if (hasSeenSplash) {
       setShowSplash(false);
     } else {
-      // Set session storage so we only show it once per session
       sessionStorage.setItem("hasSeenSplash", "true");
     }
   }, [location, navigate]);
+
   const handleCloseSplash = () => {
     setShowSplash(false);
   };
+
   const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop" | "profile") => {
     setActiveNavItem(item);
     if (item === "home") {
@@ -57,9 +59,11 @@ const Index = () => {
       return;
     }
   };
+
   const handleCameraClick = () => {
     setShowCameraSheet(true);
   };
+
   const handleScannerClick = (type: string) => {
     const tabMap: Record<string, string> = {
       "Food": "food",
@@ -77,10 +81,12 @@ const Index = () => {
     }
     navigate(`/scan?tab=${tabMap[type] || "food"}`);
   };
+
   const handleProfileClick = () => {
     navigate("/profile");
     setActiveNavItem("profile");
   };
+
   return <div className="pb-20 bg-white min-h-screen">
       <AnimatePresence>
         {showSplash && <SplashScreen onClose={handleCloseSplash} />}
@@ -90,10 +96,10 @@ const Index = () => {
         <img alt="WayScanner Logo" className="h-10" src="/lovable-uploads/0d65399a-0d61-4303-b110-a67005ca7e27.png" />
         <div className="flex items-center space-x-3">
           <button className="p-2">
-            <Bell size={24} fill="white" strokeWidth={1.5} />
+            <Bell size={24} color="#034AFF" strokeWidth={1.5} />
           </button>
           <button className="p-2" onClick={handleProfileClick}>
-            <User size={24} fill="white" strokeWidth={1.5} />
+            <User size={24} color="#034AFF" strokeWidth={1.5} />
           </button>
         </div>
       </header>
@@ -121,4 +127,5 @@ const Index = () => {
       <BottomNavigation activeItem={activeNavItem} onItemClick={handleNavItemClick} onCameraClick={handleCameraClick} />
     </div>;
 };
+
 export default Index;
