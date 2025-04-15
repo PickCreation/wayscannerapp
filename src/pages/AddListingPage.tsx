@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { ChevronLeft, Camera, Upload, Plus, X, Tag, Clock, DollarSign, Ruler, Package, WashingMachine } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -26,6 +25,7 @@ import * as z from "zod";
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
+import ProductVariationsSection, { VariationType } from "@/components/ProductVariationsSection";
 
 const countries = [
   "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", 
@@ -80,7 +80,18 @@ const formSchema = z.object({
   color: z.string().min(1, { message: "Please select a color" }),
   brand: z.string().min(1, { message: "Please enter a brand" }),
   country: z.string().min(1, { message: "Please select a country" }),
-  variations: z.string().optional(),
+  variations: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      options: z.array(
+        z.object({
+          id: z.string(),
+          value: z.string()
+        })
+      )
+    })
+  ).optional(),
   tags: z.array(z.string()).max(6, { message: "Maximum 6 tags allowed" }).optional(),
   shippingDays: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0 && Number(val) <= 30, {
     message: "Shipping days must be between 1 and 30 days",
@@ -99,6 +110,8 @@ const AddListingPage = () => {
   const [commissionAmount, setCommissionAmount] = useState<string>("0.00");
   const COMMISSION_RATE = 0.10; // 10% commission
   
+  const [productVariations, setProductVariations] = useState<VariationType[]>([]);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -115,13 +128,12 @@ const AddListingPage = () => {
       color: "",
       brand: "",
       country: "",
-      variations: "",
+      variations: [],
       tags: [],
       shippingDays: "5", // Default to 5 days
     },
   });
 
-  // Watch price field to calculate commission
   const watchPrice = form.watch("price");
   
   React.useEffect(() => {
@@ -200,6 +212,8 @@ const AddListingPage = () => {
       });
       return;
     }
+
+    values.variations = productVariations;
 
     console.log({
       ...values,
@@ -551,7 +565,11 @@ const AddListingPage = () => {
               )}
             />
 
-            {/* Commission information */}
+            <ProductVariationsSection 
+              variations={productVariations}
+              setVariations={setProductVariations}
+            />
+
             {Number(watchPrice) > 0 && (
               <div className="bg-gray-50 border rounded-md p-4">
                 <div className="flex items-center mb-2">
