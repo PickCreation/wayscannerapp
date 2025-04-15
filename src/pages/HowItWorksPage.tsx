@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
@@ -6,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { fetchHowItWorksContent } from "@/api/mockApi";
+import BottomNavigation from "@/components/BottomNavigation";
 
 const HowItWorksPage = () => {
   const navigate = useNavigate();
@@ -19,12 +19,15 @@ const HowItWorksPage = () => {
     }[];
   } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("home");
+
+  const handleCameraClick = () => {
+    // This can be implemented to open the camera sheet if needed
+  };
 
   useEffect(() => {
-    // Fetch the how it works content from our API
     const loadContent = async () => {
       try {
-        // Use the mockApi instead of fetching directly
         const data = await fetchHowItWorksContent();
         setContent(data as any);
       } catch (error) {
@@ -34,7 +37,6 @@ const HowItWorksPage = () => {
           description: "Please try again later",
           variant: "destructive"
         });
-        // Fallback content if API fails
         setContent({
           title: "How WayScanner Works",
           sections: [
@@ -77,15 +79,15 @@ const HowItWorksPage = () => {
   }
 
   return (
-    <div className="bg-white min-h-screen p-4">
-      <div className="flex items-center justify-between mb-6">
+    <div className="bg-white min-h-screen pb-20 relative">
+      <div className="flex items-center justify-between mb-6 px-4 pt-4">
         <h1 className="text-2xl font-bold">{content?.title || "How It Works"}</h1>
-        <Button variant="ghost" size="icon" onClick={handleBack}>
+        <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
           <X size={24} />
         </Button>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-6 px-4">
         {content?.sections.map((section, index) => (
           <Card key={index} className="p-4">
             <h2 className="text-xl font-semibold mb-2">{section.heading}</h2>
@@ -93,6 +95,12 @@ const HowItWorksPage = () => {
           </Card>
         ))}
       </div>
+
+      <BottomNavigation 
+        activeItem={activeNavItem} 
+        onItemClick={setActiveNavItem} 
+        onCameraClick={handleCameraClick} 
+      />
     </div>
   );
 };
