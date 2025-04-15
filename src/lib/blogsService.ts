@@ -1,3 +1,4 @@
+
 import { 
   doc, 
   collection, 
@@ -31,6 +32,7 @@ export interface BlogPost {
   date: string;
   readTime: string;
   commentsCount: number;
+  createdAt?: any; // Add this property to fix the type error
 }
 
 export interface BlogComment {
