@@ -4,7 +4,7 @@ import { Drawer, DrawerContent, DrawerClose } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { X, Utensils, Flower, PawPrint, Pencil, ShoppingCart } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "@/hooks/use-auth";
+import { useFirebaseAuth } from "@/hooks/use-firebase-auth";
 import LoginDialog from "@/components/LoginDialog";
 
 interface CameraSheetProps {
@@ -22,7 +22,7 @@ const CameraSheet: React.FC<CameraSheetProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useFirebaseAuth();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
 
   const handleCreatePost = () => {

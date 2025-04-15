@@ -9,6 +9,7 @@ import AnimalScanTab from "@/components/AnimalScanTab";
 import CameraSheet from "@/components/CameraSheet";
 import EditPreferencesSheet from "@/components/EditPreferencesSheet";
 import HowWeScoreSheet from "@/components/HowWeScoreSheet";
+import { useFirebaseAuth } from "@/hooks/use-firebase-auth";
 
 const ScanPage = () => {
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("home");
@@ -18,6 +19,7 @@ const ScanPage = () => {
   const [howWeScoreOpen, setHowWeScoreOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { isAuthenticated } = useFirebaseAuth();
 
   // Get the tab from URL on initial load
   useEffect(() => {

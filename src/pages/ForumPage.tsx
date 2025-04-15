@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Heart, MessageSquare, Bookmark, Bell, User, LogIn } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -8,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import CreatePostSheet from "@/components/CreatePostSheet";
 import CameraSheet from "@/components/CameraSheet";
 import LoginDialog from "@/components/LoginDialog";
-import { useAuth } from "@/hooks/use-auth";
+import { useFirebaseAuth } from "@/hooks/use-firebase-auth";
 
 // Sample forum data
 const INITIAL_POSTS = [
@@ -65,7 +64,7 @@ const CATEGORIES = [
 
 export const ForumPage = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useFirebaseAuth();
   const [activeTab, setActiveTab] = useState<"all" | "my">("all");
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("forum");

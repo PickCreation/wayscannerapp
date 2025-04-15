@@ -14,7 +14,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
 import LoginDialog from "@/components/LoginDialog";
-import { useAuth } from "@/hooks/use-auth";
+import { useFirebaseAuth } from "@/hooks/use-firebase-auth";
 
 const ProfileMenuItem = ({ icon, title, description, onClick }: ProfileMenuItemProps) => {
   return (
@@ -44,7 +44,7 @@ const ProfilePage = () => {
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("profile");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout } = useFirebaseAuth();
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [profileData, setProfileData] = useState({
     fullName: "",

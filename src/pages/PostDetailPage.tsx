@@ -7,13 +7,13 @@ import { Input } from "@/components/ui/input";
 import BottomNavigation from "@/components/BottomNavigation";
 import { useToast } from "@/hooks/use-toast";
 import CameraSheet from "@/components/CameraSheet";
-import { useAuth } from "@/hooks/use-auth";
+import { useFirebaseAuth } from "@/hooks/use-firebase-auth";
 
 const PostDetailPage = () => {
   const navigate = useNavigate();
   const params = useParams();
   const { toast } = useToast();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useFirebaseAuth();
   const [post, setPost] = useState<any>(null);
   const [comments, setComments] = useState<any[]>([]);
   const [newComment, setNewComment] = useState("");
@@ -171,7 +171,7 @@ const PostDetailPage = () => {
   const handleCameraClick = () => {
     setShowCameraSheet(true);
   };
-  
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
