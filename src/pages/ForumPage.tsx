@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Heart, MessageSquare, Bookmark, Bell, User, LogIn } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -8,52 +9,8 @@ import CreatePostSheet from "@/components/CreatePostSheet";
 import CameraSheet from "@/components/CameraSheet";
 import LoginDialog from "@/components/LoginDialog";
 import { useFirebaseAuth } from "@/hooks/use-firebase-auth";
-
-// Sample forum data
-const INITIAL_POSTS = [
-  {
-    id: "1",
-    author: {
-      name: "John D.",
-      avatar: "/placeholder.svg",
-    },
-    timeAgo: "12h ago",
-    category: "Plants",
-    content: "Just found this amazing plant in my backyard. Anyone know what it is?",
-    likes: 2,
-    comments: 2,
-    bookmarked: false,
-    liked: false,
-  },
-  {
-    id: "2",
-    author: {
-      name: "Emma K.",
-      avatar: "/placeholder.svg",
-    },
-    timeAgo: "5h ago",
-    category: "Food",
-    content: "Made this healthy salad for lunch today. The app identified all the ingredients perfectly!",
-    likes: 3,
-    comments: 1,
-    bookmarked: false,
-    liked: false,
-  },
-  {
-    id: "3",
-    author: {
-      name: "Mike P.",
-      avatar: "/placeholder.svg",
-    },
-    timeAgo: "2d ago",
-    category: "Animals & Pets",
-    content: "Spotted this rare bird in the park today. The scanner identified it as a Northern Flicker!",
-    likes: 15,
-    comments: 7,
-    bookmarked: true,
-    liked: false,
-  }
-];
+import { getAllPosts, likePost, addBookmark, removeBookmark } from "@/lib/firebaseService";
+import { Loader2 } from "lucide-react";
 
 // Updated category options for filtering
 const CATEGORIES = [
@@ -68,11 +25,8 @@ export const ForumPage = () => {
   const [activeTab, setActiveTab] = useState<"all" | "my">("all");
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("forum");
-  const [posts, setPosts] = useState(() => {
-    // Try to get posts from localStorage
-    const savedPosts = localStorage.getItem('forumPosts');
-    return savedPosts ? JSON.parse(savedPosts) : INITIAL_POSTS;
-  });
+  const [posts, setPosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [showCameraSheet, setShowCameraSheet] = useState(false);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
@@ -87,20 +41,33 @@ export const ForumPage = () => {
     }
   }, []);
 
-  // Save posts to localStorage whenever they change
+  // Load posts from Firebase
   useEffect(() => {
-    localStorage.setItem('forumPosts', JSON.stringify(posts));
-  }, [posts]);
+    const fetchPosts = async () => {
+      setLoading(true);
+      try {
+        const fetchedPosts = await getAllPosts();
+        setPosts(fetchedPosts);
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load posts. Please try again.",
+          variant: "destructive"
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, [toast]);
 
   // Listen for new posts from CreatePostSheet
   useEffect(() => {
     const handleAddNewPost = (event: CustomEvent) => {
       const newPost = event.detail;
-      setPosts(prevPosts => {
-        const updatedPosts = [newPost, ...prevPosts];
-        localStorage.setItem('forumPosts', JSON.stringify(updatedPosts));
-        return updatedPosts;
-      });
+      setPosts(prevPosts => [newPost, ...prevPosts]);
     };
 
     window.addEventListener('addNewPost', handleAddNewPost as EventListener);
@@ -129,43 +96,73 @@ export const ForumPage = () => {
     : posts.filter(post => post.category === activeCategory);
   
   // Handle post interactions
-  const handleLikePost = (postId: string) => {
+  const handleLikePost = async (postId: string, isLiked: boolean) => {
     if (!isAuthenticated) {
       setShowLoginDialog(true);
       return;
     }
     
-    setPosts(posts.map(post => {
-      if (post.id === postId) {
-        const newLikes = post.likes + (post.liked ? -1 : 1);
-        return { ...post, likes: newLikes, liked: !post.liked };
+    try {
+      const result = await likePost(postId, isLiked);
+      
+      setPosts(posts.map(post => {
+        if (post.id === postId) {
+          return { ...post, likes: result.likes, liked: result.liked };
+        }
+        return post;
+      }));
+      
+      if (!isLiked) {
+        toast({
+          title: "Post liked",
+          description: "The author has been notified",
+        });
       }
-      return post;
-    }));
-    
-    toast({
-      title: "Post liked",
-      description: "The author has been notified",
-    });
+    } catch (error) {
+      console.error("Error liking post:", error);
+      toast({
+        title: "Error",
+        description: "Failed to like post. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
   
-  const handleBookmarkPost = (postId: string) => {
+  const handleBookmarkPost = async (postId: string, isBookmarked: boolean) => {
     if (!isAuthenticated) {
       setShowLoginDialog(true);
       return;
     }
     
-    setPosts(posts.map(post => {
-      if (post.id === postId) {
-        return { ...post, bookmarked: !post.bookmarked };
+    try {
+      const post = posts.find(p => p.id === postId);
+      if (!post) return;
+      
+      if (isBookmarked) {
+        await removeBookmark(postId, 'forum');
+      } else {
+        await addBookmark(post, 'forum');
       }
-      return post;
-    }));
-    
-    toast({
-      title: "Post bookmarked",
-      description: "Saved to your profile",
-    });
+      
+      setPosts(posts.map(post => {
+        if (post.id === postId) {
+          return { ...post, bookmarked: !isBookmarked };
+        }
+        return post;
+      }));
+      
+      toast({
+        title: isBookmarked ? "Bookmark removed" : "Post bookmarked",
+        description: isBookmarked ? "Removed from your bookmarks" : "Saved to your bookmarks",
+      });
+    } catch (error) {
+      console.error("Error bookmarking post:", error);
+      toast({
+        title: "Error",
+        description: "Failed to bookmark post. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
   
   const handleCommentClick = (postId: string) => {
@@ -279,7 +276,11 @@ export const ForumPage = () => {
       
       {/* Posts List */}
       <div className="flex-1 p-3 space-y-4">
-        {filteredPosts.length > 0 ? (
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <Loader2 className="h-8 w-8 animate-spin text-wayscanner-blue" />
+          </div>
+        ) : filteredPosts.length > 0 ? (
           filteredPosts.map(post => (
             <div key={post.id} className="bg-white rounded-lg shadow p-4 border border-gray-200">
               {/* Post Header - Author & Time */}
@@ -323,7 +324,7 @@ export const ForumPage = () => {
               <div className="flex items-center border-t border-gray-100 pt-3">
                 <button 
                   className="flex items-center mr-5"
-                  onClick={() => handleLikePost(post.id)}
+                  onClick={() => handleLikePost(post.id, post.liked)}
                   type="button"
                 >
                   <Heart 
@@ -342,7 +343,7 @@ export const ForumPage = () => {
                 </button>
                 <button 
                   className="flex items-center"
-                  onClick={() => handleBookmarkPost(post.id)}
+                  onClick={() => handleBookmarkPost(post.id, post.bookmarked)}
                   type="button"
                 >
                   <Bookmark 

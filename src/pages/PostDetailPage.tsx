@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, Heart, Bookmark, Send, Bell, User, LogIn } from "lucide-react";
+import { ChevronLeft, Heart, Bookmark, Send, Bell, User, LogIn, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useParams } from "react-router-dom";
@@ -8,6 +9,9 @@ import BottomNavigation from "@/components/BottomNavigation";
 import { useToast } from "@/hooks/use-toast";
 import CameraSheet from "@/components/CameraSheet";
 import { useFirebaseAuth } from "@/hooks/use-firebase-auth";
+import { doc, getDoc, collection, getDocs, query, orderBy } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { likePost, addBookmark, removeBookmark, addComment, getComments } from "@/lib/firebaseService";
 
 const PostDetailPage = () => {
   const navigate = useNavigate();
@@ -19,6 +23,7 @@ const PostDetailPage = () => {
   const [newComment, setNewComment] = useState("");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [submittingComment, setSubmittingComment] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   
   useEffect(() => {
@@ -27,26 +32,127 @@ const PostDetailPage = () => {
       setProfileImage(savedProfileImage);
     }
     
-    const postId = params.postId;
-    console.log("Loading post with ID:", postId);
-    
-    const savedPosts = localStorage.getItem('forumPosts');
-    if (savedPosts && postId) {
-      const allPosts = JSON.parse(savedPosts);
-      const foundPost = allPosts.find((p: any) => p.id === postId);
+    const fetchPostData = async () => {
+      const postId = params.postId;
+      console.log("Loading post with ID:", postId);
       
-      if (foundPost) {
-        setPost(foundPost);
-        if (!foundPost.comments || !Array.isArray(foundPost.comments)) {
-          foundPost.comments = [];
-        }
-        setComments(foundPost.comments);
+      if (!postId) {
+        setLoading(false);
+        return;
       }
-    }
-    setLoading(false);
-  }, [params.postId]);
+      
+      try {
+        // Try to get the post from Firestore
+        const postRef = doc(db, 'posts', postId);
+        const postSnapshot = await getDoc(postRef);
+        
+        if (postSnapshot.exists()) {
+          const postData = postSnapshot.data();
+          
+          // Get author info
+          let authorData = { name: 'Unknown User', avatar: '/placeholder.svg' };
+          try {
+            const authorRef = doc(db, 'users', postData.authorId);
+            const authorDoc = await getDoc(authorRef);
+            if (authorDoc.exists()) {
+              const userData = authorDoc.data();
+              authorData = {
+                name: userData.name || 'User',
+                avatar: userData.photoURL || '/placeholder.svg'
+              };
+            }
+          } catch (error) {
+            console.error('Error fetching author data:', error);
+          }
+          
+          // Check post likes
+          let likes = 0;
+          let liked = false;
+          
+          const likesRef = collection(db, 'posts', postId, 'userLikes');
+          const likesQuery = query(likesRef);
+          const likesSnapshot = await getDocs(likesQuery);
+          likes = likesSnapshot.size;
+          
+          // Check if current user has liked the post
+          if (isAuthenticated) {
+            const user = await import('@/lib/firebase').then(module => module.auth.currentUser);
+            if (user) {
+              const userLikesRef = doc(db, 'posts', postId, 'userLikes', user.uid);
+              const userLikeDoc = await getDoc(userLikesRef);
+              liked = userLikeDoc.exists();
+            }
+          }
+          
+          // Check if post is bookmarked
+          let bookmarked = false;
+          if (isAuthenticated) {
+            const user = await import('@/lib/firebase').then(module => module.auth.currentUser);
+            if (user) {
+              const userBookmarksRef = doc(db, 'posts', postId, 'userBookmarks', user.uid);
+              const userBookmarkDoc = await getDoc(userBookmarksRef);
+              bookmarked = userBookmarkDoc.exists();
+            }
+          }
+          
+          // Count comments
+          const commentsRef = collection(db, 'posts', postId, 'comments');
+          const commentsQuery = query(commentsRef);
+          const commentsSnapshot = await getDocs(commentsQuery);
+          const commentsCount = commentsSnapshot.size;
+          
+          // Get comments
+          const fetchedComments = await getComments(postId);
+          setComments(fetchedComments);
+          
+          // Format date
+          const timeAgo = postData.createdAt ? formatTimeAgo(postData.createdAt.toDate()) : '';
+          
+          // Set post data
+          setPost({
+            id: postId,
+            author: authorData,
+            timeAgo,
+            category: postData.category || 'General',
+            content: postData.content || '',
+            imageUrl: postData.imageUrl || null,
+            likes,
+            comments: commentsCount,
+            liked,
+            bookmarked
+          });
+        } else {
+          // If not found in Firestore, try localStorage
+          const savedPosts = localStorage.getItem('forumPosts');
+          if (savedPosts) {
+            const allPosts = JSON.parse(savedPosts);
+            const foundPost = allPosts.find((p: any) => p.id === postId);
+            
+            if (foundPost) {
+              setPost(foundPost);
+              if (!foundPost.comments || !Array.isArray(foundPost.comments)) {
+                foundPost.comments = [];
+              }
+              setComments(foundPost.comments);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching post:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load post. Please try again.",
+          variant: "destructive"
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchPostData();
+  }, [params.postId, toast, isAuthenticated]);
   
-  const handleLikePost = () => {
+  const handleLikePost = async () => {
     if (!post) return;
     
     if (!isAuthenticated) {
@@ -54,34 +160,32 @@ const PostDetailPage = () => {
       return;
     }
     
-    setPost((prev: any) => {
-      const newLikes = prev.likes + (prev.liked ? -1 : 1);
-      return { ...prev, likes: newLikes, liked: !prev.liked };
-    });
-    
-    const savedPosts = localStorage.getItem('forumPosts');
-    if (savedPosts) {
-      const allPosts = JSON.parse(savedPosts);
-      const updatedPosts = allPosts.map((p: any) => {
-        if (p.id === post.id) {
-          const newLikes = p.likes + (p.liked ? -1 : 1);
-          return { ...p, likes: newLikes, liked: !p.liked };
-        }
-        return p;
-      });
+    try {
+      const result = await likePost(post.id, post.liked);
       
-      localStorage.setItem('forumPosts', JSON.stringify(updatedPosts));
-    }
-    
-    if (!post.liked) {
+      setPost(prev => ({
+        ...prev,
+        likes: result.likes,
+        liked: result.liked
+      }));
+      
+      if (!post.liked) {
+        toast({
+          title: "Post liked",
+          description: "The author has been notified",
+        });
+      }
+    } catch (error) {
+      console.error("Error liking post:", error);
       toast({
-        title: "Post liked",
-        description: "The author has been notified",
+        title: "Error",
+        description: "Failed to like post. Please try again.",
+        variant: "destructive"
       });
     }
   };
   
-  const handleBookmarkPost = () => {
+  const handleBookmarkPost = async () => {
     if (!post) return;
     
     if (!isAuthenticated) {
@@ -89,28 +193,33 @@ const PostDetailPage = () => {
       return;
     }
     
-    setPost((prev: any) => ({ ...prev, bookmarked: !prev.bookmarked }));
-    
-    const savedPosts = localStorage.getItem('forumPosts');
-    if (savedPosts) {
-      const allPosts = JSON.parse(savedPosts);
-      const updatedPosts = allPosts.map((p: any) => {
-        if (p.id === post.id) {
-          return { ...p, bookmarked: !p.bookmarked };
-        }
-        return p;
-      });
+    try {
+      if (post.bookmarked) {
+        await removeBookmark(post.id, 'forum');
+      } else {
+        await addBookmark(post, 'forum');
+      }
       
-      localStorage.setItem('forumPosts', JSON.stringify(updatedPosts));
+      setPost(prev => ({
+        ...prev,
+        bookmarked: !prev.bookmarked
+      }));
+      
+      toast({
+        title: post.bookmarked ? "Bookmark removed" : "Post bookmarked",
+        description: post.bookmarked ? "Removed from your bookmarks" : "Saved to your bookmarks",
+      });
+    } catch (error) {
+      console.error("Error bookmarking post:", error);
+      toast({
+        title: "Error",
+        description: "Failed to bookmark post. Please try again.",
+        variant: "destructive"
+      });
     }
-    
-    toast({
-      title: post.bookmarked ? "Bookmark removed" : "Post bookmarked",
-      description: post.bookmarked ? "Removed from your bookmarks" : "Saved to your bookmarks",
-    });
   };
 
-  const handleSubmitComment = () => {
+  const handleSubmitComment = async () => {
     if (!newComment.trim() || !post) return;
     
     if (!isAuthenticated) {
@@ -118,50 +227,33 @@ const PostDetailPage = () => {
       return;
     }
 
-    const newCommentObj = {
-      id: `c${Date.now()}`,
-      author: {
-        name: "You",
-        avatar: profileImage || "/placeholder.svg",
-      },
-      timeAgo: "Just now",
-      content: newComment.trim(),
-    };
-
-    const updatedComments = [...comments, newCommentObj];
-    setComments(updatedComments);
+    setSubmittingComment(true);
     
-    const savedPosts = localStorage.getItem('forumPosts');
-    if (savedPosts) {
-      const allPosts = JSON.parse(savedPosts);
-      const updatedPosts = allPosts.map((p: any) => {
-        if (p.id === post.id) {
-          if (!p.comments) {
-            p.comments = [];
-          }
-          return { 
-            ...p, 
-            comments: p.comments + 1,
-            commentsArray: [...(p.commentsArray || []), newCommentObj]
-          };
-        }
-        return p;
+    try {
+      const newCommentObj = await addComment(post.id, newComment.trim());
+      
+      setComments([...comments, newCommentObj]);
+      setPost({
+        ...post,
+        comments: post.comments + 1
       });
       
-      localStorage.setItem('forumPosts', JSON.stringify(updatedPosts));
+      setNewComment("");
+      
+      toast({
+        title: "Comment posted",
+        description: "The author has been notified",
+      });
+    } catch (error) {
+      console.error("Error posting comment:", error);
+      toast({
+        title: "Error",
+        description: "Failed to post comment. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setSubmittingComment(false);
     }
-    
-    setPost({
-      ...post,
-      comments: post.comments + 1
-    });
-    
-    setNewComment("");
-    
-    toast({
-      title: "Comment posted",
-      description: "The author has been notified",
-    });
   };
 
   const handleProfileClick = () => {
@@ -175,7 +267,7 @@ const PostDetailPage = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <p>Loading post...</p>
+        <Loader2 className="h-8 w-8 animate-spin text-wayscanner-blue" />
       </div>
     );
   }
@@ -319,8 +411,17 @@ const PostDetailPage = () => {
                 placeholder="Add a comment..."
                 className="flex-1"
               />
-              <Button onClick={handleSubmitComment} size="icon" type="button">
-                <Send size={18} />
+              <Button 
+                onClick={handleSubmitComment} 
+                size="icon" 
+                type="button"
+                disabled={submittingComment}
+              >
+                {submittingComment ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send size={18} />
+                )}
               </Button>
             </div>
           ) : (
@@ -356,6 +457,39 @@ const PostDetailPage = () => {
       />
     </div>
   );
+};
+
+// Helper function for formatting time
+const formatTimeAgo = (date: Date) => {
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  
+  if (diffInSeconds < 60) {
+    return 'Just now';
+  }
+  
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) {
+    return `${diffInMinutes}m ago`;
+  }
+  
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) {
+    return `${diffInHours}h ago`;
+  }
+  
+  const diffInDays = Math.floor(diffInHours / 24);
+  if (diffInDays < 30) {
+    return `${diffInDays}d ago`;
+  }
+  
+  const diffInMonths = Math.floor(diffInDays / 30);
+  if (diffInMonths < 12) {
+    return `${diffInMonths}mo ago`;
+  }
+  
+  const diffInYears = Math.floor(diffInMonths / 12);
+  return `${diffInYears}y ago`;
 };
 
 export default PostDetailPage;

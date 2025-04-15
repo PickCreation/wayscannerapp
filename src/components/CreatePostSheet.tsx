@@ -4,11 +4,12 @@ import { Drawer, DrawerContent, DrawerClose, DrawerHeader, DrawerTitle, DrawerDe
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { X, Image } from "lucide-react";
+import { X, Image, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/use-auth";
+import { useFirebaseAuth } from "@/hooks/use-firebase-auth";
 import LoginDialog from "@/components/LoginDialog";
+import { createPost } from "@/lib/firebaseService";
 
 interface CreatePostSheetProps {
   open: boolean;
@@ -27,8 +28,9 @@ const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange })
   const [category, setCategory] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user } = useFirebaseAuth();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   
@@ -61,7 +63,7 @@ const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange })
     setImagePreview(null);
   };
   
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!isAuthenticated) {
       setShowLoginDialog(true);
       return;
@@ -85,40 +87,39 @@ const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange })
       return;
     }
     
-    // Create the new post object
-    const newPost = {
-      id: `post-${Date.now()}`,
-      author: {
-        name: "You",
-        avatar: profileImage || "/placeholder.svg",
-      },
-      timeAgo: "Just now",
-      category: category,
-      content: content,
-      likes: 0,
-      comments: 0,
-      bookmarked: false,
-      liked: false,
-      imageUrl: imagePreview,
-    };
+    setIsSubmitting(true);
     
-    // Dispatch a custom event to add the post to both pages
-    const addPostEvent = new CustomEvent('addNewPost', { detail: newPost });
-    window.dispatchEvent(addPostEvent);
-    
-    toast({
-      title: "Post Created",
-      description: "Your post has been published successfully",
-    });
-    
-    // Reset form
-    setContent("");
-    setCategory("");
-    setImage(null);
-    setImagePreview(null);
-    
-    // Close the sheet
-    onOpenChange(false);
+    try {
+      // Save post to Firebase
+      const newPost = await createPost(content, category, image);
+      
+      // Dispatch a custom event to add the post to the forum page
+      const addPostEvent = new CustomEvent('addNewPost', { detail: newPost });
+      window.dispatchEvent(addPostEvent);
+      
+      toast({
+        title: "Post Created",
+        description: "Your post has been published successfully",
+      });
+      
+      // Reset form
+      setContent("");
+      setCategory("");
+      setImage(null);
+      setImagePreview(null);
+      
+      // Close the sheet
+      onOpenChange(false);
+    } catch (error) {
+      console.error("Error creating post:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create post. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   
   return (
@@ -215,9 +216,17 @@ const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange })
             <Button
               className="w-full bg-wayscanner-blue hover:bg-blue-700 py-6 text-[16px] font-medium"
               onClick={handleSubmit}
+              disabled={isSubmitting}
               type="button"
             >
-              Post
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                "Post"
+              )}
             </Button>
           </div>
         </DrawerContent>

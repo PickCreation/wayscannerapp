@@ -1,11 +1,14 @@
+
 import React, { useState, useEffect } from "react";
-import { Heart, MessageSquare, Bookmark, Bell, User, ChevronLeft, Trash2 } from "lucide-react";
+import { Heart, MessageSquare, Bookmark, Bell, User, ChevronLeft, Trash2, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
 import BottomNavigation from "@/components/BottomNavigation";
 import { useToast } from "@/hooks/use-toast";
 import CreatePostSheet from "@/components/CreatePostSheet";
 import CameraSheet from "@/components/CameraSheet";
+import { useFirebaseAuth } from "@/hooks/use-firebase-auth";
+import { getMyPosts, likePost, addBookmark, removeBookmark, deletePost } from "@/lib/firebaseService";
 import { 
   AlertDialog,
   AlertDialogAction,
@@ -26,9 +29,12 @@ const CATEGORIES = [
 
 const MyPostsPage = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useFirebaseAuth();
   const [activeTab, setActiveTab] = useState<"all" | "my">("my");
   const [activeCategory, setActiveCategory] = useState("All");
   const [posts, setPosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState<string | null>(null);
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [showCameraSheet, setShowCameraSheet] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -40,23 +46,34 @@ const MyPostsPage = () => {
       setProfileImage(savedProfileImage);
     }
     
-    const savedPosts = localStorage.getItem('forumPosts');
-    if (savedPosts) {
-      const allPosts = JSON.parse(savedPosts);
-      const myPosts = allPosts.filter((post: any) => post.author.name === "You");
-      setPosts(myPosts);
-    }
-  }, []);
+    const fetchPosts = async () => {
+      setLoading(true);
+      try {
+        if (isAuthenticated) {
+          const myPosts = await getMyPosts();
+          setPosts(myPosts);
+        } else {
+          navigate('/profile');
+        }
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load your posts. Please try again.",
+          variant: "destructive"
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchPosts();
+  }, [isAuthenticated, navigate, toast]);
   
   useEffect(() => {
     const handleAddNewPost = (event: CustomEvent) => {
       const newPost = event.detail;
-      setPosts(prevPosts => {
-        if (newPost.author.name === "You") {
-          return [newPost, ...prevPosts];
-        }
-        return prevPosts;
-      });
+      setPosts(prevPosts => [newPost, ...prevPosts]);
     };
 
     window.addEventListener('addNewPost', handleAddNewPost as EventListener);
@@ -82,52 +99,63 @@ const MyPostsPage = () => {
     ? posts 
     : posts.filter(post => post.category === activeCategory);
   
-  const handleLikePost = (postId: string) => {
-    setPosts(posts.map(post => {
-      if (post.id === postId) {
-        const newLikes = post.likes + (post.liked ? -1 : 1);
-        return { ...post, likes: newLikes, liked: !post.liked };
+  const handleLikePost = async (postId: string, isLiked: boolean) => {
+    try {
+      const result = await likePost(postId, isLiked);
+      
+      setPosts(posts.map(post => {
+        if (post.id === postId) {
+          return { ...post, likes: result.likes, liked: result.liked };
+        }
+        return post;
+      }));
+      
+      if (!isLiked) {
+        toast({
+          title: "Post liked",
+          description: "The author has been notified",
+        });
       }
-      return post;
-    }));
-    
-    const allPosts = JSON.parse(localStorage.getItem('forumPosts') || '[]');
-    const updatedAllPosts = allPosts.map((post: any) => {
-      if (post.id === postId) {
-        const newLikes = post.likes + (post.liked ? -1 : 1);
-        return { ...post, likes: newLikes, liked: !post.liked };
-      }
-      return post;
-    });
-    localStorage.setItem('forumPosts', JSON.stringify(updatedAllPosts));
-    
-    toast({
-      title: "Post liked",
-      description: "The author has been notified",
-    });
+    } catch (error) {
+      console.error("Error liking post:", error);
+      toast({
+        title: "Error",
+        description: "Failed to like post. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
   
-  const handleBookmarkPost = (postId: string) => {
-    setPosts(posts.map(post => {
-      if (post.id === postId) {
-        return { ...post, bookmarked: !post.bookmarked };
+  const handleBookmarkPost = async (postId: string, isBookmarked: boolean) => {
+    try {
+      const post = posts.find(p => p.id === postId);
+      if (!post) return;
+      
+      if (isBookmarked) {
+        await removeBookmark(postId, 'forum');
+      } else {
+        await addBookmark(post, 'forum');
       }
-      return post;
-    }));
-    
-    const allPosts = JSON.parse(localStorage.getItem('forumPosts') || '[]');
-    const updatedAllPosts = allPosts.map((post: any) => {
-      if (post.id === postId) {
-        return { ...post, bookmarked: !post.bookmarked };
-      }
-      return post;
-    });
-    localStorage.setItem('forumPosts', JSON.stringify(updatedAllPosts));
-    
-    toast({
-      title: "Post bookmarked",
-      description: "Saved to your profile",
-    });
+      
+      setPosts(posts.map(post => {
+        if (post.id === postId) {
+          return { ...post, bookmarked: !isBookmarked };
+        }
+        return post;
+      }));
+      
+      toast({
+        title: isBookmarked ? "Bookmark removed" : "Post bookmarked",
+        description: isBookmarked ? "Removed from your bookmarks" : "Saved to your bookmarks",
+      });
+    } catch (error) {
+      console.error("Error bookmarking post:", error);
+      toast({
+        title: "Error",
+        description: "Failed to bookmark post. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
   
   const handleCommentClick = (postId: string) => {
@@ -135,17 +163,28 @@ const MyPostsPage = () => {
     navigate(`/forum/post/${postId}`);
   };
   
-  const handleDeletePost = (postId: string) => {
-    setPosts(posts.filter(post => post.id !== postId));
+  const handleDeletePost = async (postId: string) => {
+    setDeleting(postId);
     
-    const allPosts = JSON.parse(localStorage.getItem('forumPosts') || '[]');
-    const updatedAllPosts = allPosts.filter((post: any) => post.id !== postId);
-    localStorage.setItem('forumPosts', JSON.stringify(updatedAllPosts));
-    
-    toast({
-      title: "Post deleted",
-      description: "Your post has been removed",
-    });
+    try {
+      await deletePost(postId);
+      
+      setPosts(posts.filter(post => post.id !== postId));
+      
+      toast({
+        title: "Post deleted",
+        description: "Your post has been removed",
+      });
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete post. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setDeleting(null);
+    }
   };
 
   const handleProfileClick = () => {
@@ -227,7 +266,11 @@ const MyPostsPage = () => {
       </div>
       
       <div className="flex-1 p-3 space-y-4">
-        {filteredPosts.length > 0 ? (
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <Loader2 className="h-8 w-8 animate-spin text-wayscanner-blue" />
+          </div>
+        ) : filteredPosts.length > 0 ? (
           filteredPosts.map(post => (
             <div key={post.id} className="bg-white rounded-lg shadow p-4 border border-gray-200">
               <div className="flex items-center mb-3">
@@ -243,7 +286,11 @@ const MyPostsPage = () => {
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <button className="text-gray-400 hover:text-red-500" type="button">
-                          <Trash2 size={18} />
+                          {deleting === post.id ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <Trash2 size={18} />
+                          )}
                         </button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
@@ -293,7 +340,7 @@ const MyPostsPage = () => {
               <div className="flex items-center border-t border-gray-100 pt-3">
                 <button 
                   className="flex items-center mr-5"
-                  onClick={() => handleLikePost(post.id)}
+                  onClick={() => handleLikePost(post.id, post.liked)}
                   type="button"
                 >
                   <Heart 
@@ -312,7 +359,7 @@ const MyPostsPage = () => {
                 </button>
                 <button 
                   className="flex items-center"
-                  onClick={() => handleBookmarkPost(post.id)}
+                  onClick={() => handleBookmarkPost(post.id, post.bookmarked)}
                   type="button"
                 >
                   <Bookmark 
