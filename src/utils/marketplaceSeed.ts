@@ -1,5 +1,5 @@
 
-import { saveProduct } from '@/lib/marketplaceService';
+import { saveProduct, Product } from '@/lib/marketplaceService';
 
 export const seedMarketplace = async () => {
   try {
