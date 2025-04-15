@@ -6,9 +6,11 @@ import { useNavigate } from "react-router-dom";
 interface ScannerCardProps {
   title: string;
   description: string;
-  color: "red" | "green" | "yellow" | "purple" | "blue";
+  color: "red" | "green" | "yellow" | "purple" | "blue" | "neutral";
   icon: React.ReactNode;
   onClick?: () => void;
+  showBookmarkIcon?: boolean;
+  onBookmarkRemove?: () => void;
 }
 
 const ScannerCard: React.FC<ScannerCardProps> = ({
@@ -17,6 +19,8 @@ const ScannerCard: React.FC<ScannerCardProps> = ({
   color,
   icon,
   onClick,
+  showBookmarkIcon = false,
+  onBookmarkRemove,
 }) => {
   const navigate = useNavigate();
   const colorMap = {
@@ -25,6 +29,7 @@ const ScannerCard: React.FC<ScannerCardProps> = ({
     yellow: "bg-wayscanner-yellow", 
     purple: "bg-wayscanner-purple",
     blue: "bg-wayscanner-blue",
+    neutral: "bg-gray-500",
   };
 
   const handleClick = () => {
@@ -55,6 +60,13 @@ const ScannerCard: React.FC<ScannerCardProps> = ({
     if (onClick) onClick();
   };
 
+  const handleBookmarkRemove = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onBookmarkRemove) {
+      onBookmarkRemove();
+    }
+  };
+
   return (
     <div 
       className="relative rounded-xl p-4 bg-gray-800 cursor-pointer shadow-md h-36"
@@ -64,6 +76,18 @@ const ScannerCard: React.FC<ScannerCardProps> = ({
       <div className={cn("absolute top-4 left-4 rounded-2xl p-3 w-10 h-10 flex items-center justify-center", colorMap[color])}>
         {icon}
       </div>
+      
+      {/* Bookmark remove icon if needed */}
+      {showBookmarkIcon && (
+        <button 
+          onClick={handleBookmarkRemove}
+          className="absolute top-4 right-4 text-white hover:text-red-500"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+          </svg>
+        </button>
+      )}
       
       {/* Text at the bottom */}
       <div className="absolute bottom-4 left-4 right-4 text-white">
