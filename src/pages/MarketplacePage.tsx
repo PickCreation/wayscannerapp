@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Search, ShoppingCart, Filter } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import FilterBottomSheet, { FilterOptions } from "@/components/FilterBottomSheet";
 import { useToast } from "@/hooks/use-toast";
 import { getAllProducts, Product } from "@/lib/marketplaceService";
+import { seedMarketplace } from '@/utils/marketplaceSeed';
 
 const categories = [
   { id: "all", name: "All", color: "#2196F3", bgColor: "#E3F2FD", icon: "📦" },
@@ -39,6 +39,11 @@ const MarketplacePage = () => {
     const fetchProducts = async () => {
       setIsLoading(true);
       try {
+        const savedProducts = localStorage.getItem('products');
+        if (!savedProducts || JSON.parse(savedProducts).length === 0) {
+          await seedMarketplace();
+        }
+
         const fetchedProducts = await getAllProducts();
         setProducts(fetchedProducts);
       } catch (error) {
