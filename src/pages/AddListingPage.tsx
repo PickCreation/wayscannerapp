@@ -200,15 +200,15 @@ const AddListingPage = () => {
       return;
     }
 
-    values.variations = productVariations;
-
-    console.log({
+    const productData = {
       ...values,
       images: images.map(img => img.preview),
-      tags: tags,
+      variations: productVariations,
       sellerAmount: calculatedAmount,
       commissionAmount: commissionAmount,
-    });
+    };
+
+    console.log(productData);
 
     toast({
       title: "Listing Created",
