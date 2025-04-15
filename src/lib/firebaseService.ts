@@ -12,11 +12,9 @@ import {
   serverTimestamp,
   orderBy,
   limit,
-  Timestamp,
-  ref,
-  uploadBytes,
-  getDownloadURL
+  Timestamp
 } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { auth, db, storage } from './firebase';
 
 // Bookmarks
