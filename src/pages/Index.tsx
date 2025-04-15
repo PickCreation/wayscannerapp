@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from "react";
 import ScannerCard from "@/components/ScannerCard";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
 import SplashScreen from "@/components/SplashScreen";
-import { BellIcon, UserIcon, Utensils, Leaf, PawPrint, ShoppingBag, BookOpen } from "lucide-react";
+import { BellIcon, UserIcon, Utensils, Leaf, PawPrint, ShoppingBag, BookOpen, HelpCircle } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { AnimatePresence } from "framer-motion";
@@ -88,6 +87,10 @@ const Index = () => {
     setActiveNavItem("profile");
   };
 
+  const handleHowItWorksClick = () => {
+    navigate("/how-it-works");
+  };
+
   return <div className="pb-20 bg-white min-h-screen">
       <AnimatePresence>
         {showSplash && <SplashScreen onClose={handleCloseSplash} />}
@@ -121,6 +124,16 @@ const Index = () => {
           <ScannerCard title="Marketplace" description="Buy and sell products" color="purple" icon={<ShoppingBag size={24} color="white" />} onClick={() => handleScannerClick("Marketplace")} />
           <ScannerCard title="Blog & Articles" description="Browse related blog articles" color="blue" icon={<BookOpen size={24} color="white" />} onClick={() => handleScannerClick("Blog")} />
         </div>
+      </div>
+
+      <div className="px-4 mb-16 flex justify-center">
+        <button 
+          onClick={handleHowItWorksClick}
+          className="flex items-center text-blue-600 font-medium"
+        >
+          <HelpCircle size={18} className="mr-1" />
+          How it Works?
+        </button>
       </div>
 
       <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />

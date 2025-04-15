@@ -47,6 +47,7 @@ import MessagesPage from "./pages/MessagesPage";
 import PlantDetailPage from "./pages/PlantDetailPage";
 import BlogsPage from "./pages/BlogsPage";
 import BlogDetailPage from "./pages/BlogDetailPage";
+import HowItWorksPage from "./pages/HowItWorksPage";
 
 const queryClient = new QueryClient();
 
@@ -100,6 +101,7 @@ function App() {
               <Route path="/profile/messages" element={<MessagesPage />} />
               <Route path="/blogs" element={<BlogsPage />} />
               <Route path="/blogs/:blogId" element={<BlogDetailPage />} />
+              <Route path="/how-it-works" element={<HowItWorksPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

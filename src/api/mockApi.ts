@@ -1,0 +1,36 @@
+
+// This is a mock API file that would be replaced with actual API calls in production
+// For now, it serves static content
+
+export const fetchHowItWorksContent = () => {
+  return new Promise((resolve) => {
+    // Simulate network delay
+    setTimeout(() => {
+      resolve({
+        title: "How WayScanner Works",
+        sections: [
+          {
+            heading: "Scan Anything",
+            text: "Simply open the app and point your camera at food items, plants, or animals. Our advanced AI technology will quickly identify what you're looking at and provide you with detailed information."
+          },
+          {
+            heading: "Learn & Explore",
+            text: "After scanning, dive into a wealth of information about your discovery. For food, see nutritional facts and sustainability ratings. For plants, get care instructions and species details. For animals, learn about their habitat and conservation status."
+          },
+          {
+            heading: "Shop Consciously",
+            text: "Discover eco-friendly products related to your scans in our marketplace. Shop for sustainable alternatives and support environmentally responsible brands."
+          },
+          {
+            heading: "Share & Connect",
+            text: "Join our community forum to share your discoveries, ask questions, and learn from fellow nature enthusiasts. Save your favorite finds to your profile and create your own digital nature journal."
+          },
+          {
+            heading: "Personalized Recommendations",
+            text: "The more you use WayScanner, the more personalized your experience becomes. Our AI learns your preferences to provide tailored content and product recommendations."
+          }
+        ]
+      });
+    }, 800);
+  });
+};
