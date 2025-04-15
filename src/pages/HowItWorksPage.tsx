@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { fetchHowItWorksContent } from "@/api/mockApi";
 
 const HowItWorksPage = () => {
   const navigate = useNavigate();
@@ -21,14 +22,11 @@ const HowItWorksPage = () => {
 
   useEffect(() => {
     // Fetch the how it works content from our API
-    const fetchHowItWorksContent = async () => {
+    const loadContent = async () => {
       try {
-        const response = await fetch('/api/how-it-works');
-        if (!response.ok) {
-          throw new Error('Failed to fetch content');
-        }
-        const data = await response.json();
-        setContent(data);
+        // Use the mockApi instead of fetching directly
+        const data = await fetchHowItWorksContent();
+        setContent(data as any);
       } catch (error) {
         console.error("Error fetching how it works content:", error);
         toast({
@@ -63,7 +61,7 @@ const HowItWorksPage = () => {
       }
     };
 
-    fetchHowItWorksContent();
+    loadContent();
   }, [toast]);
 
   const handleBack = () => {
