@@ -1,7 +1,7 @@
-
-import React from 'react';
-import { ChevronRight, Camera, Apple } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronRight, Camera, Apple, Bookmark } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 
 interface FoodScanTabProps {
   onEditPreferences?: () => void;
@@ -13,6 +13,8 @@ const SHOW_WELCOME_SCREEN = false;
 
 const FoodScanTab: React.FC<FoodScanTabProps> = ({ onEditPreferences, onHowWeScore }) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [bookmarkedItems, setBookmarkedItems] = useState<string[]>([]);
 
   // Sample food scan results with realistic food images
   const scanResults = [
@@ -45,6 +47,61 @@ const FoodScanTab: React.FC<FoodScanTabProps> = ({ onEditPreferences, onHowWeSco
       imageUrl: '/lovable-uploads/8fdd5ac8-39b5-43e6-86de-c8b27715d7c8.png',
     }
   ];
+
+  // Load bookmarked items from localStorage on component mount
+  useEffect(() => {
+    const savedBookmarks = localStorage.getItem('bookmarkedScans');
+    if (savedBookmarks) {
+      const bookmarks = JSON.parse(savedBookmarks);
+      // Get just the IDs of food scan bookmarks
+      const foodScanIds = bookmarks
+        .filter((bookmark: any) => bookmark.type === 'food')
+        .map((bookmark: any) => bookmark.id);
+      setBookmarkedItems(foodScanIds);
+    }
+  }, []);
+
+  const handleBookmarkToggle = (e: React.MouseEvent, item: any) => {
+    e.stopPropagation(); // Prevent navigation when clicking the bookmark button
+    
+    // Get existing bookmarks
+    const savedBookmarks = localStorage.getItem('bookmarkedScans');
+    let bookmarks = savedBookmarks ? JSON.parse(savedBookmarks) : [];
+    
+    // Check if this item is already bookmarked
+    const isBookmarked = bookmarkedItems.includes(item.id);
+    
+    if (isBookmarked) {
+      // Remove from bookmarks
+      bookmarks = bookmarks.filter((bookmark: any) => 
+        !(bookmark.id === item.id && bookmark.type === 'food')
+      );
+      setBookmarkedItems(prev => prev.filter(id => id !== item.id));
+      toast({
+        title: "Removed from bookmarks",
+        description: `${item.name} has been removed from your bookmarks`,
+      });
+    } else {
+      // Add to bookmarks
+      bookmarks.push({
+        id: item.id,
+        name: item.name,
+        brand: item.brand,
+        score: item.score,
+        imageUrl: item.imageUrl,
+        type: 'food',
+        date: new Date().toISOString().split('T')[0]
+      });
+      setBookmarkedItems(prev => [...prev, item.id]);
+      toast({
+        title: "Added to bookmarks",
+        description: `${item.name} has been added to your bookmarks`,
+      });
+    }
+    
+    // Save updated bookmarks to localStorage
+    localStorage.setItem('bookmarkedScans', JSON.stringify(bookmarks));
+  };
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return "bg-teal-500";
@@ -121,7 +178,18 @@ const FoodScanTab: React.FC<FoodScanTabProps> = ({ onEditPreferences, onHowWeSco
               <span>{getScoreText(item.score)}</span>
             </div>
           </div>
-          <ChevronRight className="text-gray-400 h-5 w-5" />
+          <div className="flex items-center">
+            <button 
+              onClick={(e) => handleBookmarkToggle(e, item)}
+              className="p-2 mr-2 text-gray-500"
+              aria-label={bookmarkedItems.includes(item.id) ? "Remove bookmark" : "Add bookmark"}
+            >
+              <Bookmark 
+                className={`h-6 w-6 ${bookmarkedItems.includes(item.id) ? 'fill-wayscanner-blue text-wayscanner-blue' : ''}`} 
+              />
+            </button>
+            <ChevronRight className="text-gray-400 h-5 w-5" />
+          </div>
         </div>
       ))}
     </div>

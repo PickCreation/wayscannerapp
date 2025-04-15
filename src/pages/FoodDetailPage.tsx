@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ChevronLeft, Bookmark, CircleCheck, Vegan, Fish, Edit, Info, ChevronRight, BarChart2, ListCheck, Calendar, Leaf } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -176,6 +176,17 @@ const FoodDetailPage = () => {
     return <div>Food not found</div>;
   }
 
+  useEffect(() => {
+    const savedBookmarks = localStorage.getItem('bookmarkedScans');
+    if (savedBookmarks) {
+      const bookmarks = JSON.parse(savedBookmarks);
+      const isCurrentItemBookmarked = bookmarks.some(
+        (bookmark: any) => bookmark.id === foodId && bookmark.type === 'food'
+      );
+      setIsBookmarked(isCurrentItemBookmarked);
+    }
+  }, [foodId]);
+
   const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop") => {
     setActiveNavItem(item);
     
@@ -190,6 +201,32 @@ const FoodDetailPage = () => {
 
   const handleCameraClick = () => {
     setCameraSheetOpen(true);
+  };
+
+  const toggleBookmark = () => {
+    const savedBookmarks = localStorage.getItem('bookmarkedScans');
+    let bookmarks = savedBookmarks ? JSON.parse(savedBookmarks) : [];
+
+    if (isBookmarked) {
+      bookmarks = bookmarks.filter(
+        (bookmark: any) => !(bookmark.id === foodId && bookmark.type === 'food')
+      );
+      toast.success("Removed from bookmarks");
+    } else {
+      bookmarks.push({
+        id: food.id,
+        name: food.name,
+        brand: food.brand,
+        score: food.score,
+        imageUrl: food.imageUrl,
+        type: 'food',
+        date: new Date().toISOString().split('T')[0]
+      });
+      toast.success("Added to bookmarks");
+    }
+
+    localStorage.setItem('bookmarkedScans', JSON.stringify(bookmarks));
+    setIsBookmarked(!isBookmarked);
   };
 
   const getScoreColor = (score: number) => {
@@ -288,7 +325,7 @@ const FoodDetailPage = () => {
           </div>
           <button 
             className="p-2 text-red-500"
-            onClick={() => setIsBookmarked(!isBookmarked)}
+            onClick={toggleBookmark}
           >
             <Bookmark 
               className={`h-6 w-6 ${isBookmarked ? 'fill-red-500' : ''}`} 
@@ -529,7 +566,7 @@ const FoodDetailPage = () => {
         </button>
         
         <button 
-          className="w-full py-3 flex items-center justify-between bg-gray-100 rounded-lg mb-5"
+          className="w-full py-3 flex items-center justify-between bg-gray-100 rounded-lg mb-3"
           onClick={() => setHowWeScoreOpen(true)}
         >
           <div className="flex items-center">

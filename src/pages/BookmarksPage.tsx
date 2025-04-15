@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from "react";
 import { 
   ArrowLeft, User, Bell, BookmarkCheck, Heart, MessageSquare, Bookmark,
-  Folder, FolderOpen 
+  Folder, FolderOpen, Utensils, Flower, PawPrint, ChevronRight
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -11,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
 import { RecipeCard } from "@/components/RecipeCard";
+import CameraSheet from "@/components/CameraSheet";
 
 const BookmarksPage = () => {
   const navigate = useNavigate();
@@ -20,6 +20,7 @@ const BookmarksPage = () => {
   const [bookmarkedPosts, setBookmarkedPosts] = useState<any[]>([]);
   const [bookmarkedScans, setBookmarkedScans] = useState<any[]>([]);
   const [bookmarkedRecipes, setBookmarkedRecipes] = useState<any[]>([]);
+  const [cameraSheetOpen, setCameraSheetOpen] = useState(false);
 
   useEffect(() => {
     const savedPosts = localStorage.getItem('forumPosts');
@@ -55,10 +56,10 @@ const BookmarksPage = () => {
       ]);
     }
 
-    setBookmarkedScans([
-      { id: 's1', title: 'Organic Apple', date: '2025-04-01', category: 'Fruit', score: 87 },
-      { id: 's2', title: 'Whole Grain Bread', date: '2025-04-02', category: 'Bakery', score: 92 },
-    ]);
+    const savedBookmarks = localStorage.getItem('bookmarkedScans');
+    if (savedBookmarks) {
+      setBookmarkedScans(JSON.parse(savedBookmarks));
+    }
   }, []);
 
   const handleBackClick = () => {
@@ -89,10 +90,7 @@ const BookmarksPage = () => {
   };
 
   const handleCameraClick = () => {
-    toast({
-      title: "Camera",
-      description: "The camera feature is under development.",
-    });
+    setCameraSheetOpen(true);
   };
 
   const handleLikePost = (postId: string) => {
@@ -134,6 +132,71 @@ const BookmarksPage = () => {
       title: "Recipe unbookmarked",
       description: "Recipe removed from your bookmarks",
     });
+  };
+
+  const handleRemoveScanBookmark = (scanId: string, scanType: string) => {
+    setBookmarkedScans(bookmarkedScans.filter(scan => !(scan.id === scanId && scan.type === scanType)));
+    
+    const savedBookmarks = localStorage.getItem('bookmarkedScans');
+    if (savedBookmarks) {
+      const bookmarks = JSON.parse(savedBookmarks);
+      const updatedBookmarks = bookmarks.filter((scan: any) => 
+        !(scan.id === scanId && scan.type === scanType)
+      );
+      localStorage.setItem('bookmarkedScans', JSON.stringify(updatedBookmarks));
+    }
+    
+    toast({
+      title: "Scan unbookmarked",
+      description: "Scan removed from your bookmarks",
+    });
+  };
+
+  const getScoreColor = (score: number) => {
+    if (score >= 80) return "bg-teal-500";
+    if (score >= 60) return "bg-purple-500";
+    if (score >= 40) return "bg-orange-500";
+    return "bg-red-500";
+  };
+  
+  const getScoreBorderColor = (score: number) => {
+    if (score >= 80) return "border-teal-300";
+    if (score >= 60) return "border-purple-300";
+    if (score >= 40) return "border-orange-300";
+    return "border-red-300";
+  };
+
+  const getScoreText = (score: number) => {
+    if (score >= 80) return "Excellent";
+    if (score >= 60) return "Good";
+    if (score >= 40) return "Not great";
+    return "Bad";
+  };
+
+  const getScanTypeIcon = (type: string) => {
+    switch (type) {
+      case 'food':
+        return <Utensils className="h-5 w-5 text-wayscanner-blue" />;
+      case 'plants':
+        return <Flower className="h-5 w-5 text-wayscanner-green" />;
+      case 'animals':
+        return <PawPrint className="h-5 w-5 text-wayscanner-red" />;
+      default:
+        return <Bookmark className="h-5 w-5" />;
+    }
+  };
+
+  const getScanPath = (scan: any) => {
+    switch (scan.type) {
+      case 'food':
+        return `/food/${scan.id}`;
+      case 'plants':
+        return `/plants/${scan.id}`;
+      case 'animals':
+        return `/animals/${scan.id}`;
+      default:
+        return `/scan?tab=${scan.type}`;
+    }
   };
 
   return (
@@ -257,30 +320,42 @@ const BookmarksPage = () => {
             <div className="space-y-4">
               {bookmarkedScans.length > 0 ? (
                 bookmarkedScans.map(scan => (
-                  <Card key={scan.id} className="overflow-hidden">
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium text-[16px]">{scan.title}</h3>
-                        <span className={`px-2 py-1 rounded-full text-xs ${
-                          scan.score >= 90 ? "bg-green-100 text-green-700" :
-                          scan.score >= 70 ? "bg-yellow-100 text-yellow-700" :
-                          "bg-red-100 text-red-700"
-                        }`}>
-                          Score: {scan.score}
-                        </span>
-                      </div>
-                      <div className="text-[14px] text-gray-500">Category: {scan.category}</div>
-                      <div className="text-[14px] text-gray-500">Scanned on: {scan.date}</div>
+                  <div 
+                    key={`${scan.type}-${scan.id}`} 
+                    className="p-3 rounded-xl border shadow-sm bg-white flex items-center justify-between cursor-pointer"
+                    onClick={() => navigate(getScanPath(scan))}
+                  >
+                    <div className="h-14 w-14 mr-3 flex-shrink-0 rounded-xl overflow-hidden">
+                      <img 
+                        src={scan.imageUrl} 
+                        alt={scan.name} 
+                        className="h-full w-full object-cover rounded-[12px]"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-gray-900">{scan.name}</h3>
+                      <p className="text-md text-blue-500">{scan.brand}</p>
+                      {scan.score && (
+                        <div className={`${getScoreColor(scan.score)} text-white px-4 py-1 rounded-full text-md inline-flex items-center mt-2 border-2 ${getScoreBorderColor(scan.score)}`}>
+                          <span className="font-bold mr-1">{scan.score}</span>
+                          <span>{getScoreText(scan.score)}</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex items-center">
                       <button 
-                        className="mt-4 flex items-center text-wayscanner-blue"
-                        onClick={() => setBookmarkedScans(prev => prev.filter(s => s.id !== scan.id))}
-                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemoveScanBookmark(scan.id, scan.type);
+                        }}
+                        className="p-2 mr-2 text-gray-500"
+                        aria-label="Remove bookmark"
                       >
-                        <Bookmark size={18} className="fill-wayscanner-blue mr-1" />
-                        Remove from bookmarks
+                        <Bookmark className="h-6 w-6 fill-wayscanner-blue text-wayscanner-blue" />
                       </button>
-                    </CardContent>
-                  </Card>
+                      <ChevronRight className="text-gray-400 h-5 w-5" />
+                    </div>
+                  </div>
                 ))
               ) : (
                 <div className="flex flex-col items-center justify-center py-10 px-4 bg-white rounded-lg shadow">
@@ -337,6 +412,8 @@ const BookmarksPage = () => {
         onItemClick={handleNavItemClick}
         onCameraClick={handleCameraClick}
       />
+      
+      <CameraSheet open={cameraSheetOpen} onOpenChange={setCameraSheetOpen} />
     </div>
   );
 };
