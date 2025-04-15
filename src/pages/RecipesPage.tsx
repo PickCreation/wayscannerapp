@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   Search, 
   ChevronRight, 
@@ -9,7 +8,8 @@ import {
   Cookie,
   Bell,
   User,
-  Grid
+  Grid,
+  Loader2
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
@@ -17,8 +17,9 @@ import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
 import { RecipeCard } from "@/components/RecipeCard";
 import { useToast } from "@/hooks/use-toast";
+import { getAllRecipes } from "@/lib/firebaseService";
 
-const allRecipes = [
+const mockRecipes = [
   {
     id: "stir-fry-1",
     title: "Vegetable Stir Fry",
@@ -106,14 +107,66 @@ const RecipesPage = () => {
   const [showCameraSheet, setShowCameraSheet] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [recipes, setRecipes] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  useEffect(() => {
+    const handleConnectionChange = () => {
+      setIsOffline(!navigator.onLine);
+    };
+
+    window.addEventListener('online', handleConnectionChange);
+    window.addEventListener('offline', handleConnectionChange);
+    
+    return () => {
+      window.removeEventListener('online', handleConnectionChange);
+      window.removeEventListener('offline', handleConnectionChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    const loadRecipes = async () => {
+      try {
+        setLoading(true);
+        
+        const firebaseRecipes = await getAllRecipes();
+        
+        if (firebaseRecipes && firebaseRecipes.length > 0) {
+          setRecipes(firebaseRecipes);
+        } else {
+          setRecipes(mockRecipes);
+          
+          if (navigator.onLine) {
+            for (const recipe of mockRecipes) {
+              try {
+                await import('@/lib/firebaseService').then(module => 
+                  module.saveRecipe(recipe)
+                );
+              } catch (error) {
+                console.error('Error saving mock recipe:', error);
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error loading recipes:', error);
+        setRecipes(mockRecipes);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadRecipes();
+  }, []);
+
   const filteredRecipes = selectedCategory && selectedCategory !== "all"
-    ? allRecipes.filter(recipe => recipe.category === selectedCategory)
-    : allRecipes;
+    ? recipes.filter(recipe => recipe.category === selectedCategory)
+    : recipes;
   
-  const displayedRecipes = selectedCategory ? filteredRecipes : allRecipes.slice(0, 4);
+  const displayedRecipes = selectedCategory ? filteredRecipes : recipes.slice(0, 4);
 
   const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop") => {
     setActiveNavItem(item);
@@ -241,7 +294,11 @@ const RecipesPage = () => {
             </button>
           </div>
           
-          {displayedRecipes.length > 0 ? (
+          {loading ? (
+            <div className="flex justify-center items-center py-10">
+              <Loader2 className="h-8 w-8 animate-spin text-wayscanner-blue" />
+            </div>
+          ) : displayedRecipes.length > 0 ? (
             <div className="grid grid-cols-1 gap-4">
               {displayedRecipes.map((recipe) => (
                 <RecipeCard 
@@ -254,6 +311,12 @@ const RecipesPage = () => {
           ) : (
             <div className="text-center py-8">
               <p className="text-gray-500">No recipes found for this category</p>
+            </div>
+          )}
+          
+          {isOffline && (
+            <div className="bg-amber-50 border-l-4 border-amber-500 p-4 mt-4 flex items-center">
+              <p className="text-amber-700">You're currently offline. Some content may be limited.</p>
             </div>
           )}
         </div>

@@ -15,7 +15,9 @@ import {
   Tags,
   X,
   Copy,
-  Facebook
+  Facebook,
+  Loader2,
+  WifiOff
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -39,6 +41,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { getRecipe, saveRecipeComment, getRecipeComments, addBookmark, removeBookmark } from "@/lib/firebaseService";
 
 const recipeData = {
   "pasta-1": {
@@ -212,59 +215,149 @@ const RecipeDetailPage = () => {
   const [userComments, setUserComments] = useState<any[]>([]);
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("recipes");
   const [cameraSheetOpen, setCameraSheetOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [recipe, setRecipe] = useState<any>(null);
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const [systemComments, setSystemComments] = useState<any[]>([]);
   const isMobile = useIsMobile();
 
-  const recipe = recipeData[recipeId as keyof typeof recipeData] || getDefaultRecipe(recipeId || "unknown");
+  useEffect(() => {
+    const handleConnectionChange = () => {
+      setIsOffline(!navigator.onLine);
+    };
+
+    window.addEventListener('online', handleConnectionChange);
+    window.addEventListener('offline', handleConnectionChange);
+    
+    return () => {
+      window.removeEventListener('online', handleConnectionChange);
+      window.removeEventListener('offline', handleConnectionChange);
+    };
+  }, []);
 
   useEffect(() => {
-    const savedBookmarks = localStorage.getItem('bookmarkedRecipes');
-    if (savedBookmarks) {
-      const bookmarks = JSON.parse(savedBookmarks);
-      const isRecipeSaved = bookmarks.some((item: any) => item.id === recipe.id);
-      setIsSaved(isRecipeSaved);
-    }
-
-    const savedComments = localStorage.getItem(`comments-${recipe.id}`);
-    if (savedComments) {
-      setUserComments(JSON.parse(savedComments));
-    }
-  }, [recipe.id]);
+    const loadRecipe = async () => {
+      if (!recipeId) {
+        setLoading(false);
+        return;
+      }
+      
+      setLoading(true);
+      
+      try {
+        const firebaseRecipe = await getRecipe(recipeId);
+        
+        if (firebaseRecipe) {
+          setRecipe(firebaseRecipe);
+        } else {
+          const mockRecipe = recipeData[recipeId as keyof typeof recipeData];
+          if (mockRecipe) {
+            setRecipe(mockRecipe);
+            
+            if (navigator.onLine) {
+              try {
+                await saveRecipe(mockRecipe);
+              } catch (error) {
+                console.error('Error saving mock recipe to Firebase:', error);
+              }
+            }
+          } else {
+            setRecipe(getDefaultRecipe(recipeId));
+          }
+        }
+        
+        try {
+          const comments = await getRecipeComments(recipeId);
+          setSystemComments(comments || []);
+        } catch (error) {
+          console.error('Error loading recipe comments:', error);
+        }
+        
+        const savedBookmarks = localStorage.getItem('bookmarkedRecipes');
+        if (savedBookmarks) {
+          const bookmarks = JSON.parse(savedBookmarks);
+          const isRecipeSaved = bookmarks.some((item: any) => item.id === recipeId);
+          setIsSaved(isRecipeSaved);
+        }
+        
+        const savedComments = localStorage.getItem(`comments-${recipeId}`);
+        if (savedComments) {
+          setUserComments(JSON.parse(savedComments));
+        }
+      } catch (error) {
+        console.error('Error loading recipe:', error);
+        
+        const mockRecipe = recipeData[recipeId as keyof typeof recipeData];
+        setRecipe(mockRecipe || getDefaultRecipe(recipeId));
+        
+        if (isOffline) {
+          toast({
+            title: "You're offline",
+            description: "Limited recipe data available",
+            variant: "default"
+          });
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadRecipe();
+  }, [recipeId, toast, isOffline]);
 
   const handleBack = () => {
     navigate(-1);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const newSaveState = !isSaved;
     setIsSaved(newSaveState);
     
-    const savedBookmarks = localStorage.getItem('bookmarkedRecipes');
-    let bookmarks = savedBookmarks ? JSON.parse(savedBookmarks) : [];
-    
-    if (newSaveState) {
-      if (!bookmarks.some((item: any) => item.id === recipe.id)) {
-        const bookmarkItem = {
-          id: recipe.id,
-          title: recipe.title,
-          time: recipe.time,
-          rating: recipe.rating,
-          reviews: recipe.reviews,
-          image: recipe.image
-        };
-        bookmarks.push(bookmarkItem);
+    try {
+      if (newSaveState) {
+        await addBookmark(recipe, 'recipe');
+      } else {
+        await removeBookmark(recipe.id, 'recipe');
       }
-    } else {
-      bookmarks = bookmarks.filter((item: any) => item.id !== recipe.id);
-    }
-    
-    localStorage.setItem('bookmarkedRecipes', JSON.stringify(bookmarks));
+      
+      const savedBookmarks = localStorage.getItem('bookmarkedRecipes');
+      let bookmarks = savedBookmarks ? JSON.parse(savedBookmarks) : [];
+      
+      if (newSaveState) {
+        if (!bookmarks.some((item: any) => item.id === recipe.id)) {
+          const bookmarkItem = {
+            id: recipe.id,
+            title: recipe.title,
+            time: recipe.time,
+            rating: recipe.rating,
+            reviews: recipe.reviews,
+            image: recipe.image
+          };
+          bookmarks.push(bookmarkItem);
+        }
+      } else {
+        bookmarks = bookmarks.filter((item: any) => item.id !== recipe.id);
+      }
+      
+      localStorage.setItem('bookmarkedRecipes', JSON.stringify(bookmarks));
 
-    toast({
-      title: newSaveState ? "Saved to Bookmarks" : "Removed from Bookmarks",
-      description: newSaveState 
-        ? `${recipe.title} has been added to your bookmarks.` 
-        : `${recipe.title} has been removed from your bookmarks.`,
-    });
+      toast({
+        title: newSaveState ? "Saved to Bookmarks" : "Removed from Bookmarks",
+        description: newSaveState 
+          ? `${recipe.title} has been added to your bookmarks.` 
+          : `${recipe.title} has been removed from your bookmarks.`,
+      });
+    } catch (error) {
+      console.error('Error updating bookmark:', error);
+      
+      setIsSaved(!newSaveState);
+      
+      toast({
+        title: "Error",
+        description: "Failed to update bookmark status.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleShare = () => {
@@ -319,7 +412,7 @@ const RecipeDetailPage = () => {
     }
   };
 
-  const handlePostComment = () => {
+  const handlePostComment = async () => {
     if (!comment) {
       toast({
         title: "Empty Comment",
@@ -339,20 +432,37 @@ const RecipeDetailPage = () => {
       ratingLabel: ratingLabel
     };
 
-    const updatedComments = [...userComments, newComment];
-    setUserComments(updatedComments);
-    
-    localStorage.setItem(`comments-${recipe.id}`, JSON.stringify(updatedComments));
+    try {
+      await saveRecipeComment(recipe.id, newComment);
+      
+      const updatedComments = [...userComments, newComment];
+      setUserComments(updatedComments);
+      
+      localStorage.setItem(`comments-${recipe.id}`, JSON.stringify(updatedComments));
 
-    toast({
-      title: "Comment Posted",
-      description: "Your comment has been posted successfully.",
-    });
+      toast({
+        title: "Comment Posted",
+        description: "Your comment has been posted successfully.",
+      });
 
-    setComment("");
+      setComment("");
+    } catch (error) {
+      console.error('Error posting comment:', error);
+      
+      const updatedComments = [...userComments, newComment];
+      setUserComments(updatedComments);
+      localStorage.setItem(`comments-${recipe.id}`, JSON.stringify(updatedComments));
+      
+      toast({
+        title: "Comment Saved Locally",
+        description: "Comment saved locally - will sync when back online.",
+      });
+      
+      setComment("");
+    }
   };
 
-  const allComments = [...(recipe.comments || []), ...userComments];
+  const allComments = [...(systemComments || []), ...(recipe?.comments || []), ...userComments];
 
   const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop" | "profile") => {
     setActiveNavItem(item);
@@ -380,6 +490,26 @@ const RecipeDetailPage = () => {
     setCameraSheetOpen(true);
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <Loader2 className="h-8 w-8 animate-spin text-wayscanner-blue" />
+      </div>
+    );
+  }
+
+  if (!recipe) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
+        <h2 className="text-xl font-semibold mb-2">Recipe Not Found</h2>
+        <p className="text-gray-500 mb-4">The recipe you're looking for doesn't exist or has been removed.</p>
+        <Button onClick={() => navigate('/recipes')} type="button">
+          Back to Recipes
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="pb-20 bg-white min-h-screen">
       <div className="fixed top-0 left-0 right-0 z-10 bg-[#034AFF] text-white p-4 flex items-center shadow-md">
@@ -391,6 +521,13 @@ const RecipeDetailPage = () => {
         </button>
         <h1 className="text-lg font-medium">Recipe Details</h1>
       </div>
+      
+      {isOffline && (
+        <div className="fixed top-16 left-0 right-0 z-10 bg-amber-50 border-b border-amber-200 p-2 flex items-center justify-center">
+          <WifiOff className="h-4 w-4 text-amber-500 mr-2" />
+          <p className="text-amber-700 text-sm">You're offline. Some features may be limited.</p>
+        </div>
+      )}
       
       <div className="pt-16">
         <div className="relative h-72 bg-gray-200">
@@ -764,6 +901,17 @@ const RecipeDetailPage = () => {
       </div>
     </div>
   );
+};
+
+const saveRecipe = async (recipe: any) => {
+  try {
+    const { saveRecipe } = await import('@/lib/firebaseService');
+    await saveRecipe(recipe);
+    return true;
+  } catch (error) {
+    console.error('Error saving recipe:', error);
+    return false;
+  }
 };
 
 export default RecipeDetailPage;

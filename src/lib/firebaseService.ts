@@ -603,3 +603,202 @@ const formatTimeAgo = (date: Date) => {
   const diffInYears = Math.floor(diffInMonths / 12);
   return `${diffInYears}y ago`;
 };
+
+// Recipe related functions
+export const saveRecipe = async (recipeData: any) => {
+  try {
+    const user = auth.currentUser;
+    const recipeId = recipeData.id;
+    
+    // Store recipe in localStorage for offline access
+    const savedRecipes = localStorage.getItem('recipes');
+    let recipes = savedRecipes ? JSON.parse(savedRecipes) : [];
+    
+    const existingRecipeIndex = recipes.findIndex((r: any) => r.id === recipeId);
+    if (existingRecipeIndex >= 0) {
+      recipes[existingRecipeIndex] = recipeData;
+    } else {
+      recipes.push(recipeData);
+    }
+    
+    localStorage.setItem('recipes', JSON.stringify(recipes));
+    
+    // If user is not authenticated, just keep it in localStorage
+    if (!user) {
+      return recipeData;
+    }
+    
+    // If user is authenticated, save to Firestore
+    const recipeRef = doc(db, 'recipes', recipeId);
+    await setDoc(recipeRef, {
+      ...recipeData,
+      updatedAt: serverTimestamp(),
+      createdAt: serverTimestamp()
+    }, { merge: true });
+    
+    return recipeData;
+  } catch (error) {
+    console.error('Error saving recipe:', error);
+    throw error;
+  }
+};
+
+export const getRecipe = async (recipeId: string) => {
+  try {
+    // First check localStorage
+    const savedRecipes = localStorage.getItem('recipes');
+    const recipes = savedRecipes ? JSON.parse(savedRecipes) : [];
+    const localRecipe = recipes.find((r: any) => r.id === recipeId);
+    
+    // If we're offline, return the local recipe
+    if (!navigator.onLine) {
+      return localRecipe || null;
+    }
+    
+    // Try to get from Firestore
+    const recipeRef = doc(db, 'recipes', recipeId);
+    const recipeDoc = await getDoc(recipeRef);
+    
+    if (recipeDoc.exists()) {
+      const recipe = recipeDoc.data();
+      
+      // Update local storage with the latest data
+      const updatedRecipes = recipes.map((r: any) => 
+        r.id === recipeId ? { ...recipe, id: recipeId } : r
+      );
+      
+      if (!updatedRecipes.some((r: any) => r.id === recipeId)) {
+        updatedRecipes.push({ ...recipe, id: recipeId });
+      }
+      
+      localStorage.setItem('recipes', JSON.stringify(updatedRecipes));
+      
+      return { ...recipe, id: recipeId };
+    }
+    
+    // If not in Firestore but we have a local version, return that
+    return localRecipe || null;
+  } catch (error) {
+    console.error('Error getting recipe:', error);
+    
+    // If we have a local version, return that on error
+    const savedRecipes = localStorage.getItem('recipes');
+    const recipes = savedRecipes ? JSON.parse(savedRecipes) : [];
+    return recipes.find((r: any) => r.id === recipeId) || null;
+  }
+};
+
+export const getAllRecipes = async () => {
+  try {
+    // First check localStorage
+    const savedRecipes = localStorage.getItem('recipes');
+    const localRecipes = savedRecipes ? JSON.parse(savedRecipes) : [];
+    
+    // If we're offline, return local recipes
+    if (!navigator.onLine) {
+      return localRecipes;
+    }
+    
+    // Try to get from Firestore
+    const recipesRef = collection(db, 'recipes');
+    const recipesSnapshot = await getDocs(recipesRef);
+    
+    const recipes: any[] = [];
+    recipesSnapshot.forEach((doc) => {
+      recipes.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+    
+    // Update localStorage with the latest data
+    localStorage.setItem('recipes', JSON.stringify(recipes));
+    
+    return recipes;
+  } catch (error) {
+    console.error('Error getting all recipes:', error);
+    
+    // Return local recipes on error
+    const savedRecipes = localStorage.getItem('recipes');
+    return savedRecipes ? JSON.parse(savedRecipes) : [];
+  }
+};
+
+export const saveRecipeComment = async (recipeId: string, commentData: any) => {
+  try {
+    const user = auth.currentUser;
+    
+    // Store comment in localStorage for offline access
+    const savedComments = localStorage.getItem(`comments-${recipeId}`);
+    let comments = savedComments ? JSON.parse(savedComments) : [];
+    comments.push(commentData);
+    localStorage.setItem(`comments-${recipeId}`, JSON.stringify(comments));
+    
+    // If user is not authenticated, just keep it in localStorage
+    if (!user) {
+      return commentData;
+    }
+    
+    // If user is authenticated, save to Firestore
+    const commentsRef = collection(db, 'recipes', recipeId, 'comments');
+    
+    const commentDoc = await addDoc(commentsRef, {
+      ...commentData,
+      userId: user.uid,
+      createdAt: serverTimestamp()
+    });
+    
+    // Update recipe document to increment comments count
+    const recipeRef = doc(db, 'recipes', recipeId);
+    await updateDoc(recipeRef, {
+      comments: Timestamp.now()
+    });
+    
+    return {
+      ...commentData,
+      id: commentDoc.id
+    };
+  } catch (error) {
+    console.error('Error saving recipe comment:', error);
+    throw error;
+  }
+};
+
+export const getRecipeComments = async (recipeId: string) => {
+  try {
+    // First check localStorage
+    const savedComments = localStorage.getItem(`comments-${recipeId}`);
+    const localComments = savedComments ? JSON.parse(savedComments) : [];
+    
+    // If we're offline, return local comments
+    if (!navigator.onLine) {
+      return localComments;
+    }
+    
+    // Try to get from Firestore
+    const commentsRef = collection(db, 'recipes', recipeId, 'comments');
+    const q = query(commentsRef, orderBy('createdAt', 'desc'));
+    const commentsSnapshot = await getDocs(q);
+    
+    const comments: any[] = [];
+    commentsSnapshot.forEach((doc) => {
+      const data = doc.data();
+      comments.push({
+        id: doc.id,
+        ...data,
+        date: data.createdAt ? formatTimeAgo(data.createdAt.toDate()) : 'Just now'
+      });
+    });
+    
+    // Update localStorage with the latest data
+    localStorage.setItem(`comments-${recipeId}`, JSON.stringify([...comments, ...localComments]));
+    
+    return [...comments, ...localComments];
+  } catch (error) {
+    console.error('Error getting recipe comments:', error);
+    
+    // Return local comments on error
+    const savedComments = localStorage.getItem(`comments-${recipeId}`);
+    return savedComments ? JSON.parse(savedComments) : [];
+  }
+};

@@ -1,11 +1,13 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   Search, 
   ArrowLeft, 
   Bell, 
   User,
-  Filter
+  Filter,
+  Loader2,
+  WifiOff
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
@@ -13,9 +15,10 @@ import { RecipeCard } from "@/components/RecipeCard";
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
+import { getAllRecipes } from "@/lib/firebaseService";
 
-// Mock recipe data for all recipes
-const allRecipes = [
+// Mock recipe data as fallback
+const mockRecipes = [
   {
     id: "stir-fry-1",
     title: "Vegetable Stir Fry",
@@ -103,8 +106,62 @@ const AllRecipesPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("recipes");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
+  const [recipes, setRecipes] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  useEffect(() => {
+    const handleConnectionChange = () => {
+      setIsOffline(!navigator.onLine);
+    };
+
+    window.addEventListener('online', handleConnectionChange);
+    window.addEventListener('offline', handleConnectionChange);
+    
+    return () => {
+      window.removeEventListener('online', handleConnectionChange);
+      window.removeEventListener('offline', handleConnectionChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    const loadRecipes = async () => {
+      try {
+        setLoading(true);
+        
+        // Try to get recipes from Firebase/localStorage
+        const firebaseRecipes = await getAllRecipes();
+        
+        if (firebaseRecipes && firebaseRecipes.length > 0) {
+          setRecipes(firebaseRecipes);
+        } else {
+          // Initialize with mock data if no recipes found
+          setRecipes(mockRecipes);
+          
+          // Save mock data to Firebase if online
+          if (navigator.onLine) {
+            for (const recipe of mockRecipes) {
+              try {
+                const { saveRecipe } = await import('@/lib/firebaseService');
+                await saveRecipe(recipe);
+              } catch (error) {
+                console.error('Error saving mock recipe:', error);
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error loading recipes:', error);
+        setRecipes(mockRecipes);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadRecipes();
+  }, []);
 
   const handleBack = () => {
     navigate("/recipes");
@@ -202,19 +259,37 @@ const AllRecipesPage = () => {
           </form>
         </div>
 
+        {isOffline && (
+          <div className="bg-amber-50 border-l-4 border-amber-500 p-4 mb-4 mx-4 flex items-center">
+            <WifiOff className="h-5 w-5 text-amber-500 mr-2" />
+            <p className="text-amber-700">You're currently offline. Some features may be limited.</p>
+          </div>
+        )}
+
         <div className="px-4 mb-8">
           <h2 className="text-lg font-medium mb-3">
             All Available Recipes
           </h2>
-          <div className="grid grid-cols-1 gap-4">
-            {allRecipes.map((recipe) => (
-              <RecipeCard 
-                key={recipe.id}
-                recipe={recipe}
-                onClick={() => handleRecipeClick(recipe.id)}
-              />
-            ))}
-          </div>
+          
+          {loading ? (
+            <div className="flex justify-center items-center py-10">
+              <Loader2 className="h-8 w-8 animate-spin text-wayscanner-blue" />
+            </div>
+          ) : recipes.length > 0 ? (
+            <div className="grid grid-cols-1 gap-4">
+              {recipes.map((recipe) => (
+                <RecipeCard 
+                  key={recipe.id}
+                  recipe={recipe}
+                  onClick={() => handleRecipeClick(recipe.id)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-gray-500">No recipes found</p>
+            </div>
+          )}
         </div>
       </div>
 
