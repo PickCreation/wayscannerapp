@@ -80,18 +80,6 @@ const formSchema = z.object({
   color: z.string().min(1, { message: "Please select a color" }),
   brand: z.string().min(1, { message: "Please enter a brand" }),
   country: z.string().min(1, { message: "Please select a country" }),
-  variations: z.array(
-    z.object({
-      id: z.string(),
-      name: z.string(),
-      options: z.array(
-        z.object({
-          id: z.string(),
-          value: z.string()
-        })
-      )
-    })
-  ).optional(),
   tags: z.array(z.string()).max(6, { message: "Maximum 6 tags allowed" }).optional(),
   shippingDays: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0 && Number(val) <= 30, {
     message: "Shipping days must be between 1 and 30 days",
@@ -128,7 +116,6 @@ const AddListingPage = () => {
       color: "",
       brand: "",
       country: "",
-      variations: [],
       tags: [],
       shippingDays: "5", // Default to 5 days
     },
@@ -637,23 +624,6 @@ const AddListingPage = () => {
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="variations"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Product Variations (optional)</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder="Enter product variations (e.g., Size: S, M, L; Color: Red, Blue; etc.)" 
-                      {...field} 
-                    />
-                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
