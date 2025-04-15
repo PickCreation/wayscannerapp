@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, Heart, Bookmark, Send, Bell, User, LogIn, Loader2 } from "lucide-react";
+import { ChevronLeft, Heart, Bookmark, Send, Bell, User, LogIn, Loader2, WifiOff } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useParams } from "react-router-dom";
@@ -25,6 +24,22 @@ const PostDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [submittingComment, setSubmittingComment] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [isOffline, setIsOffline] = useState(false);
+  
+  useEffect(() => {
+    const handleConnectionChange = () => {
+      setIsOffline(!navigator.onLine);
+    };
+
+    window.addEventListener('online', handleConnectionChange);
+    window.addEventListener('offline', handleConnectionChange);
+    setIsOffline(!navigator.onLine);
+
+    return () => {
+      window.removeEventListener('online', handleConnectionChange);
+      window.removeEventListener('offline', handleConnectionChange);
+    };
+  }, []);
   
   useEffect(() => {
     const savedProfileImage = localStorage.getItem('profileImage');
@@ -42,108 +57,130 @@ const PostDetailPage = () => {
       }
       
       try {
-        // Try to get the post from Firestore
-        const postRef = doc(db, 'posts', postId);
-        const postSnapshot = await getDoc(postRef);
+        // First check if we have this post in localStorage
+        const savedPosts = localStorage.getItem('forumPosts');
+        const cachedPosts = savedPosts ? JSON.parse(savedPosts) : [];
+        const cachedPost = cachedPosts.find((p: any) => p.id === postId);
         
-        if (postSnapshot.exists()) {
-          const postData = postSnapshot.data();
+        if (cachedPost) {
+          setPost(cachedPost);
           
-          // Get author info
-          let authorData = { name: 'Unknown User', avatar: '/placeholder.svg' };
-          try {
-            const authorRef = doc(db, 'users', postData.authorId);
-            const authorDoc = await getDoc(authorRef);
-            if (authorDoc.exists()) {
-              const userData = authorDoc.data();
-              authorData = {
-                name: userData.name || 'User',
-                avatar: userData.photoURL || '/placeholder.svg'
-              };
-            }
-          } catch (error) {
-            console.error('Error fetching author data:', error);
+          // Try to get cached comments if available
+          const savedComments = localStorage.getItem(`post_${postId}_comments`);
+          if (savedComments) {
+            setComments(JSON.parse(savedComments));
           }
+        }
+        
+        // Only try to fetch from Firebase if online
+        if (navigator.onLine) {
+          // Try to get the post from Firestore
+          const postRef = doc(db, 'posts', postId);
+          const postSnapshot = await getDoc(postRef);
           
-          // Check post likes
-          let likes = 0;
-          let liked = false;
-          
-          const likesRef = collection(db, 'posts', postId, 'userLikes');
-          const likesQuery = query(likesRef);
-          const likesSnapshot = await getDocs(likesQuery);
-          likes = likesSnapshot.size;
-          
-          // Check if current user has liked the post
-          if (isAuthenticated) {
-            const user = await import('@/lib/firebase').then(module => module.auth.currentUser);
-            if (user) {
-              const userLikesRef = doc(db, 'posts', postId, 'userLikes', user.uid);
-              const userLikeDoc = await getDoc(userLikesRef);
-              liked = userLikeDoc.exists();
-            }
-          }
-          
-          // Check if post is bookmarked
-          let bookmarked = false;
-          if (isAuthenticated) {
-            const user = await import('@/lib/firebase').then(module => module.auth.currentUser);
-            if (user) {
-              const userBookmarksRef = doc(db, 'posts', postId, 'userBookmarks', user.uid);
-              const userBookmarkDoc = await getDoc(userBookmarksRef);
-              bookmarked = userBookmarkDoc.exists();
-            }
-          }
-          
-          // Count comments
-          const commentsRef = collection(db, 'posts', postId, 'comments');
-          const commentsQuery = query(commentsRef);
-          const commentsSnapshot = await getDocs(commentsQuery);
-          const commentsCount = commentsSnapshot.size;
-          
-          // Get comments
-          const fetchedComments = await getComments(postId);
-          setComments(fetchedComments);
-          
-          // Format date
-          const timeAgo = postData.createdAt ? formatTimeAgo(postData.createdAt.toDate()) : '';
-          
-          // Set post data
-          setPost({
-            id: postId,
-            author: authorData,
-            timeAgo,
-            category: postData.category || 'General',
-            content: postData.content || '',
-            imageUrl: postData.imageUrl || null,
-            likes,
-            comments: commentsCount,
-            liked,
-            bookmarked
-          });
-        } else {
-          // If not found in Firestore, try localStorage
-          const savedPosts = localStorage.getItem('forumPosts');
-          if (savedPosts) {
-            const allPosts = JSON.parse(savedPosts);
-            const foundPost = allPosts.find((p: any) => p.id === postId);
+          if (postSnapshot.exists()) {
+            const postData = postSnapshot.data();
             
-            if (foundPost) {
-              setPost(foundPost);
-              if (!foundPost.comments || !Array.isArray(foundPost.comments)) {
-                foundPost.comments = [];
+            // Get author info
+            let authorData = { name: 'Unknown User', avatar: '/placeholder.svg' };
+            try {
+              const authorRef = doc(db, 'users', postData.authorId);
+              const authorDoc = await getDoc(authorRef);
+              if (authorDoc.exists()) {
+                const userData = authorDoc.data();
+                authorData = {
+                  name: userData.name || 'User',
+                  avatar: userData.photoURL || '/placeholder.svg'
+                };
               }
-              setComments(foundPost.comments);
+            } catch (error) {
+              console.error('Error fetching author data:', error);
+            }
+            
+            // Check post likes
+            let likes = 0;
+            let liked = false;
+            
+            const likesRef = collection(db, 'posts', postId, 'userLikes');
+            const likesQuery = query(likesRef);
+            const likesSnapshot = await getDocs(likesQuery);
+            likes = likesSnapshot.size;
+            
+            // Check if current user has liked the post
+            if (isAuthenticated) {
+              const user = await import('@/lib/firebase').then(module => module.auth.currentUser);
+              if (user) {
+                const userLikesRef = doc(db, 'posts', postId, 'userLikes', user.uid);
+                const userLikeDoc = await getDoc(userLikesRef);
+                liked = userLikeDoc.exists();
+              }
+            }
+            
+            // Check if post is bookmarked
+            let bookmarked = false;
+            if (isAuthenticated) {
+              const user = await import('@/lib/firebase').then(module => module.auth.currentUser);
+              if (user) {
+                const userBookmarksRef = doc(db, 'posts', postId, 'userBookmarks', user.uid);
+                const userBookmarkDoc = await getDoc(userBookmarksRef);
+                bookmarked = userBookmarkDoc.exists();
+              }
+            }
+            
+            // Count comments
+            const commentsRef = collection(db, 'posts', postId, 'comments');
+            const commentsQuery = query(commentsRef);
+            const commentsSnapshot = await getDocs(commentsQuery);
+            const commentsCount = commentsSnapshot.size;
+            
+            // Get comments
+            const fetchedComments = await getComments(postId);
+            setComments(fetchedComments);
+            
+            // Store comments in localStorage for offline access
+            localStorage.setItem(`post_${postId}_comments`, JSON.stringify(fetchedComments));
+            
+            // Format date
+            const timeAgo = postData.createdAt ? formatTimeAgo(postData.createdAt.toDate()) : '';
+            
+            // Set post data
+            const postObj = {
+              id: postId,
+              author: authorData,
+              timeAgo,
+              category: postData.category || 'General',
+              content: postData.content || '',
+              imageUrl: postData.imageUrl || null,
+              likes,
+              comments: commentsCount,
+              liked,
+              bookmarked
+            };
+            
+            setPost(postObj);
+            
+            // Update the post in localStorage
+            if (cachedPosts.length > 0) {
+              const updatedPosts = cachedPosts.map((p: any) => 
+                p.id === postId ? postObj : p
+              );
+              localStorage.setItem('forumPosts', JSON.stringify(updatedPosts));
             }
           }
         }
       } catch (error) {
         console.error("Error fetching post:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load post. Please try again.",
-          variant: "destructive"
-        });
+        setIsOffline(true);
+        
+        // If we have a cached version, we'll continue with that
+        // Otherwise, we'll show an error
+        if (!post) {
+          toast({
+            title: "Connection Error",
+            description: "Failed to load post. You appear to be offline.",
+            variant: "destructive"
+          });
+        }
       } finally {
         setLoading(false);
       }
@@ -303,6 +340,13 @@ const PostDetailPage = () => {
         </div>
       </header>
       
+      {isOffline && (
+        <div className="bg-amber-50 border-l-4 border-amber-500 p-4 mb-4 mx-4 mt-2 flex items-center">
+          <WifiOff className="h-5 w-5 text-amber-500 mr-2" />
+          <p className="text-amber-700">You're currently offline. Some features may be limited.</p>
+        </div>
+      )}
+      
       <div className="flex-1 p-4">
         <div className="bg-white rounded-lg shadow p-4 mb-4 border border-gray-100">
           <div className="flex items-center mb-3">
@@ -344,6 +388,7 @@ const PostDetailPage = () => {
               className="flex items-center mr-5"
               onClick={handleLikePost}
               type="button"
+              disabled={isOffline}
             >
               <Heart 
                 size={22} 
@@ -363,6 +408,7 @@ const PostDetailPage = () => {
               className="flex items-center ml-auto"
               onClick={handleBookmarkPost}
               type="button"
+              disabled={isOffline}
             >
               <Bookmark 
                 size={22} 
@@ -398,7 +444,10 @@ const PostDetailPage = () => {
               ))
             ) : (
               <div className="text-center py-6 text-gray-500">
-                <p>No comments yet. Be the first to comment!</p>
+                {isOffline ? 
+                  <p>Comments aren't available offline.</p> :
+                  <p>No comments yet. Be the first to comment!</p>
+                }
               </div>
             )}
           </div>
@@ -410,12 +459,13 @@ const PostDetailPage = () => {
                 onChange={e => setNewComment(e.target.value)}
                 placeholder="Add a comment..."
                 className="flex-1"
+                disabled={isOffline}
               />
               <Button 
                 onClick={handleSubmitComment} 
                 size="icon" 
                 type="button"
-                disabled={submittingComment}
+                disabled={submittingComment || isOffline}
               >
                 {submittingComment ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
