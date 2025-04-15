@@ -1,5 +1,6 @@
+
 import React, { useState } from "react";
-import { ChevronLeft, Camera, Upload, Plus, X, Tag, Clock, DollarSign } from "lucide-react";
+import { ChevronLeft, Camera, Upload, Plus, X, Tag, Clock, DollarSign, Ruler, Package, WashingMachine } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -68,6 +69,14 @@ const formSchema = z.object({
   weight: z.string().refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
     message: "Weight must be a non-negative number",
   }),
+  height: z.string().refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
+    message: "Height must be a non-negative number",
+  }),
+  width: z.string().refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
+    message: "Width must be a non-negative number",
+  }),
+  material: z.string().min(1, { message: "Please enter material information" }),
+  careInstructions: z.string().optional(),
   color: z.string().min(1, { message: "Please select a color" }),
   brand: z.string().min(1, { message: "Please enter a brand" }),
   country: z.string().min(1, { message: "Please select a country" }),
@@ -99,6 +108,10 @@ const AddListingPage = () => {
       category: "",
       condition: "",
       weight: "",
+      height: "",
+      width: "",
+      material: "",
+      careInstructions: "",
       color: "",
       brand: "",
       country: "",
@@ -464,6 +477,79 @@ const AddListingPage = () => {
                 )}
               />
             </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="height"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Height (cm)</FormLabel>
+                    <div className="flex items-center">
+                      <FormControl>
+                        <Input placeholder="0" type="number" step="0.1" min="0" {...field} />
+                      </FormControl>
+                      <Ruler className="ml-2 text-gray-400" size={18} />
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="width"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Width (cm)</FormLabel>
+                    <div className="flex items-center">
+                      <FormControl>
+                        <Input placeholder="0" type="number" step="0.1" min="0" {...field} />
+                      </FormControl>
+                      <Ruler className="ml-2 text-gray-400" size={18} />
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="material"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Material</FormLabel>
+                  <div className="flex items-center">
+                    <FormControl>
+                      <Input placeholder="Enter material (e.g., Wood, Metal, Cotton)" {...field} />
+                    </FormControl>
+                    <Package className="ml-2 text-gray-400" size={18} />
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="careInstructions"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Care Instructions</FormLabel>
+                  <div className="flex items-center">
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Add care or maintenance instructions for the product" 
+                        {...field} 
+                      />
+                    </FormControl>
+                    <WashingMachine className="ml-2 text-gray-400 self-start mt-3" size={18} />
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             {/* Commission information */}
             {Number(watchPrice) > 0 && (
