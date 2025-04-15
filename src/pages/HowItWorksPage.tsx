@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
@@ -6,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { fetchHowItWorksContent } from "@/api/mockApi";
 import BottomNavigation from "@/components/BottomNavigation";
+import CameraSheet from "@/components/CameraSheet";
 
 const HowItWorksPage = () => {
   const navigate = useNavigate();
@@ -20,9 +22,34 @@ const HowItWorksPage = () => {
   } | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("home");
+  const [showCameraSheet, setShowCameraSheet] = useState(false);
 
   const handleCameraClick = () => {
-    // This can be implemented to open the camera sheet if needed
+    setShowCameraSheet(true);
+  };
+
+  const handleNavItemClick = (item: "home" | "forum" | "recipes" | "shop" | "profile") => {
+    setActiveNavItem(item);
+    if (item === "home") {
+      navigate("/");
+      return;
+    }
+    if (item === "forum") {
+      navigate("/forum");
+      return;
+    }
+    if (item === "recipes") {
+      navigate("/recipes");
+      return;
+    }
+    if (item === "shop") {
+      navigate("/marketplace");
+      return;
+    }
+    if (item === "profile") {
+      navigate("/profile");
+      return;
+    }
   };
 
   useEffect(() => {
@@ -96,9 +123,14 @@ const HowItWorksPage = () => {
         ))}
       </div>
 
+      <CameraSheet 
+        open={showCameraSheet} 
+        onOpenChange={setShowCameraSheet} 
+      />
+
       <BottomNavigation 
         activeItem={activeNavItem} 
-        onItemClick={setActiveNavItem} 
+        onItemClick={handleNavItemClick} 
         onCameraClick={handleCameraClick} 
       />
     </div>
