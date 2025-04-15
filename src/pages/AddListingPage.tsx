@@ -56,7 +56,7 @@ const colors = [
   "Black", "Green", "Maroon", "Silver", "Turquoise", "Purple", "Teal", "Blue"
 ];
 
-const conditions = ["New", "Open Box", "Like New", "Used", "Refurbished"];
+const conditions = ["New", "Open Box", "Used", "Refurbished"];
 
 const formSchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters" }),
