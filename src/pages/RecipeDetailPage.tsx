@@ -41,7 +41,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { getRecipe, saveRecipeComment, getRecipeComments, addBookmark, removeBookmark, saveRecipe } from "@/lib/firebaseService";
+import { getRecipe, saveRecipeComment, getRecipeComments, addBookmark, removeBookmark, saveRecipe as saveRecipeToFirebase } from "@/lib/firebaseService";
 
 const recipeData = {
   "pasta-1": {
@@ -289,13 +289,13 @@ const RecipeDetailPage = () => {
               console.log('No Firebase recipe, using local:', localRecipe);
               setRecipe(localRecipe);
               
-              await saveRecipe(localRecipe);
+              await saveRecipeToFirebase(localRecipe);
             } else {
               const mockRecipe = recipeData[recipeId as keyof typeof recipeData];
               if (mockRecipe) {
                 console.log('Using and saving mock recipe:', mockRecipe);
                 setRecipe(mockRecipe);
-                await saveRecipe(mockRecipe);
+                await saveRecipeToFirebase(mockRecipe);
               } else {
                 console.log('No recipe found anywhere, using default');
                 setRecipe(getDefaultRecipe(recipeId));
@@ -972,10 +972,9 @@ const RecipeDetailPage = () => {
   );
 };
 
-const saveRecipe = async (recipe: any) => {
+const saveRecipeHelper = async (recipe: any) => {
   try {
-    const { saveRecipe } = await import('@/lib/firebaseService');
-    await saveRecipe(recipe);
+    await saveRecipeToFirebase(recipe);
     return true;
   } catch (error) {
     console.error('Error saving recipe:', error);
