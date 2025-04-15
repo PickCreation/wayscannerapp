@@ -41,7 +41,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { getRecipe, saveRecipeComment, getRecipeComments, addBookmark, removeBookmark } from "@/lib/firebaseService";
+import { getRecipe, saveRecipeComment, getRecipeComments, addBookmark, removeBookmark, saveRecipe } from "@/lib/firebaseService";
 
 const recipeData = {
   "pasta-1": {
@@ -245,32 +245,99 @@ const RecipeDetailPage = () => {
       setLoading(true);
       
       try {
-        const firebaseRecipe = await getRecipe(recipeId);
+        const savedRecipes = localStorage.getItem('recipes');
+        const localRecipes = savedRecipes ? JSON.parse(savedRecipes) : [];
+        const localRecipe = localRecipes.find((r: any) => r.id === recipeId);
         
-        if (firebaseRecipe) {
-          setRecipe(firebaseRecipe);
+        if (!navigator.onLine) {
+          if (localRecipe) {
+            console.log('Using cached recipe from localStorage:', localRecipe);
+            setRecipe(localRecipe);
+          } else {
+            const mockRecipe = recipeData[recipeId as keyof typeof recipeData];
+            if (mockRecipe) {
+              console.log('Using mock recipe data:', mockRecipe);
+              setRecipe(mockRecipe);
+              
+              const updatedRecipes = [...localRecipes, mockRecipe];
+              localStorage.setItem('recipes', JSON.stringify(updatedRecipes));
+            } else {
+              console.log('No mock or cached data found, using default recipe');
+              setRecipe(getDefaultRecipe(recipeId));
+            }
+          }
+          
+          const savedComments = localStorage.getItem(`comments-${recipeId}`);
+          if (savedComments) {
+            setSystemComments(JSON.parse(savedComments));
+          }
+          
+          toast({
+            title: "You're offline",
+            description: "Using cached recipe data",
+            variant: "default"
+          });
         } else {
-          const mockRecipe = recipeData[recipeId as keyof typeof recipeData];
-          if (mockRecipe) {
-            setRecipe(mockRecipe);
+          try {
+            console.log('Fetching recipe from Firebase:', recipeId);
+            const firebaseRecipe = await getRecipe(recipeId);
             
-            if (navigator.onLine) {
-              try {
+            if (firebaseRecipe) {
+              console.log('Firebase recipe found:', firebaseRecipe);
+              setRecipe(firebaseRecipe);
+            } else if (localRecipe) {
+              console.log('No Firebase recipe, using local:', localRecipe);
+              setRecipe(localRecipe);
+              
+              await saveRecipe(localRecipe);
+            } else {
+              const mockRecipe = recipeData[recipeId as keyof typeof recipeData];
+              if (mockRecipe) {
+                console.log('Using and saving mock recipe:', mockRecipe);
+                setRecipe(mockRecipe);
                 await saveRecipe(mockRecipe);
-              } catch (error) {
-                console.error('Error saving mock recipe to Firebase:', error);
+              } else {
+                console.log('No recipe found anywhere, using default');
+                setRecipe(getDefaultRecipe(recipeId));
               }
             }
-          } else {
-            setRecipe(getDefaultRecipe(recipeId));
+            
+            try {
+              const comments = await getRecipeComments(recipeId);
+              console.log('Recipe comments:', comments);
+              setSystemComments(comments || []);
+            } catch (commentErr) {
+              console.error('Error loading recipe comments:', commentErr);
+              const savedComments = localStorage.getItem(`comments-${recipeId}`);
+              if (savedComments) {
+                setSystemComments(JSON.parse(savedComments));
+              }
+            }
+          } catch (firebaseErr) {
+            console.error('Firebase recipe fetch error:', firebaseErr);
+            
+            if (localRecipe) {
+              console.log('Firebase error, using local recipe');
+              setRecipe(localRecipe);
+            } else {
+              const mockRecipe = recipeData[recipeId as keyof typeof recipeData];
+              if (mockRecipe) {
+                console.log('Firebase error, using mock recipe');
+                setRecipe(mockRecipe);
+                
+                const updatedRecipes = [...localRecipes, mockRecipe];
+                localStorage.setItem('recipes', JSON.stringify(updatedRecipes));
+              } else {
+                console.log('No fallback data found, using default');
+                setRecipe(getDefaultRecipe(recipeId));
+              }
+            }
+            
+            const savedComments = localStorage.getItem(`comments-${recipeId}`);
+            if (savedComments) {
+              setSystemComments(JSON.parse(savedComments));
+            }
           }
-        }
-        
-        try {
-          const comments = await getRecipeComments(recipeId);
-          setSystemComments(comments || []);
-        } catch (error) {
-          console.error('Error loading recipe comments:', error);
         }
         
         const savedBookmarks = localStorage.getItem('bookmarkedRecipes');
@@ -280,23 +347,21 @@ const RecipeDetailPage = () => {
           setIsSaved(isRecipeSaved);
         }
         
-        const savedComments = localStorage.getItem(`comments-${recipeId}`);
+        const savedComments = localStorage.getItem(`userComments-${recipeId}`);
         if (savedComments) {
           setUserComments(JSON.parse(savedComments));
         }
       } catch (error) {
-        console.error('Error loading recipe:', error);
+        console.error('General error loading recipe:', error);
         
         const mockRecipe = recipeData[recipeId as keyof typeof recipeData];
         setRecipe(mockRecipe || getDefaultRecipe(recipeId));
         
-        if (isOffline) {
-          toast({
-            title: "You're offline",
-            description: "Limited recipe data available",
-            variant: "default"
-          });
-        }
+        toast({
+          title: "Error Loading Recipe",
+          description: "Could not load the recipe details. Using fallback data.",
+          variant: "destructive"
+        });
       } finally {
         setLoading(false);
       }
@@ -433,29 +498,33 @@ const RecipeDetailPage = () => {
     };
 
     try {
-      await saveRecipeComment(recipe.id, newComment);
+      const savedUserComments = localStorage.getItem(`userComments-${recipe.id}`);
+      const userCommentsList = savedUserComments ? JSON.parse(savedUserComments) : [];
+      const updatedUserComments = [...userCommentsList, newComment];
+      localStorage.setItem(`userComments-${recipe.id}`, JSON.stringify(updatedUserComments));
+      setUserComments(updatedUserComments);
       
-      const updatedComments = [...userComments, newComment];
-      setUserComments(updatedComments);
-      
-      localStorage.setItem(`comments-${recipe.id}`, JSON.stringify(updatedComments));
-
-      toast({
-        title: "Comment Posted",
-        description: "Your comment has been posted successfully.",
-      });
+      if (navigator.onLine) {
+        await saveRecipeComment(recipe.id, newComment);
+        
+        toast({
+          title: "Comment Posted",
+          description: "Your comment has been posted successfully.",
+        });
+      } else {
+        toast({
+          title: "Comment Saved Locally",
+          description: "You're offline. Comment saved locally and will sync when back online.",
+        });
+      }
 
       setComment("");
     } catch (error) {
       console.error('Error posting comment:', error);
       
-      const updatedComments = [...userComments, newComment];
-      setUserComments(updatedComments);
-      localStorage.setItem(`comments-${recipe.id}`, JSON.stringify(updatedComments));
-      
       toast({
         title: "Comment Saved Locally",
-        description: "Comment saved locally - will sync when back online.",
+        description: "Error saving to database. Comment saved locally and will sync when possible.",
       });
       
       setComment("");
@@ -715,7 +784,7 @@ const RecipeDetailPage = () => {
           <h3 className="text-base font-semibold mb-3">Tips</h3>
           <div className="bg-yellow-50 border border-yellow-100 rounded-lg p-4">
             <div className="flex items-start mb-2">
-              <LightbulbIcon size={14} className="text-yellow-500 mr-2 mt-0.5" />
+              <LightbulbIcon size={14} className="text-yellow-500 mr-2 text-blue-500" />
               <h4 className="text-sm font-semibold text-yellow-600">Chef Tips</h4>
             </div>
             <ul className="space-y-2 ml-2">

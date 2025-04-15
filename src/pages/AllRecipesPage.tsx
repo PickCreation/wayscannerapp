@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { 
   Search, 
@@ -15,9 +14,8 @@ import { RecipeCard } from "@/components/RecipeCard";
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
-import { getAllRecipes } from "@/lib/firebaseService";
+import { getAllRecipes, saveRecipe } from "@/lib/firebaseService";
 
-// Mock recipe data as fallback
 const mockRecipes = [
   {
     id: "stir-fry-1",
@@ -130,21 +128,27 @@ const AllRecipesPage = () => {
     const loadRecipes = async () => {
       try {
         setLoading(true);
+        console.log('Loading recipes from Firebase/localStorage');
         
         // Try to get recipes from Firebase/localStorage
         const firebaseRecipes = await getAllRecipes();
         
         if (firebaseRecipes && firebaseRecipes.length > 0) {
+          console.log('Recipes loaded successfully:', firebaseRecipes.length);
           setRecipes(firebaseRecipes);
         } else {
+          console.log('No recipes found, initializing with mock data');
           // Initialize with mock data if no recipes found
           setRecipes(mockRecipes);
           
+          // Save mock data to localStorage for offline access
+          localStorage.setItem('recipes', JSON.stringify(mockRecipes));
+          
           // Save mock data to Firebase if online
           if (navigator.onLine) {
+            console.log('Saving mock recipes to Firebase');
             for (const recipe of mockRecipes) {
               try {
-                const { saveRecipe } = await import('@/lib/firebaseService');
                 await saveRecipe(recipe);
               } catch (error) {
                 console.error('Error saving mock recipe:', error);
@@ -155,6 +159,9 @@ const AllRecipesPage = () => {
       } catch (error) {
         console.error('Error loading recipes:', error);
         setRecipes(mockRecipes);
+        
+        // Save mock data to localStorage for offline access
+        localStorage.setItem('recipes', JSON.stringify(mockRecipes));
       } finally {
         setLoading(false);
       }

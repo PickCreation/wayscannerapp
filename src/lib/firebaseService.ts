@@ -607,8 +607,13 @@ const formatTimeAgo = (date: Date) => {
 // Recipe related functions
 export const saveRecipe = async (recipeData: any) => {
   try {
-    const user = auth.currentUser;
+    if (!recipeData || !recipeData.id) {
+      console.error('Invalid recipe data provided', recipeData);
+      return null;
+    }
+    
     const recipeId = recipeData.id;
+    console.log('Saving recipe:', recipeId, recipeData);
     
     // Store recipe in localStorage for offline access
     const savedRecipes = localStorage.getItem('recipes');
@@ -622,29 +627,53 @@ export const saveRecipe = async (recipeData: any) => {
     }
     
     localStorage.setItem('recipes', JSON.stringify(recipes));
+    console.log('Recipe saved to localStorage');
+    
+    // If we're offline, just keep it in localStorage
+    if (!navigator.onLine) {
+      console.log('Offline mode, recipe only saved to localStorage');
+      return recipeData;
+    }
+    
+    const user = auth.currentUser;
     
     // If user is not authenticated, just keep it in localStorage
     if (!user) {
+      console.log('No authenticated user, recipe only saved to localStorage');
       return recipeData;
     }
     
     // If user is authenticated, save to Firestore
-    const recipeRef = doc(db, 'recipes', recipeId);
-    await setDoc(recipeRef, {
-      ...recipeData,
-      updatedAt: serverTimestamp(),
-      createdAt: serverTimestamp()
-    }, { merge: true });
-    
-    return recipeData;
+    try {
+      const recipeRef = doc(db, 'recipes', recipeId);
+      await setDoc(recipeRef, {
+        ...recipeData,
+        updatedAt: serverTimestamp(),
+        createdAt: serverTimestamp()
+      }, { merge: true });
+      
+      console.log('Recipe saved to Firebase');
+      return recipeData;
+    } catch (firestoreError) {
+      console.error('Firestore save error:', firestoreError);
+      // Still return the recipe data since we saved to localStorage
+      return recipeData;
+    }
   } catch (error) {
     console.error('Error saving recipe:', error);
-    throw error;
+    return null;
   }
 };
 
 export const getRecipe = async (recipeId: string) => {
   try {
+    if (!recipeId) {
+      console.error('Invalid recipeId provided');
+      return null;
+    }
+    
+    console.log('Getting recipe:', recipeId);
+    
     // First check localStorage
     const savedRecipes = localStorage.getItem('recipes');
     const recipes = savedRecipes ? JSON.parse(savedRecipes) : [];
@@ -652,69 +681,127 @@ export const getRecipe = async (recipeId: string) => {
     
     // If we're offline, return the local recipe
     if (!navigator.onLine) {
+      console.log('Offline mode, returning local recipe:', localRecipe);
       return localRecipe || null;
     }
     
     // Try to get from Firestore
-    const recipeRef = doc(db, 'recipes', recipeId);
-    const recipeDoc = await getDoc(recipeRef);
-    
-    if (recipeDoc.exists()) {
-      const recipe = recipeDoc.data();
+    try {
+      const recipeRef = doc(db, 'recipes', recipeId);
+      const recipeDoc = await getDoc(recipeRef);
       
-      // Update local storage with the latest data
-      const updatedRecipes = recipes.map((r: any) => 
-        r.id === recipeId ? { ...recipe, id: recipeId } : r
-      );
+      if (recipeDoc.exists()) {
+        const recipe = recipeDoc.data();
+        console.log('Firebase recipe found:', recipe);
+        
+        // Update local storage with the latest data
+        const updatedRecipes = recipes.map((r: any) => 
+          r.id === recipeId ? { ...recipe, id: recipeId } : r
+        );
+        
+        if (!updatedRecipes.some((r: any) => r.id === recipeId)) {
+          updatedRecipes.push({ ...recipe, id: recipeId });
+        }
+        
+        localStorage.setItem('recipes', JSON.stringify(updatedRecipes));
+        
+        return { ...recipe, id: recipeId };
+      } else {
+        console.log('Recipe not found in Firebase, checking local');
+        
+        // If not in Firestore but we have a local version, return that
+        if (localRecipe) {
+          console.log('Returning local recipe:', localRecipe);
+          
+          // Try to save the local recipe to Firebase
+          try {
+            await setDoc(recipeRef, {
+              ...localRecipe,
+              updatedAt: serverTimestamp(),
+              createdAt: serverTimestamp()
+            });
+            console.log('Local recipe saved to Firebase');
+          } catch (saveError) {
+            console.error('Error saving local recipe to Firebase:', saveError);
+          }
+        }
+        
+        return localRecipe || null;
+      }
+    } catch (firestoreError) {
+      console.error('Firestore get error:', firestoreError);
       
-      if (!updatedRecipes.some((r: any) => r.id === recipeId)) {
-        updatedRecipes.push({ ...recipe, id: recipeId });
+      // If Firestore fails, return local recipe if available
+      if (localRecipe) {
+        console.log('Firestore error, returning local recipe:', localRecipe);
+        return localRecipe;
       }
       
-      localStorage.setItem('recipes', JSON.stringify(updatedRecipes));
-      
-      return { ...recipe, id: recipeId };
+      return null;
     }
-    
-    // If not in Firestore but we have a local version, return that
-    return localRecipe || null;
   } catch (error) {
     console.error('Error getting recipe:', error);
     
     // If we have a local version, return that on error
     const savedRecipes = localStorage.getItem('recipes');
     const recipes = savedRecipes ? JSON.parse(savedRecipes) : [];
-    return recipes.find((r: any) => r.id === recipeId) || null;
+    const localRecipe = recipes.find((r: any) => r.id === recipeId);
+    
+    return localRecipe || null;
   }
 };
 
 export const getAllRecipes = async () => {
   try {
+    console.log('Getting all recipes');
+    
     // First check localStorage
     const savedRecipes = localStorage.getItem('recipes');
     const localRecipes = savedRecipes ? JSON.parse(savedRecipes) : [];
     
     // If we're offline, return local recipes
     if (!navigator.onLine) {
+      console.log('Offline mode, returning local recipes:', localRecipes.length);
       return localRecipes;
     }
     
     // Try to get from Firestore
-    const recipesRef = collection(db, 'recipes');
-    const recipesSnapshot = await getDocs(recipesRef);
-    
-    const recipes: any[] = [];
-    recipesSnapshot.forEach((doc) => {
-      recipes.push({
-        id: doc.id,
-        ...doc.data()
+    try {
+      const recipesRef = collection(db, 'recipes');
+      const recipesSnapshot = await getDocs(recipesRef);
+      
+      const recipes: any[] = [];
+      recipesSnapshot.forEach((doc) => {
+        recipes.push({
+          id: doc.id,
+          ...doc.data()
+        });
       });
-    });
-    
-    // Update localStorage with the latest data
-    localStorage.setItem('recipes', JSON.stringify(recipes));
-    
-    return recipes;
+      
+      console.log('Firebase recipes found:', recipes.length);
+      
+      // If we got recipes from Firebase, update localStorage
+      if (recipes.length > 0) {
+        // Merge with local recipes that might not be in Firebase yet
+        const mergedRecipes = [...recipes];
+        
+        // Add any local recipes that aren't in the Firebase results
+        localRecipes.forEach((localRecipe: any) => {
+          if (!mergedRecipes.some((r) => r.id === localRecipe.id)) {
+            mergedRecipes.push(localRecipe);
+          }
+        });
+        
+        localStorage.setItem('recipes', JSON.stringify(mergedRecipes));
+        return mergedRecipes;
+      }
+      
+      // If no Firebase recipes, return local recipes
+      return localRecipes;
+    } catch (firestoreError) {
+      console.error('Firestore getAll error:', firestoreError);
+      return localRecipes;
+    }
   } catch (error) {
     console.error('Error getting all recipes:', error);
     
@@ -726,7 +813,12 @@ export const getAllRecipes = async () => {
 
 export const saveRecipeComment = async (recipeId: string, commentData: any) => {
   try {
-    const user = auth.currentUser;
+    if (!recipeId || !commentData) {
+      console.error('Invalid recipeId or commentData');
+      return null;
+    }
+    
+    console.log('Saving recipe comment:', recipeId, commentData);
     
     // Store comment in localStorage for offline access
     const savedComments = localStorage.getItem(`comments-${recipeId}`);
@@ -734,30 +826,47 @@ export const saveRecipeComment = async (recipeId: string, commentData: any) => {
     comments.push(commentData);
     localStorage.setItem(`comments-${recipeId}`, JSON.stringify(comments));
     
+    // If we're offline, just keep it in localStorage
+    if (!navigator.onLine) {
+      console.log('Offline mode, comment only saved to localStorage');
+      return commentData;
+    }
+    
+    const user = auth.currentUser;
+    
     // If user is not authenticated, just keep it in localStorage
     if (!user) {
+      console.log('No authenticated user, comment only saved to localStorage');
       return commentData;
     }
     
     // If user is authenticated, save to Firestore
-    const commentsRef = collection(db, 'recipes', recipeId, 'comments');
-    
-    const commentDoc = await addDoc(commentsRef, {
-      ...commentData,
-      userId: user.uid,
-      createdAt: serverTimestamp()
-    });
-    
-    // Update recipe document to increment comments count
-    const recipeRef = doc(db, 'recipes', recipeId);
-    await updateDoc(recipeRef, {
-      comments: Timestamp.now()
-    });
-    
-    return {
-      ...commentData,
-      id: commentDoc.id
-    };
+    try {
+      const commentsRef = collection(db, 'recipes', recipeId, 'comments');
+      
+      const commentDoc = await addDoc(commentsRef, {
+        ...commentData,
+        userId: user.uid,
+        createdAt: serverTimestamp()
+      });
+      
+      // Update recipe document to increment comments count
+      const recipeRef = doc(db, 'recipes', recipeId);
+      await updateDoc(recipeRef, {
+        comments: Timestamp.now()
+      });
+      
+      console.log('Comment saved to Firebase');
+      
+      return {
+        ...commentData,
+        id: commentDoc.id
+      };
+    } catch (firestoreError) {
+      console.error('Firestore comment save error:', firestoreError);
+      // Still return the comment data since we saved to localStorage
+      return commentData;
+    }
   } catch (error) {
     console.error('Error saving recipe comment:', error);
     throw error;
@@ -766,34 +875,64 @@ export const saveRecipeComment = async (recipeId: string, commentData: any) => {
 
 export const getRecipeComments = async (recipeId: string) => {
   try {
+    if (!recipeId) {
+      console.error('Invalid recipeId provided');
+      return [];
+    }
+    
+    console.log('Getting recipe comments:', recipeId);
+    
     // First check localStorage
     const savedComments = localStorage.getItem(`comments-${recipeId}`);
     const localComments = savedComments ? JSON.parse(savedComments) : [];
     
     // If we're offline, return local comments
     if (!navigator.onLine) {
+      console.log('Offline mode, returning local comments:', localComments.length);
       return localComments;
     }
     
     // Try to get from Firestore
-    const commentsRef = collection(db, 'recipes', recipeId, 'comments');
-    const q = query(commentsRef, orderBy('createdAt', 'desc'));
-    const commentsSnapshot = await getDocs(q);
-    
-    const comments: any[] = [];
-    commentsSnapshot.forEach((doc) => {
-      const data = doc.data();
-      comments.push({
-        id: doc.id,
-        ...data,
-        date: data.createdAt ? formatTimeAgo(data.createdAt.toDate()) : 'Just now'
+    try {
+      const commentsRef = collection(db, 'recipes', recipeId, 'comments');
+      const q = query(commentsRef, orderBy('createdAt', 'desc'));
+      const commentsSnapshot = await getDocs(q);
+      
+      const comments: any[] = [];
+      commentsSnapshot.forEach((doc) => {
+        const data = doc.data();
+        comments.push({
+          id: doc.id,
+          ...data,
+          date: data.createdAt ? formatTimeAgo(data.createdAt.toDate()) : 'Just now'
+        });
       });
-    });
-    
-    // Update localStorage with the latest data
-    localStorage.setItem(`comments-${recipeId}`, JSON.stringify([...comments, ...localComments]));
-    
-    return [...comments, ...localComments];
+      
+      console.log('Firebase comments found:', comments.length);
+      
+      // Merge with local comments
+      const mergedComments = [...comments];
+      
+      // Add any local comments that aren't in the Firebase results
+      localComments.forEach((localComment: any) => {
+        const firebaseComment = comments.find((c) => 
+          c.id === localComment.id || 
+          (c.text === localComment.text && c.author === localComment.author)
+        );
+        
+        if (!firebaseComment) {
+          mergedComments.push(localComment);
+        }
+      });
+      
+      // Update localStorage with the latest data
+      localStorage.setItem(`comments-${recipeId}`, JSON.stringify(mergedComments));
+      
+      return mergedComments;
+    } catch (firestoreError) {
+      console.error('Firestore comments get error:', firestoreError);
+      return localComments;
+    }
   } catch (error) {
     console.error('Error getting recipe comments:', error);
     
