@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ChevronRight, Camera, Apple, Bookmark } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { addBookmark, removeBookmark, isBookmarked } from '@/lib/firebaseService';
 
 interface FoodScanTabProps {
   onEditPreferences?: () => void;
@@ -48,59 +49,62 @@ const FoodScanTab: React.FC<FoodScanTabProps> = ({ onEditPreferences, onHowWeSco
     }
   ];
 
-  // Load bookmarked items from localStorage on component mount
+  // Load bookmarked items from Firebase or localStorage on component mount
   useEffect(() => {
-    const savedBookmarks = localStorage.getItem('bookmarkedScans');
-    if (savedBookmarks) {
-      const bookmarks = JSON.parse(savedBookmarks);
-      // Get just the IDs of food scan bookmarks
-      const foodScanIds = bookmarks
-        .filter((bookmark: any) => bookmark.type === 'food')
-        .map((bookmark: any) => bookmark.id);
-      setBookmarkedItems(foodScanIds);
-    }
+    const loadBookmarks = async () => {
+      const bookmarkedIds: string[] = [];
+      
+      for (const item of scanResults) {
+        const isBookmarkedItem = await isBookmarked(item.id, 'food');
+        if (isBookmarkedItem) {
+          bookmarkedIds.push(item.id);
+        }
+      }
+      
+      setBookmarkedItems(bookmarkedIds);
+    };
+    
+    loadBookmarks();
   }, []);
 
-  const handleBookmarkToggle = (e: React.MouseEvent, item: any) => {
+  const handleBookmarkToggle = async (e: React.MouseEvent, item: any) => {
     e.stopPropagation(); // Prevent navigation when clicking the bookmark button
     
-    // Get existing bookmarks
-    const savedBookmarks = localStorage.getItem('bookmarkedScans');
-    let bookmarks = savedBookmarks ? JSON.parse(savedBookmarks) : [];
-    
     // Check if this item is already bookmarked
-    const isBookmarked = bookmarkedItems.includes(item.id);
+    const isItemBookmarked = bookmarkedItems.includes(item.id);
     
-    if (isBookmarked) {
+    if (isItemBookmarked) {
       // Remove from bookmarks
-      bookmarks = bookmarks.filter((bookmark: any) => 
-        !(bookmark.id === item.id && bookmark.type === 'food')
-      );
-      setBookmarkedItems(prev => prev.filter(id => id !== item.id));
-      toast({
-        title: "Removed from bookmarks",
-        description: `${item.name} has been removed from your bookmarks`,
-      });
+      const success = await removeBookmark(item.id, 'food');
+      
+      if (success) {
+        setBookmarkedItems(prev => prev.filter(id => id !== item.id));
+        toast({
+          title: "Removed from bookmarks",
+          description: `${item.name} has been removed from your bookmarks`,
+        });
+      }
     } else {
-      // Add to bookmarks
-      bookmarks.push({
+      // Add to bookmarks - prepare the item with type and data
+      const bookmarkItem = {
         id: item.id,
         name: item.name,
         brand: item.brand,
         score: item.score,
         imageUrl: item.imageUrl,
         type: 'food',
-        date: new Date().toISOString().split('T')[0]
-      });
-      setBookmarkedItems(prev => [...prev, item.id]);
-      toast({
-        title: "Added to bookmarks",
-        description: `${item.name} has been added to your bookmarks`,
-      });
+      };
+      
+      const success = await addBookmark(bookmarkItem, 'food');
+      
+      if (success) {
+        setBookmarkedItems(prev => [...prev, item.id]);
+        toast({
+          title: "Added to bookmarks",
+          description: `${item.name} has been added to your bookmarks`,
+        });
+      }
     }
-    
-    // Save updated bookmarks to localStorage
-    localStorage.setItem('bookmarkedScans', JSON.stringify(bookmarks));
   };
 
   const getScoreColor = (score: number) => {

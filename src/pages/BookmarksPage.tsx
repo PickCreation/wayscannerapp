@@ -11,10 +11,13 @@ import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
 import { RecipeCard } from "@/components/RecipeCard";
 import CameraSheet from "@/components/CameraSheet";
+import { getBookmarks, removeBookmark } from '@/lib/firebaseService';
+import { useFirebaseAuth } from "@/hooks/use-firebase-auth";
 
 const BookmarksPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useFirebaseAuth();
   const [activeTab, setActiveTab] = useState("forum");
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("profile");
   const [bookmarkedPosts, setBookmarkedPosts] = useState<any[]>([]);
@@ -23,44 +26,22 @@ const BookmarksPage = () => {
   const [cameraSheetOpen, setCameraSheetOpen] = useState(false);
 
   useEffect(() => {
-    const savedPosts = localStorage.getItem('forumPosts');
-    if (savedPosts) {
-      const allPosts = JSON.parse(savedPosts);
-      const bookmarkedItems = allPosts.filter((post: any) => post.bookmarked);
-      setBookmarkedPosts(bookmarkedItems);
-    }
-
-    const savedRecipes = localStorage.getItem('bookmarkedRecipes');
-    if (savedRecipes) {
-      setBookmarkedRecipes(JSON.parse(savedRecipes));
-    } else {
-      setBookmarkedRecipes([
-        { 
-          id: 'r1', 
-          title: 'Vegetable Stir Fry', 
-          author: 'Chef Jamie', 
-          difficulty: 'Medium', 
-          time: '30 mins',
-          rating: 4.5,
-          image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80"
-        },
-        { 
-          id: 'r2', 
-          title: 'Chocolate Brownies', 
-          author: 'Baker Paul', 
-          difficulty: 'Easy', 
-          time: '45 mins',
-          rating: 4.8,
-          image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80"
-        }
-      ]);
-    }
-
-    const savedBookmarks = localStorage.getItem('bookmarkedScans');
-    if (savedBookmarks) {
-      setBookmarkedScans(JSON.parse(savedBookmarks));
-    }
-  }, []);
+    const loadBookmarks = async () => {
+      const forumBookmarks = await getBookmarks('forum');
+      setBookmarkedPosts(forumBookmarks);
+      
+      const recipeBookmarks = await getBookmarks('recipe');
+      setBookmarkedRecipes(recipeBookmarks);
+      
+      const foodBookmarks = await getBookmarks('food');
+      const plantBookmarks = await getBookmarks('plants');
+      const animalBookmarks = await getBookmarks('animals');
+      
+      setBookmarkedScans([...foodBookmarks, ...plantBookmarks, ...animalBookmarks]);
+    };
+    
+    loadBookmarks();
+  }, [user]);
 
   const handleBackClick = () => {
     navigate("/profile");
@@ -100,56 +81,43 @@ const BookmarksPage = () => {
     });
   };
 
-  const handleUnbookmarkPost = (postId: string) => {
-    setBookmarkedPosts(bookmarkedPosts.filter(post => post.id !== postId));
+  const handleUnbookmarkPost = async (postId: string) => {
+    const success = await removeBookmark(postId, 'forum');
     
-    const savedPosts = localStorage.getItem('forumPosts');
-    if (savedPosts) {
-      const allPosts = JSON.parse(savedPosts);
-      const updatedPosts = allPosts.map((post: any) => 
-        post.id === postId ? { ...post, bookmarked: false } : post
-      );
-      localStorage.setItem('forumPosts', JSON.stringify(updatedPosts));
+    if (success) {
+      setBookmarkedPosts(bookmarkedPosts.filter(post => post.id !== postId));
+      
+      toast({
+        title: "Post unbookmarked",
+        description: "Removed from your bookmarks",
+      });
     }
-    
-    toast({
-      title: "Post unbookmarked",
-      description: "Removed from your bookmarks",
-    });
   };
   
-  const handleRemoveRecipeBookmark = (recipeId: string) => {
-    setBookmarkedRecipes(bookmarkedRecipes.filter(recipe => recipe.id !== recipeId));
+  const handleRemoveRecipeBookmark = async (recipeId: string) => {
+    const success = await removeBookmark(recipeId, 'recipe');
     
-    const savedBookmarks = localStorage.getItem('bookmarkedRecipes');
-    if (savedBookmarks) {
-      const bookmarks = JSON.parse(savedBookmarks);
-      const updatedBookmarks = bookmarks.filter((recipe: any) => recipe.id !== recipeId);
-      localStorage.setItem('bookmarkedRecipes', JSON.stringify(updatedBookmarks));
+    if (success) {
+      setBookmarkedRecipes(bookmarkedRecipes.filter(recipe => recipe.id !== recipeId));
+      
+      toast({
+        title: "Recipe unbookmarked",
+        description: "Recipe removed from your bookmarks",
+      });
     }
-    
-    toast({
-      title: "Recipe unbookmarked",
-      description: "Recipe removed from your bookmarks",
-    });
   };
 
-  const handleRemoveScanBookmark = (scanId: string, scanType: string) => {
-    setBookmarkedScans(bookmarkedScans.filter(scan => !(scan.id === scanId && scan.type === scanType)));
+  const handleRemoveScanBookmark = async (scanId: string, scanType: string) => {
+    const success = await removeBookmark(scanId, scanType as 'food' | 'plants' | 'animals');
     
-    const savedBookmarks = localStorage.getItem('bookmarkedScans');
-    if (savedBookmarks) {
-      const bookmarks = JSON.parse(savedBookmarks);
-      const updatedBookmarks = bookmarks.filter((scan: any) => 
-        !(scan.id === scanId && scan.type === scanType)
-      );
-      localStorage.setItem('bookmarkedScans', JSON.stringify(updatedBookmarks));
+    if (success) {
+      setBookmarkedScans(bookmarkedScans.filter(scan => !(scan.id === scanId && scan.type === scanType)));
+      
+      toast({
+        title: "Scan unbookmarked",
+        description: "Scan removed from your bookmarks",
+      });
     }
-    
-    toast({
-      title: "Scan unbookmarked",
-      description: "Scan removed from your bookmarks",
-    });
   };
 
   const getScoreColor = (score: number) => {

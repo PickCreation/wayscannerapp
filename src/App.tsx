@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/hooks/use-auth";
+import { FirebaseAuthProvider } from "@/hooks/use-firebase-auth"; // Changed from AuthProvider
 import Index from "./pages/Index";
 import ForumPage from "./pages/ForumPage";
 import MyPostsPage from "./pages/MyPostsPage";
@@ -55,7 +55,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <AuthProvider>
+        <FirebaseAuthProvider> {/* Changed from AuthProvider */}
           <Toaster />
           <Sonner />
           <BrowserRouter>
@@ -105,7 +105,7 @@ function App() {
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
-        </AuthProvider>
+        </FirebaseAuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Camera, UserCircle, Mail, Phone } from "lucide-react";
@@ -9,12 +8,15 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
-import { useAuth } from "@/hooks/use-auth";
+import { useFirebaseAuth } from "@/hooks/use-firebase-auth";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { db, storage } from "@/lib/firebase";
+import { ref, uploadString, getDownloadURL } from "firebase/storage";
 
 const EditProfilePage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { user } = useFirebaseAuth();
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("profile");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -33,7 +35,6 @@ const EditProfilePage = () => {
       setProfileImage(savedProfileImage);
     }
     
-    // First prioritize logged-in user data
     if (user) {
       setFormData(prev => ({
         ...prev,
@@ -42,13 +43,11 @@ const EditProfilePage = () => {
       }));
     }
     
-    // Then check for saved profile data as a secondary source
     const savedProfileData = localStorage.getItem('profileData');
     if (savedProfileData) {
       const parsedData = JSON.parse(savedProfileData);
       setFormData(prev => ({
         ...prev,
-        // Only use saved data if we don't have user data
         fullName: user?.name || parsedData.fullName,
         email: user?.email || parsedData.email,
         phone: parsedData.phone || prev.phone,
@@ -69,11 +68,9 @@ const EditProfilePage = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Ensure we don't override the authenticated user's core details
     if (user) {
       const profileData = {
         ...formData,
-        // Preserve the original user name and email from auth
         fullName: user.name,
         email: user.email,
       };
@@ -186,7 +183,7 @@ const EditProfilePage = () => {
               onChange={handleInputChange}
               placeholder="Enter your full name"
               className="mt-1"
-              disabled={user?.isAdmin} // Disable editing for admin
+              disabled={user?.isAdmin}
             />
             {user?.isAdmin && (
               <p className="text-xs text-gray-500 mt-1">Admin name cannot be changed</p>
@@ -203,7 +200,7 @@ const EditProfilePage = () => {
               onChange={handleInputChange}
               placeholder="Enter your email"
               className="mt-1"
-              disabled={user?.isAdmin} // Disable editing for admin
+              disabled={user?.isAdmin}
             />
             {user?.isAdmin && (
               <p className="text-xs text-gray-500 mt-1">Admin email cannot be changed</p>

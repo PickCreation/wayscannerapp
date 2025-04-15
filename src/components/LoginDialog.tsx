@@ -9,7 +9,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
 import { LogIn, User, Lock, Mail, X } from "lucide-react";
-import { useAuth } from "@/hooks/use-auth";
+import { useFirebaseAuth } from "@/hooks/use-firebase-auth";
 
 interface LoginDialogProps {
   open: boolean;
@@ -30,7 +30,7 @@ const signupSchema = z.object({
 const LoginDialog: React.FC<LoginDialogProps> = ({ open, onOpenChange }) => {
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
   const { toast } = useToast();
-  const { login, signup } = useAuth();
+  const { login, signup } = useFirebaseAuth();
   
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
