@@ -30,195 +30,13 @@ import {
 } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-
-interface BlogPost {
-  id: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  category: string;
-  image: string;
-  author: {
-    name: string;
-    avatar: string;
-  };
-  date: string;
-  readTime: string;
-  commentsCount: number;
-}
-
-interface Comment {
-  id: string;
-  text: string;
-  author: {
-    name: string;
-  };
-  date: string;
-  likes: number;
-}
-
-const BLOGS: BlogPost[] = [
-  {
-    id: "1",
-    title: "10 Ways to Reduce Your Carbon Footprint at Home",
-    excerpt: "Simple daily habits that can make a huge difference for our planet.",
-    content: `Climate change is accelerating at an unprecedented rate, and our daily choices have a significant impact on the environment. In this article, we'll explore ten practical ways to reduce your carbon footprint without drastically changing your lifestyle.
-
-## 1. Switch to LED Light Bulbs
-
-LED bulbs use up to 90% less energy than traditional incandescent bulbs and last much longer. This simple swap can significantly reduce your electricity consumption and save you money in the long run.
-
-## 2. Conserve Water
-
-Fix leaky faucets, take shorter showers, and install low-flow fixtures. Water treatment facilities use a lot of energy to purify and deliver water to your home, so reducing water usage also reduces your carbon footprint.
-
-## 3. Reduce, Reuse, Recycle
-
-Practice the three Rs in order of importance. First, reduce your consumption; second, reuse items when possible; and finally, recycle materials properly. Remember that recycling still requires energy, so it's best to minimize waste from the start.
-
-## 4. Use Energy-Efficient Appliances
-
-When it's time to replace appliances, look for Energy Star certified models, which use significantly less energy than standard appliances.
-
-## 5. Eat Less Meat
-
-The meat industry is a major contributor to greenhouse gas emissions. Consider implementing meatless Mondays or generally reducing your meat consumption, especially beef.
-
-## 6. Compost Food Waste
-
-Instead of sending food scraps to landfills where they produce methane, compost them to create nutrient-rich soil for your garden.
-
-## 7. Unplug Electronics When Not in Use
-
-Many electronics continue to draw power even when turned off. This "phantom energy" can account for up to 10% of your home's energy usage.
-
-## 8. Use Cold Water for Laundry
-
-About 90% of the energy used by washing machines goes to heating water. Washing clothes in cold water is just as effective for most loads and saves significant energy.
-
-## 9. Drive Less
-
-Walk, bike, or use public transportation when possible. If you need to drive, combine errands to reduce trips.
-
-## 10. Support Renewable Energy
-
-Consider installing solar panels or switching to a utility provider that offers renewable energy options.
-
-By implementing these changes, you can significantly reduce your carbon footprint while often saving money and living a healthier lifestyle. Remember that small actions, when multiplied by millions of people, can make a substantial difference in the fight against climate change.`,
-    category: "Climate",
-    image: "/lovable-uploads/photo-1649972904349-6e44c42644a7.png",
-    author: {
-      name: "Emma Wilson",
-      avatar: "/lovable-uploads/81f6d068-8c80-4e65-9ad0-2d3fe0a6f480.png",
-    },
-    date: "Apr 2, 2025",
-    readTime: "6 min read",
-    commentsCount: 14,
-  },
-  {
-    id: "2",
-    title: "The Ultimate Guide to Composting in Small Spaces",
-    excerpt: "Yes, you can compost even in your apartment. Here's how.",
-    content: "Composting is one of the most effective ways to reduce waste and create nutrient-rich soil for plants. But what if you live in an apartment or have limited outdoor space? In this comprehensive guide, we'll show you various methods for composting in small spaces...",
-    category: "Zero Waste",
-    image: "/lovable-uploads/photo-1486312338219-ce68d2c6f44d.png",
-    author: {
-      name: "Marcus Chen",
-      avatar: "/lovable-uploads/4c436a75-e04b-4265-8025-91e7bb146566.png",
-    },
-    date: "Mar 28, 2025",
-    readTime: "8 min read",
-    commentsCount: 27,
-  },
-  {
-    id: "3",
-    title: "Understanding Sustainable Fashion Labels",
-    excerpt: "Navigate the confusing world of eco-fashion certifications with our simple guide.",
-    content: "The fashion industry is one of the world's largest polluters, but a growing movement of sustainable fashion brands is working to change that. However, with so many eco-friendly labels and certifications on the market, it can be challenging to understand what they actually mean...",
-    category: "Sustainable",
-    image: "/lovable-uploads/photo-1488590528505-98d2b5aba04b.png",
-    author: {
-      name: "Sofia Rodriguez",
-      avatar: "/lovable-uploads/69501614-b92c-43f9-89e5-85971b5b6ede.png",
-    },
-    date: "Mar 15, 2025",
-    readTime: "5 min read",
-    commentsCount: 9,
-  },
-  {
-    id: "4",
-    title: "The Rise of Eco-Tourism: Travel Responsibly",
-    excerpt: "How to explore the world while minimizing your environmental impact.",
-    content: "As global awareness about climate change grows, many travelers are seeking ways to explore the world more responsibly. Eco-tourism offers the opportunity to experience incredible destinations while minimizing your environmental impact and supporting local communities...",
-    category: "Eco-friendly",
-    image: "/lovable-uploads/5cf63fd0-114b-490f-96f9-b6b8dcc0b573.png",
-    author: {
-      name: "James Thompson",
-      avatar: "/lovable-uploads/3981fb88-0fa3-404e-8a77-3a58ae1e0347.png",
-    },
-    date: "Mar 10, 2025",
-    readTime: "7 min read",
-    commentsCount: 18,
-  },
-  {
-    id: "5",
-    title: "Seasonal Eating: A Guide to Local Produce",
-    excerpt: "Reduce your food miles and enjoy fresher, tastier meals.",
-    content: "Eating seasonally isn't just better for the environment—it's also more delicious and nutritious. When you consume fruits and vegetables during their natural growing season, they require fewer resources to produce and transport, resulting in a lower carbon footprint...",
-    category: "Organic",
-    image: "/lovable-uploads/f2fb63ae-cc4d-4d46-ba4f-c70225d6d564.png",
-    author: {
-      name: "Olivia Johnson",
-      avatar: "/lovable-uploads/b7a77845-a980-42f1-8b7e-eea9a8b822f8.png",
-    },
-    date: "Feb 28, 2025",
-    readTime: "6 min read",
-    commentsCount: 21,
-  },
-];
-
-const SAMPLE_COMMENTS: Record<string, Comment[]> = {
-  "1": [
-    {
-      id: "c1",
-      text: "Great article! I've implemented several of these tips and have noticed a real difference in my energy bill.",
-      author: {
-        name: "Michael Brown",
-      },
-      date: "Apr 3, 2025",
-      likes: 7,
-    },
-    {
-      id: "c2",
-      text: "I'd like to add that hanging your clothes to dry instead of using a dryer is another great way to reduce your carbon footprint!",
-      author: {
-        name: "Sarah Lee",
-      },
-      date: "Apr 3, 2025",
-      likes: 4,
-    },
-    {
-      id: "c3",
-      text: "The tip about unplugging electronics was a game-changer for me. I had no idea they still used power when turned off!",
-      author: {
-        name: "David Wright",
-      },
-      date: "Apr 4, 2025",
-      likes: 2,
-    },
-  ],
-  "2": [
-    {
-      id: "c1",
-      text: "I've been using a counter-top compost bin for 6 months now and it's fantastic! No smell if you manage it properly.",
-      author: {
-        name: "Taylor Kim",
-      },
-      date: "Mar 29, 2025",
-      likes: 9,
-    },
-  ],
-};
+import { 
+  getBlog, 
+  getBlogComments, 
+  addBlogComment, 
+  BlogPost, 
+  BlogComment 
+} from "@/lib/blogsService";
 
 const BlogDetailPage = () => {
   const { blogId } = useParams<{ blogId: string }>();
@@ -227,32 +45,52 @@ const BlogDetailPage = () => {
   const isMobile = useIsMobile();
   const { isAuthenticated, user } = useAuth();
   const [blog, setBlog] = useState<BlogPost | null>(null);
-  const [comments, setComments] = useState<Comment[]>([]);
+  const [comments, setComments] = useState<BlogComment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [commenterName, setCommenterName] = useState("");
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const [isCameraSheetOpen, setIsCameraSheetOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [activeNavItem, setActiveNavItem] = useState("home");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const foundBlog = BLOGS.find((b) => b.id === blogId);
-    if (foundBlog) {
-      setBlog(foundBlog);
+    const fetchBlog = async () => {
+      if (!blogId) return;
       
-      const blogComments = SAMPLE_COMMENTS[blogId || ""] || [];
-      setComments(blogComments);
-      
-      setNewComment("");
-      setCopied(false);
-    } else {
-      toast({
-        title: "Blog not found",
-        description: "The requested blog post could not be found.",
-        variant: "destructive",
-      });
-      navigate("/blogs");
-    }
+      setIsLoading(true);
+      try {
+        const fetchedBlog = await getBlog(blogId);
+        if (fetchedBlog) {
+          setBlog(fetchedBlog);
+          
+          // Fetch comments for this blog
+          const fetchedComments = await getBlogComments(blogId);
+          setComments(fetchedComments);
+          
+          setNewComment("");
+          setCopied(false);
+        } else {
+          toast({
+            title: "Blog not found",
+            description: "The requested blog post could not be found.",
+            variant: "destructive",
+          });
+          navigate("/blogs");
+        }
+      } catch (error) {
+        console.error('Error fetching blog:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load blog. Please try again later.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchBlog();
   }, [blogId, navigate, toast]);
 
   const handleBackClick = () => {
@@ -303,7 +141,9 @@ const BlogDetailPage = () => {
     setIsShareDialogOpen(false);
   };
 
-  const handleSubmitComment = () => {
+  const handleSubmitComment = async () => {
+    if (!blogId) return;
+    
     if (!newComment.trim()) {
       toast({
         title: "Empty comment",
@@ -322,41 +162,58 @@ const BlogDetailPage = () => {
       return;
     }
     
-    const newCommentObj: Comment = {
-      id: `c${Date.now()}`,
-      text: newComment,
-      author: {
-        name: commenterName,
-      },
-      date: new Date().toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric' 
-      }),
-      likes: 0,
-    };
-    
-    setComments([newCommentObj, ...comments]);
-    setNewComment("");
-    setCommenterName("");
-    
-    toast({
-      title: "Comment added",
-      description: "Your comment has been posted successfully",
-    });
-    
-    if (blog) {
-      setBlog({
-        ...blog,
-        commentsCount: blog.commentsCount + 1,
+    try {
+      const commentData = {
+        text: newComment,
+        author: {
+          name: commenterName,
+        }
+      };
+      
+      const savedComment = await addBlogComment(blogId, commentData);
+      
+      if (savedComment) {
+        // Add the new comment to the comments array
+        setComments([savedComment, ...comments]);
+        
+        // Update local blog object with increased comment count
+        if (blog) {
+          setBlog({
+            ...blog,
+            commentsCount: blog.commentsCount + 1,
+          });
+        }
+      }
+      
+      setNewComment("");
+      setCommenterName("");
+      
+      toast({
+        title: "Comment added",
+        description: "Your comment has been posted successfully",
+      });
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add comment. Please try again later.",
+        variant: "destructive",
       });
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-wayscanner-blue"></div>
+      </div>
+    );
+  }
+
   if (!blog) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p>Loading...</p>
+        <p>Blog not found</p>
       </div>
     );
   }
