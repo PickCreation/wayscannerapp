@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import FilterBottomSheet, { FilterOptions } from "@/components/FilterBottomSheet";
 import { useToast } from "@/hooks/use-toast";
 import { getAllProducts, Product } from "@/lib/marketplaceService";
-import { seedMarketplace } from '@/utils/marketplaceSeed';
+import { seedMarketplace, seedLocalStorage } from '@/utils/marketplaceSeed';
 
 const categories = [
   { id: "all", name: "All", color: "#2196F3", bgColor: "#E3F2FD", icon: "📦" },
@@ -40,18 +40,47 @@ const MarketplacePage = () => {
       setIsLoading(true);
       try {
         const savedProducts = localStorage.getItem('products');
+        
         if (!savedProducts || JSON.parse(savedProducts).length === 0) {
-          await seedMarketplace();
+          try {
+            await seedMarketplace();
+          } catch (firebaseError) {
+            console.error("Firebase seeding failed, using local fallback:", firebaseError);
+            seedLocalStorage();
+          }
         }
 
-        const fetchedProducts = await getAllProducts();
-        setProducts(fetchedProducts);
+        try {
+          const fetchedProducts = await getAllProducts();
+          if (fetchedProducts && fetchedProducts.length > 0) {
+            setProducts(fetchedProducts);
+          } else {
+            const localProducts = JSON.parse(localStorage.getItem('products') || '[]');
+            if (localProducts.length > 0) {
+              setProducts(localProducts);
+            } else {
+              const seededProducts = seedLocalStorage();
+              setProducts(seededProducts);
+            }
+          }
+        } catch (fetchError) {
+          console.error("Error fetching products from Firebase:", fetchError);
+          const localProducts = JSON.parse(localStorage.getItem('products') || '[]');
+          if (localProducts.length > 0) {
+            setProducts(localProducts);
+          } else {
+            const seededProducts = seedLocalStorage();
+            setProducts(seededProducts);
+          }
+        }
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error("Fatal error fetching products:", error);
+        const seededProducts = seedLocalStorage();
+        setProducts(seededProducts);
         toast({
-          title: "Error",
-          description: "Failed to load products. Please try again later.",
-          variant: "destructive",
+          title: "Using local data",
+          description: "Connected to local storage instead of Firebase.",
+          variant: "default",
         });
       } finally {
         setIsLoading(false);
