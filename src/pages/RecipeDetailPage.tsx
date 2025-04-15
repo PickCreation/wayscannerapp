@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { 
@@ -216,7 +217,7 @@ const RecipeDetailPage = () => {
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("recipes");
   const [cameraSheetOpen, setCameraSheetOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [recipe, setRecipe] = useState<any>(null);
+  const [recipe, setRecipe] = useState<any>(getDefaultRecipe(recipeId || "unknown"));
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const [systemComments, setSystemComments] = useState<any[]>([]);
   const isMobile = useIsMobile();
@@ -284,12 +285,22 @@ const RecipeDetailPage = () => {
             
             if (firebaseRecipe) {
               console.log('Firebase recipe found:', firebaseRecipe);
-              setRecipe(firebaseRecipe);
+              // Ensure recipe has all required properties
+              const safeRecipe = {
+                ...getDefaultRecipe(recipeId),
+                ...firebaseRecipe
+              };
+              setRecipe(safeRecipe);
             } else if (localRecipe) {
               console.log('No Firebase recipe, using local:', localRecipe);
-              setRecipe(localRecipe);
+              // Ensure recipe has all required properties
+              const safeRecipe = {
+                ...getDefaultRecipe(recipeId),
+                ...localRecipe
+              };
+              setRecipe(safeRecipe);
               
-              await saveRecipeToFirebase(localRecipe);
+              await saveRecipeToFirebase(safeRecipe);
             } else {
               const mockRecipe = recipeData[recipeId as keyof typeof recipeData];
               if (mockRecipe) {
@@ -318,7 +329,12 @@ const RecipeDetailPage = () => {
             
             if (localRecipe) {
               console.log('Firebase error, using local recipe');
-              setRecipe(localRecipe);
+              // Ensure recipe has all required properties
+              const safeRecipe = {
+                ...getDefaultRecipe(recipeId),
+                ...localRecipe
+              };
+              setRecipe(safeRecipe);
             } else {
               const mockRecipe = recipeData[recipeId as keyof typeof recipeData];
               if (mockRecipe) {
@@ -354,6 +370,7 @@ const RecipeDetailPage = () => {
       } catch (error) {
         console.error('General error loading recipe:', error);
         
+        // Fallback to default recipe in case of error
         const mockRecipe = recipeData[recipeId as keyof typeof recipeData];
         setRecipe(mockRecipe || getDefaultRecipe(recipeId));
         
@@ -579,6 +596,13 @@ const RecipeDetailPage = () => {
     );
   }
 
+  // Ensure recipe has all required properties to prevent errors
+  const tags = recipe.tags || [];
+  const ingredients = recipe.ingredients || [];
+  const instructions = recipe.instructions || [];
+  const tips = recipe.tips || [];
+  const nutrition = recipe.nutrition || { calories: 0, protein: '0g', carbs: '0g', fat: '0g' };
+
   return (
     <div className="pb-20 bg-white min-h-screen">
       <div className="fixed top-0 left-0 right-0 z-10 bg-[#034AFF] text-white p-4 flex items-center shadow-md">
@@ -655,7 +679,7 @@ const RecipeDetailPage = () => {
           <h1 className="text-2xl font-semibold mb-3 text-[28px]">{recipe.title}</h1>
           
           <div className="flex flex-wrap gap-2 mb-3">
-            {recipe.tags.map(tag => (
+            {tags.map((tag: string) => (
               <Badge key={tag} variant="secondary" className="capitalize text-xs">
                 {tag}
               </Badge>
@@ -668,7 +692,7 @@ const RecipeDetailPage = () => {
             <div className="bg-blue-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
               <Clock size={16} className="text-blue-500" />
             </div>
-            <p className="text-xs text-blue-500 font-medium">{recipe.time}</p>
+            <p className="text-xs text-blue-500 font-medium">{recipe.time || 'N/A'}</p>
             <p className="text-[10px] text-gray-500">Cook Time</p>
           </div>
           <div className="flex flex-col items-center">
@@ -682,7 +706,7 @@ const RecipeDetailPage = () => {
             <div className="bg-orange-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
               <Users size={16} className="text-orange-500" />
             </div>
-            <p className="text-xs text-orange-500 font-medium">{recipe.servings}</p>
+            <p className="text-xs text-orange-500 font-medium">{recipe.servings || 0}</p>
             <p className="text-[10px] text-gray-500">Servings</p>
           </div>
           <div className="flex flex-col items-center">
@@ -697,7 +721,7 @@ const RecipeDetailPage = () => {
         <div className="px-4 py-2">
           <h3 className="text-base font-semibold mb-2">Description</h3>
           <div className="border border-gray-200 bg-gray-50 rounded-lg p-3 mb-4">
-            <p className="text-sm text-gray-700">{recipe.description}</p>
+            <p className="text-sm text-gray-700">{recipe.description || 'No description available.'}</p>
           </div>
         </div>
 
@@ -714,7 +738,7 @@ const RecipeDetailPage = () => {
                 Ingredients
               </h3>
               <ul className="space-y-2">
-                {recipe.ingredients.map((ingredient, index) => (
+                {ingredients.map((ingredient: string, index: number) => (
                   <li key={index} className="flex items-start">
                     <div className="h-6 w-6 rounded-full border border-gray-300 flex-shrink-0 flex items-center justify-center mr-3 mt-0.5">
                       <span className="text-xs text-gray-500">{index + 1}</span>
@@ -722,6 +746,9 @@ const RecipeDetailPage = () => {
                     <span className="text-sm text-gray-700">{ingredient}</span>
                   </li>
                 ))}
+                {ingredients.length === 0 && (
+                  <li className="text-sm text-gray-500 italic">No ingredients listed for this recipe.</li>
+                )}
               </ul>
             </TabsContent>
             
@@ -731,7 +758,7 @@ const RecipeDetailPage = () => {
                 Instructions
               </h3>
               <ol className="space-y-4">
-                {recipe.instructions.map((instruction, index) => (
+                {instructions.map((instruction: string, index: number) => (
                   <li key={index} className="flex">
                     <div className="h-6 w-6 bg-primary text-white rounded-full flex-shrink-0 flex items-center justify-center mr-3 mt-0.5">
                       <span className="text-xs">{index + 1}</span>
@@ -739,6 +766,9 @@ const RecipeDetailPage = () => {
                     <span className="text-sm text-gray-700">{instruction}</span>
                   </li>
                 ))}
+                {instructions.length === 0 && (
+                  <li className="text-sm text-gray-500 italic">No instructions provided for this recipe.</li>
+                )}
               </ol>
             </TabsContent>
           </Tabs>
@@ -749,25 +779,25 @@ const RecipeDetailPage = () => {
           <div className="flex justify-between mb-2">
             <div className="flex flex-col items-center">
               <div className="bg-red-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
-                <span className="text-red-500 text-xs font-semibold">{recipe.nutrition.calories}</span>
+                <span className="text-red-500 text-xs font-semibold">{nutrition.calories}</span>
               </div>
               <p className="text-xs text-gray-600">Calories</p>
             </div>
             <div className="flex flex-col items-center">
               <div className="bg-purple-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
-                <span className="text-purple-600 text-xs font-semibold">{recipe.nutrition.protein}</span>
+                <span className="text-purple-600 text-xs font-semibold">{nutrition.protein}</span>
               </div>
               <p className="text-xs text-gray-600">Protein</p>
             </div>
             <div className="flex flex-col items-center">
               <div className="bg-green-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
-                <span className="text-green-500 text-xs font-semibold">{recipe.nutrition.carbs}</span>
+                <span className="text-green-500 text-xs font-semibold">{nutrition.carbs}</span>
               </div>
               <p className="text-xs text-gray-600">Carbs</p>
             </div>
             <div className="flex flex-col items-center">
               <div className="bg-yellow-100 w-10 h-10 rounded-full flex items-center justify-center mb-1">
-                <span className="text-yellow-500 text-xs font-semibold">{recipe.nutrition.fat}</span>
+                <span className="text-yellow-500 text-xs font-semibold">{nutrition.fat}</span>
               </div>
               <p className="text-xs text-gray-600">Fat</p>
             </div>
@@ -788,12 +818,18 @@ const RecipeDetailPage = () => {
               <h4 className="text-sm font-semibold text-yellow-600">Chef Tips</h4>
             </div>
             <ul className="space-y-2 ml-2">
-              {recipe.tips && recipe.tips.map((tip, index) => (
-                <li key={index} className="flex items-start">
-                  <span className="text-gray-700 mr-2">•</span>
-                  <span className="text-sm text-gray-700">{tip}</span>
+              {tips && tips.length > 0 ? (
+                tips.map((tip: string, index: number) => (
+                  <li key={index} className="flex items-start">
+                    <span className="text-gray-700 mr-2">•</span>
+                    <span className="text-sm text-gray-700">{tip}</span>
+                  </li>
+                ))
+              ) : (
+                <li className="flex items-start">
+                  <span className="text-sm text-gray-500 italic">No tips available for this recipe.</span>
                 </li>
-              ))}
+              )}
             </ul>
           </div>
         </div>
