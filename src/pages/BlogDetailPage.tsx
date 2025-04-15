@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -17,7 +16,6 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useAuth } from "@/hooks/use-auth";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
 import {
@@ -43,7 +41,6 @@ const BlogDetailPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
-  const { isAuthenticated, user } = useAuth();
   const [blog, setBlog] = useState<BlogPost | null>(null);
   const [comments, setComments] = useState<BlogComment[]>([]);
   const [newComment, setNewComment] = useState("");
