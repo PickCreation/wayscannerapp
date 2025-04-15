@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from "react";
 import { 
   ArrowLeft, User, Bell, BookmarkCheck, Heart, MessageSquare, Bookmark,
-  Folder, FolderOpen, Utensils, Leaf, PawPrint
+  Folder, FolderOpen 
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -10,7 +11,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
 import { RecipeCard } from "@/components/RecipeCard";
-import ScannerCard from "@/components/ScannerCard";
 
 const BookmarksPage = () => {
   const navigate = useNavigate();
@@ -56,40 +56,8 @@ const BookmarksPage = () => {
     }
 
     setBookmarkedScans([
-      { 
-        id: 's1', 
-        title: 'Organic Apple', 
-        date: '2025-04-01', 
-        category: 'Fruit', 
-        score: 87,
-        description: 'Fresh and organic',
-        type: 'food'
-      },
-      { 
-        id: 's2', 
-        title: 'Whole Grain Bread', 
-        date: '2025-04-02', 
-        category: 'Bakery', 
-        score: 92,
-        description: 'High in fiber',
-        type: 'food'
-      },
-      { 
-        id: 's3', 
-        title: 'Snake Plant', 
-        date: '2025-04-03', 
-        category: 'Indoor Plant', 
-        description: 'Low maintenance plant',
-        type: 'plant'
-      },
-      { 
-        id: 's4', 
-        title: 'Golden Retriever', 
-        date: '2025-04-04', 
-        category: 'Dog Breed', 
-        description: 'Friendly companion',
-        type: 'animal'
-      },
+      { id: 's1', title: 'Organic Apple', date: '2025-04-01', category: 'Fruit', score: 87 },
+      { id: 's2', title: 'Whole Grain Bread', date: '2025-04-02', category: 'Bakery', score: 92 },
     ]);
   }, []);
 
@@ -166,33 +134,6 @@ const BookmarksPage = () => {
       title: "Recipe unbookmarked",
       description: "Recipe removed from your bookmarks",
     });
-  };
-
-  const handleRemoveScanBookmark = (scanId: string) => {
-    setBookmarkedScans(bookmarkedScans.filter(scan => scan.id !== scanId));
-    
-    toast({
-      title: "Scan unbookmarked",
-      description: "Scan removed from your bookmarks",
-    });
-  };
-
-  const getScanCardColor = (type: string): "red" | "green" | "yellow" | "purple" | "blue" | "neutral" => {
-    switch (type) {
-      case 'food': return "red";
-      case 'plant': return "green";
-      case 'animal': return "yellow";
-      default: return "neutral";
-    }
-  };
-
-  const getScanCardIcon = (type: string) => {
-    switch (type) {
-      case 'food': return <Utensils size={24} color="white" />;
-      case 'plant': return <Leaf size={24} color="white" />;
-      case 'animal': return <PawPrint size={24} color="white" />;
-      default: return <Bookmark size={24} color="white" />;
-    }
   };
 
   return (
@@ -313,22 +254,36 @@ const BookmarksPage = () => {
           </TabsContent>
 
           <TabsContent value="scan" className="pb-20">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-4">
               {bookmarkedScans.length > 0 ? (
                 bookmarkedScans.map(scan => (
-                  <ScannerCard
-                    key={scan.id}
-                    title={scan.title}
-                    description={scan.description}
-                    color={getScanCardColor(scan.type)}
-                    icon={getScanCardIcon(scan.type)}
-                    onClick={() => navigate(`/scan?tab=${scan.type === 'food' ? 'food' : scan.type === 'plant' ? 'plants' : 'animals'}`)}
-                    showBookmarkIcon={true}
-                    onBookmarkRemove={() => handleRemoveScanBookmark(scan.id)}
-                  />
+                  <Card key={scan.id} className="overflow-hidden">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="font-medium text-[16px]">{scan.title}</h3>
+                        <span className={`px-2 py-1 rounded-full text-xs ${
+                          scan.score >= 90 ? "bg-green-100 text-green-700" :
+                          scan.score >= 70 ? "bg-yellow-100 text-yellow-700" :
+                          "bg-red-100 text-red-700"
+                        }`}>
+                          Score: {scan.score}
+                        </span>
+                      </div>
+                      <div className="text-[14px] text-gray-500">Category: {scan.category}</div>
+                      <div className="text-[14px] text-gray-500">Scanned on: {scan.date}</div>
+                      <button 
+                        className="mt-4 flex items-center text-wayscanner-blue"
+                        onClick={() => setBookmarkedScans(prev => prev.filter(s => s.id !== scan.id))}
+                        type="button"
+                      >
+                        <Bookmark size={18} className="fill-wayscanner-blue mr-1" />
+                        Remove from bookmarks
+                      </button>
+                    </CardContent>
+                  </Card>
                 ))
               ) : (
-                <div className="flex flex-col items-center justify-center py-10 px-4 bg-white rounded-lg shadow col-span-2">
+                <div className="flex flex-col items-center justify-center py-10 px-4 bg-white rounded-lg shadow">
                   <FolderOpen size={48} className="text-gray-400 mb-2" />
                   <p className="text-gray-600 text-center text-[16px]">No bookmarked scans yet.</p>
                   <p className="text-gray-400 text-sm text-center mt-1">
