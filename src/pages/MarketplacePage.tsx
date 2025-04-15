@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Search, ShoppingCart, Filter } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -8,63 +9,8 @@ import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
 import { Badge } from "@/components/ui/badge";
 import FilterBottomSheet, { FilterOptions } from "@/components/FilterBottomSheet";
-
-const products = [
-  {
-    id: 1,
-    title: "Modern Plant Pot",
-    price: 29.99,
-    category: "Plants Accessories",
-    image: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&q=80&w=600",
-    rating: 4.5,
-    reviews: 124,
-  },
-  {
-    id: 2,
-    title: "Ceramic Dog Bowl",
-    price: 19.99,
-    category: "Animal Accessories",
-    image: "https://images.unsplash.com/photo-1601758174499-203dda8ffc92?auto=format&fit=crop&q=80&w=600",
-    rating: 4.2,
-    reviews: 89,
-  },
-  {
-    id: 3,
-    title: "Monstera Plant",
-    price: 34.99,
-    category: "Plants",
-    image: "https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&q=80&w=600",
-    rating: 4.8,
-    reviews: 215,
-  },
-  {
-    id: 4,
-    title: "Bamboo Cutting Board",
-    price: 24.99,
-    category: "Kitchen Essentials",
-    image: "https://images.unsplash.com/photo-1594662322686-8db3bad1d279?auto=format&fit=crop&q=80&w=600",
-    rating: 4.6,
-    reviews: 178,
-  },
-  {
-    id: 5,
-    title: "Macrame Wall Hanging",
-    price: 39.99,
-    category: "Decor",
-    image: "https://images.unsplash.com/photo-1594130139005-3f0c0f0e7c5e?auto=format&fit=crop&q=80&w=600",
-    rating: 4.7,
-    reviews: 156,
-  },
-  {
-    id: 6,
-    title: "Cat Climbing Tree",
-    price: 89.99,
-    category: "Animal Accessories",
-    image: "https://images.unsplash.com/photo-1603314585442-ee3b3c16fbcf?auto=format&fit=crop&q=80&w=600",
-    rating: 4.3,
-    reviews: 92,
-  },
-];
+import { useToast } from "@/hooks/use-toast";
+import { getAllProducts, Product } from "@/lib/marketplaceService";
 
 const categories = [
   { id: "all", name: "All", color: "#2196F3", bgColor: "#E3F2FD", icon: "📦" },
@@ -84,7 +30,31 @@ const MarketplacePage = () => {
   const [cartCount, setCartCount] = useState(0);
   const [showFilterSheet, setShowFilterSheet] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<FilterOptions | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setIsLoading(true);
+      try {
+        const fetchedProducts = await getAllProducts();
+        setProducts(fetchedProducts);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load products. Please try again later.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [toast]);
 
   useEffect(() => {
     const updateCartCount = () => {
@@ -156,15 +126,15 @@ const MarketplacePage = () => {
     
     switch (appliedFilters.sortBy) {
       case "Recent":
-        return b.id - a.id;
+        return (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0);
       case "Price: Low to High":
         return a.price - b.price;
       case "Price: High to Low":
         return b.price - a.price;
       case "Most Reviews":
-        return b.reviews - a.reviews;
+        return (b.reviews || 0) - (a.reviews || 0);
       case "Highest Rated":
-        return b.rating - a.rating;
+        return (b.rating || 0) - (a.rating || 0);
       default:
         return 0;
     }
@@ -268,21 +238,37 @@ const MarketplacePage = () => {
           </div>
         )}
         
-        <div className="grid grid-cols-2 gap-3">
-          {sortedProducts.map(product => (
-            <ProductCard
-              key={product.id}
-              id={product.id}
-              title={product.title}
-              price={product.price}
-              image={product.image}
-              rating={product.rating}
-              reviews={product.reviews}
-            />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="grid grid-cols-2 gap-3">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="rounded-lg overflow-hidden shadow-md bg-white">
+                <div className="h-40 bg-gray-200 animate-pulse"></div>
+                <div className="p-3">
+                  <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse mb-2"></div>
+                  <div className="h-3 bg-gray-200 rounded w-1/2 animate-pulse mb-2"></div>
+                  <div className="h-5 bg-gray-200 rounded w-1/3 animate-pulse mb-2"></div>
+                  <div className="h-8 bg-gray-200 rounded w-full animate-pulse"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-3">
+            {sortedProducts.map(product => (
+              <ProductCard
+                key={product.id}
+                id={parseInt(product.id) || Math.floor(Math.random() * 1000)}
+                title={product.title}
+                price={product.price}
+                image={product.image || "/placeholder.svg"}
+                rating={product.rating || 0}
+                reviews={product.reviews || 0}
+              />
+            ))}
+          </div>
+        )}
         
-        {sortedProducts.length === 0 && (
+        {!isLoading && sortedProducts.length === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-500">No products found.</p>
           </div>

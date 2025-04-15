@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Star, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -52,6 +52,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
     
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
     
+    // Dispatch a custom event to notify other components
+    window.dispatchEvent(new Event('cartUpdated'));
+    
     toast({
       title: "Added to Cart",
       description: `${title} added to your cart`,
@@ -73,6 +76,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
           src={image}
           alt={title}
           className="w-full h-full object-cover"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = "/placeholder.svg";
+            target.onerror = null;
+          }}
         />
       </div>
       
@@ -81,7 +89,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <h3 className="font-medium text-sm line-clamp-1">{title}</h3>
         <div className="flex items-center mt-1">
           <Star size={14} className="text-yellow-500 fill-current" />
-          <span className="text-xs text-gray-600 ml-1">{rating}</span>
+          <span className="text-xs text-gray-600 ml-1">{rating.toFixed(1)}</span>
           <span className="text-xs text-gray-500 ml-1">({reviews})</span>
         </div>
         <p className="font-bold text-wayscanner-blue mt-2">${price.toFixed(2)}</p>
@@ -95,7 +103,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           disabled={isAddingToCart}
         >
           <ShoppingCart size={14} className="mr-1" />
-          Add to Cart
+          {isAddingToCart ? "Adding..." : "Add to Cart"}
         </Button>
       </div>
     </div>
