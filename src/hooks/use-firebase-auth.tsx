@@ -96,9 +96,22 @@ export const FirebaseAuthProvider = ({ children }: { children: React.ReactNode }
       
     } catch (error: any) {
       console.error('Login error:', error);
+      // More specific error messages based on Firebase error codes
+      let errorMessage = "Please check your credentials and try again.";
+      
+      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+        errorMessage = "Invalid email or password.";
+      } else if (error.code === 'auth/too-many-requests') {
+        errorMessage = "Too many failed login attempts. Please try again later.";
+      } else if (error.code === 'auth/network-request-failed') {
+        errorMessage = "Network error. Please check your connection.";
+      } else if (error.code && error.code.includes('api-key-not-valid')) {
+        errorMessage = "Authentication service error. Please contact support.";
+      }
+      
       toast({
         title: "Login Failed",
-        description: error.message || "Please check your credentials and try again.",
+        description: errorMessage,
         variant: "destructive"
       });
       throw error;
@@ -129,9 +142,23 @@ export const FirebaseAuthProvider = ({ children }: { children: React.ReactNode }
       
     } catch (error: any) {
       console.error('Signup error:', error);
+      
+      // More specific error messages based on Firebase error codes
+      let errorMessage = "An error occurred during sign up.";
+      
+      if (error.code === 'auth/email-already-in-use') {
+        errorMessage = "Email already in use. Please try another email or login.";
+      } else if (error.code === 'auth/weak-password') {
+        errorMessage = "Password is too weak. Please choose a stronger password.";
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = "Invalid email address format.";
+      } else if (error.code === 'auth/network-request-failed') {
+        errorMessage = "Network error. Please check your connection.";
+      }
+      
       toast({
         title: "Signup Failed",
-        description: error.message || "An error occurred during sign up.",
+        description: errorMessage,
         variant: "destructive"
       });
       throw error;
