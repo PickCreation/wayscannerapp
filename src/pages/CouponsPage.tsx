@@ -6,7 +6,7 @@ import { Coupon, getCoupons, seedCoupons } from '@/lib/couponService';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Layout } from '@/components/Layout';
-import { BottomNavigation } from '@/components/BottomNavigation';
+import BottomNavigation from '@/components/BottomNavigation';
 
 const CouponsPage: React.FC = () => {
   const [coupons, setCoupons] = useState<Coupon[]>([]);

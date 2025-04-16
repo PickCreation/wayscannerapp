@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BottomNavigation } from "@/components/BottomNavigation";
+import BottomNavigation from "@/components/BottomNavigation";
 import {
   Settings,
   User,
@@ -16,7 +16,7 @@ import {
   Ticket,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { LoginDialog } from "@/components/LoginDialog";
+import LoginDialog from "@/components/LoginDialog";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 
