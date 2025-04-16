@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
-import { collection, addDoc, serverTimestamp, updateDoc, doc } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, updateDoc, doc, getDoc, setDoc, increment } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 interface MessageSellerDialogProps {
@@ -100,11 +100,23 @@ const MessageSellerDialog: React.FC<MessageSellerDialogProps> = ({
 
   const updateShopSalesData = async (shop: string) => {
     try {
-      // Update shop sales data in Firebase
+      // Check if shop sales data document exists
       const salesDataRef = doc(db, "shopSalesData", shop);
-      await updateDoc(salesDataRef, {
-        messageCount: 1
-      }, { merge: true });
+      const docSnap = await getDoc(salesDataRef);
+      
+      if (docSnap.exists()) {
+        // Update existing document using increment for atomic updates
+        await updateDoc(salesDataRef, {
+          messageCount: increment(1)
+        });
+      } else {
+        // Create new document with initial values
+        await setDoc(salesDataRef, {
+          messageCount: 1,
+          salesCount: 0,
+          reviewCount: 0
+        });
+      }
     } catch (error) {
       console.error("Error updating shop sales data:", error);
       // Fallback to localStorage
