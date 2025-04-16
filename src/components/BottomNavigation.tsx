@@ -1,3 +1,4 @@
+
 import React from "react";
 import { 
   MessageCircle, 
@@ -27,7 +28,8 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
                         location.pathname.includes("/payment-methods") || 
                         location.pathname.includes("/bookmarks") || 
                         location.pathname.includes("/favorites") || 
-                        location.pathname.includes("/purchases");
+                        location.pathname.includes("/purchases") ||
+                        location.pathname.includes("/coupons");
   const isRecipesPage = location.pathname.includes("/recipes");
   const isMarketplacePage = location.pathname.includes("/marketplace") || location.pathname.includes("/add-listing");
 

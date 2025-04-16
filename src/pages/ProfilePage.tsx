@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { 
   ArrowLeft, Edit, Lock, Store, Bookmark, Heart, 
@@ -131,7 +132,7 @@ const ProfilePage = () => {
 
   const handleMenuItemClick = (item: string) => {
     if (!isAuthenticated && ['Bookmarks', 'Favorites', 'Cart', 'Orders', 'Purchases', 'Addresses', 
-                             'Payment Methods', 'Edit Profile', 'Seller Dashboard', 'Messages'].includes(item)) {
+                             'Payment Methods', 'Edit Profile', 'Seller Dashboard', 'Messages', 'Coupons'].includes(item)) {
       setShowLoginDialog(true);
       return;
     }
@@ -223,6 +224,11 @@ const ProfilePage = () => {
     
     if (item === "Blogs") {
       navigate("/blogs");
+      return;
+    }
+
+    if (item === "Coupons") {
+      navigate("/coupons");
       return;
     }
     
@@ -430,6 +436,13 @@ const ProfilePage = () => {
           onClick={() => handleMenuItemClick("Cart")}
         />
         
+        <ProfileMenuItem 
+          icon={<Ticket className="h-5 w-5 text-wayscanner-blue" />} 
+          title="My Coupons" 
+          description="Discount coupons and offers"
+          onClick={() => handleMenuItemClick("Coupons")}
+        />
+        
         {isAuthenticated && (
           <>
             <ProfileMenuItem 
@@ -447,13 +460,6 @@ const ProfilePage = () => {
             />
           </>
         )}
-        
-        <ProfileMenuItem 
-          icon={<Ticket className="h-5 w-5 text-wayscanner-blue" />} 
-          title="My Coupons" 
-          description="Discount coupons and offers"
-          onClick={() => handleMenuItemClick("Coupons")}
-        />
       </div>
 
       {isAuthenticated && (
