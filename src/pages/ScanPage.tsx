@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, Search, Utensils, Flower, PawPrint } from "lucide-react";
 import BottomNavigation from "@/components/BottomNavigation";
@@ -21,7 +20,6 @@ const ScanPage = () => {
   const location = useLocation();
   const { isAuthenticated } = useFirebaseAuth();
 
-  // Get the tab from URL on initial load
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const tab = searchParams.get("tab");
@@ -43,19 +41,16 @@ const ScanPage = () => {
   };
 
   const handleCameraClick = () => {
-    // Open the camera sheet instead of directly navigating
     setCameraSheetOpen(true);
   };
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    // Update URL when tab changes
     navigate(`/scan?tab=${value}`);
   };
 
   return (
     <div className="pb-20 bg-white min-h-screen">
-      {/* Header */}
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
         <button 
           className="p-2" 
@@ -64,12 +59,8 @@ const ScanPage = () => {
           <ChevronLeft className="h-6 w-6" color="white" />
         </button>
         <h1 className="text-[20px] font-medium">Scan Results</h1>
-        <div className="w-10 h-10 flex items-center justify-center">
-          <Search size={24} color="white" />
-        </div>
       </header>
 
-      {/* Scan Tabs - Redesigned to match forum page style */}
       <div className="flex border-b border-gray-200 bg-white">
         <button
           className={`flex-1 py-3 px-2 flex flex-col items-center ${
@@ -117,7 +108,6 @@ const ScanPage = () => {
         </button>
       </div>
 
-      {/* Tab Content */}
       <div className="p-4">
         {activeTab === "food" && (
           <FoodScanTab 
@@ -129,24 +119,20 @@ const ScanPage = () => {
         {activeTab === "animals" && <AnimalScanTab />}
       </div>
 
-      {/* Bottom Navigation */}
       <BottomNavigation
         activeItem={activeNavItem}
         onItemClick={handleNavItemClick}
         onCameraClick={handleCameraClick}
       />
 
-      {/* Camera Sheet */}
       <CameraSheet open={cameraSheetOpen} onOpenChange={setCameraSheetOpen} />
       
-      {/* Edit Preferences Sheet */}
       <EditPreferencesSheet 
         open={editPreferencesOpen} 
         onOpenChange={setEditPreferencesOpen} 
         onSave={() => {}} 
       />
       
-      {/* How We Score Sheet */}
       <HowWeScoreSheet 
         open={howWeScoreOpen} 
         onOpenChange={setHowWeScoreOpen} 
