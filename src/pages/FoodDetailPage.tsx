@@ -489,7 +489,10 @@ const FoodDetailPage = () => {
         
         <div className="space-y-3">
           {food.certifications.map((certification, index) => (
-            <div key={index} className="bg-gray-100 p-3 rounded-lg flex items-center">
+            <div 
+              key={index} 
+              className="bg-white p-3 rounded-lg flex items-center shadow-[0_2px_5px_rgba(0,0,0,0.1)] border border-gray-100"
+            >
               <CircleCheck className="h-5 w-5 text-teal-500 mr-2" />
               <span className="text-base">{certification}</span>
             </div>
@@ -501,7 +504,7 @@ const FoodDetailPage = () => {
         <h3 className="text-lg font-bold mb-4">Allergy & Diet Info</h3>
         <Separator className="my-4" />
         
-        <div className="flex flex-wrap gap-3">
+        <div className="bg-white p-4 rounded-lg shadow-[0_2px_5px_rgba(0,0,0,0.1)] border border-gray-100 flex flex-wrap gap-3">
           {food.dietInfo.includes("Vegan") && (
             <Badge variant="outline" className="py-1.5 px-4 flex items-center gap-2 rounded-full border-2">
               <Vegan className="h-4 w-4" />
