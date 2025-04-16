@@ -4,7 +4,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { FirebaseAuthProvider } from "@/hooks/use-firebase-auth"; // Changed from AuthProvider
+import { FirebaseAuthProvider } from "@/hooks/use-firebase-auth";
+import { AuthProvider } from "@/hooks/use-auth"; // Added back the original AuthProvider
 import Index from "./pages/Index";
 import ForumPage from "./pages/ForumPage";
 import MyPostsPage from "./pages/MyPostsPage";
@@ -55,56 +56,58 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <FirebaseAuthProvider> {/* Changed from AuthProvider */}
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/bookmarks" element={<BookmarksPage />} />
-              <Route path="/forum" element={<ForumPage />} />
-              <Route path="/forum/my-posts" element={<MyPostsPage />} />
-              <Route path="/forum/post/:postId" element={<PostDetailPage />} />
-              <Route path="/recipes" element={<RecipesPage />} />
-              <Route path="/recipes/:recipeId" element={<RecipeDetailPage />} />
-              <Route path="/recipes/search" element={<RecipeSearchPage />} />
-              <Route path="/recipes/all" element={<AllRecipesPage />} />
-              <Route path="/scan" element={<ScanPage />} />
-              <Route path="/animal/:animalId" element={<AnimalDetailPage />} />
-              <Route path="/food/:foodId" element={<FoodDetailPage />} />
-              <Route path="/plant/:plantId" element={<PlantDetailPage />} />
-              <Route path="/scan-camera" element={<ScanCameraPage />} />
-              <Route path="/food-scan-camera" element={<FoodScanCameraPage />} />
-              <Route path="/marketplace" element={<MarketplacePage />} />
-              <Route path="/marketplace/product/:productId" element={<ProductDetailPage />} />
-              <Route path="/add-listing" element={<AddListingPage />} />
-              <Route path="/cart" element={<CartPage />} />
-              <Route path="/favorites" element={<FavoritesPage />} />
-              <Route path="/addresses" element={<AddressesPage />} />
-              <Route path="/payment-methods" element={<PaymentMethodsPage />} />
-              <Route path="/purchases" element={<PurchasesPage />} />
-              <Route path="/checkout" element={<CheckoutPage />} />
-              <Route path="/edit-profile" element={<EditProfilePage />} />
-              <Route path="/change-password" element={<ChangePasswordPage />} />
-              <Route path="/orders" element={<OrdersPage />} />
-              <Route path="/language-settings" element={<LanguageSettingsPage />} />
-              <Route path="/help-center" element={<HelpCenterPage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-              <Route path="/terms-of-use" element={<TermsOfUsePage />} />
-              <Route path="/submit-ticket" element={<SubmitTicketPage />} />
-              <Route path="/subscription" element={<SubscriptionPage />} />
-              <Route path="/seller-dashboard" element={<SellerDashboardPage />} />
-              <Route path="/seller-dashboard/settings" element={<SellerDashboardSettingsPage />} />
-              <Route path="/store/:storeId" element={<StoreFrontPage />} />
-              <Route path="/profile/messages" element={<MessagesPage />} />
-              <Route path="/blogs" element={<BlogsPage />} />
-              <Route path="/blogs/:blogId" element={<BlogDetailPage />} />
-              <Route path="/how-it-works" element={<HowItWorksPage />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
+        <FirebaseAuthProvider>
+          <AuthProvider> {/* Added back the AuthProvider */}
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/bookmarks" element={<BookmarksPage />} />
+                <Route path="/forum" element={<ForumPage />} />
+                <Route path="/forum/my-posts" element={<MyPostsPage />} />
+                <Route path="/forum/post/:postId" element={<PostDetailPage />} />
+                <Route path="/recipes" element={<RecipesPage />} />
+                <Route path="/recipes/:recipeId" element={<RecipeDetailPage />} />
+                <Route path="/recipes/search" element={<RecipeSearchPage />} />
+                <Route path="/recipes/all" element={<AllRecipesPage />} />
+                <Route path="/scan" element={<ScanPage />} />
+                <Route path="/animal/:animalId" element={<AnimalDetailPage />} />
+                <Route path="/food/:foodId" element={<FoodDetailPage />} />
+                <Route path="/plant/:plantId" element={<PlantDetailPage />} />
+                <Route path="/scan-camera" element={<ScanCameraPage />} />
+                <Route path="/food-scan-camera" element={<FoodScanCameraPage />} />
+                <Route path="/marketplace" element={<MarketplacePage />} />
+                <Route path="/marketplace/product/:productId" element={<ProductDetailPage />} />
+                <Route path="/add-listing" element={<AddListingPage />} />
+                <Route path="/cart" element={<CartPage />} />
+                <Route path="/favorites" element={<FavoritesPage />} />
+                <Route path="/addresses" element={<AddressesPage />} />
+                <Route path="/payment-methods" element={<PaymentMethodsPage />} />
+                <Route path="/purchases" element={<PurchasesPage />} />
+                <Route path="/checkout" element={<CheckoutPage />} />
+                <Route path="/edit-profile" element={<EditProfilePage />} />
+                <Route path="/change-password" element={<ChangePasswordPage />} />
+                <Route path="/orders" element={<OrdersPage />} />
+                <Route path="/language-settings" element={<LanguageSettingsPage />} />
+                <Route path="/help-center" element={<HelpCenterPage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+                <Route path="/terms-of-use" element={<TermsOfUsePage />} />
+                <Route path="/submit-ticket" element={<SubmitTicketPage />} />
+                <Route path="/subscription" element={<SubscriptionPage />} />
+                <Route path="/seller-dashboard" element={<SellerDashboardPage />} />
+                <Route path="/seller-dashboard/settings" element={<SellerDashboardSettingsPage />} />
+                <Route path="/store/:storeId" element={<StoreFrontPage />} />
+                <Route path="/profile/messages" element={<MessagesPage />} />
+                <Route path="/blogs" element={<BlogsPage />} />
+                <Route path="/blogs/:blogId" element={<BlogDetailPage />} />
+                <Route path="/how-it-works" element={<HowItWorksPage />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </AuthProvider>
         </FirebaseAuthProvider>
       </TooltipProvider>
     </QueryClientProvider>

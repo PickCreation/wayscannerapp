@@ -1,6 +1,7 @@
 
 import { useState, useEffect, createContext, useContext } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { useFirebaseAuth } from '@/hooks/use-firebase-auth'; // Import the firebase auth hook
 
 interface User {
   id: string;
@@ -27,8 +28,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
   const { toast } = useToast();
+  const firebaseAuth = useFirebaseAuth(); // Use Firebase auth
 
   useEffect(() => {
+    // If Firebase auth has a user, use that
+    if (firebaseAuth.isAuthenticated && firebaseAuth.user) {
+      setIsAuthenticated(true);
+      setUser(firebaseAuth.user);
+      return;
+    }
+
     const checkAuth = () => {
       const storedAuth = localStorage.getItem('isLoggedIn');
       const storedUser = localStorage.getItem('user');
@@ -40,9 +49,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
     
     checkAuth();
-  }, []);
+  }, [firebaseAuth.isAuthenticated, firebaseAuth.user]);
 
   const login = async (email: string, password: string) => {
+    // Try Firebase login first
+    try {
+      await firebaseAuth.login(email, password);
+      return;
+    } catch (error) {
+      console.log("Falling back to local login", error);
+    }
+
     console.log("Logging in with:", email, password);
     
     // Admin login check
@@ -91,6 +108,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signup = async (name: string, email: string, password: string) => {
+    // Try Firebase signup first
+    try {
+      await firebaseAuth.signup(name, email, password);
+      return;
+    } catch (error) {
+      console.log("Falling back to local signup", error);
+    }
+
     console.log("Signing up with:", name, email, password);
     
     // Simulate signup success
@@ -114,6 +139,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = () => {
+    // Try Firebase logout
+    try {
+      firebaseAuth.logout();
+    } catch (error) {
+      console.log("Error with Firebase logout, proceeding with local logout", error);
+    }
+
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('user');
     // Also remove any profile data
