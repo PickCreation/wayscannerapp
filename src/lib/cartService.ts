@@ -44,8 +44,12 @@ export interface Order {
 const CART_COLLECTION = 'cart_items';
 const ORDERS_COLLECTION = 'orders';
 
-// Save cart item to Firestore
+// Save cart item to Firestore with better error handling
 export const saveCartItem = async (userId: string, item: Omit<CartItem, 'addedAt'>): Promise<void> => {
+  // First, update localStorage as a reliable fallback
+  updateLocalStorageCart(item);
+  
+  // Then try Firebase, but don't block on it
   try {
     console.log('Saving cart item to Firebase:', item);
     
@@ -69,31 +73,20 @@ export const saveCartItem = async (userId: string, item: Omit<CartItem, 'addedAt
         addedAt: Timestamp.now()
       });
     }
-    
-    // Also update localStorage as backup
-    const cartItems = getCartItemsFromLocalStorage();
-    const existingItemIndex = cartItems.findIndex(i => i.id === item.id);
-    
-    if (existingItemIndex >= 0) {
-      cartItems[existingItemIndex].quantity += item.quantity;
-    } else {
-      cartItems.push({
-        ...item,
-        addedAt: new Date()
-      });
-    }
-    
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
-    
   } catch (error) {
-    console.error('Error saving cart item:', error);
-    // Fallback to localStorage only
-    updateLocalStorageCart(item);
+    console.error('Error saving cart item to Firebase:', error);
+    // We've already updated localStorage, so just log the error
+    // and let the app continue with the local cart
+    throw error; // Rethrow so caller can handle it if needed
   }
 };
 
 // Update cart item quantity in Firestore
 export const updateCartItemQuantity = async (userId: string, itemId: string, quantity: number): Promise<void> => {
+  // First, update localStorage for guaranteed functionality
+  updateLocalStorageCartItemQuantity(itemId, quantity);
+  
+  // Then try Firebase, but don't block on it
   try {
     const cartRef = collection(db, CART_COLLECTION);
     const q = query(cartRef, where('userId', '==', userId), where('id', '==', itemId));
@@ -103,35 +96,18 @@ export const updateCartItemQuantity = async (userId: string, itemId: string, qua
       const docRef = doc(db, CART_COLLECTION, querySnapshot.docs[0].id);
       await updateDoc(docRef, { quantity });
     }
-    
-    // Update localStorage as backup
-    const cartItems = getCartItemsFromLocalStorage();
-    const updatedCart = cartItems.map(item => {
-      if (item.id === itemId) {
-        return { ...item, quantity };
-      }
-      return item;
-    });
-    
-    localStorage.setItem('cartItems', JSON.stringify(updatedCart));
-    
   } catch (error) {
-    console.error('Error updating cart item quantity:', error);
-    // Fallback to localStorage only
-    const cartItems = getCartItemsFromLocalStorage();
-    const updatedCart = cartItems.map(item => {
-      if (item.id === itemId) {
-        return { ...item, quantity };
-      }
-      return item;
-    });
-    
-    localStorage.setItem('cartItems', JSON.stringify(updatedCart));
+    console.error('Error updating cart item quantity in Firebase:', error);
+    // We've already updated localStorage, so just log the error
   }
 };
 
 // Remove item from cart in Firestore
 export const removeCartItem = async (userId: string, itemId: string): Promise<void> => {
+  // First, update localStorage for guaranteed functionality
+  removeCartItemFromLocalStorage(itemId);
+  
+  // Then try Firebase, but don't block on it
   try {
     const cartRef = collection(db, CART_COLLECTION);
     const q = query(cartRef, where('userId', '==', userId), where('id', '==', itemId));
@@ -141,18 +117,9 @@ export const removeCartItem = async (userId: string, itemId: string): Promise<vo
       const docRef = doc(db, CART_COLLECTION, querySnapshot.docs[0].id);
       await deleteDoc(docRef);
     }
-    
-    // Remove from localStorage as backup
-    const cartItems = getCartItemsFromLocalStorage();
-    const updatedCart = cartItems.filter(item => item.id !== itemId);
-    localStorage.setItem('cartItems', JSON.stringify(updatedCart));
-    
   } catch (error) {
-    console.error('Error removing cart item:', error);
-    // Fallback to localStorage only
-    const cartItems = getCartItemsFromLocalStorage();
-    const updatedCart = cartItems.filter(item => item.id !== itemId);
-    localStorage.setItem('cartItems', JSON.stringify(updatedCart));
+    console.error('Error removing cart item from Firebase:', error);
+    // We've already updated localStorage, so just log the error
   }
 };
 
@@ -183,7 +150,7 @@ export const getCartItems = async (userId: string): Promise<CartItem[]> => {
     
     return cartItems;
   } catch (error) {
-    console.error('Error fetching cart items:', error);
+    console.error('Error fetching cart items from Firebase:', error);
     // Fallback to localStorage
     return getCartItemsFromLocalStorage();
   }
@@ -238,6 +205,26 @@ const updateLocalStorageCart = (item: Omit<CartItem, 'addedAt'>): void => {
   }
   
   localStorage.setItem('cartItems', JSON.stringify(cartItems));
+};
+
+// Helper function to update a specific cart item's quantity in localStorage
+const updateLocalStorageCartItemQuantity = (itemId: string, quantity: number): void => {
+  const cartItems = getCartItemsFromLocalStorage();
+  const updatedCart = cartItems.map(item => {
+    if (item.id === itemId) {
+      return { ...item, quantity };
+    }
+    return item;
+  });
+  
+  localStorage.setItem('cartItems', JSON.stringify(updatedCart));
+};
+
+// Helper function to remove a cart item from localStorage
+const removeCartItemFromLocalStorage = (itemId: string): void => {
+  const cartItems = getCartItemsFromLocalStorage();
+  const updatedCart = cartItems.filter(item => item.id !== itemId);
+  localStorage.setItem('cartItems', JSON.stringify(updatedCart));
 };
 
 // Helper function to get cart items from localStorage

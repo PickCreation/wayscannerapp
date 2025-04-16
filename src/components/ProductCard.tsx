@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Star, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -45,21 +46,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
     };
     
     try {
-      // If user is authenticated, save to Firebase
+      // First, update localStorage regardless of authentication status
+      updateLocalStorageCart(cartItem);
+      
+      // If user is authenticated, try to save to Firebase as well
       if (isAuthenticated && user) {
-        await saveCartItem(user.id, cartItem);
-      } else {
-        // Otherwise, just use localStorage
-        const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-        const existingItemIndex = cartItems.findIndex((item: any) => item.id === id.toString());
-        
-        if (existingItemIndex >= 0) {
-          cartItems[existingItemIndex].quantity += 1;
-        } else {
-          cartItems.push(cartItem);
-        }
-        
-        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        await saveCartItem(user.id, cartItem).catch(error => {
+          console.error("Firebase cart update failed, using localStorage only:", error);
+          // We already updated localStorage above, so no further action needed
+        });
       }
       
       // Dispatch a custom event to notify other components
@@ -81,6 +76,20 @@ const ProductCard: React.FC<ProductCardProps> = ({
         setIsAddingToCart(false);
       }, 500);
     }
+  };
+
+  // Helper function to update localStorage cart
+  const updateLocalStorageCart = (item: any) => {
+    const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+    const existingItemIndex = cartItems.findIndex((cartItem: any) => cartItem.id === item.id);
+    
+    if (existingItemIndex >= 0) {
+      cartItems[existingItemIndex].quantity += 1;
+    } else {
+      cartItems.push(item);
+    }
+    
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
   };
 
   return (
