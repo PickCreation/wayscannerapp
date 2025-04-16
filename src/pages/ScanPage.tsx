@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, Search, Utensils, Flower, PawPrint } from "lucide-react";
 import BottomNavigation from "@/components/BottomNavigation";
@@ -58,7 +59,7 @@ const ScanPage = () => {
         >
           <ChevronLeft className="h-6 w-6" color="white" />
         </button>
-        <h1 className="text-[20px] font-medium">Scan Results</h1>
+        <h1 className="text-[20px] font-medium absolute left-1/2 transform -translate-x-1/2">Scan Results</h1>
       </header>
 
       <div className="flex border-b border-gray-200 bg-white">
