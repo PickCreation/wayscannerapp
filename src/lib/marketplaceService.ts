@@ -10,10 +10,18 @@ export interface Product {
   category: string;
   description: string;
   image: string;
+  images?: string[];
   rating?: number;
   reviews?: number;
   stock?: number;
   createdAt?: Date;
+  seller?: string;
+  color?: string;
+  condition?: string;
+  weight?: string;
+  brand?: string;
+  country?: string;
+  tags?: string[];
 }
 
 // Collection reference
@@ -73,9 +81,17 @@ export const getAllProducts = async (): Promise<Product[]> => {
         category: data.category,
         description: data.description,
         image: data.image,
+        images: data.images,
         rating: data.rating,
         reviews: data.reviews,
         stock: data.stock,
+        seller: data.seller,
+        color: data.color,
+        condition: data.condition,
+        weight: data.weight,
+        brand: data.brand,
+        country: data.country,
+        tags: data.tags,
         createdAt: data.createdAt ? (data.createdAt as Timestamp).toDate() : new Date()
       });
     });
@@ -109,9 +125,17 @@ export const getProductById = async (productId: string): Promise<Product | null>
         category: data.category,
         description: data.description,
         image: data.image,
+        images: data.images,
         rating: data.rating,
         reviews: data.reviews,
         stock: data.stock,
+        seller: data.seller,
+        color: data.color,
+        condition: data.condition,
+        weight: data.weight,
+        brand: data.brand,
+        country: data.country,
+        tags: data.tags,
         createdAt: data.createdAt ? (data.createdAt as Timestamp).toDate() : new Date()
       };
     } else {
