@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from "react";
 import { 
   ArrowLeft, User, Bell, BookmarkCheck, Heart, MessageSquare, Bookmark,
-  Folder, FolderOpen, Utensils, Flower, PawPrint, ChevronRight
+  Folder, FolderOpen, Utensils, Flower, PawPrint, ChevronRight, X
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -338,31 +339,31 @@ const BookmarksPage = () => {
           </TabsContent>
 
           <TabsContent value="recipes" className="pb-20">
-            <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
               {bookmarkedRecipes.length > 0 ? (
                 bookmarkedRecipes.map(recipe => (
-                  <div key={recipe.id} className="bg-white rounded-lg shadow">
-                    <RecipeCard
-                      recipe={recipe}
-                      onClick={() => handleRecipeClick(recipe.id)}
-                    />
-                    <div className="px-4 pb-3">
-                      <button 
-                        className="flex items-center text-blue-500 py-2 text-[16px]"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRemoveRecipeBookmark(recipe.id);
-                        }}
-                        type="button"
-                      >
-                        <Bookmark size={18} className="fill-blue-500 mr-2" />
-                        Remove from bookmarks
-                      </button>
+                  <div key={recipe.id} className="relative bg-white rounded-lg shadow">
+                    <button 
+                      className="absolute top-2 right-2 z-10 p-1 bg-white/80 rounded-full"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveRecipeBookmark(recipe.id);
+                      }}
+                      type="button"
+                      aria-label="Remove bookmark"
+                    >
+                      <Bookmark size={18} className="fill-wayscanner-blue text-wayscanner-blue" />
+                    </button>
+                    <div onClick={() => handleRecipeClick(recipe.id)}>
+                      <RecipeCard
+                        recipe={recipe}
+                        onClick={() => handleRecipeClick(recipe.id)}
+                      />
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="flex flex-col items-center justify-center py-10 px-4 bg-white rounded-lg shadow">
+                <div className="flex flex-col items-center justify-center py-10 px-4 bg-white rounded-lg shadow col-span-2">
                   <FolderOpen size={48} className="text-gray-400 mb-2" />
                   <p className="text-gray-600 text-center text-[16px]">No bookmarked recipes yet.</p>
                   <p className="text-gray-400 text-sm text-center mt-1">
