@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription } from "@/components/ui/drawer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,11 +11,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
 import { LogIn, User, Lock, Mail, X } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-
-interface LoginDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -56,6 +52,11 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, onOpenChange }) => {
       onOpenChange(false);
     } catch (error) {
       console.error("Login error:", error);
+      toast({
+        title: "Login Failed",
+        description: "Invalid email or password",
+        variant: "destructive"
+      });
     }
   };
 
@@ -66,8 +67,18 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, onOpenChange }) => {
       onOpenChange(false);
     } catch (error) {
       console.error("Signup error:", error);
+      toast({
+        title: "Signup Failed",
+        description: "Unable to create account",
+        variant: "destructive"
+      });
     }
   };
+
+  interface LoginDialogProps {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+  }
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
@@ -247,3 +258,4 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, onOpenChange }) => {
 };
 
 export default LoginDialog;
+

@@ -1,3 +1,4 @@
+
 import React from "react";
 import { 
   MessageCircle, 
@@ -10,15 +11,15 @@ import { cn } from "@/lib/utils";
 import { useLocation, useNavigate } from "react-router-dom";
 
 interface BottomNavigationProps {
-  activeItem: "home" | "forum" | "recipes" | "shop" | "profile";
-  onItemClick: (item: "home" | "forum" | "recipes" | "shop" | "profile") => void;
-  onCameraClick: () => void;
+  activeItem?: "home" | "forum" | "recipes" | "shop" | "profile";
+  onItemClick?: (item: "home" | "forum" | "recipes" | "shop" | "profile") => void;
+  onCameraClick?: () => void;
 }
 
 const BottomNavigation: React.FC<BottomNavigationProps> = ({
-  activeItem,
-  onItemClick,
-  onCameraClick,
+  activeItem = "home",
+  onItemClick = () => {},
+  onCameraClick = () => {},
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -158,3 +159,4 @@ const HomeIcon = ({ filled, size = 24 }: { filled: boolean; size?: number }) => 
 };
 
 export default BottomNavigation;
+
