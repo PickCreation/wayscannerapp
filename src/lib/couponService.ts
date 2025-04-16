@@ -14,19 +14,37 @@ export interface Coupon {
 
 export const getCoupons = async (): Promise<Coupon[]> => {
   try {
+    console.log("Getting all coupons from Firestore");
     const couponsRef = collection(db, "coupons");
     const snapshot = await getDocs(couponsRef);
     
+    console.log(`Retrieved ${snapshot.docs.length} coupons from Firestore`);
+    
     return snapshot.docs.map((doc) => {
       const data = doc.data();
+      // Safely convert Firestore Timestamp to Date
+      let validUntil = new Date();
+      try {
+        if (data.validUntil && typeof data.validUntil.toDate === 'function') {
+          validUntil = data.validUntil.toDate();
+        } else if (data.validUntil instanceof Date) {
+          validUntil = data.validUntil;
+        }
+      } catch (err) {
+        console.error("Error converting validUntil date:", err);
+      }
+      
+      // Check if coupon is active based on current date
+      const isActive = new Date() < validUntil;
+      
       return {
         id: doc.id,
-        code: data.code,
-        discount: data.discount,
-        description: data.description,
-        store: data.store,
-        validUntil: data.validUntil?.toDate() || new Date(),
-        isActive: new Date() < (data.validUntil?.toDate() || new Date())
+        code: data.code || "",
+        discount: data.discount || "",
+        description: data.description || "",
+        store: data.store || "",
+        validUntil: validUntil,
+        isActive: isActive
       };
     });
   } catch (error) {
@@ -37,29 +55,15 @@ export const getCoupons = async (): Promise<Coupon[]> => {
 
 export const getActiveCoupons = async (): Promise<Coupon[]> => {
   try {
-    // Instead of using the validUntil field in the query which might be causing issues,
-    // let's get all coupons and filter them in the client
-    const couponsRef = collection(db, "coupons");
-    const snapshot = await getDocs(couponsRef);
+    console.log("Getting active coupons");
+    // Get all coupons and filter client-side for active ones
+    const allCoupons = await getCoupons();
     const now = new Date();
     
-    return snapshot.docs
-      .map((doc) => {
-        const data = doc.data();
-        const validUntil = data.validUntil?.toDate() || new Date();
-        const isActive = now < validUntil;
-        
-        return {
-          id: doc.id,
-          code: data.code,
-          discount: data.discount,
-          description: data.description,
-          store: data.store,
-          validUntil: validUntil,
-          isActive: isActive
-        };
-      })
-      .filter(coupon => coupon.isActive);
+    const activeCoupons = allCoupons.filter(coupon => coupon.isActive);
+    console.log(`Found ${activeCoupons.length} active coupons out of ${allCoupons.length} total`);
+    
+    return activeCoupons;
   } catch (error) {
     console.error("Error fetching active coupons:", error);
     return [];
@@ -68,28 +72,15 @@ export const getActiveCoupons = async (): Promise<Coupon[]> => {
 
 export const getExpiredCoupons = async (): Promise<Coupon[]> => {
   try {
-    // Same approach as getActiveCoupons, but filtering for expired ones
-    const couponsRef = collection(db, "coupons");
-    const snapshot = await getDocs(couponsRef);
+    console.log("Getting expired coupons");
+    // Get all coupons and filter client-side for expired ones
+    const allCoupons = await getCoupons();
     const now = new Date();
     
-    return snapshot.docs
-      .map((doc) => {
-        const data = doc.data();
-        const validUntil = data.validUntil?.toDate() || new Date();
-        const isActive = now < validUntil;
-        
-        return {
-          id: doc.id,
-          code: data.code,
-          discount: data.discount,
-          description: data.description,
-          store: data.store,
-          validUntil: validUntil,
-          isActive: isActive
-        };
-      })
-      .filter(coupon => !coupon.isActive);
+    const expiredCoupons = allCoupons.filter(coupon => !coupon.isActive);
+    console.log(`Found ${expiredCoupons.length} expired coupons out of ${allCoupons.length} total`);
+    
+    return expiredCoupons;
   } catch (error) {
     console.error("Error fetching expired coupons:", error);
     return [];
@@ -98,12 +89,28 @@ export const getExpiredCoupons = async (): Promise<Coupon[]> => {
 
 export const addCoupon = async (coupon: Omit<Coupon, 'id' | 'isActive'>): Promise<string | null> => {
   try {
+    console.log("Adding new coupon:", coupon);
     const couponsRef = collection(db, "coupons");
+    
+    // Ensure the validUntil is properly converted to Firestore Timestamp
+    let validUntilTimestamp;
+    try {
+      validUntilTimestamp = Timestamp.fromDate(coupon.validUntil);
+    } catch (err) {
+      console.error("Error converting validUntil to Timestamp:", err);
+      return null;
+    }
+    
     const docRef = await addDoc(couponsRef, {
-      ...coupon,
-      validUntil: Timestamp.fromDate(coupon.validUntil),
+      code: coupon.code,
+      discount: coupon.discount,
+      description: coupon.description,
+      store: coupon.store,
+      validUntil: validUntilTimestamp,
       createdAt: serverTimestamp()
     });
+    
+    console.log("Coupon added successfully with ID:", docRef.id);
     return docRef.id;
   } catch (error) {
     console.error("Error adding coupon:", error);
@@ -114,6 +121,7 @@ export const addCoupon = async (coupon: Omit<Coupon, 'id' | 'isActive'>): Promis
 // Seed some initial coupons if none exist
 export const seedCoupons = async (): Promise<void> => {
   try {
+    console.log("Checking if coupons need to be seeded...");
     const coupons = await getCoupons();
     
     if (coupons.length === 0) {

@@ -28,18 +28,18 @@ const CouponsPage: React.FC = () => {
         setIsLoading(true);
         setError(null);
         
-        console.log("Starting to fetch coupons...");
+        console.log("CouponsPage: Starting to fetch coupons...");
         
         // First seed coupons if there are none
         await seedCoupons();
-        console.log("Seed coupons complete");
+        console.log("CouponsPage: Seed coupons complete");
         
         // Then fetch active and expired coupons
         const active = await getActiveCoupons();
-        console.log(`Fetched ${active.length} active coupons`);
+        console.log(`CouponsPage: Fetched ${active.length} active coupons`);
         
         const expired = await getExpiredCoupons();
-        console.log(`Fetched ${expired.length} expired coupons`);
+        console.log(`CouponsPage: Fetched ${expired.length} expired coupons`);
         
         setActiveCoupons(active);
         setExpiredCoupons(expired);
@@ -102,6 +102,14 @@ const CouponsPage: React.FC = () => {
     ));
   };
 
+  // For debugging
+  console.log("CouponsPage render state:", {
+    isLoading,
+    error,
+    activeCouponsCount: activeCoupons.length,
+    expiredCouponsCount: expiredCoupons.length
+  });
+
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <div className="bg-wayscanner-blue text-white p-4 relative">
@@ -145,6 +153,12 @@ const CouponsPage: React.FC = () => {
             ) : (
               <div className="text-center py-10">
                 <p className="text-gray-500">No active coupons available.</p>
+                <button 
+                  onClick={() => window.location.reload()} 
+                  className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md"
+                >
+                  Try Again
+                </button>
               </div>
             )}
           </TabsContent>
@@ -169,6 +183,12 @@ const CouponsPage: React.FC = () => {
             ) : (
               <div className="text-center py-10">
                 <p className="text-gray-500">No expired coupons.</p>
+                <button 
+                  onClick={() => window.location.reload()} 
+                  className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md"
+                >
+                  Try Again
+                </button>
               </div>
             )}
           </TabsContent>
