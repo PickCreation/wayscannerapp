@@ -55,6 +55,7 @@ export const seedMarketplace = async () => {
 
 // Add a synchronous seeding function for direct localStorage use
 export const seedLocalStorage = () => {
+  console.log('Seeding localStorage directly');
   const sampleProducts = [
     {
       id: 'local_123456',

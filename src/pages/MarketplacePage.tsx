@@ -39,23 +39,21 @@ const MarketplacePage = () => {
     const fetchProducts = async () => {
       setIsLoading(true);
       try {
-        // Force seed localStorage immediately to ensure we have products
         const localProducts = seedLocalStorage();
         setProducts(localProducts);
+        console.log("Local products loaded:", localProducts.length);
         
-        // Try Firebase in the background, but don't block on it
-        try {
-          await seedMarketplace();
-          const firebaseProducts = await getAllProducts();
+        getAllProducts().then(firebaseProducts => {
           if (firebaseProducts && firebaseProducts.length > 0) {
             setProducts(firebaseProducts);
+            console.log("Firebase products loaded:", firebaseProducts.length);
           }
-        } catch (firebaseError) {
-          console.error("Firebase operation failed:", firebaseError);
-          // We already have localStorage products loaded, so no additional fallback needed
-        }
+        }).catch(error => {
+          console.error("Firebase products fetch failed:", error);
+          // We already have local products, so no additional fallback needed
+        });
       } catch (error) {
-        console.error("Fatal error fetching products:", error);
+        console.error("Error fetching products:", error);
         toast({
           title: "Using local data",
           description: "Connected to local storage instead of Firebase.",
@@ -265,12 +263,12 @@ const MarketplacePage = () => {
               </div>
             ))}
           </div>
-        ) : (
+        ) : sortedProducts.length > 0 ? (
           <div className="grid grid-cols-2 gap-3">
             {sortedProducts.map(product => (
               <ProductCard
                 key={product.id}
-                id={parseInt(product.id) || Math.floor(Math.random() * 1000)}
+                id={parseInt(product.id.replace('local_', '')) || Math.floor(Math.random() * 1000)}
                 title={product.title}
                 price={product.price}
                 image={product.image || "/placeholder.svg"}
@@ -279,11 +277,9 @@ const MarketplacePage = () => {
               />
             ))}
           </div>
-        )}
-        
-        {!isLoading && sortedProducts.length === 0 && (
+        ) : (
           <div className="text-center py-12">
-            <p className="text-gray-500">No products found.</p>
+            <p className="text-gray-500">No products found. Please try again later.</p>
           </div>
         )}
       </div>
