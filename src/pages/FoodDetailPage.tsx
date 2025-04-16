@@ -361,7 +361,7 @@ const FoodDetailPage = () => {
       </div>
 
       <div className="bg-white rounded-lg shadow-sm mx-4 mt-4 p-4 border border-gray-200">
-        <h3 className="text-lg font-bold mb-6">Macros</h3>
+        <h3 className="text-lg font-bold mb-4">Macros</h3>
         
         <div className="flex mb-4 h-6 rounded-lg overflow-hidden">
           <div className="bg-blue-500" style={{ width: `${food.macros.carbs.percentage}%` }}></div>
@@ -369,23 +369,23 @@ const FoodDetailPage = () => {
           <div className="bg-yellow-500" style={{ width: `${food.macros.fat.percentage}%` }}></div>
         </div>
         
-        <div className="flex justify-between text-xl mt-4">
+        <div className="flex justify-between text-sm mt-3">
           <div className="flex items-center">
-            <div className="w-4 h-4 bg-blue-500 rounded-full mr-3"></div>
+            <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
             <span className="font-normal">Carbs</span>
-            <span className="font-bold ml-3">{food.macros.carbs.value}g</span>
+            <span className="font-bold ml-2">{food.macros.carbs.value}g</span>
           </div>
           
           <div className="flex items-center">
-            <div className="w-4 h-4 bg-purple-500 rounded-full mr-3"></div>
+            <div className="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
             <span className="font-normal">Protein</span>
-            <span className="font-bold ml-3">{food.macros.protein.value}g</span>
+            <span className="font-bold ml-2">{food.macros.protein.value}g</span>
           </div>
           
           <div className="flex items-center">
-            <div className="w-4 h-4 bg-yellow-500 rounded-full mr-3"></div>
+            <div className="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>
             <span className="font-normal">Fat</span>
-            <span className="font-bold ml-3">{food.macros.fat.value}g</span>
+            <span className="font-bold ml-2">{food.macros.fat.value}g</span>
           </div>
         </div>
       </div>
