@@ -1,10 +1,11 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   ChevronLeft, 
   MessageCircle, 
   Check, 
+  CheckCheck,
   Send,
   ArrowLeft
 } from "lucide-react";
@@ -25,14 +26,31 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { useAuth } from "@/hooks/use-auth";
 import BottomNavigation from "@/components/BottomNavigation";
+import { 
+  collection, 
+  query, 
+  where, 
+  orderBy, 
+  onSnapshot, 
+  addDoc, 
+  serverTimestamp, 
+  updateDoc, 
+  doc, 
+  setDoc, 
+  getDoc
+} from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 interface Message {
-  id: number;
+  id: string;
   shopName: string;
   message: string;
-  date: string;
+  createdAt: any;
   isFromBuyer: boolean;
   read: boolean;
+  buyerId?: string;
+  buyerName?: string;
+  typingIndicator?: boolean;
 }
 
 const MessagesPage = () => {
@@ -44,6 +62,10 @@ const MessagesPage = () => {
   const [selectedShop, setSelectedShop] = useState<string | null>(null);
   const [reply, setReply] = useState("");
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("profile");
+  const [typingStatus, setTypingStatus] = useState<Record<string, boolean>>({});
+  const [isTyping, setIsTyping] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Check if user is authenticated
   useEffect(() => {
@@ -57,21 +79,130 @@ const MessagesPage = () => {
     }
   }, [isAuthenticated, navigate, toast]);
 
-  // Load messages from localStorage
+  // Setup Firestore listeners for messages
   useEffect(() => {
-    const storedMessages = JSON.parse(localStorage.getItem("sellerMessages") || "[]");
-    setMessages(storedMessages);
-    
-    // Mark messages as read only for selected shop
-    if (selectedShop && storedMessages.length > 0) {
-      const updatedMessages = storedMessages.map((msg: Message) => ({
-        ...msg,
-        read: msg.shopName === selectedShop ? true : msg.read
-      }));
-      localStorage.setItem("sellerMessages", JSON.stringify(updatedMessages));
-      setMessages(updatedMessages);
+    if (!isAuthenticated || !user) return;
+
+    let messagesUnsubscribe: () => void;
+
+    try {
+      // Get messages where the current user is the buyer
+      const messagesRef = collection(db, "messages");
+      const messagesQuery = query(
+        messagesRef,
+        where("buyerId", "==", user.id),
+        orderBy("createdAt", "asc")
+      );
+
+      messagesUnsubscribe = onSnapshot(messagesQuery, (snapshot) => {
+        const fetchedMessages: Message[] = [];
+        snapshot.forEach((doc) => {
+          fetchedMessages.push({
+            id: doc.id,
+            ...(doc.data() as Omit<Message, "id">),
+            createdAt: doc.data().createdAt?.toDate() || new Date()
+          });
+        });
+        
+        console.log("Fetched messages from Firebase:", fetchedMessages);
+        setMessages(fetchedMessages);
+        
+        // Mark messages as read if shop is selected
+        if (selectedShop) {
+          fetchedMessages
+            .filter(msg => msg.shopName === selectedShop && !msg.isFromBuyer && !msg.read)
+            .forEach(msg => {
+              updateDoc(doc(db, "messages", msg.id), { read: true });
+            });
+        }
+      }, (error) => {
+        console.error("Error fetching messages:", error);
+        // Fallback to localStorage
+        const storedMessages = JSON.parse(localStorage.getItem("sellerMessages") || "[]");
+        setMessages(storedMessages);
+      });
+
+      // Listen for typing indicators
+      const typingRef = collection(db, "typingIndicators");
+      const typingQuery = query(typingRef, where("buyerId", "==", user.id));
+      
+      const typingUnsubscribe = onSnapshot(typingQuery, (snapshot) => {
+        const typingData: Record<string, boolean> = {};
+        snapshot.forEach((doc) => {
+          typingData[doc.data().shopName] = doc.data().isTyping;
+        });
+        setTypingStatus(typingData);
+      });
+
+      return () => {
+        messagesUnsubscribe?.();
+        typingUnsubscribe?.();
+      };
+    } catch (error) {
+      console.error("Error setting up Firebase listeners:", error);
+      // Fallback to localStorage
+      const storedMessages = JSON.parse(localStorage.getItem("sellerMessages") || "[]");
+      setMessages(storedMessages);
     }
-  }, [selectedShop]);
+  }, [isAuthenticated, user, selectedShop]);
+
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    if (messagesEndRef.current && selectedShop) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, selectedShop]);
+
+  // Handle typing indicator
+  useEffect(() => {
+    if (!user || !selectedShop) return;
+
+    const handleTyping = async () => {
+      if (!isTyping) {
+        setIsTyping(true);
+        try {
+          const typingDocRef = doc(db, "typingIndicators", `${user.id}_${selectedShop}`);
+          await setDoc(typingDocRef, {
+            buyerId: user.id,
+            shopName: selectedShop,
+            isTyping: true,
+            timestamp: serverTimestamp()
+          });
+        } catch (error) {
+          console.error("Error setting typing indicator:", error);
+        }
+      }
+
+      // Clear previous timeout
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+
+      // Set timeout to stop typing indicator after 2 seconds
+      typingTimeoutRef.current = setTimeout(async () => {
+        setIsTyping(false);
+        try {
+          const typingDocRef = doc(db, "typingIndicators", `${user.id}_${selectedShop}`);
+          await updateDoc(typingDocRef, {
+            isTyping: false,
+            timestamp: serverTimestamp()
+          });
+        } catch (error) {
+          console.error("Error clearing typing indicator:", error);
+        }
+      }, 2000);
+    };
+
+    if (reply) {
+      handleTyping();
+    }
+
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
+  }, [reply, user, selectedShop, isTyping]);
 
   // Get unique shop names
   const shops = [...new Set(messages.map(msg => msg.shopName))];
@@ -89,22 +220,36 @@ const MessagesPage = () => {
     navigate("/profile");
   };
 
-  const handleSelectShop = (shop: string) => {
-    setSelectedShop(shop === selectedShop ? null : shop);
+  const handleSelectShop = async (shop: string) => {
+    const newSelectedShop = shop === selectedShop ? null : shop;
+    setSelectedShop(newSelectedShop);
     
     // Mark messages as read when selecting a shop
-    if (shop !== selectedShop) {
-      const updatedMessages = messages.map(msg => ({
-        ...msg,
-        read: msg.shopName === shop ? true : msg.read
-      }));
-      localStorage.setItem("sellerMessages", JSON.stringify(updatedMessages));
-      setMessages(updatedMessages);
+    if (newSelectedShop && user) {
+      try {
+        const unreadMessages = messages.filter(
+          msg => msg.shopName === shop && !msg.isFromBuyer && !msg.read
+        );
+        
+        for (const msg of unreadMessages) {
+          await updateDoc(doc(db, "messages", msg.id), { read: true });
+        }
+      } catch (error) {
+        console.error("Error marking messages as read:", error);
+        
+        // Fallback to localStorage
+        const updatedMessages = messages.map(msg => ({
+          ...msg,
+          read: msg.shopName === shop ? true : msg.read
+        }));
+        localStorage.setItem("sellerMessages", JSON.stringify(updatedMessages));
+        setMessages(updatedMessages);
+      }
     }
   };
 
-  const handleSendReply = () => {
-    if (!selectedShop || !reply.trim()) {
+  const handleSendReply = async () => {
+    if (!selectedShop || !reply.trim() || !user) {
       toast({
         title: "Cannot send message",
         description: selectedShop ? "Please enter a message" : "Please select a shop first",
@@ -113,48 +258,107 @@ const MessagesPage = () => {
       return;
     }
 
-    const newMessage = {
-      id: Date.now(),
-      shopName: selectedShop,
-      message: reply,
-      date: new Date().toISOString(),
-      isFromBuyer: true,
-      read: false,
-    };
-
-    const updatedMessages = [...messages, newMessage];
-    localStorage.setItem("sellerMessages", JSON.stringify(updatedMessages));
-    setMessages(updatedMessages);
-    setReply("");
-
-    // Also update sales data since this represents a customer interaction
-    updateSalesData(selectedShop);
-
-    toast({
-      title: "Message sent",
-      description: `Your message has been sent to ${selectedShop}.`,
-    });
-  };
-
-  const updateSalesData = (shopName: string) => {
-    const salesData = JSON.parse(localStorage.getItem("shopSalesData") || "{}");
-    
-    if (!salesData[shopName]) {
-      salesData[shopName] = {
-        messageCount: 0,
-        salesCount: 0,
-        reviewCount: 0
-      };
-    }
-    
-    salesData[shopName].messageCount = (salesData[shopName].messageCount || 0) + 1;
-    
-    localStorage.setItem("shopSalesData", JSON.stringify(salesData));
-  };
-
-  const formatDate = (dateString: string) => {
     try {
-      return format(new Date(dateString), "MMM d, yyyy h:mm a");
+      // Add message to Firebase
+      const messagesCollection = collection(db, "messages");
+      await addDoc(messagesCollection, {
+        shopName: selectedShop,
+        message: reply,
+        createdAt: serverTimestamp(),
+        isFromBuyer: true,
+        read: false,
+        buyerId: user.id,
+        buyerName: user.name,
+      });
+
+      // Clear typing indicator
+      const typingDocRef = doc(db, "typingIndicators", `${user.id}_${selectedShop}`);
+      await updateDoc(typingDocRef, {
+        isTyping: false,
+        timestamp: serverTimestamp()
+      });
+
+      // Update shop sales data
+      await updateSalesData(selectedShop);
+
+      setReply("");
+      setIsTyping(false);
+
+      toast({
+        title: "Message sent",
+        description: `Your message has been sent to ${selectedShop}.`,
+      });
+    } catch (error) {
+      console.error("Error sending message:", error);
+      
+      // Fallback to localStorage
+      const newMessage = {
+        id: Date.now().toString(),
+        shopName: selectedShop,
+        message: reply,
+        createdAt: new Date(),
+        isFromBuyer: true,
+        read: false,
+      };
+
+      const updatedMessages = [...messages, newMessage];
+      localStorage.setItem("sellerMessages", JSON.stringify(updatedMessages));
+      setMessages(updatedMessages);
+      setReply("");
+
+      updateSalesData(selectedShop);
+
+      toast({
+        title: "Message sent (offline mode)",
+        description: `Your message has been saved locally.`,
+      });
+    }
+  };
+
+  const updateSalesData = async (shopName: string) => {
+    try {
+      // Update shop sales data in Firebase
+      const salesDataRef = doc(db, "shopSalesData", shopName);
+      
+      // Check if document exists
+      const docSnap = await getDoc(salesDataRef);
+      
+      if (docSnap.exists()) {
+        // Update existing document
+        await updateDoc(salesDataRef, {
+          messageCount: (docSnap.data().messageCount || 0) + 1
+        });
+      } else {
+        // Create new document
+        await setDoc(salesDataRef, {
+          messageCount: 1,
+          salesCount: 0,
+          reviewCount: 0
+        });
+      }
+    } catch (error) {
+      console.error("Error updating shop sales data:", error);
+      
+      // Fallback to localStorage
+      const salesData = JSON.parse(localStorage.getItem("shopSalesData") || "{}");
+      
+      if (!salesData[shopName]) {
+        salesData[shopName] = {
+          messageCount: 0,
+          salesCount: 0,
+          reviewCount: 0
+        };
+      }
+      
+      salesData[shopName].messageCount = (salesData[shopName].messageCount || 0) + 1;
+      
+      localStorage.setItem("shopSalesData", JSON.stringify(salesData));
+    }
+  };
+
+  const formatDate = (date: Date) => {
+    try {
+      return format(date, "MMM d, yyyy h:mm a");
     } catch (e) {
       return "Unknown date";
     }
@@ -255,7 +459,11 @@ const MessagesPage = () => {
             <div className="space-y-4 max-h-[50vh] overflow-y-auto p-2 border rounded-md mb-4">
               {filteredMessages.length > 0 ? (
                 filteredMessages
-                  .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                  .sort((a, b) => {
+                    const dateA = a.createdAt instanceof Date ? a.createdAt : new Date(a.createdAt);
+                    const dateB = b.createdAt instanceof Date ? b.createdAt : new Date(b.createdAt);
+                    return dateA.getTime() - dateB.getTime();
+                  })
                   .map(msg => (
                     <div
                       key={msg.id}
@@ -268,10 +476,12 @@ const MessagesPage = () => {
                       <p className="text-sm">{msg.message}</p>
                       <div className="flex items-center justify-end mt-1 gap-1">
                         <span className="text-xs text-gray-500">
-                          {formatDate(msg.date)}
+                          {formatDate(msg.createdAt instanceof Date ? msg.createdAt : new Date(msg.createdAt))}
                         </span>
                         {msg.isFromBuyer && (
-                          <Check size={12} className={msg.read ? "text-blue-500" : "text-gray-500"} />
+                          msg.read ? 
+                            <CheckCheck size={12} className="text-blue-500" /> : 
+                            <Check size={12} className="text-gray-500" />
                         )}
                       </div>
                     </div>
@@ -282,6 +492,19 @@ const MessagesPage = () => {
                   <p>No messages with this shop yet</p>
                 </div>
               )}
+              
+              {/* Typing indicator */}
+              {typingStatus[selectedShop] && (
+                <div className="p-3 rounded-lg max-w-[85%] bg-gray-100 mr-auto">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0.4s]"></div>
+                  </div>
+                </div>
+              )}
+              
+              <div ref={messagesEndRef} />
             </div>
 
             <div className="flex gap-2">
@@ -318,7 +541,9 @@ const MessagesPage = () => {
                           </Avatar>
                           <CardTitle className="text-base">{msg.shopName}</CardTitle>
                         </div>
-                        <span className="text-xs text-gray-500">{formatDate(msg.date)}</span>
+                        <span className="text-xs text-gray-500">
+                          {formatDate(msg.createdAt instanceof Date ? msg.createdAt : new Date(msg.createdAt))}
+                        </span>
                       </div>
                     </CardHeader>
                     <CardContent className="p-4 pt-2">
@@ -347,8 +572,13 @@ const MessagesPage = () => {
                           <CardTitle className="text-base">To: {msg.shopName}</CardTitle>
                         </div>
                         <div className="flex items-center">
-                          <span className="text-xs text-gray-500 mr-1">{formatDate(msg.date)}</span>
-                          <Check size={16} className={msg.read ? "text-blue-500" : "text-gray-500"} />
+                          <span className="text-xs text-gray-500 mr-1">
+                            {formatDate(msg.createdAt instanceof Date ? msg.createdAt : new Date(msg.createdAt))}
+                          </span>
+                          {msg.read ? 
+                            <CheckCheck size={16} className="text-blue-500" /> : 
+                            <Check size={16} className="text-gray-500" />
+                          }
                         </div>
                       </div>
                     </CardHeader>
