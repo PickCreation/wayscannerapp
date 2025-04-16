@@ -39,44 +39,23 @@ const MarketplacePage = () => {
     const fetchProducts = async () => {
       setIsLoading(true);
       try {
-        const savedProducts = localStorage.getItem('products');
+        // Force seed localStorage immediately to ensure we have products
+        const localProducts = seedLocalStorage();
+        setProducts(localProducts);
         
-        if (!savedProducts || JSON.parse(savedProducts).length === 0) {
-          try {
-            await seedMarketplace();
-          } catch (firebaseError) {
-            console.error("Firebase seeding failed, using local fallback:", firebaseError);
-            seedLocalStorage();
-          }
-        }
-
+        // Try Firebase in the background, but don't block on it
         try {
-          const fetchedProducts = await getAllProducts();
-          if (fetchedProducts && fetchedProducts.length > 0) {
-            setProducts(fetchedProducts);
-          } else {
-            const localProducts = JSON.parse(localStorage.getItem('products') || '[]');
-            if (localProducts.length > 0) {
-              setProducts(localProducts);
-            } else {
-              const seededProducts = seedLocalStorage();
-              setProducts(seededProducts);
-            }
+          await seedMarketplace();
+          const firebaseProducts = await getAllProducts();
+          if (firebaseProducts && firebaseProducts.length > 0) {
+            setProducts(firebaseProducts);
           }
-        } catch (fetchError) {
-          console.error("Error fetching products from Firebase:", fetchError);
-          const localProducts = JSON.parse(localStorage.getItem('products') || '[]');
-          if (localProducts.length > 0) {
-            setProducts(localProducts);
-          } else {
-            const seededProducts = seedLocalStorage();
-            setProducts(seededProducts);
-          }
+        } catch (firebaseError) {
+          console.error("Firebase operation failed:", firebaseError);
+          // We already have localStorage products loaded, so no additional fallback needed
         }
       } catch (error) {
         console.error("Fatal error fetching products:", error);
-        const seededProducts = seedLocalStorage();
-        setProducts(seededProducts);
         toast({
           title: "Using local data",
           description: "Connected to local storage instead of Firebase.",
