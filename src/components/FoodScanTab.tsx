@@ -3,6 +3,16 @@ import { ChevronRight, Camera, Apple, Bookmark } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { addBookmark, removeBookmark, isBookmarked } from '@/lib/firebaseService';
+import { auth, db } from "@/lib/firebase";
+import { doc, setDoc, collection, getDocs, query, orderBy, where, serverTimestamp } from "firebase/firestore";
+
+interface FoodItem {
+  id: string;
+  name: string;
+  brand: string;
+  score: number;
+  imageUrl: string;
+}
 
 interface FoodScanTabProps {
   onEditPreferences?: () => void;
@@ -12,62 +22,100 @@ interface FoodScanTabProps {
 // Set this to false to show food items for testing
 const SHOW_WELCOME_SCREEN = false;
 
+// Sample food scan results
+const sampleFoodItems: FoodItem[] = [
+  {
+    id: '1',
+    name: 'Whole Wheat Bread',
+    brand: "Nature's Own",
+    score: 81,
+    imageUrl: '/lovable-uploads/5cf63fd0-114b-490f-96f9-b6b8dcc0b573.png',
+  },
+  {
+    id: '2',
+    name: 'Doritos Chips',
+    brand: 'Frito-Lay',
+    score: 74,
+    imageUrl: '/lovable-uploads/f2fb63ae-cc4d-4d46-ba4f-c70225d6d564.png',
+  },
+  {
+    id: '3',
+    name: 'Greek Yogurt',
+    brand: 'Chobani',
+    score: 50,
+    imageUrl: '/lovable-uploads/4c436a75-e04b-4265-8025-91e7bb146566.png',
+  },
+  {
+    id: '4',
+    name: 'Chocolate Bar',
+    brand: 'Hershey\'s',
+    score: 23,
+    imageUrl: '/lovable-uploads/8fdd5ac8-39b5-43e6-86de-c8b27715d7c8.png',
+  }
+];
+
 const FoodScanTab: React.FC<FoodScanTabProps> = ({ onEditPreferences, onHowWeScore }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [foodItems, setFoodItems] = useState<FoodItem[]>(sampleFoodItems);
   const [bookmarkedItems, setBookmarkedItems] = useState<string[]>([]);
 
-  // Sample food scan results with realistic food images
-  const scanResults = [
-    {
-      id: '1',
-      name: 'Whole Wheat Bread',
-      brand: "Nature's Own",
-      score: 81,
-      imageUrl: '/lovable-uploads/5cf63fd0-114b-490f-96f9-b6b8dcc0b573.png',
-    },
-    {
-      id: '2',
-      name: 'Doritos Chips',
-      brand: 'Frito-Lay',
-      score: 74,
-      imageUrl: '/lovable-uploads/f2fb63ae-cc4d-4d46-ba4f-c70225d6d564.png',
-    },
-    {
-      id: '3',
-      name: 'Greek Yogurt',
-      brand: 'Chobani',
-      score: 50,
-      imageUrl: '/lovable-uploads/4c436a75-e04b-4265-8025-91e7bb146566.png',
-    },
-    {
-      id: '4',
-      name: 'Chocolate Bar',
-      brand: 'Hershey\'s',
-      score: 23,
-      imageUrl: '/lovable-uploads/8fdd5ac8-39b5-43e6-86de-c8b27715d7c8.png',
-    }
-  ];
-
-  // Load bookmarked items from Firebase or localStorage on component mount
+  // Load saved scans from Firebase or localStorage on component mount
   useEffect(() => {
-    const loadBookmarks = async () => {
-      const bookmarkedIds: string[] = [];
-      
-      for (const item of scanResults) {
-        const isBookmarkedItem = await isBookmarked(item.id, 'food');
-        if (isBookmarkedItem) {
-          bookmarkedIds.push(item.id);
+    const loadSavedScans = async () => {
+      try {
+        // Load bookmark statuses for items
+        const bookmarkedIds: string[] = [];
+        for (const item of foodItems) {
+          const isBookmarkedItem = await isBookmarked(item.id, 'food');
+          if (isBookmarkedItem) {
+            bookmarkedIds.push(item.id);
+          }
         }
+        setBookmarkedItems(bookmarkedIds);
+
+        // Try to fetch user's saved scans from Firebase
+        const user = auth.currentUser;
+        if (user) {
+          const scansRef = collection(db, 'users', user.uid, 'scans');
+          const q = query(
+            scansRef, 
+            where('type', '==', 'food'),
+            orderBy('timestamp', 'desc')
+          );
+          
+          const querySnapshot = await getDocs(q);
+          const savedScans: FoodItem[] = [];
+          
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            if (data) {
+              // Make sure we don't add duplicate items that are already in our sample data
+              const sampleItemIds = sampleFoodItems.map(item => item.id);
+              if (!sampleItemIds.includes(data.id)) {
+                savedScans.push({
+                  id: data.id,
+                  name: data.name,
+                  brand: data.brand,
+                  score: data.score,
+                  imageUrl: data.imageUrl,
+                });
+              }
+            }
+          });
+          
+          // Combine sample items with user's saved scans
+          setFoodItems([...sampleFoodItems, ...savedScans]);
+        }
+      } catch (error) {
+        console.error('Error loading saved scans:', error);
       }
-      
-      setBookmarkedItems(bookmarkedIds);
     };
     
-    loadBookmarks();
+    loadSavedScans();
   }, []);
 
-  const handleBookmarkToggle = async (e: React.MouseEvent, item: any) => {
+  const handleBookmarkToggle = async (e: React.MouseEvent, item: FoodItem) => {
     e.stopPropagation(); // Prevent navigation when clicking the bookmark button
     
     // Check if this item is already bookmarked
@@ -107,6 +155,51 @@ const FoodScanTab: React.FC<FoodScanTabProps> = ({ onEditPreferences, onHowWeSco
     }
   };
 
+  // Save scan result to Firebase
+  const saveScanToFirebase = async (item: FoodItem) => {
+    try {
+      const user = auth.currentUser;
+      
+      // If user is not logged in, save to localStorage
+      if (!user) {
+        const savedScans = localStorage.getItem('foodScans');
+        let scans = savedScans ? JSON.parse(savedScans) : [];
+        
+        // Check if scan already exists in localStorage
+        if (!scans.some((scan: FoodItem) => scan.id === item.id)) {
+          scans.push(item);
+          localStorage.setItem('foodScans', JSON.stringify(scans));
+        }
+        
+        return;
+      }
+      
+      // Save scan to Firestore
+      const scanRef = doc(collection(db, 'users', user.uid, 'scans'));
+      await setDoc(scanRef, {
+        id: item.id,
+        name: item.name,
+        brand: item.brand,
+        score: item.score,
+        imageUrl: item.imageUrl,
+        type: 'food',
+        timestamp: serverTimestamp()
+      });
+      
+      toast({
+        title: "Scan saved",
+        description: `${item.name} has been saved to your account`,
+      });
+    } catch (error) {
+      console.error('Error saving scan:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save scan result",
+        variant: "destructive"
+      });
+    }
+  };
+
   const getScoreColor = (score: number) => {
     if (score >= 80) return "bg-teal-500";
     if (score >= 60) return "bg-purple-500";
@@ -135,6 +228,12 @@ const FoodScanTab: React.FC<FoodScanTabProps> = ({ onEditPreferences, onHowWeSco
     return "Bad";
   };
 
+  const handleFoodClick = (item: FoodItem) => {
+    // Save the scan to Firebase when user clicks on it
+    saveScanToFirebase(item);
+    navigate(`/food/${item.id}`);
+  };
+
   if (SHOW_WELCOME_SCREEN) {
     return (
       <div className="flex flex-col items-center justify-center py-8 px-4 text-center h-[70vh]">
@@ -161,11 +260,11 @@ const FoodScanTab: React.FC<FoodScanTabProps> = ({ onEditPreferences, onHowWeSco
 
   return (
     <div className="space-y-3">
-      {scanResults.map((item) => (
+      {foodItems.map((item) => (
         <div 
           key={item.id} 
           className={`p-3 rounded-xl border shadow-sm bg-white flex items-center justify-between cursor-pointer ${getCardBorderColor(item.score)}`}
-          onClick={() => navigate(`/food/${item.id}`)}
+          onClick={() => handleFoodClick(item)}
         >
           <div className="h-14 w-14 mr-3 flex-shrink-0 rounded-xl overflow-hidden">
             <img 

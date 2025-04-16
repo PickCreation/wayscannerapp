@@ -1,7 +1,10 @@
-
-import React from "react";
-import { ChevronRight, AlertTriangle, Camera, PawPrint } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { ChevronRight, AlertTriangle, Camera, PawPrint, Bookmark } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import { addBookmark, removeBookmark, isBookmarked } from "@/lib/firebaseService";
+import { auth, db } from "@/lib/firebase";
+import { doc, setDoc, collection, getDocs, query, orderBy, where, serverTimestamp } from "firebase/firestore";
 
 interface AnimalItem {
   id: string;
@@ -16,7 +19,7 @@ interface AnimalItem {
   behavior: string;
 }
 
-const animalItems: AnimalItem[] = [
+const sampleAnimalItems: AnimalItem[] = [
   {
     id: "1",
     name: "Bengal Tiger",
@@ -55,12 +58,139 @@ const animalItems: AnimalItem[] = [
   },
 ];
 
-// Set this to false to show animal items for testing
 const SHOW_WELCOME_SCREEN = false;
 
 const AnimalScanTab = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [animalItems, setAnimalItems] = useState<AnimalItem[]>(sampleAnimalItems);
+  const [bookmarkedItems, setBookmarkedItems] = useState<string[]>([]);
   
+  useEffect(() => {
+    const loadSavedScans = async () => {
+      try {
+        const bookmarkedIds: string[] = [];
+        for (const item of animalItems) {
+          const isBookmarkedItem = await isBookmarked(item.id, 'animals');
+          if (isBookmarkedItem) {
+            bookmarkedIds.push(item.id);
+          }
+        }
+        setBookmarkedItems(bookmarkedIds);
+
+        const user = auth.currentUser;
+        if (user) {
+          const scansRef = collection(db, 'users', user.uid, 'scans');
+          const q = query(
+            scansRef, 
+            where('type', '==', 'animals'),
+            orderBy('timestamp', 'desc')
+          );
+          
+          const querySnapshot = await getDocs(q);
+          const savedScans: AnimalItem[] = [];
+          
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            if (data) {
+              const sampleItemIds = sampleAnimalItems.map(item => item.id);
+              if (!sampleItemIds.includes(data.id)) {
+                savedScans.push({
+                  id: data.id,
+                  name: data.name,
+                  scientificName: data.scientificName,
+                  riskLevel: data.riskLevel,
+                  imageUrl: data.imageUrl,
+                  borderColor: data.borderColor,
+                  icon: data.icon,
+                  type: data.type,
+                  dietary: data.dietary,
+                  behavior: data.behavior
+                });
+              }
+            }
+          });
+          
+          setAnimalItems([...sampleAnimalItems, ...savedScans]);
+        }
+      } catch (error) {
+        console.error('Error loading saved scans:', error);
+      }
+    };
+    
+    loadSavedScans();
+  }, []);
+
+  const handleBookmarkToggle = async (e: React.MouseEvent, item: AnimalItem) => {
+    e.stopPropagation();
+    
+    const isItemBookmarked = bookmarkedItems.includes(item.id);
+    
+    if (isItemBookmarked) {
+      const success = await removeBookmark(item.id, 'animals');
+      
+      if (success) {
+        setBookmarkedItems(prev => prev.filter(id => id !== item.id));
+        toast({
+          title: "Removed from bookmarks",
+          description: `${item.name} has been removed from your bookmarks`,
+        });
+      }
+    } else {
+      const bookmarkItem = {
+        ...item,
+        type: 'animals',
+      };
+      
+      const success = await addBookmark(bookmarkItem, 'animals');
+      
+      if (success) {
+        setBookmarkedItems(prev => [...prev, item.id]);
+        toast({
+          title: "Added to bookmarks",
+          description: `${item.name} has been added to your bookmarks`,
+        });
+      }
+    }
+  };
+
+  const saveScanToFirebase = async (item: AnimalItem) => {
+    try {
+      const user = auth.currentUser;
+      
+      if (!user) {
+        const savedScans = localStorage.getItem('animalScans');
+        let scans = savedScans ? JSON.parse(savedScans) : [];
+        
+        if (!scans.some((scan: AnimalItem) => scan.id === item.id)) {
+          scans.push(item);
+          localStorage.setItem('animalScans', JSON.stringify(scans));
+        }
+        
+        return;
+      }
+      
+      const scanRef = doc(collection(db, 'users', user.uid, 'scans'));
+      await setDoc(scanRef, {
+        ...item,
+        type: 'animals',
+        timestamp: serverTimestamp()
+      });
+      
+      toast({
+        title: "Scan saved",
+        description: `${item.name} has been saved to your account`,
+      });
+    } catch (error) {
+      console.error('Error saving scan:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save scan result",
+        variant: "destructive"
+      });
+    }
+  };
+
   const getRiskColor = (risk: "High" | "Moderate" | "Low") => {
     if (risk === "High") return "bg-red-500";
     if (risk === "Moderate") return "bg-yellow-500";
@@ -73,8 +203,9 @@ const AnimalScanTab = () => {
     return "border-green-200";
   };
 
-  const handleAnimalClick = (id: string) => {
-    navigate(`/animal/${id}`);
+  const handleAnimalClick = (item: AnimalItem) => {
+    saveScanToFirebase(item);
+    navigate(`/animal/${item.id}`);
   };
 
   if (SHOW_WELCOME_SCREEN) {
@@ -107,7 +238,7 @@ const AnimalScanTab = () => {
         <div 
           key={item.id} 
           className={`p-3 rounded-xl border-2 ${getBorderColor(item.riskLevel)} shadow-sm bg-white flex items-center justify-between cursor-pointer`}
-          onClick={() => handleAnimalClick(item.id)}
+          onClick={() => handleAnimalClick(item)}
         >
           <div className="h-14 w-14 mr-3 flex-shrink-0 rounded-xl overflow-hidden">
             <img 
@@ -124,7 +255,18 @@ const AnimalScanTab = () => {
               <span>{item.riskLevel} Risk</span>
             </div>
           </div>
-          <ChevronRight className="text-gray-400 h-5 w-5" />
+          <div className="flex items-center">
+            <button 
+              onClick={(e) => handleBookmarkToggle(e, item)}
+              className="p-2 mr-2 text-gray-500"
+              aria-label={bookmarkedItems.includes(item.id) ? "Remove bookmark" : "Add bookmark"}
+            >
+              <Bookmark 
+                className={`h-6 w-6 ${bookmarkedItems.includes(item.id) ? 'fill-wayscanner-red text-wayscanner-red' : ''}`} 
+              />
+            </button>
+            <ChevronRight className="text-gray-400 h-5 w-5" />
+          </div>
         </div>
       ))}
     </div>
