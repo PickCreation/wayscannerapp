@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { 
   ArrowLeft, User, Bell, BookmarkCheck, Heart, MessageSquare, Bookmark,
@@ -340,27 +341,32 @@ const BookmarksPage = () => {
           <TabsContent value="recipes" className="pb-20">
             <div className="space-y-4">
               {bookmarkedRecipes.length > 0 ? (
-                bookmarkedRecipes.map(recipe => (
-                  <div key={recipe.id} className="bg-white rounded-lg shadow">
-                    <RecipeCard
-                      recipe={recipe}
-                      onClick={() => handleRecipeClick(recipe.id)}
-                    />
-                    <div className="px-4 pb-3">
-                      <button 
-                        className="flex items-center text-blue-500 py-2 text-[16px]"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRemoveRecipeBookmark(recipe.id);
-                        }}
-                        type="button"
-                      >
-                        <Bookmark size={18} className="fill-blue-500 mr-2" />
-                        Remove from bookmarks
-                      </button>
+                <div className="space-y-4">
+                  {bookmarkedRecipes.map(recipe => (
+                    <div key={recipe.id} className="bg-white rounded-lg shadow relative">
+                      <div className="absolute top-3 right-3 z-10">
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveRecipeBookmark(recipe.id);
+                          }}
+                          className="text-wayscanner-blue"
+                          aria-label="Remove bookmark"
+                          type="button"
+                        >
+                          <Bookmark className="h-6 w-6 fill-wayscanner-blue" />
+                        </button>
+                      </div>
+                      <div onClick={() => handleRecipeClick(recipe.id)}>
+                        <RecipeCard
+                          recipe={recipe}
+                          onClick={() => handleRecipeClick(recipe.id)}
+                          showBookmarkButton={false}
+                        />
+                      </div>
                     </div>
-                  </div>
-                ))
+                  ))}
+                </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-10 px-4 bg-white rounded-lg shadow">
                   <FolderOpen size={48} className="text-gray-400 mb-2" />

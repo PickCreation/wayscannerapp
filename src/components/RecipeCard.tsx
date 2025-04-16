@@ -17,9 +17,14 @@ interface Recipe {
 interface RecipeCardProps {
   recipe: Recipe;
   onClick: () => void;
+  showBookmarkButton?: boolean;
 }
 
-export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onClick }) => {
+export const RecipeCard: React.FC<RecipeCardProps> = ({ 
+  recipe, 
+  onClick,
+  showBookmarkButton = true 
+}) => {
   // Determine rating label based on rating value
   const getRatingLabel = (rating: number): string => {
     if (rating > 4) return "Delicious";
@@ -52,7 +57,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onClick }) => {
         </div>
         <CardContent className="w-2/3 p-3">
           <div className="flex justify-between items-start mb-1">
-            <h3 className="font-semibold text-sm line-clamp-1 text-gray-800">{recipe.title}</h3>
+            <h3 className="font-semibold text-lg line-clamp-1 text-gray-800">{recipe.title}</h3>
             {recipe.difficulty && (
               <span className={`px-2 py-0.5 text-xs rounded-full ${getDifficultyColor(recipe.difficulty)}`}>
                 {recipe.difficulty}
@@ -64,11 +69,15 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onClick }) => {
             <div className="text-xs text-gray-500 mb-1">By: {recipe.author}</div>
           )}
           
-          <div className="flex items-center text-xs text-gray-600 mt-1">
-            <Clock size={14} className="mr-1" />
-            <span className="mr-3">{recipe.time}</span>
-            <LightbulbIcon size={14} className="mr-1 text-yellow-500" />
-            <span>{getRatingLabel(recipe.rating)}</span>
+          <div className="flex items-center gap-4 text-sm text-gray-600 mt-2">
+            <div className="flex items-center">
+              <Clock size={16} className="mr-1" />
+              <span>{recipe.time}</span>
+            </div>
+            <div className="flex items-center">
+              <LightbulbIcon size={16} className="mr-1 text-yellow-500" />
+              <span>{getRatingLabel(recipe.rating)}</span>
+            </div>
           </div>
         </CardContent>
       </div>
