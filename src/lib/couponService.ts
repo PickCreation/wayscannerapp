@@ -119,15 +119,16 @@ export const seedCoupons = async (): Promise<void> => {
     if (coupons.length === 0) {
       console.log("No coupons found, seeding initial data");
       
-      const now = new Date();
-      
       // Active coupon - valid for next month
       const futureDate = new Date();
       futureDate.setMonth(futureDate.getMonth() + 1);
       
-      // Expired coupon - expired last month
-      const pastDate = new Date();
-      pastDate.setMonth(pastDate.getMonth() - 1);
+      // Expired coupon - matches the image sample (May 31, 2023)
+      const pastDate = new Date("2023-05-31");
+      
+      // Another expired date from last month
+      const lastMonthDate = new Date();
+      lastMonthDate.setMonth(lastMonthDate.getMonth() - 1);
       
       const initialCoupons = [
         {
@@ -142,7 +143,7 @@ export const seedCoupons = async (): Promise<void> => {
           discount: "15% OFF",
           description: "Spring Season Discount",
           store: "eBay",
-          validUntil: pastDate
+          validUntil: lastMonthDate
         },
         {
           code: "WELCOME10",
@@ -150,6 +151,14 @@ export const seedCoupons = async (): Promise<void> => {
           description: "New User Discount",
           store: "Wayscanner",
           validUntil: futureDate
+        },
+        // Add the exact coupon from the image
+        {
+          code: "SPRING15",
+          discount: "20% OFF",
+          description: "Summer Sale Discount",
+          store: "Amazon",
+          validUntil: pastDate
         }
       ];
       
@@ -165,7 +174,35 @@ export const seedCoupons = async (): Promise<void> => {
       
       console.log("Finished seeding coupons");
     } else {
-      console.log(`Found ${coupons.length} existing coupons, skipping seed`);
+      // Check if we need to add the specific coupon from the image
+      const hasSampleExpiredCoupon = coupons.some(
+        coupon => 
+          coupon.store === "Amazon" && 
+          coupon.discount === "20% OFF" && 
+          coupon.description === "Summer Sale Discount" &&
+          coupon.code === "SPRING15"
+      );
+      
+      if (!hasSampleExpiredCoupon) {
+        console.log("Adding sample expired coupon from the image");
+        try {
+          const pastDate = new Date("2023-05-31");
+          await addCoupon({
+            code: "SPRING15",
+            discount: "20% OFF",
+            description: "Summer Sale Discount",
+            store: "Amazon",
+            validUntil: pastDate
+          });
+          console.log("Added sample expired coupon");
+        } catch (err) {
+          console.error("Failed to add sample expired coupon:", err);
+        }
+      } else {
+        console.log("Sample expired coupon already exists");
+      }
+      
+      console.log(`Found ${coupons.length} existing coupons, skipping full seed`);
     }
   } catch (error) {
     console.error("Error in seedCoupons function:", error);
