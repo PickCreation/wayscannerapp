@@ -80,6 +80,7 @@ export const FirebaseAuthProvider = ({ children }: { children: React.ReactNode }
 
   const login = async (email: string, password: string) => {
     try {
+      console.log("Attempting Firebase login with:", email);
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const firebaseUser = userCredential.user;
       
@@ -106,6 +107,7 @@ export const FirebaseAuthProvider = ({ children }: { children: React.ReactNode }
 
   const signup = async (name: string, email: string, password: string) => {
     try {
+      console.log("Attempting Firebase signup with:", name, email);
       // Create user in Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const firebaseUser = userCredential.user;
