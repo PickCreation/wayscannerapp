@@ -390,7 +390,7 @@ const FoodDetailPage = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm mx-4 mt-4 p-4">
+      <div className="bg-white rounded-lg shadow-sm mx-4 mt-4 p-4 border border-gray-200">
         <h3 className="text-lg font-bold mb-4">Negatives</h3>
         <div className="space-y-4">
           {food.nutrients.negatives.map((nutrient, index) => (
