@@ -24,6 +24,11 @@ const foodItems = [
     score: 81,
     imageUrl: "/lovable-uploads/5cf63fd0-114b-490f-96f9-b6b8dcc0b573.png",
     serving: "26g",
+    macros: {
+      carbs: { value: 8, percentage: 30 },
+      protein: { value: 5, percentage: 15 },
+      fat: { value: 14, percentage: 55 }
+    },
     nutrients: {
       negatives: [
         { name: "Sodium", value: "120mg", progress: 35, color: "bg-red-500" },
@@ -58,6 +63,11 @@ const foodItems = [
     score: 74,
     imageUrl: "/lovable-uploads/f2fb63ae-cc4d-4d46-ba4f-c70225d6d564.png",
     serving: "30g",
+    macros: {
+      carbs: { value: 18, percentage: 60 },
+      protein: { value: 2, percentage: 7 },
+      fat: { value: 10, percentage: 33 }
+    },
     nutrients: {
       negatives: [
         { name: "Sodium", value: "210mg", progress: 65, color: "bg-red-500" },
@@ -90,6 +100,11 @@ const foodItems = [
     score: 50,
     imageUrl: "/lovable-uploads/4c436a75-e04b-4265-8025-91e7bb146566.png",
     serving: "150g",
+    macros: {
+      carbs: { value: 7, percentage: 20 },
+      protein: { value: 15, percentage: 43 },
+      fat: { value: 13, percentage: 37 }
+    },
     nutrients: {
       negatives: [
         { name: "Sodium", value: "65mg", progress: 25, color: "bg-red-500" },
@@ -124,6 +139,11 @@ const foodItems = [
     score: 23,
     imageUrl: "/lovable-uploads/8fdd5ac8-39b5-43e6-86de-c8b27715d7c8.png",
     serving: "43g",
+    macros: {
+      carbs: { value: 24, percentage: 60 },
+      protein: { value: 3, percentage: 8 },
+      fat: { value: 13, percentage: 32 }
+    },
     nutrients: {
       negatives: [
         { name: "Sodium", value: "35mg", progress: 15, color: "bg-red-500" },
@@ -338,6 +358,36 @@ const FoodDetailPage = () => {
         <p className="text-gray-500 text-sm pb-2">
           per serving ({food.serving})
         </p>
+      </div>
+
+      <div className="bg-gray-900 rounded-lg shadow-sm mx-4 mt-4 p-4 text-white">
+        <h3 className="text-2xl font-bold mb-6">Macros</h3>
+        
+        <div className="flex mb-4 h-6 rounded-lg overflow-hidden">
+          <div className="bg-blue-500" style={{ width: `${food.macros.carbs.percentage}%` }}></div>
+          <div className="bg-purple-500" style={{ width: `${food.macros.protein.percentage}%` }}></div>
+          <div className="bg-yellow-500" style={{ width: `${food.macros.fat.percentage}%` }}></div>
+        </div>
+        
+        <div className="flex justify-between text-xl mt-4">
+          <div className="flex items-center">
+            <div className="w-4 h-4 bg-blue-500 rounded-full mr-3"></div>
+            <span className="font-normal">Carbs</span>
+            <span className="font-bold ml-3">{food.macros.carbs.value}g</span>
+          </div>
+          
+          <div className="flex items-center">
+            <div className="w-4 h-4 bg-purple-500 rounded-full mr-3"></div>
+            <span className="font-normal">Protein</span>
+            <span className="font-bold ml-3">{food.macros.protein.value}g</span>
+          </div>
+          
+          <div className="flex items-center">
+            <div className="w-4 h-4 bg-yellow-500 rounded-full mr-3"></div>
+            <span className="font-normal">Fat</span>
+            <span className="font-bold ml-3">{food.macros.fat.value}g</span>
+          </div>
+        </div>
       </div>
 
       <div className="bg-white rounded-lg shadow-sm mx-4 mt-4 p-4">
