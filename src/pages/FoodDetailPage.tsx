@@ -429,7 +429,7 @@ const FoodDetailPage = () => {
         </div>
       </div>
 
-      <div className="mx-4 mt-5">
+      <div className="bg-white rounded-lg shadow-sm mx-4 mt-5 p-4 border border-gray-200">
         <h3 className="text-lg font-bold mb-4">Positives</h3>
         <div className="grid grid-cols-3 gap-3 mb-5">
           {food.nutrients.highlights.map((highlight, index) => (
@@ -441,47 +441,45 @@ const FoodDetailPage = () => {
           ))}
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm p-4">
-          <div className="space-y-4">
-            {food.nutrients.positives.map((nutrient, index) => (
-              <div key={index} className="flex items-center">
-                <div className="w-32 flex items-center">
-                  {nutrient.name === "Fiber" && <span className="text-teal-600 mr-2 text-base">🌿</span>}
-                  {nutrient.name === "Sugar" && <span className="text-purple-600 mr-2 text-base">🍬</span>}
-                  {nutrient.name === "Saturated Fat" && <span className="text-blue-600 mr-2 text-base">🧈</span>}
-                  {nutrient.name === "Calcium" && <span className="text-teal-600 mr-2 text-base">🥛</span>}
-                  {nutrient.name === "Vitamin D" && <span className="text-yellow-600 mr-2 text-base">☀️</span>}
-                  {nutrient.name === "Potassium" && <span className="text-red-700 mr-2 text-base">🍌</span>}
-                  <span className="font-medium text-base">{nutrient.name}</span>
-                </div>
-                <div className="flex-1 mx-4">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div>
-                          <Progress 
-                            value={nutrient.progress} 
-                            className="h-2.5 bg-gray-200" 
-                            indicatorColor={getNutrientColor(nutrient.name, index)}
-                          />
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p className="text-sm">
-                          {nutrient.name === "Fiber" && "Fiber aids digestion and helps you feel full"}
-                          {nutrient.name === "Protein" && "Protein helps build and repair muscles"}
-                          {nutrient.name === "Calcium" && "Calcium strengthens bones and teeth"}
-                          {nutrient.name === "Vitamin D" && "Vitamin D helps calcium absorption"}
-                          {nutrient.name === "Potassium" && "Potassium regulates heartbeat and nerve signals"}
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-                <div className="w-16 text-right font-medium text-base">{nutrient.value}</div>
+        <div className="space-y-4">
+          {food.nutrients.positives.map((nutrient, index) => (
+            <div key={index} className="flex items-center">
+              <div className="w-32 flex items-center">
+                {nutrient.name === "Fiber" && <span className="text-teal-600 mr-2 text-base">🌿</span>}
+                {nutrient.name === "Sugar" && <span className="text-purple-600 mr-2 text-base">🍬</span>}
+                {nutrient.name === "Saturated Fat" && <span className="text-blue-600 mr-2 text-base">🧈</span>}
+                {nutrient.name === "Calcium" && <span className="text-teal-600 mr-2 text-base">🥛</span>}
+                {nutrient.name === "Vitamin D" && <span className="text-yellow-600 mr-2 text-base">☀️</span>}
+                {nutrient.name === "Potassium" && <span className="text-red-700 mr-2 text-base">🍌</span>}
+                <span className="font-medium text-base">{nutrient.name}</span>
               </div>
-            ))}
-          </div>
+              <div className="flex-1 mx-4">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div>
+                        <Progress 
+                          value={nutrient.progress} 
+                          className="h-2.5 bg-gray-200" 
+                          indicatorColor={getNutrientColor(nutrient.name, index)}
+                        />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-sm">
+                        {nutrient.name === "Fiber" && "Fiber aids digestion and helps you feel full"}
+                        {nutrient.name === "Protein" && "Protein helps build and repair muscles"}
+                        {nutrient.name === "Calcium" && "Calcium strengthens bones and teeth"}
+                        {nutrient.name === "Vitamin D" && "Vitamin D helps calcium absorption"}
+                        {nutrient.name === "Potassium" && "Potassium regulates heartbeat and nerve signals"}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <div className="w-16 text-right font-medium text-base">{nutrient.value}</div>
+            </div>
+          ))}
         </div>
       </div>
 
