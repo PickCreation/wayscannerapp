@@ -360,8 +360,8 @@ const FoodDetailPage = () => {
         </p>
       </div>
 
-      <div className="bg-gray-900 rounded-lg shadow-sm mx-4 mt-4 p-4 text-white">
-        <h3 className="text-2xl font-bold mb-6">Macros</h3>
+      <div className="bg-white rounded-lg shadow-sm mx-4 mt-4 p-4 border border-gray-200">
+        <h3 className="text-lg font-bold mb-6">Macros</h3>
         
         <div className="flex mb-4 h-6 rounded-lg overflow-hidden">
           <div className="bg-blue-500" style={{ width: `${food.macros.carbs.percentage}%` }}></div>
