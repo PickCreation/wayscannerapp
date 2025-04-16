@@ -553,11 +553,11 @@ const CheckoutPage = () => {
                 <div key={item.id} className="flex py-2">
                   <img 
                     src={item.image} 
-                    alt={item.name} 
+                    alt={item.title} 
                     className="w-16 h-16 object-cover rounded mr-3" 
                   />
                   <div className="flex-1">
-                    <h3 className="font-medium">{item.name}</h3>
+                    <h3 className="font-medium">{item.title}</h3>
                     <div className="flex justify-between mt-1">
                       <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
                       <p className="font-medium">${(item.price * item.quantity).toFixed(2)}</p>
@@ -784,11 +784,11 @@ const CheckoutPage = () => {
                 <div key={item.id} className="flex py-2">
                   <img 
                     src={item.image} 
-                    alt={item.name} 
+                    alt={item.title} 
                     className="w-16 h-16 object-cover rounded mr-3" 
                   />
                   <div className="flex-1">
-                    <h3 className="font-medium">{item.name}</h3>
+                    <h3 className="font-medium">{item.title}</h3>
                     <div className="flex justify-between mt-1">
                       <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
                       <p className="font-medium">${(item.price * item.quantity).toFixed(2)}</p>
