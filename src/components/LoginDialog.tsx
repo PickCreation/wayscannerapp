@@ -56,11 +56,6 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, onOpenChange }) => {
       onOpenChange(false);
     } catch (error) {
       console.error("Login error:", error);
-      toast({
-        title: "Login Failed",
-        description: "Invalid email or password",
-        variant: "destructive"
-      });
     }
   };
 
@@ -71,11 +66,6 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, onOpenChange }) => {
       onOpenChange(false);
     } catch (error) {
       console.error("Signup error:", error);
-      toast({
-        title: "Signup Failed",
-        description: "Unable to create account",
-        variant: "destructive"
-      });
     }
   };
 

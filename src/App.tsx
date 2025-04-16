@@ -49,7 +49,6 @@ import PlantDetailPage from "./pages/PlantDetailPage";
 import BlogsPage from "./pages/BlogsPage";
 import BlogDetailPage from "./pages/BlogDetailPage";
 import HowItWorksPage from "./pages/HowItWorksPage";
-import CouponsPage from "./pages/CouponsPage";
 
 const queryClient = new QueryClient();
 
@@ -105,7 +104,6 @@ function App() {
                 <Route path="/blogs" element={<BlogsPage />} />
                 <Route path="/blogs/:blogId" element={<BlogDetailPage />} />
                 <Route path="/how-it-works" element={<HowItWorksPage />} />
-                <Route path="/coupons" element={<CouponsPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
