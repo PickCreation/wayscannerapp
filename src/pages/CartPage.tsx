@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, Trash2, Plus, Minus, ShoppingBag } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
@@ -9,50 +9,115 @@ import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
 import { useAuth } from "@/hooks/use-auth";
 import LoginDialog from "@/components/LoginDialog";
+import { getCartItems, removeCartItem, updateCartItemQuantity } from "@/lib/cartService";
+import { CartItem } from "@/lib/cartService";
 
 const CartPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { toast } = useToast();
-  const [cartItems, setCartItems] = useState<any[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeItem, setActiveItem] = useState<"home" | "forum" | "recipes" | "shop">("shop");
   const [cameraSheetOpen, setCameraSheetOpen] = useState(false);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   useEffect(() => {
-    const items = JSON.parse(localStorage.getItem('cartItems') || '[]');
-    setCartItems(items);
-    setLoading(false);
-  }, []);
+    const loadCartItems = async () => {
+      setLoading(true);
+      try {
+        if (isAuthenticated && user) {
+          // Get cart items from Firebase
+          const items = await getCartItems(user.id);
+          setCartItems(items);
+        } else {
+          // Fall back to localStorage
+          const items = JSON.parse(localStorage.getItem('cartItems') || '[]');
+          setCartItems(items);
+        }
+      } catch (error) {
+        console.error("Error loading cart items:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load cart items. Please refresh the page.",
+          variant: "destructive"
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleRemoveItem = (id: number) => {
-    const updatedCart = cartItems.filter(item => item.id !== id);
-    setCartItems(updatedCart);
-    localStorage.setItem('cartItems', JSON.stringify(updatedCart));
-    
-    toast({
-      title: "Item Removed",
-      description: "The item has been removed from your cart",
-    });
+    loadCartItems();
+
+    // Listen for cart updates
+    const handleCartUpdate = () => {
+      loadCartItems();
+    };
+
+    window.addEventListener('cartUpdated', handleCartUpdate);
+    return () => window.removeEventListener('cartUpdated', handleCartUpdate);
+  }, [isAuthenticated, user, toast]);
+
+  const handleRemoveItem = async (id: string) => {
+    try {
+      if (isAuthenticated && user) {
+        // Remove from Firebase
+        await removeCartItem(user.id, id);
+      } else {
+        // Remove from localStorage only
+        const updatedCart = cartItems.filter(item => item.id !== id);
+        setCartItems(updatedCart);
+        localStorage.setItem('cartItems', JSON.stringify(updatedCart));
+      }
+      
+      toast({
+        title: "Item Removed",
+        description: "The item has been removed from your cart",
+      });
+    } catch (error) {
+      console.error("Error removing item:", error);
+      toast({
+        title: "Error",
+        description: "Failed to remove item. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
-  const handleUpdateQuantity = (id: number, newQuantity: number) => {
+  const handleUpdateQuantity = async (id: string, newQuantity: number) => {
     if (newQuantity < 1) return;
     
-    const updatedCart = cartItems.map(item => {
-      if (item.id === id) {
-        return { ...item, quantity: newQuantity };
+    try {
+      if (isAuthenticated && user) {
+        // Update in Firebase
+        await updateCartItemQuantity(user.id, id, newQuantity);
       }
-      return item;
-    });
-    
-    setCartItems(updatedCart);
-    localStorage.setItem('cartItems', JSON.stringify(updatedCart));
+      
+      // Update local state
+      const updatedCart = cartItems.map(item => {
+        if (item.id === id) {
+          return { ...item, quantity: newQuantity };
+        }
+        return item;
+      });
+      
+      setCartItems(updatedCart);
+      
+      // Update localStorage as fallback
+      if (!isAuthenticated || !user) {
+        localStorage.setItem('cartItems', JSON.stringify(updatedCart));
+      }
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update quantity. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
-  const navigateToProduct = (id: number) => {
+  const navigateToProduct = (id: string) => {
     navigate(`/marketplace/product/${id}`);
   };
 

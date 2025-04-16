@@ -29,14 +29,8 @@ import {
 } from "@/components/ui/drawer";
 import AddressForm from "@/components/AddressForm";
 import PaymentMethodForm from "@/components/PaymentMethodForm";
-
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-}
+import { useAuth } from "@/hooks/use-auth";
+import { getCartItems, placeOrder, CartItem } from "@/lib/cartService";
 
 interface Address {
   id: string;
@@ -69,30 +63,12 @@ interface PaymentMethod {
   };
 }
 
-const mockCartItems: CartItem[] = [
-  {
-    id: "1",
-    name: "Eco-friendly Water Bottle",
-    price: 24.99,
-    quantity: 2,
-    image: "/placeholder.svg"
-  },
-  {
-    id: "2",
-    name: "Organic Cotton T-shirt",
-    price: 79.99,
-    quantity: 1,
-    image: "/placeholder.svg"
-  }
-];
-
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [cartItems] = useState<CartItem[]>(() => {
-    const storedItems = localStorage.getItem('cartItems');
-    return storedItems ? JSON.parse(storedItems) : mockCartItems;
-  });
+  const { isAuthenticated, user } = useAuth();
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   
   const [addresses, setAddresses] = useState<Address[]>(() => {
     const savedAddresses = localStorage.getItem('userAddresses');
@@ -152,12 +128,37 @@ const CheckoutPage = () => {
   const [shippingMethod, setShippingMethod] = useState<"standard" | "express">("standard");
 
   useEffect(() => {
-    const defaultAddress = addresses.find(a => a.isDefault);
-    const defaultPayment = paymentMethods.find(p => p.isDefault);
-    
-    if (defaultAddress) setSelectedAddress(defaultAddress);
-    if (defaultPayment) setSelectedPayment(defaultPayment);
-  }, [addresses, paymentMethods]);
+    if (!isAuthenticated || !user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to checkout",
+        variant: "destructive"
+      });
+      navigate("/cart");
+      return;
+    }
+
+    const loadCartItems = async () => {
+      try {
+        if (user) {
+          const items = await getCartItems(user.id);
+          setCartItems(items);
+        } else {
+          const storedItems = localStorage.getItem('cartItems');
+          setCartItems(storedItems ? JSON.parse(storedItems) : []);
+        }
+      } catch (error) {
+        console.error('Error loading cart items:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load cart items",
+          variant: "destructive"
+        });
+      }
+    };
+
+    loadCartItems();
+  }, [isAuthenticated, user, navigate, toast]);
 
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const shippingCost = shippingMethod === "standard" ? 4.99 : 12.99;
@@ -248,17 +249,78 @@ const CheckoutPage = () => {
     });
   };
 
-  const handlePlaceOrder = () => {
-    localStorage.setItem('cartItems', JSON.stringify([]));
-    
-    toast({
-      title: "Order Placed!",
-      description: "Your order has been successfully placed."
-    });
-    
-    setTimeout(() => {
-      navigate("/profile");
-    }, 2000);
+  const handlePlaceOrder = async () => {
+    if (!isAuthenticated || !user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to place an order",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!selectedAddress || !selectedPayment) {
+      toast({
+        title: "Missing Information",
+        description: "Please select both shipping address and payment method",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const orderData = {
+        items: cartItems,
+        shippingAddress: {
+          name: selectedAddress.name,
+          street: selectedAddress.street,
+          city: selectedAddress.city,
+          state: selectedAddress.state,
+          zipCode: selectedAddress.zipCode,
+          country: selectedAddress.country,
+          phone: selectedAddress.phone
+        },
+        paymentMethod: {
+          type: selectedPayment.type,
+          details: selectedPayment.type === 'card' 
+            ? selectedPayment.cardInfo 
+            : selectedPayment.type === 'paypal' 
+              ? selectedPayment.paypalInfo
+              : selectedPayment.payoneerInfo
+        },
+        shippingMethod,
+        shippingCost,
+        subtotal,
+        tax,
+        total,
+        status: 'pending' as const,
+        createdAt: new Date()
+      };
+
+      const orderId = await placeOrder(user.id, orderData);
+
+      toast({
+        title: "Order Placed!",
+        description: "Your order has been successfully placed.",
+      });
+
+      window.dispatchEvent(new Event('cartUpdated'));
+
+      setTimeout(() => {
+        navigate("/profile");
+      }, 2000);
+    } catch (error) {
+      console.error('Error placing order:', error);
+      toast({
+        title: "Error",
+        description: "There was a problem placing your order. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const renderPaymentMethodCard = (method: PaymentMethod) => {
@@ -766,9 +828,10 @@ const CheckoutPage = () => {
           <Button 
             className="w-full bg-wayscanner-blue py-6"
             onClick={handlePlaceOrder}
+            disabled={isLoading}
           >
             <ShoppingBag className="h-5 w-5 mr-2" />
-            Place Order • ${total.toFixed(2)}
+            {isLoading ? "Processing..." : `Place Order • $${total.toFixed(2)}`}
           </Button>
         ) : (
           <Button 

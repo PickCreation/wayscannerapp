@@ -1,9 +1,10 @@
-
 import React, { useState } from "react";
 import { Star, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { saveCartItem } from "@/lib/cartService";
+import { useAuth } from "@/hooks/use-auth";
 
 interface ProductCardProps {
   id: number;
@@ -25,44 +26,61 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const { isAuthenticated, user } = useAuth();
 
   const handleClick = () => {
     navigate(`/marketplace/product/${id}`);
   };
 
-  const handleAddToCart = (e: React.MouseEvent) => {
+  const handleAddToCart = async (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click
     setIsAddingToCart(true);
     
-    // Get current cart items
-    const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-    const existingItemIndex = cartItems.findIndex((item: any) => item.id === id);
+    const cartItem = {
+      id: id.toString(),
+      title,
+      price,
+      image,
+      quantity: 1
+    };
     
-    if (existingItemIndex >= 0) {
-      cartItems[existingItemIndex].quantity += 1;
-    } else {
-      cartItems.push({
-        id,
-        title,
-        price,
-        image,
-        quantity: 1
+    try {
+      // If user is authenticated, save to Firebase
+      if (isAuthenticated && user) {
+        await saveCartItem(user.id, cartItem);
+      } else {
+        // Otherwise, just use localStorage
+        const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+        const existingItemIndex = cartItems.findIndex((item: any) => item.id === id.toString());
+        
+        if (existingItemIndex >= 0) {
+          cartItems[existingItemIndex].quantity += 1;
+        } else {
+          cartItems.push(cartItem);
+        }
+        
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+      }
+      
+      // Dispatch a custom event to notify other components
+      window.dispatchEvent(new Event('cartUpdated'));
+      
+      toast({
+        title: "Added to Cart",
+        description: `${title} added to your cart`,
       });
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      toast({
+        title: "Error",
+        description: "Failed to add item to cart. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setTimeout(() => {
+        setIsAddingToCart(false);
+      }, 500);
     }
-    
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
-    
-    // Dispatch a custom event to notify other components
-    window.dispatchEvent(new Event('cartUpdated'));
-    
-    toast({
-      title: "Added to Cart",
-      description: `${title} added to your cart`,
-    });
-    
-    setTimeout(() => {
-      setIsAddingToCart(false);
-    }, 500);
   };
 
   return (
