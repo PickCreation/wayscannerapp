@@ -14,156 +14,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-
-const products = [
-  {
-    id: 1,
-    title: "Modern Plant Pot",
-    price: 29.99,
-    category: "Plants Accessories",
-    image: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&q=80&w=600",
-    images: [
-      "https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&q=80&w=600",
-      "https://images.unsplash.com/photo-1581504803078-889aa7a2a3c4?auto=format&fit=crop&q=80&w=600",
-      "https://images.unsplash.com/photo-1582139329109-c10441b6db1c?auto=format&fit=crop&q=80&w=600",
-    ],
-    rating: 4.5,
-    reviews: 124,
-    description: "A beautiful modern plant pot perfect for your indoor plants. Made with high-quality ceramic and designed to complement any interior decor.",
-    seller: "Green Thumb Co.",
-    sellerRating: 4.8,
-    available: true,
-    condition: "New",
-    weight: "2.5 kg",
-    brand: "EcoPlant",
-    country: "United States",
-    color: "White",
-    tags: ["Plant", "Home Decor", "Ceramic", "Indoor", "Modern"],
-  },
-  {
-    id: 2,
-    title: "Ceramic Dog Bowl",
-    price: 19.99,
-    category: "Animal Accessories",
-    image: "https://images.unsplash.com/photo-1601758174499-203dda8ffc92?auto=format&fit=crop&q=80&w=600",
-    images: [
-      "https://images.unsplash.com/photo-1601758174499-203dda8ffc92?auto=format&fit=crop&q=80&w=600",
-      "https://images.unsplash.com/photo-1581456569631-873d308ba72c?auto=format&fit=crop&q=80&w=600",
-      "https://images.unsplash.com/photo-1546421845-6471bdcf3edf?auto=format&fit=crop&q=80&w=600",
-      "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=600",
-    ],
-    rating: 4.2,
-    reviews: 89,
-    description: "A durable ceramic dog bowl that's easy to clean and perfect for your furry friend. Designed with a non-slip base to prevent spills.",
-    seller: "Pet Haven",
-    sellerRating: 4.6,
-    available: true,
-    condition: "New",
-    weight: "1.2 kg",
-    brand: "PetCare",
-    country: "Canada",
-    color: "Blue",
-    tags: ["Pet", "Dog", "Bowl", "Ceramic", "Non-slip"],
-  },
-  {
-    id: 3,
-    title: "Monstera Plant",
-    price: 34.99,
-    category: "Plants",
-    image: "https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&q=80&w=600",
-    images: [
-      "https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&q=80&w=600",
-      "https://images.unsplash.com/photo-1545239705-1564e58b9e4d?auto=format&fit=crop&q=80&w=600",
-      "https://images.unsplash.com/photo-1598880940639-7f443a26fe2a?auto=format&fit=crop&q=80&w=600",
-    ],
-    rating: 4.8,
-    reviews: 215,
-    description: "A healthy Monstera Deliciosa plant, perfect for adding a touch of nature to your home. Comes in a stylish pot and is easy to care for.",
-    seller: "Urban Jungle",
-    sellerRating: 4.9,
-    available: true,
-    condition: "New",
-    weight: "3.5 kg",
-    brand: "GreenLife",
-    country: "Brazil",
-    color: "Green",
-    tags: ["Plant", "Monstera", "Indoor", "Tropical", "Easy Care"],
-  },
-  {
-    id: 4,
-    title: "Bamboo Cutting Board",
-    price: 24.99,
-    category: "Kitchen Essentials",
-    image: "https://images.unsplash.com/photo-1594662322686-8db3bad1d279?auto=format&fit=crop&q=80&w=600",
-    images: [
-      "https://images.unsplash.com/photo-1594662322686-8db3bad1d279?auto=format&fit=crop&q=80&w=600",
-      "https://images.unsplash.com/photo-1619108915702-31ee00a0a6bd?auto=format&fit=crop&q=80&w=600",
-      "https://images.unsplash.com/photo-1668456186589-8c6af46226e0?auto=format&fit=crop&q=80&w=600",
-      "https://images.unsplash.com/photo-1623632897768-7ff5604765ec?auto=format&fit=crop&q=80&w=600",
-      "https://images.unsplash.com/photo-1625944526866-84b8898d1669?auto=format&fit=crop&q=80&w=600",
-    ],
-    rating: 4.6,
-    reviews: 178,
-    description: "A premium bamboo cutting board, perfect for all your kitchen needs. Durable, eco-friendly, and designed with a juice groove to prevent spills.",
-    seller: "Kitchen Pros",
-    sellerRating: 4.7,
-    available: true,
-    condition: "New",
-    weight: "0.8 kg",
-    brand: "EcoKitchen",
-    country: "Japan",
-    color: "Natural",
-    tags: ["Kitchen", "Bamboo", "Cutting Board", "Eco-friendly", "Durable"],
-  },
-  {
-    id: 5,
-    title: "Macrame Wall Hanging",
-    price: 39.99,
-    category: "Decor",
-    image: "https://images.unsplash.com/photo-1594130139005-3f0c0f0e7c5e?auto=format&fit=crop&q=80&w=600",
-    images: [
-      "https://images.unsplash.com/photo-1594130139005-3f0c0f0e7c5e?auto=format&fit=crop&q=80&w=600",
-      "https://images.unsplash.com/photo-1582582494705-f8ce0b0c24f2?auto=format&fit=crop&q=80&w=600",
-      "https://images.unsplash.com/photo-1617870952348-760d43bae46f?auto=format&fit=crop&q=80&w=600",
-    ],
-    rating: 4.7,
-    reviews: 156,
-    description: "A handcrafted macrame wall hanging that adds texture and style to any room. Made with 100% cotton rope and natural wooden beads.",
-    seller: "Artisan Crafts",
-    sellerRating: 4.8,
-    available: true,
-    condition: "New",
-    weight: "0.5 kg",
-    brand: "HandMade",
-    country: "Mexico",
-    color: "Beige",
-    tags: ["Decor", "Macrame", "Wall Hanging", "Handcrafted", "Boho"],
-  },
-  {
-    id: 6,
-    title: "Cat Climbing Tree",
-    price: 89.99,
-    category: "Animal Accessories",
-    image: "https://images.unsplash.com/photo-1603314585442-ee3b3c16fbcf?auto=format&fit=crop&q=80&w=600",
-    images: [
-      "https://images.unsplash.com/photo-1603314585442-ee3b3c16fbcf?auto=format&fit=crop&q=80&w=600",
-      "https://images.unsplash.com/photo-1605433274522-da77eecb7088?auto=format&fit=crop&q=80&w=600",
-      "https://images.unsplash.com/photo-1545033131-485ea67fd7c3?auto=format&fit=crop&q=80&w=600",
-    ],
-    rating: 4.3,
-    reviews: 92,
-    description: "A multi-level cat climbing tree with scratching posts, platforms, and cozy hideaways. Perfect for keeping your feline friend entertained and active.",
-    seller: "Pet Palace",
-    sellerRating: 4.5,
-    available: true,
-    condition: "New",
-    weight: "12 kg",
-    brand: "CatHaven",
-    country: "Germany",
-    color: "Gray",
-    tags: ["Pet", "Cat", "Climbing Tree", "Scratching Post", "Furniture"],
-  }
-];
+import { getProductById, Product } from "@/lib/marketplaceService";
 
 const ProductDetailPage = () => {
   const navigate = useNavigate();
@@ -172,8 +23,88 @@ const ProductDetailPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [cartCount, setCartCount] = useState(0);
   const [sellerPolicy, setSellerPolicy] = useState<string>("");
+  const [product, setProduct] = useState<Product | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   
-  const product = products.find(p => p.id === Number(productId));
+  // Fetch product from local storage first
+  useEffect(() => {
+    const fetchProduct = async () => {
+      setIsLoading(true);
+      try {
+        console.log(`Attempting to fetch product with ID: ${productId}`);
+        
+        // Try to get products from localStorage first
+        const productsJson = localStorage.getItem('products');
+        const products: Product[] = productsJson ? JSON.parse(productsJson) : [];
+        console.log('Products from localStorage:', products.length);
+        
+        // First check if we can find the product in localStorage
+        const localProduct = products.find(p => 
+          p.id === productId || 
+          p.id === `local_${productId}` || 
+          parseInt(p.id.replace('local_', '')) === parseInt(productId as string)
+        );
+        
+        if (localProduct) {
+          console.log('Found product in localStorage:', localProduct);
+          setProduct(localProduct);
+        } else {
+          // If not found in localStorage, try to fetch from Firebase
+          console.log('Product not found in localStorage, trying Firebase...');
+          const firebaseProduct = await getProductById(productId as string);
+          if (firebaseProduct) {
+            console.log('Found product in Firebase:', firebaseProduct);
+            setProduct(firebaseProduct);
+          } else {
+            console.log('Product not found in Firebase either');
+            
+            // Fallback to hardcoded products if no products found
+            const hardcodedProducts = [
+              {
+                id: '1',
+                title: "Modern Plant Pot",
+                price: 29.99,
+                category: "Plants Accessories",
+                image: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&q=80&w=600",
+                images: [
+                  "https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&q=80&w=600",
+                  "https://images.unsplash.com/photo-1581504803078-889aa7a2a3c4?auto=format&fit=crop&q=80&w=600",
+                  "https://images.unsplash.com/photo-1582139329109-c10441b6db1c?auto=format&fit=crop&q=80&w=600",
+                ],
+                rating: 4.5,
+                reviews: 124,
+                description: "A beautiful modern plant pot perfect for your indoor plants. Made with high-quality ceramic and designed to complement any interior decor.",
+                seller: "Green Thumb Co.",
+                createdAt: new Date(),
+              },
+              // ... more hardcoded products if needed
+            ];
+            
+            const hardcodedProduct = hardcodedProducts.find(p => 
+              p.id === productId || 
+              parseInt(p.id) === parseInt(productId as string)
+            );
+            
+            if (hardcodedProduct) {
+              console.log('Found product in hardcoded list:', hardcodedProduct);
+              setProduct(hardcodedProduct as Product);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching product details:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load product details",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchProduct();
+  }, [productId, toast]);
   
   useEffect(() => {
     const updateCartCount = () => {
@@ -203,15 +134,52 @@ const ProductDetailPage = () => {
     };
   }, []);
   
+  if (isLoading) {
+    return (
+      <div className="min-h-screen p-4">
+        <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center fixed top-0 left-0 right-0">
+          <button className="p-2" onClick={() => navigate(-1)}>
+            <ChevronLeft size={24} color="white" />
+          </button>
+          <h1 className="text-xl font-bold">Loading Product...</h1>
+          <div className="w-10"></div>
+        </header>
+        <div className="pt-16 flex flex-col items-center justify-center">
+          <div className="w-full h-64 bg-gray-200 animate-pulse rounded-lg mb-4"></div>
+          <div className="w-3/4 h-8 bg-gray-200 animate-pulse rounded mb-2"></div>
+          <div className="w-1/2 h-6 bg-gray-200 animate-pulse rounded mb-4"></div>
+          <div className="w-1/4 h-10 bg-gray-200 animate-pulse rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
   if (!product) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>Product not found</p>
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center fixed top-0 left-0 right-0">
+          <button className="p-2" onClick={() => navigate(-1)}>
+            <ChevronLeft size={24} color="white" />
+          </button>
+          <h1 className="text-xl font-bold">Product Not Found</h1>
+          <div className="w-10"></div>
+        </header>
+        <div className="pt-20 text-center">
+          <p className="text-gray-600 mb-4">Sorry, we couldn't find the product you're looking for.</p>
+          <Button 
+            variant="default" 
+            onClick={() => navigate('/marketplace')}
+            className="bg-wayscanner-blue hover:bg-blue-700"
+          >
+            Return to Marketplace
+          </Button>
+        </div>
       </div>
     );
   }
 
   const totalPrice = (product.price * quantity).toFixed(2);
+  const productImages = product.images || (product.image ? [product.image] : []);
 
   const handleAddToCart = () => {
     const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
@@ -275,7 +243,7 @@ const ProductDetailPage = () => {
 
   return (
     <div className="pb-24 bg-white min-h-screen">
-      <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
+      <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center fixed top-0 left-0 right-0 z-10" style={{ backgroundColor: "#034AFF" }}>
         <button 
           className="p-2" 
           onClick={() => navigate(-1)}
@@ -293,11 +261,11 @@ const ProductDetailPage = () => {
         </button>
       </header>
 
-      <div className="w-full bg-gray-100 px-4 py-0">
-        {product.images && product.images.length > 0 ? (
+      <div className="w-full bg-gray-100 px-4 py-0 pt-16">
+        {productImages.length > 0 ? (
           <Carousel className="w-full">
             <CarouselContent>
-              {product.images.map((image, index) => (
+              {productImages.map((image, index) => (
                 <CarouselItem key={index}>
                   <div className="h-64 flex items-center justify-center">
                     <img 
@@ -310,24 +278,23 @@ const ProductDetailPage = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="left-2" />
-            <CarouselNext className="right-2" />
+            {productImages.length > 1 && (
+              <>
+                <CarouselPrevious className="left-2" />
+                <CarouselNext className="right-2" />
+              </>
+            )}
           </Carousel>
         ) : (
-          <div className="w-full h-64">
-            <img 
-              src={product.image} 
-              alt={product.title} 
-              className="w-full h-full object-contain rounded-lg overflow-hidden"
-              style={{ borderRadius: "8px" }}
-            />
+          <div className="w-full h-64 flex items-center justify-center bg-gray-200 rounded-lg">
+            <span className="text-gray-500">No image available</span>
           </div>
         )}
       </div>
 
-      {product.images && product.images.length > 1 && (
+      {productImages.length > 1 && (
         <div className="px-4 py-2 flex space-x-2 overflow-x-auto">
-          {product.images.map((img, index) => (
+          {productImages.map((img, index) => (
             <button 
               key={index} 
               className="w-14 h-14 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0"
@@ -364,15 +331,15 @@ const ProductDetailPage = () => {
               className="text-wayscanner-blue font-medium hover:underline" 
               onClick={handleSellerClick}
             >
-              {product.seller}
+              {product.seller || "Unknown Seller"}
             </button>
           </p>
         </div>
         
         <div className="flex items-center mb-3">
           <Star size={18} className="text-yellow-500 fill-current" />
-          <span className="text-sm ml-1">{product.rating}</span>
-          <span className="text-sm text-gray-500 ml-1">({product.reviews} reviews)</span>
+          <span className="text-sm ml-1">{product.rating || "N/A"}</span>
+          <span className="text-sm text-gray-500 ml-1">({product.reviews || 0} reviews)</span>
         </div>
         
         <p className="text-2xl font-bold text-wayscanner-blue mb-4">${totalPrice}</p>
@@ -382,11 +349,11 @@ const ProductDetailPage = () => {
         <Tabs defaultValue="description">
           <TabsList className="grid grid-cols-3 mb-2">
             <TabsTrigger value="description">Description</TabsTrigger>
-            <TabsTrigger value="reviews">Reviews ({product.reviews})</TabsTrigger>
+            <TabsTrigger value="reviews">Reviews ({product.reviews || 0})</TabsTrigger>
             <TabsTrigger value="policies">Policies</TabsTrigger>
           </TabsList>
           <TabsContent value="description" className="pt-2">
-            <p className="text-gray-700 mb-4">{product.description}</p>
+            <p className="text-gray-700 mb-4">{product.description || "No description available."}</p>
             
             <div className="mt-6 space-y-4 border-t pt-4">
               <h3 className="font-medium text-lg">Product Details</h3>
@@ -436,7 +403,7 @@ const ProductDetailPage = () => {
                     key={star}
                     size={18}
                     className={`${
-                      star <= Math.floor(product.rating)
+                      star <= Math.floor(product.rating || 0)
                         ? "text-yellow-500 fill-current"
                         : "text-gray-300"
                     }`}
@@ -444,7 +411,7 @@ const ProductDetailPage = () => {
                 ))}
               </div>
               <span className="ml-2 text-sm font-medium text-gray-700">
-                {product.rating} out of 5
+                {product.rating || 0} out of 5
               </span>
             </div>
             <p className="text-sm text-gray-500">Reviews are coming soon!</p>
