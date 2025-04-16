@@ -7,7 +7,7 @@ import { getStorage } from 'firebase/storage';
 // Firebase configuration
 // These are safe to include in your frontend code as they are considered "publishable" keys
 const firebaseConfig = {
-  apiKey: "AIzaSyB7YzNhE08yNC-MJ8BVeFDeC6jSAc1Aokc", // Updated API key
+  apiKey: "AIzaSyB7YzNhE08yNC-MJ8BVeFDeC6jSAc1Aokc", // Verified API key
   authDomain: "wayscanner-app.firebaseapp.com",
   projectId: "wayscanner-app",
   storageBucket: "wayscanner-app.appspot.com",

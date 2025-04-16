@@ -20,7 +20,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Admin credentials
+// Admin credentials - make sure these match what the user provided
 const ADMIN_EMAIL = 'Pickcreations@gmail.com';
 const ADMIN_PASSWORD = 'Admin123!';
 
@@ -52,18 +52,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [firebaseAuth.isAuthenticated, firebaseAuth.user]);
 
   const login = async (email: string, password: string) => {
+    console.log("Combined auth login attempt with:", email);
+    
     // Try Firebase login first
     try {
       await firebaseAuth.login(email, password);
+      console.log("Firebase login successful");
       return;
     } catch (error) {
-      console.log("Falling back to local login", error);
+      console.log("Firebase login failed, falling back to local login:", error);
     }
 
-    console.log("Logging in with:", email, password);
-    
-    // Admin login check
+    // Hard-coded admin check as fallback
     if (email.toLowerCase() === ADMIN_EMAIL.toLowerCase() && password === ADMIN_PASSWORD) {
+      console.log("Admin fallback login successful");
       const adminUser = {
         id: 'admin-123',
         name: 'Admin',
@@ -88,7 +90,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       return;
     }
     
-    // Regular user login - but let's not hard-code John Doe anymore
+    // Regular user fallback login
     const regularUser = {
       id: 'user-' + Date.now(),
       name: email.split('@')[0], // Use the part before @ as a name

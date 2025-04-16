@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { FirebaseAuthProvider } from "@/hooks/use-firebase-auth";
-import { AuthProvider } from "@/hooks/use-auth"; // Added back the original AuthProvider
+import { AuthProvider } from "@/hooks/use-auth";
 import Index from "./pages/Index";
 import ForumPage from "./pages/ForumPage";
 import MyPostsPage from "./pages/MyPostsPage";
@@ -57,7 +57,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <FirebaseAuthProvider>
-          <AuthProvider> {/* Added back the AuthProvider */}
+          <AuthProvider>
             <Toaster />
             <Sonner />
             <BrowserRouter>
