@@ -8,12 +8,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
 import CouponCard from "@/components/CouponCard";
-import { 
-  Coupon, 
-  getActiveCoupons, 
-  getExpiredCoupons, 
-  seedCoupons 
-} from "@/lib/couponService";
+import { Coupon, getActiveCoupons, getExpiredCoupons, seedCoupons } from "@/lib/couponService";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const CouponsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -24,22 +20,32 @@ const CouponsPage: React.FC = () => {
   const [activeCoupons, setActiveCoupons] = useState<Coupon[]>([]);
   const [expiredCoupons, setExpiredCoupons] = useState<Coupon[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchCoupons = async () => {
       try {
         setIsLoading(true);
+        setError(null);
+        
+        console.log("Starting to fetch coupons...");
+        
         // First seed coupons if there are none
         await seedCoupons();
+        console.log("Seed coupons complete");
         
         // Then fetch active and expired coupons
         const active = await getActiveCoupons();
+        console.log(`Fetched ${active.length} active coupons`);
+        
         const expired = await getExpiredCoupons();
+        console.log(`Fetched ${expired.length} expired coupons`);
         
         setActiveCoupons(active);
         setExpiredCoupons(expired);
       } catch (error) {
-        console.error("Error fetching coupons:", error);
+        console.error("Error in fetchCoupons:", error);
+        setError("Failed to load coupons. Please try again later.");
         toast({
           title: "Error",
           description: "Failed to load coupons. Please try again later.",
@@ -76,6 +82,26 @@ const CouponsPage: React.FC = () => {
     setShowCameraSheet(true);
   };
 
+  const renderSkeletons = () => {
+    return Array(3).fill(0).map((_, index) => (
+      <div key={index} className="rounded-2xl p-5 my-3 relative overflow-hidden bg-gray-100">
+        <Skeleton className="h-6 w-24 mb-2" />
+        <Skeleton className="h-8 w-36 mb-2" />
+        <Skeleton className="h-4 w-full mb-5" />
+        <div className="border-t border-gray-200 pt-4 mt-2 flex justify-between">
+          <div>
+            <Skeleton className="h-3 w-16 mb-2" />
+            <Skeleton className="h-5 w-24" />
+          </div>
+          <div>
+            <Skeleton className="h-3 w-20 mb-2" />
+            <Skeleton className="h-5 w-28" />
+          </div>
+        </div>
+      </div>
+    ));
+  };
+
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <div className="bg-wayscanner-blue text-white p-4 relative">
@@ -101,8 +127,16 @@ const CouponsPage: React.FC = () => {
 
           <TabsContent value="active">
             {isLoading ? (
-              <div className="flex justify-center py-10">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-wayscanner-blue"></div>
+              renderSkeletons()
+            ) : error ? (
+              <div className="text-center py-10">
+                <p className="text-red-500">{error}</p>
+                <button 
+                  onClick={() => window.location.reload()} 
+                  className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md"
+                >
+                  Reload Page
+                </button>
               </div>
             ) : activeCoupons.length > 0 ? (
               activeCoupons.map((coupon) => (
@@ -117,8 +151,16 @@ const CouponsPage: React.FC = () => {
 
           <TabsContent value="expired">
             {isLoading ? (
-              <div className="flex justify-center py-10">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-wayscanner-blue"></div>
+              renderSkeletons()
+            ) : error ? (
+              <div className="text-center py-10">
+                <p className="text-red-500">{error}</p>
+                <button 
+                  onClick={() => window.location.reload()} 
+                  className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md"
+                >
+                  Reload Page
+                </button>
               </div>
             ) : expiredCoupons.length > 0 ? (
               expiredCoupons.map((coupon) => (
