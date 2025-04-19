@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Store, CreditCard, Link, MapPin, Camera, ImageIcon } from "lucide-react";
+import { ArrowLeft, Store, CreditCard, MapPin, Camera, ImageIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,6 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
 
 const SellerDashboardSettingsPage = () => {
   const navigate = useNavigate();
@@ -34,7 +32,6 @@ const SellerDashboardSettingsPage = () => {
     shopState: "",
     shopZip: "",
     shopCountry: "",
-    shopWebsite: "",
     shopPolicy: "All sales are final. Returns accepted within 30 days with receipt.",
     paymentMethod: "bank",
     bankName: "",
@@ -294,22 +291,6 @@ const SellerDashboardSettingsPage = () => {
                       onChange={handleInputChange}
                       className="mt-1"
                     />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="shopWebsite">Website (Optional)</Label>
-                    <div className="flex mt-1">
-                      <div className="bg-gray-100 border border-gray-300 rounded-l-md px-3 flex items-center">
-                        <Link size={16} className="text-gray-500" />
-                      </div>
-                      <Input
-                        id="shopWebsite"
-                        name="shopWebsite"
-                        value={shopSettings.shopWebsite}
-                        onChange={handleInputChange}
-                        className="rounded-l-none"
-                      />
-                    </div>
                   </div>
                   
                   <h3 className="font-semibold mt-6">Shop Address</h3>
