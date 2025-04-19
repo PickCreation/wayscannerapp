@@ -9,10 +9,7 @@ import {
   where,
   Timestamp,
   updateDoc,
-  doc,
-  addDoc,
-  getDocs,
-  deleteDoc
+  doc 
 } from 'firebase/firestore';
 
 export type NotificationType = {
@@ -30,7 +27,6 @@ type NotificationsContextType = {
   unreadCount: number;
   markAsRead: (notificationId: string) => Promise<void>;
   markAllAsRead: () => Promise<void>;
-  addSampleNotifications: () => Promise<void>;
 };
 
 const NotificationsContext = createContext<NotificationsContextType | null>(null);
@@ -100,78 +96,12 @@ export const NotificationsProvider = ({ children }: { children: React.ReactNode 
     await Promise.all(promises);
   };
 
-  const addSampleNotifications = async () => {
-    const user = auth.currentUser;
-    if (!user) return;
-
-    // First clear existing notifications
-    const notificationsRef = collection(db, 'users', user.uid, 'notifications');
-    const existingNotifications = await getDocs(notificationsRef);
-    
-    const deletePromises = existingNotifications.docs.map(doc => 
-      deleteDoc(doc.ref)
-    );
-    
-    await Promise.all(deletePromises);
-
-    // Add sample notifications
-    const sampleNotifications = [
-      {
-        type: 'order',
-        title: 'Order Confirmed',
-        message: 'Your order #12345 has been confirmed and is being processed.',
-        read: false,
-        createdAt: Timestamp.now(),
-        link: '/orders'
-      },
-      {
-        type: 'shipping',
-        title: 'Package Shipped',
-        message: 'Your package has been shipped and is on its way to you.',
-        read: false,
-        createdAt: Timestamp.fromDate(new Date(Date.now() - 2 * 60 * 60 * 1000)), // 2 hours ago
-        link: '/orders'
-      },
-      {
-        type: 'message',
-        title: 'New Message',
-        message: 'You have received a new message from EcoStore.',
-        read: false,
-        createdAt: Timestamp.fromDate(new Date(Date.now() - 6 * 60 * 60 * 1000)), // 6 hours ago
-        link: '/profile/messages'
-      },
-      {
-        type: 'like',
-        title: 'Post Liked',
-        message: 'Your post about sustainable gardening received 5 new likes.',
-        read: true,
-        createdAt: Timestamp.fromDate(new Date(Date.now() - 24 * 60 * 60 * 1000)), // 1 day ago
-        link: '/forum'
-      },
-      {
-        type: 'comment',
-        title: 'New Comment',
-        message: 'GreenThumb commented on your plant identification post.',
-        read: true,
-        createdAt: Timestamp.fromDate(new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)), // 2 days ago
-        link: '/forum'
-      }
-    ];
-
-    const addPromises = sampleNotifications.map(notification => 
-      addDoc(notificationsRef, notification)
-    );
-
-    await Promise.all(addPromises);
-  };
-
   return (
     <NotificationsContext.Provider value={{
       notifications,
       unreadCount,
       markAsRead,
-      markAllAsRead,
-      addSampleNotifications
+      markAllAsRead
     }}>
       {children}
     </NotificationsContext.Provider>
