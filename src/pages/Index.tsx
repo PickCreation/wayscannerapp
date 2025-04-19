@@ -7,6 +7,8 @@ import { BellIcon, UserIcon, Utensils, Leaf, PawPrint, ShoppingBag, BookOpen, He
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { AnimatePresence } from "framer-motion";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { useAuth } from "@/hooks/use-auth";
 
 const Index = () => {
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("home");
@@ -17,6 +19,7 @@ const Index = () => {
   const {
     toast
   } = useToast();
+  const { isAuthenticated, user } = useAuth();
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -103,7 +106,14 @@ const Index = () => {
             <BellIcon size={24} color="#034AFF" strokeWidth={2.5} fill="#034AFF" />
           </button>
           <button className="p-2" onClick={handleProfileClick}>
-            <UserIcon size={24} color="#034AFF" strokeWidth={2.5} fill="#034AFF" />
+            {isAuthenticated && user ? (
+              <Avatar className="h-6 w-6">
+                <AvatarImage src={user.profileImage} alt={user.name} />
+                <AvatarFallback>{user.name?.charAt(0).toUpperCase()}</AvatarFallback>
+              </Avatar>
+            ) : (
+              <UserIcon size={24} color="#034AFF" strokeWidth={2.5} fill="#034AFF" />
+            )}
           </button>
         </div>
       </header>
