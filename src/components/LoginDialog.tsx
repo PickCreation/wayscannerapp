@@ -14,6 +14,7 @@ import { useAuth } from "@/hooks/use-auth";
 interface LoginDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSuccess?: () => void;
 }
 
 const loginSchema = z.object({
@@ -27,7 +28,7 @@ const signupSchema = z.object({
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
 });
 
-const LoginDialog: React.FC<LoginDialogProps> = ({ open, onOpenChange }) => {
+const LoginDialog: React.FC<LoginDialogProps> = ({ open, onOpenChange, onSuccess }) => {
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
   const { toast } = useToast();
   const { login, signup } = useAuth();
@@ -54,6 +55,9 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, onOpenChange }) => {
       await login(values.email, values.password);
       loginForm.reset();
       onOpenChange(false);
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (error) {
       console.error("Login error:", error);
     }
@@ -64,6 +68,9 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, onOpenChange }) => {
       await signup(values.name, values.email, values.password);
       signupForm.reset();
       onOpenChange(false);
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (error) {
       console.error("Signup error:", error);
     }
