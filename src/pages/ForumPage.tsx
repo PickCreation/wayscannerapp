@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Bell } from "lucide-react";
+import { Bell, Heart, MessageSquare, Bookmark, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import BottomNavigation from "@/components/BottomNavigation";
 import { useToast } from "@/hooks/use-toast";
 import CreatePostSheet from "@/components/CreatePostSheet";
@@ -8,7 +9,6 @@ import CameraSheet from "@/components/CameraSheet";
 import LoginDialog from "@/components/LoginDialog";
 import { useFirebaseAuth } from "@/hooks/use-firebase-auth";
 import { getAllPosts, likePost, addBookmark, removeBookmark } from "@/lib/firebaseService";
-import { Loader2 } from "lucide-react";
 
 const CATEGORIES = [
   "All", "Plants", "Gardening", "Nature", "Food", "Healthy Recipes", 
