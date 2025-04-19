@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Loader2, Heart, MessageSquare, Bookmark } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import BottomNavigation from "@/components/BottomNavigation";
