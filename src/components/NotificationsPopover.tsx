@@ -44,23 +44,23 @@ const NotificationsPopover = () => {
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
-          <Bell className="text-wayscanner-blue" size={24} />
+          <Bell className="text-wayscanner-blue h-7 w-7" />
           {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">
+            <span className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-medium border-2 border-white">
               {unreadCount}
             </span>
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-80 bg-white border-gray-200">
-        <div className="flex items-center justify-between mb-2">
-          <h4 className="font-medium">Notifications</h4>
+      <PopoverContent align="end" className="w-80 bg-white border border-gray-200 shadow-lg p-4">
+        <div className="flex items-center justify-between mb-4">
+          <h4 className="font-semibold text-base">Notifications</h4>
           {unreadCount > 0 && (
             <Button
               variant="ghost"
               size="sm"
               onClick={() => markAllAsRead()}
-              className="text-xs"
+              className="text-xs hover:bg-gray-100"
             >
               Mark all as read
             </Button>
@@ -68,22 +68,22 @@ const NotificationsPopover = () => {
         </div>
         <ScrollArea className="h-[300px]">
           {notifications.length > 0 ? (
-            <div className="space-y-2">
+            <div className="space-y-3">
               {notifications.map((notification) => (
                 <div
                   key={notification.id}
                   onClick={() => handleNotificationClick(notification)}
                   className={cn(
-                    "flex items-start gap-2 p-2 rounded-lg cursor-pointer hover:bg-gray-100",
+                    "flex items-start gap-3 p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors",
                     !notification.read && "bg-blue-50"
                   )}
                 >
-                  <span className="text-xl" role="img" aria-label="notification type">
+                  <span className="text-2xl" role="img" aria-label="notification type">
                     {getNotificationIcon(notification.type)}
                   </span>
                   <div className="flex-1">
-                    <p className="text-sm font-medium">{notification.title}</p>
-                    <p className="text-sm text-gray-500">{notification.message}</p>
+                    <p className="text-sm font-medium text-gray-900">{notification.title}</p>
+                    <p className="text-sm text-gray-600 mt-0.5">{notification.message}</p>
                     <p className="text-xs text-gray-400 mt-1">
                       {notification.createdAt.toDate().toLocaleDateString()}
                     </p>
