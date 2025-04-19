@@ -44,7 +44,7 @@ const NotificationsPopover = () => {
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
-          <Bell size={24} />
+          <Bell className="text-wayscanner-blue" size={24} />
           {unreadCount > 0 && (
             <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">
               {unreadCount}
@@ -52,7 +52,7 @@ const NotificationsPopover = () => {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-80">
+      <PopoverContent align="end" className="w-80 bg-white border-gray-200">
         <div className="flex items-center justify-between mb-2">
           <h4 className="font-medium">Notifications</h4>
           {unreadCount > 0 && (

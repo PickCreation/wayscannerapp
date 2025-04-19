@@ -44,23 +44,31 @@ export const NotificationsProvider = ({ children }: { children: React.ReactNode 
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
-    const user = auth.currentUser;
-    if (!user) return;
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      if (!user) {
+        // Reset notifications when user logs out
+        setNotifications([]);
+        setUnreadCount(0);
+        return;
+      }
 
-    const notificationsRef = collection(db, 'users', user.uid, 'notifications');
-    const q = query(
-      notificationsRef,
-      orderBy('createdAt', 'desc')
-    );
+      const notificationsRef = collection(db, 'users', user.uid, 'notifications');
+      const q = query(
+        notificationsRef,
+        orderBy('createdAt', 'desc')
+      );
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const newNotifications = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as NotificationType[];
-      
-      setNotifications(newNotifications);
-      setUnreadCount(newNotifications.filter(n => !n.read).length);
+      const notificationsUnsubscribe = onSnapshot(q, (snapshot) => {
+        const newNotifications = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as NotificationType[];
+        
+        setNotifications(newNotifications);
+        setUnreadCount(newNotifications.filter(n => !n.read).length);
+      });
+
+      return notificationsUnsubscribe;
     });
 
     return () => unsubscribe();
