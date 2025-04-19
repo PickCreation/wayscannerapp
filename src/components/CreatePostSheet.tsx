@@ -42,9 +42,10 @@ const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange })
     }
   }, []);
   
-  // Check authentication on mount
-  React.useEffect(() => {
+  // Check authentication on mount and when open state changes
+  useEffect(() => {
     if (open && !isAuthenticated) {
+      // If drawer is opened but user is not authenticated, show login dialog
       setShowLoginDialog(true);
       onOpenChange(false);
     }
@@ -64,11 +65,14 @@ const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange })
   };
   
   const handleSubmit = async () => {
-    if (!isAuthenticated) {
+    // First check: verify user is authenticated
+    if (!isAuthenticated || !user) {
+      console.log("User not authenticated, showing login dialog");
       setShowLoginDialog(true);
       return;
     }
     
+    // Validate form fields
     if (!content.trim()) {
       toast({
         title: "Error",
@@ -90,6 +94,8 @@ const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange })
     setIsSubmitting(true);
     
     try {
+      console.log("Creating post with authenticated user:", user);
+      
       // Save post to Firebase
       const newPost = await createPost(content, category, image);
       
@@ -112,14 +118,35 @@ const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange })
       onOpenChange(false);
     } catch (error) {
       console.error("Error creating post:", error);
+      
+      // More detailed error message
+      let errorMessage = "Failed to create post. Please try again.";
+      
+      if (error instanceof Error) {
+        if (error.message.includes("authenticated")) {
+          errorMessage = "You must be logged in to create a post. Please log in and try again.";
+          setShowLoginDialog(true);
+        }
+      }
+      
       toast({
         title: "Error",
-        description: "Failed to create post. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
     }
+  };
+  
+  // Handle successful login
+  const handleLoginSuccess = () => {
+    setShowLoginDialog(false);
+    
+    // Re-open the create post sheet after successful login
+    setTimeout(() => {
+      onOpenChange(true);
+    }, 500);
   };
   
   return (
@@ -216,7 +243,7 @@ const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange })
             <Button
               className="w-full bg-wayscanner-blue hover:bg-blue-700 py-6 text-[16px] font-medium"
               onClick={handleSubmit}
-              disabled={isSubmitting}
+              disabled={isSubmitting || !isAuthenticated}
               type="button"
             >
               {isSubmitting ? (
@@ -224,6 +251,8 @@ const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange })
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Creating...
                 </>
+              ) : !isAuthenticated ? (
+                "Login to Post"
               ) : (
                 "Post"
               )}
@@ -234,7 +263,14 @@ const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange })
       
       <LoginDialog
         open={showLoginDialog}
-        onOpenChange={setShowLoginDialog}
+        onOpenChange={(open) => {
+          setShowLoginDialog(open);
+          if (!open) {
+            // If user closes login dialog without logging in, make sure create post drawer is closed
+            onOpenChange(false);
+          }
+        }}
+        onSuccess={handleLoginSuccess}
       />
     </>
   );
