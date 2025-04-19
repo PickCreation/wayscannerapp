@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ChevronLeft, AlertTriangle, PawPrint, Utensils, Moon, PhoneCall, Info, MapPin, Camera, Share2, HelpCircle } from "lucide-react";
+import { ChevronLeft, AlertTriangle, PawPrint, Utensils, Moon, PhoneCall, Info, MapPin, Share2, HelpCircle } from "lucide-react";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
 import { Badge } from "@/components/ui/badge";
@@ -182,10 +181,6 @@ const AnimalDetailPage = () => {
     toast.success("Link copied to clipboard!");
   };
 
-  const reportSighting = () => {
-    toast.success("Thanks for your report! Wildlife authorities have been notified.");
-  };
-
   if (!animal) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
@@ -215,14 +210,6 @@ const AnimalDetailPage = () => {
               alt={animal.name} 
               className="w-full h-full object-cover"
             />
-            <div className="absolute bottom-3 right-3">
-              <button 
-                onClick={reportSighting}
-                className="bg-white/80 backdrop-blur-sm p-2 rounded-full"
-              >
-                <Camera className="h-5 w-5 text-blue-600" />
-              </button>
-            </div>
           </div>
         
           <div className="p-5">
