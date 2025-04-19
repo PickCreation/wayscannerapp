@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, ShoppingBag, Star, ChevronDown, Filter, Store, MessageCircle, UserPlus, Users } from "lucide-react";
@@ -120,7 +119,6 @@ const StoreFrontPage = () => {
       setShopBanner(savedShopBanner);
     }
     
-    // Load follow state and count
     if (user && storeId) {
       const followedStores = JSON.parse(localStorage.getItem('followedStores') || '{}');
       const storeFollowers = JSON.parse(localStorage.getItem('storeFollowers') || '{}');
@@ -132,7 +130,6 @@ const StoreFrontPage = () => {
       setFollowCount(storeFollowerCount);
     }
     
-    // Load shop sales data
     const salesData = JSON.parse(localStorage.getItem('shopSalesData') || '{}');
     if (salesData && storeId && salesData[shopSettings.shopName]) {
       setShopSalesData(salesData[shopSettings.shopName]);
@@ -198,21 +195,18 @@ const StoreFrontPage = () => {
     const newIsFollowing = !isFollowing;
     setIsFollowing(newIsFollowing);
     
-    // Update followedStores for the user
     const followedStores = JSON.parse(localStorage.getItem('followedStores') || '{}');
     const storeFollowers = JSON.parse(localStorage.getItem('storeFollowers') || '{}');
     
     const userFollowedStores = followedStores[user.id] || [];
     
     if (isFollowing) {
-      // Unfollow
       const updatedFollowedStores = userFollowedStores.filter((id: string) => id !== storeId);
       followedStores[user.id] = updatedFollowedStores;
       
       storeFollowers[storeId] = Math.max((storeFollowers[storeId] || 0) - 1, 0);
       setFollowCount(prev => Math.max(prev - 1, 0));
       
-      // Update storeFollowers count for the shop name as well
       storeFollowers[shopSettings.shopName] = Math.max((storeFollowers[shopSettings.shopName] || 0) - 1, 0);
       
       toast({
@@ -220,13 +214,11 @@ const StoreFrontPage = () => {
         description: `You have unfollowed ${shopSettings.shopName}`,
       });
     } else {
-      // Follow
       followedStores[user.id] = [...userFollowedStores, storeId];
       
       storeFollowers[storeId] = (storeFollowers[storeId] || 0) + 1;
       setFollowCount(prev => prev + 1);
       
-      // Update storeFollowers count for the shop name as well
       storeFollowers[shopSettings.shopName] = (storeFollowers[shopSettings.shopName] || 0) + 1;
       
       toast({
@@ -238,7 +230,6 @@ const StoreFrontPage = () => {
     localStorage.setItem('followedStores', JSON.stringify(followedStores));
     localStorage.setItem('storeFollowers', JSON.stringify(storeFollowers));
     
-    // Update user profile follower count stats (for Profile page)
     updateUserProfileStats(user.id, newIsFollowing);
   };
   
@@ -253,7 +244,6 @@ const StoreFrontPage = () => {
       };
     }
     
-    // If the user is a shop owner, update their follower count
     if (isNewFollow) {
       userStats[userId].followers = (userStats[userId].followers || 0) + 1;
     } else {
@@ -393,14 +383,23 @@ const StoreFrontPage = () => {
             <TabsTrigger value="all" className="text-sm data-[state=active]:border-b-2 data-[state=active]:border-wayscanner-blue rounded-none data-[state=active]:shadow-none h-10">
               All
             </TabsTrigger>
-            <TabsTrigger value="kitchen" className="text-sm data-[state=active]:border-b-2 data-[state=active]:border-wayscanner-blue rounded-none data-[state=active]:shadow-none h-10">
-              Kitchen
-            </TabsTrigger>
-            <TabsTrigger value="decor" className="text-sm data-[state=active]:border-b-2 data-[state=active]:border-wayscanner-blue rounded-none data-[state=active]:shadow-none h-10">
+            <TabsTrigger value="Decor" className="text-sm data-[state=active]:border-b-2 data-[state=active]:border-wayscanner-blue rounded-none data-[state=active]:shadow-none h-10">
               Decor
             </TabsTrigger>
-            <TabsTrigger value="electronics" className="text-sm data-[state=active]:border-b-2 data-[state=active]:border-wayscanner-blue rounded-none data-[state=active]:shadow-none h-10">
-              Electronics
+            <TabsTrigger value="Kitchen Essentials" className="text-sm data-[state=active]:border-b-2 data-[state=active]:border-wayscanner-blue rounded-none data-[state=active]:shadow-none h-10">
+              Kitchen
+            </TabsTrigger>
+            <TabsTrigger value="Furniture" className="text-sm data-[state=active]:border-b-2 data-[state=active]:border-wayscanner-blue rounded-none data-[state=active]:shadow-none h-10">
+              Furniture
+            </TabsTrigger>
+            <TabsTrigger value="Plants" className="text-sm data-[state=active]:border-b-2 data-[state=active]:border-wayscanner-blue rounded-none data-[state=active]:shadow-none h-10">
+              Plants
+            </TabsTrigger>
+            <TabsTrigger value="Plants Accessories" className="text-sm data-[state=active]:border-b-2 data-[state=active]:border-wayscanner-blue rounded-none data-[state=active]:shadow-none h-10">
+              Plant Acc.
+            </TabsTrigger>
+            <TabsTrigger value="Animal Accessories" className="text-sm data-[state=active]:border-b-2 data-[state=active]:border-wayscanner-blue rounded-none data-[state=active]:shadow-none h-10">
+              Animal Acc.
             </TabsTrigger>
           </TabsList>
         </div>
@@ -445,38 +444,18 @@ const StoreFrontPage = () => {
           </div>
         </TabsContent>
         
-        <TabsContent value="kitchen" className="px-4 py-4 m-0">
-          <div className="grid grid-cols-2 gap-3">
-            {sortedProducts.filter(p => p.category === "kitchen").map((product) => (
-              <ProductCard
-                key={product.id}
-                {...adaptProductForCard(product)}
-              />
-            ))}
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="decor" className="px-4 py-4 m-0">
-          <div className="grid grid-cols-2 gap-3">
-            {sortedProducts.filter(p => p.category === "decor").map((product) => (
-              <ProductCard
-                key={product.id}
-                {...adaptProductForCard(product)}
-              />
-            ))}
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="electronics" className="px-4 py-4 m-0">
-          <div className="grid grid-cols-2 gap-3">
-            {sortedProducts.filter(p => p.category === "electronics").map((product) => (
-              <ProductCard
-                key={product.id}
-                {...adaptProductForCard(product)}
-              />
-            ))}
-          </div>
-        </TabsContent>
+        {["Decor", "Kitchen Essentials", "Furniture", "Plants", "Plants Accessories", "Animal Accessories"].map((category) => (
+          <TabsContent key={category} value={category} className="px-4 py-4 m-0">
+            <div className="grid grid-cols-2 gap-3">
+              {sortedProducts.filter(p => p.category === category).map((product) => (
+                <ProductCard
+                  key={product.id}
+                  {...adaptProductForCard(product)}
+                />
+              ))}
+            </div>
+          </TabsContent>
+        ))}
       </Tabs>
 
       <MessageSellerDialog 
