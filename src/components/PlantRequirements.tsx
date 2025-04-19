@@ -47,7 +47,7 @@ const PlantRequirements = () => {
             <span role="img" aria-label="humidity" className="text-2xl">💧</span>
             <div>
               <p className="text-xl text-white">Humidity</p>
-              <p className="text-emerald-400">High (>60%)</p>
+              <p className="text-emerald-400">High (&gt;60%)</p>
             </div>
           </div>
           <ArrowRight className="text-gray-400" />

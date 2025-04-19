@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import {
   Tabs,
@@ -6,16 +7,15 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
-import { cn } from "@/lib/utils";
-import { getPlant } from "@/lib/utils";
+import { cn, getPlant } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import PlantRequirements from "@/components/PlantRequirements";
 
 const PlantDetailPage = () => {
   const params = useParams();
-  const router = useRouter();
+  const navigate = useNavigate();
   const plantId = params.plantId as string;
   const [plant, setPlant] = useState(null);
   const { toast } = useToast();
@@ -47,7 +47,7 @@ const PlantDetailPage = () => {
     <div>
       <div className="md:flex md:items-center md:justify-between">
         <div className="mb-4">
-          <Button variant="ghost" onClick={() => router.back()}>
+          <Button variant="ghost" onClick={() => navigate(-1)}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back
           </Button>
