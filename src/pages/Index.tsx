@@ -3,13 +3,14 @@ import ScannerCard from "@/components/ScannerCard";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
 import SplashScreen from "@/components/SplashScreen";
-import { BellIcon, UserIcon, Utensils, Leaf, PawPrint, ShoppingBag, BookOpen, HelpCircle } from "lucide-react";
+import { UserIcon, Utensils, Leaf, PawPrint, ShoppingBag, BookOpen, HelpCircle } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { AnimatePresence } from "framer-motion";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/use-auth";
 import NotificationsPopover from "@/components/NotificationsPopover";
+import { useNotifications } from "@/contexts/NotificationsContext";
 
 const Index = () => {
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("home");
@@ -17,10 +18,9 @@ const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
   const { isAuthenticated, user } = useAuth();
+  const { addSampleNotifications } = useNotifications();
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -95,6 +95,31 @@ const Index = () => {
     navigate("/how-it-works");
   };
 
+  const handleNotificationTest = async () => {
+    if (isAuthenticated) {
+      try {
+        await addSampleNotifications();
+        toast({
+          title: "Sample notifications added",
+          description: "Check your notifications panel",
+        });
+      } catch (error) {
+        console.error("Error adding sample notifications:", error);
+        toast({
+          title: "Error",
+          description: "Failed to add sample notifications",
+          variant: "destructive"
+        });
+      }
+    } else {
+      toast({
+        title: "Please log in",
+        description: "You need to be logged in to see notifications",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div className="pb-20 bg-white min-h-screen">
       <AnimatePresence>
@@ -104,7 +129,9 @@ const Index = () => {
       <header className="text-white py-4 px-4 flex justify-between items-center bg-white">
         <img alt="WayScanner Logo" className="h-10" src="/lovable-uploads/0d65399a-0d61-4303-b110-a67005ca7e27.png" />
         <div className="flex items-center space-x-3">
-          <NotificationsPopover />
+          <div onClick={handleNotificationTest}>
+            <NotificationsPopover />
+          </div>
           <button className="p-2" onClick={handleProfileClick}>
             {isAuthenticated && user ? (
               <Avatar className="h-6 w-6">
