@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { AnimatePresence } from "framer-motion";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/use-auth";
+import NotificationsPopover from "@/components/NotificationsPopover";
 
 const Index = () => {
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("home");
@@ -103,9 +104,7 @@ const Index = () => {
       <header className="text-white py-4 px-4 flex justify-between items-center bg-white">
         <img alt="WayScanner Logo" className="h-10" src="/lovable-uploads/0d65399a-0d61-4303-b110-a67005ca7e27.png" />
         <div className="flex items-center space-x-3">
-          <button className="p-2">
-            <BellIcon size={24} color="#034AFF" strokeWidth={2.5} fill="#034AFF" />
-          </button>
+          <NotificationsPopover />
           <button className="p-2" onClick={handleProfileClick}>
             {isAuthenticated && user ? (
               <Avatar className="h-6 w-6">
