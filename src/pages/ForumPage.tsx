@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Bell, Heart, MessageSquare, Bookmark, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -7,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import CreatePostSheet from "@/components/CreatePostSheet";
 import CameraSheet from "@/components/CameraSheet";
 import LoginDialog from "@/components/LoginDialog";
-import { useFirebaseAuth } from "@/hooks/use-firebase-auth";
+import { useAuth } from "@/hooks/use-auth";
 import { getAllPosts, likePost, addBookmark, removeBookmark } from "@/lib/firebaseService";
 
 const CATEGORIES = [
@@ -18,7 +19,7 @@ const CATEGORIES = [
 
 export const ForumPage = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useFirebaseAuth();
+  const { isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState<"all" | "my">("all");
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("forum");

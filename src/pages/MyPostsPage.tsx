@@ -7,7 +7,7 @@ import BottomNavigation from "@/components/BottomNavigation";
 import { useToast } from "@/hooks/use-toast";
 import CreatePostSheet from "@/components/CreatePostSheet";
 import CameraSheet from "@/components/CameraSheet";
-import { useFirebaseAuth } from "@/hooks/use-firebase-auth";
+import { useAuth } from "@/hooks/use-auth";
 import { getMyPosts, likePost, addBookmark, removeBookmark, deletePost } from "@/lib/firebaseService";
 import { 
   AlertDialog,
@@ -29,7 +29,7 @@ const CATEGORIES = [
 
 const MyPostsPage = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useFirebaseAuth();
+  const { isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState<"all" | "my">("my");
   const [activeCategory, setActiveCategory] = useState("All");
   const [posts, setPosts] = useState<any[]>([]);
