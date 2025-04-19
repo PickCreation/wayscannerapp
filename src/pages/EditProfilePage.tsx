@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
-import { useFirebaseAuth } from "@/hooks/use-firebase-auth";
+import { useAuth } from "@/hooks/use-auth";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { db, storage } from "@/lib/firebase";
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
@@ -16,7 +16,7 @@ import { ref, uploadString, getDownloadURL } from "firebase/storage";
 const EditProfilePage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { user } = useFirebaseAuth();
+  const { user, updateProfileImage } = useAuth();
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop" | "profile">("profile");
   const [showCameraSheet, setShowCameraSheet] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -101,13 +101,14 @@ const EditProfilePage = () => {
         const base64String = reader.result as string;
         setProfileImage(base64String);
         localStorage.setItem('profileImage', base64String);
+        updateProfileImage(base64String);
+        
+        toast({
+          title: "Profile Photo Updated",
+          description: "Your profile photo has been changed successfully.",
+        });
       };
       reader.readAsDataURL(file);
-      
-      toast({
-        title: "Profile Photo Updated",
-        description: "Your profile photo has been changed successfully.",
-      });
     }
   };
 

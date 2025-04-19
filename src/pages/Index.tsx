@@ -94,7 +94,8 @@ const Index = () => {
     navigate("/how-it-works");
   };
 
-  return <div className="pb-20 bg-white min-h-screen">
+  return (
+    <div className="pb-20 bg-white min-h-screen">
       <AnimatePresence>
         {showSplash && <SplashScreen onClose={handleCloseSplash} />}
       </AnimatePresence>
@@ -149,7 +150,8 @@ const Index = () => {
       <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
 
       <BottomNavigation activeItem={activeNavItem} onItemClick={handleNavItemClick} onCameraClick={handleCameraClick} />
-    </div>;
+    </div>
+  );
 };
 
 export default Index;
