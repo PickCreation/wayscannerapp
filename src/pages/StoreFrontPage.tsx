@@ -379,8 +379,11 @@ const StoreFrontPage = () => {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="px-4">
-          <TabsList className="w-full flex items-center bg-transparent h-auto border-b border-gray-200 gap-2 p-0">
-            <TabsTrigger value="all" className="text-sm data-[state=active]:border-b-2 data-[state=active]:border-wayscanner-blue rounded-none data-[state=active]:shadow-none h-10">
+          <TabsList className="w-full flex items-center justify-start bg-transparent h-auto border-b border-gray-200 gap-2 p-0">
+            <TabsTrigger 
+              value="all" 
+              className="text-sm data-[state=active]:border-b-2 data-[state=active]:border-wayscanner-blue rounded-none data-[state=active]:shadow-none h-10"
+            >
               All
             </TabsTrigger>
 
@@ -390,7 +393,7 @@ const StoreFrontPage = () => {
                   Categories <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 bg-white">
+              <DropdownMenuContent align="start" className="w-48 bg-white">
                 <DropdownMenuItem onClick={() => setActiveTab("decor")}>
                   Decor
                 </DropdownMenuItem>
