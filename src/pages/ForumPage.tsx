@@ -1,7 +1,5 @@
-
 import React, { useState, useEffect } from "react";
-import { Heart, MessageSquare, Bookmark, Bell, User, LogIn } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Bell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import BottomNavigation from "@/components/BottomNavigation";
 import { useToast } from "@/hooks/use-toast";
@@ -12,7 +10,6 @@ import { useFirebaseAuth } from "@/hooks/use-firebase-auth";
 import { getAllPosts, likePost, addBookmark, removeBookmark } from "@/lib/firebaseService";
 import { Loader2 } from "lucide-react";
 
-// Updated category options for filtering
 const CATEGORIES = [
   "All", "Plants", "Gardening", "Nature", "Food", "Healthy Recipes", 
   "Nutrition Tips", "Cooking", "Kitchen", "Animals & Pets", "DIY", 
@@ -33,7 +30,6 @@ export const ForumPage = () => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const { toast } = useToast();
 
-  // Load profile image
   useEffect(() => {
     const savedProfileImage = localStorage.getItem('profileImage');
     if (savedProfileImage) {
@@ -41,7 +37,6 @@ export const ForumPage = () => {
     }
   }, []);
 
-  // Load posts from Firebase
   useEffect(() => {
     const fetchPosts = async () => {
       setLoading(true);
@@ -63,7 +58,6 @@ export const ForumPage = () => {
     fetchPosts();
   }, [toast]);
 
-  // Listen for new posts from CreatePostSheet
   useEffect(() => {
     const handleAddNewPost = (event: CustomEvent) => {
       const newPost = event.detail;
@@ -77,7 +71,6 @@ export const ForumPage = () => {
     };
   }, []);
   
-  // Listen for openCreatePost event from CameraSheet
   useEffect(() => {
     const handleOpenCreatePost = () => {
       setShowCreatePost(true);
@@ -90,12 +83,10 @@ export const ForumPage = () => {
     };
   }, []);
   
-  // Filter posts by category
   const filteredPosts = activeCategory === "All" 
     ? posts 
     : posts.filter(post => post.category === activeCategory);
   
-  // Handle post interactions
   const handleLikePost = async (postId: string, isLiked: boolean) => {
     if (!isAuthenticated) {
       setShowLoginDialog(true);
@@ -182,7 +173,6 @@ export const ForumPage = () => {
     setShowCameraSheet(true);
   };
   
-  // Navigate to My Posts page
   const handleTabChange = (tab: "all" | "my") => {
     if (tab === "my") {
       if (!isAuthenticated) {
@@ -220,20 +210,15 @@ export const ForumPage = () => {
   
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 pb-20">
-      {/* Header - Updated with Forum text on the left */}
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
         <h1 className="text-xl font-bold">Forum</h1>
         <div className="flex items-center space-x-3">
           <button className="p-2" type="button">
             <Bell size={24} fill="white" strokeWidth={1.5} />
           </button>
-          <button className="p-2" onClick={handleProfileClick} type="button">
-            <User size={24} fill="white" strokeWidth={1.5} />
-          </button>
         </div>
       </header>
       
-      {/* Tab Navigation */}
       <div className="flex border-b border-gray-200 bg-white">
         <button
           className={`flex-1 py-3 font-medium ${activeTab === "all" ? "text-wayscanner-blue border-b-2 border-wayscanner-blue" : "text-gray-500"}`}
@@ -251,7 +236,6 @@ export const ForumPage = () => {
         </button>
       </div>
       
-      {/* Category Filter */}
       <div className="p-3 overflow-x-auto flex space-x-2 bg-white">
         {CATEGORIES.map(category => (
           <button
@@ -274,7 +258,6 @@ export const ForumPage = () => {
         ))}
       </div>
       
-      {/* Posts List */}
       <div className="flex-1 p-3 space-y-4">
         {loading ? (
           <div className="flex justify-center items-center py-20">
@@ -283,7 +266,6 @@ export const ForumPage = () => {
         ) : filteredPosts.length > 0 ? (
           filteredPosts.map(post => (
             <div key={post.id} className="bg-white rounded-lg shadow p-4 border border-gray-200">
-              {/* Post Header - Author & Time */}
               <div className="flex items-center mb-3">
                 <Avatar className="h-12 w-12 mr-3">
                   <AvatarImage src={post.author.avatar} alt={post.author.name} />
@@ -310,17 +292,14 @@ export const ForumPage = () => {
                 </div>
               </div>
               
-              {/* Post Content */}
               <p className="text-[14px] text-gray-700 mb-4">{post.content}</p>
               
-              {/* Post Image (if available) */}
               {post.imageUrl && (
                 <div className="mb-4 border rounded-lg overflow-hidden">
                   <img src={post.imageUrl} alt="Post" className="w-full h-auto" />
                 </div>
               )}
               
-              {/* Post Actions */}
               <div className="flex items-center border-t border-gray-100 pt-3">
                 <button 
                   className="flex items-center mr-5"
@@ -361,22 +340,18 @@ export const ForumPage = () => {
         )}
       </div>
       
-      {/* Create Post Sheet */}
       {showCreatePost && (
         <CreatePostSheet open={showCreatePost} onOpenChange={setShowCreatePost} />
       )}
       
-      {/* Camera Sheet */}
       {showCameraSheet && (
         <CameraSheet open={showCameraSheet} onOpenChange={setShowCameraSheet} />
       )}
       
-      {/* Login Dialog */}
       {showLoginDialog && (
         <LoginDialog open={showLoginDialog} onOpenChange={setShowLoginDialog} />
       )}
       
-      {/* Bottom Navigation */}
       <BottomNavigation
         activeItem="forum"
         onItemClick={(item) => {
