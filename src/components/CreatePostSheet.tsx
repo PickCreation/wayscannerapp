@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { X, Image, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
-import { useFirebaseAuth } from "@/hooks/use-firebase-auth";
+import { useAuth } from "@/hooks/use-auth";
 import LoginDialog from "@/components/LoginDialog";
 import { createPost } from "@/lib/firebaseService";
 
@@ -30,7 +30,7 @@ const CreatePostSheet: React.FC<CreatePostSheetProps> = ({ open, onOpenChange })
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-  const { isAuthenticated, user } = useFirebaseAuth();
+  const { isAuthenticated, user } = useAuth();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   
