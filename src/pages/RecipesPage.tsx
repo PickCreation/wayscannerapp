@@ -7,7 +7,6 @@ import {
   Soup,
   Cookie,
   Bell,
-  User,
   Grid,
   Loader2
 } from "lucide-react";
@@ -227,9 +226,6 @@ const RecipesPage = () => {
         <div className="flex items-center space-x-3">
           <button className="p-2">
             <Bell size={24} fill="white" strokeWidth={1.5} />
-          </button>
-          <button className="p-2" onClick={handleProfileClick}>
-            <User size={24} fill="white" strokeWidth={1.5} />
           </button>
         </div>
       </header>
