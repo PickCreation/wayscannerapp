@@ -1,4 +1,3 @@
-
 import { useState, useEffect, createContext, useContext } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useFirebaseAuth } from '@/hooks/use-firebase-auth'; // Import the firebase auth hook
@@ -8,6 +7,7 @@ interface User {
   name: string;
   email: string;
   isAdmin?: boolean;
+  profileImage?: string; // Add the profileImage property
 }
 
 interface AuthContextType {
@@ -71,6 +71,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         name: 'Admin',
         email: ADMIN_EMAIL,
         isAdmin: true,
+        profileImage: '',
       };
       
       localStorage.setItem('isLoggedIn', 'true');
@@ -95,6 +96,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       id: 'user-' + Date.now(),
       name: email.split('@')[0], // Use the part before @ as a name
       email,
+      profileImage: '',
     };
     
     localStorage.setItem('isLoggedIn', 'true');
@@ -126,6 +128,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       id: userId,
       name,
       email,
+      profileImage: '',
     };
     
     localStorage.setItem('isLoggedIn', 'true');
