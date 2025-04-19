@@ -1,6 +1,4 @@
-
 import React, { useState, useEffect } from "react";
-import { Bell, Heart, MessageSquare, Bookmark, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import BottomNavigation from "@/components/BottomNavigation";
@@ -213,11 +211,6 @@ export const ForumPage = () => {
     <div className="flex flex-col min-h-screen bg-gray-100 pb-20">
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
         <h1 className="text-xl font-bold">Forum</h1>
-        <div className="flex items-center space-x-3">
-          <button className="p-2" type="button">
-            <Bell size={24} fill="white" strokeWidth={1.5} />
-          </button>
-        </div>
       </header>
       
       <div className="flex border-b border-gray-200 bg-white">
