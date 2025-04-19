@@ -379,28 +379,38 @@ const StoreFrontPage = () => {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="px-4">
-          <TabsList className="w-full grid grid-cols-4 bg-transparent h-auto border-b border-gray-200 gap-2 p-0">
+          <TabsList className="w-full flex items-center bg-transparent h-auto border-b border-gray-200 gap-2 p-0">
             <TabsTrigger value="all" className="text-sm data-[state=active]:border-b-2 data-[state=active]:border-wayscanner-blue rounded-none data-[state=active]:shadow-none h-10">
               All
             </TabsTrigger>
-            <TabsTrigger value="Decor" className="text-sm data-[state=active]:border-b-2 data-[state=active]:border-wayscanner-blue rounded-none data-[state=active]:shadow-none h-10">
-              Decor
-            </TabsTrigger>
-            <TabsTrigger value="Kitchen Essentials" className="text-sm data-[state=active]:border-b-2 data-[state=active]:border-wayscanner-blue rounded-none data-[state=active]:shadow-none h-10">
-              Kitchen
-            </TabsTrigger>
-            <TabsTrigger value="Furniture" className="text-sm data-[state=active]:border-b-2 data-[state=active]:border-wayscanner-blue rounded-none data-[state=active]:shadow-none h-10">
-              Furniture
-            </TabsTrigger>
-            <TabsTrigger value="Plants" className="text-sm data-[state=active]:border-b-2 data-[state=active]:border-wayscanner-blue rounded-none data-[state=active]:shadow-none h-10">
-              Plants
-            </TabsTrigger>
-            <TabsTrigger value="Plants Accessories" className="text-sm data-[state=active]:border-b-2 data-[state=active]:border-wayscanner-blue rounded-none data-[state=active]:shadow-none h-10">
-              Plant Acc.
-            </TabsTrigger>
-            <TabsTrigger value="Animal Accessories" className="text-sm data-[state=active]:border-b-2 data-[state=active]:border-wayscanner-blue rounded-none data-[state=active]:shadow-none h-10">
-              Animal Acc.
-            </TabsTrigger>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-10">
+                  Categories <ChevronDown className="ml-1 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 bg-white">
+                <DropdownMenuItem onClick={() => setActiveTab("decor")}>
+                  Decor
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab("kitchen")}>
+                  Kitchen Essentials
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab("furniture")}>
+                  Furniture
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab("plants")}>
+                  Plants
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab("plants-accessories")}>
+                  Plant Accessories
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab("animal-accessories")}>
+                  Animal Accessories
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </TabsList>
         </div>
 
