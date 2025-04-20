@@ -17,39 +17,26 @@ const CartPage = () => {
   const { toast } = useToast();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [activeItem, setActiveItem] = useState<"home" | "forum" | "recipes" | "shop">("shop");
   const [cameraSheetOpen, setCameraSheetOpen] = useState(false);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const { isAuthenticated, user } = useAuth();
 
-  console.log("CartPage rendering, loading state:", loading);
-  console.log("Authentication state:", { isAuthenticated, userId: user?.id });
-
   useEffect(() => {
     const loadCartItems = async () => {
       setLoading(true);
-      setError(null);
       try {
-        console.log("Loading cart items...");
-        let items: CartItem[] = [];
-        
         if (isAuthenticated && user) {
           // Get cart items from Firebase
-          console.log("Loading cart items from Firebase for user:", user.id);
-          items = await getCartItems(user.id);
+          const items = await getCartItems(user.id);
+          setCartItems(items);
         } else {
           // Fall back to localStorage
-          console.log("Loading cart items from localStorage");
-          const localItems = localStorage.getItem('cartItems');
-          items = localItems ? JSON.parse(localItems) : [];
+          const items = JSON.parse(localStorage.getItem('cartItems') || '[]');
+          setCartItems(items);
         }
-        
-        console.log("Loaded cart items:", items);
-        setCartItems(items);
       } catch (error) {
         console.error("Error loading cart items:", error);
-        setError("Failed to load cart items. Please refresh the page.");
         toast({
           title: "Error",
           description: "Failed to load cart items. Please refresh the page.",
@@ -179,27 +166,8 @@ const CartPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-wayscanner-blue mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading your cart...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center p-4">
-          <p className="text-red-500 mb-4">{error}</p>
-          <Button 
-            onClick={() => window.location.reload()}
-            className="bg-wayscanner-blue text-white hover:bg-blue-700"
-          >
-            Refresh Page
-          </Button>
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Loading cart...</p>
       </div>
     );
   }
@@ -218,7 +186,7 @@ const CartPage = () => {
       </header>
 
       {cartItems.length > 0 ? (
-        <div className="pb-16">
+        <div>
           <div className="p-4 space-y-4">
             {cartItems.map((item) => (
               <div key={item.id} className="bg-white rounded-lg shadow p-4">
