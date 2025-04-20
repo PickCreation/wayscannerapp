@@ -150,10 +150,11 @@ const FoodScanCameraPage = () => {
           {(captureMode === "camera" || captureMode === "barcode") && (
             <div className="w-full flex justify-center">
               <Button 
-                className="w-16 h-16 rounded-full bg-white hover:bg-gray-200 mx-auto flex items-center justify-center border-4 border-gray-800"
+                className="w-20 h-20 rounded-full bg-white hover:bg-gray-100 mx-auto flex items-center justify-center relative"
                 onClick={captureMode === "camera" ? handleCapture : handleBarcodeScan}
               >
-                <div className="w-12 h-12 rounded-full bg-red-500"></div>
+                <div className="w-16 h-16 rounded-full bg-white absolute border-4 border-black"></div>
+                <div className="w-14 h-14 rounded-full bg-white absolute"></div>
               </Button>
             </div>
           )}
