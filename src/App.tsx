@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -51,11 +52,10 @@ import BlogsPage from "./pages/BlogsPage";
 import BlogDetailPage from "./pages/BlogDetailPage";
 import HowItWorksPage from "./pages/HowItWorksPage";
 import CouponsPage from "./pages/CouponsPage";
-import PlantAiPage from './pages/PlantAiPage';
 
 const queryClient = new QueryClient();
 
-const App = () => {
+function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -110,7 +110,6 @@ const App = () => {
                   <Route path="/blogs/:blogId" element={<BlogDetailPage />} />
                   <Route path="/how-it-works" element={<HowItWorksPage />} />
                   <Route path="/coupons" element={<CouponsPage />} />
-                  <Route path="/plant/:plantId/ai" element={<PlantAiPage />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </BrowserRouter>
@@ -120,6 +119,6 @@ const App = () => {
       </TooltipProvider>
     </QueryClientProvider>
   );
-};
+}
 
 export default App;
