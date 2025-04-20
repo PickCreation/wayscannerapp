@@ -52,7 +52,6 @@ const CameraSheet: React.FC<CameraSheetProps> = ({
   const handleScanOption = (type: string) => {
     onOpenChange(false);
     
-    // No authentication check for scan options
     if (type === "Animal") {
       navigate("/scan-camera");
       return;
@@ -60,6 +59,11 @@ const CameraSheet: React.FC<CameraSheetProps> = ({
     
     if (type === "Food") {
       navigate("/food-scan-camera");
+      return;
+    }
+
+    if (type === "Plant") {
+      navigate("/plant-scan-camera");
       return;
     }
     
