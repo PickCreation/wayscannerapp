@@ -1,26 +1,50 @@
+
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { useQuery } from 'react-query';
-import { fetchPlant } from '@/lib/api';
-import { Plant } from '@/lib/types';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { useQuery } from '@tanstack/react-query';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
-import { Skeleton } from "@/components/ui/skeleton"
-import { MessageSquare } from "lucide-react";
+import { ArrowLeft, MessageSquare } from 'lucide-react';
+import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 
+// Mock API function since @/lib/api doesn't exist
+const fetchPlant = async (id: string) => {
+  // Simulate API call
+  return new Promise<any>((resolve) => {
+    setTimeout(() => {
+      resolve({
+        id,
+        name: "Monstera Deliciosa",
+        scientific_name: "Monstera deliciosa",
+        family: "Araceae",
+        genus: "Monstera",
+        koshagar_id: "KSG-PLT-001",
+        origin: "Central America",
+      });
+    }, 500);
+  });
+};
+
+// Add Plant type definition since @/lib/types doesn't exist
+interface Plant {
+  id: string;
+  name: string;
+  scientific_name: string;
+  family: string;
+  genus: string;
+  koshagar_id: string;
+  origin: string;
+}
 
 const PlantDetailPage: React.FC = () => {
   const { plantId } = useParams<{ plantId: string }>();
-  const { data: plant, isLoading, isError } = useQuery<Plant, Error>(
-    ['plant', plantId],
-    () => fetchPlant(plantId!),
-    {
-      enabled: !!plantId,
-    }
-  );
+  const { data: plant, isLoading, isError } = useQuery({
+    queryKey: ['plant', plantId],
+    queryFn: () => fetchPlant(plantId!),
+    enabled: !!plantId,
+  });
 
   if (isLoading) {
     return <div className="container mx-auto p-4">
