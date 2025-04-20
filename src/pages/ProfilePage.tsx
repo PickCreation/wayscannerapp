@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { 
   ArrowLeft, Edit, Lock, Store, Bookmark, Heart, 
@@ -450,13 +449,6 @@ const ProfilePage = () => {
               title="My Orders" 
               description="Track your orders"
               onClick={() => handleMenuItemClick("Orders")}
-            />
-
-            <ProfileMenuItem 
-              icon={<Package className="h-5 w-5 text-wayscanner-blue" />} 
-              title="My Purchases" 
-              description="View your purchase history"
-              onClick={() => handleMenuItemClick("Purchases")}
             />
           </>
         )}
