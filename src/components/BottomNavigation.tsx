@@ -1,4 +1,3 @@
-
 import React from "react";
 import { 
   MessageCircle, 
@@ -23,6 +22,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  
   const isProfilePage = location.pathname === "/profile" || 
                         location.pathname.includes("/addresses") || 
                         location.pathname.includes("/payment-methods") || 
@@ -30,8 +30,6 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
                         location.pathname.includes("/favorites") || 
                         location.pathname.includes("/purchases") ||
                         location.pathname.includes("/coupons");
-  const isRecipesPage = location.pathname.includes("/recipes");
-  const isMarketplacePage = location.pathname.includes("/marketplace") || location.pathname.includes("/add-listing");
 
   const handleRecipesClick = () => {
     navigate("/recipes");
@@ -64,21 +62,23 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
         isActive={activeItem === "forum"}
         onClick={() => onItemClick("forum")}
       />
-      <NavItem
-        icon={<Utensils size={24} />}
-        activeIcon={<Utensils size={24} fill="currentColor" />}
-        label="Recipes"
-        isActive={activeItem === "recipes" || isRecipesPage}
-        onClick={handleRecipesClick}
-      />
+      {!isProfilePage && (
+        <NavItem
+          icon={<Utensils size={24} />}
+          activeIcon={<Utensils size={24} fill="currentColor" />}
+          label="Recipes"
+          isActive={activeItem === "recipes"}
+          onClick={handleRecipesClick}
+        />
+      )}
       <NavItem
         icon={<ShoppingBag size={24} />}
         activeIcon={<ShoppingBag size={24} fill="currentColor" />}
         label="Shop"
-        isActive={activeItem === "shop" || isMarketplacePage}
+        isActive={activeItem === "shop" || location.pathname.includes("/marketplace")}
         onClick={handleShopClick}
       />
-      {isProfilePage && (
+      {isProfilePage ? (
         <NavItem
           icon={<User size={24} />}
           activeIcon={<User size={24} fill="currentColor" />}
@@ -86,7 +86,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
           isActive={activeItem === "profile" || isProfilePage}
           onClick={handleProfileClick}
         />
-      )}
+      ) : null}
       <button
         className="flex items-center justify-center"
         onClick={onCameraClick}
