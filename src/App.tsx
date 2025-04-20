@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -21,6 +22,7 @@ import ScanPage from "./pages/ScanPage";
 import AnimalDetailPage from "./pages/AnimalDetailPage";
 import ScanCameraPage from "./pages/ScanCameraPage";
 import FoodScanCameraPage from "./pages/FoodScanCameraPage";
+import PlantScanCameraPage from "./pages/PlantScanCameraPage";
 import FoodDetailPage from "./pages/FoodDetailPage";
 import MarketplacePage from "./pages/MarketplacePage";
 import ProductDetailPage from "./pages/ProductDetailPage";
@@ -80,6 +82,7 @@ function App() {
                   <Route path="/plant/:plantId" element={<PlantDetailPage />} />
                   <Route path="/scan-camera" element={<ScanCameraPage />} />
                   <Route path="/food-scan-camera" element={<FoodScanCameraPage />} />
+                  <Route path="/plant-scan-camera" element={<PlantScanCameraPage />} />
                   <Route path="/marketplace" element={<MarketplacePage />} />
                   <Route path="/marketplace/product/:productId" element={<ProductDetailPage />} />
                   <Route path="/add-listing" element={<AddListingPage />} />
