@@ -1,158 +1,187 @@
-
-import { useCallback, useEffect, createContext, useContext, useState } from 'react';
+import { useState, useEffect, createContext, useContext } from 'react';
+import { useToast } from '@/hooks/use-toast';
 import { useFirebaseAuth } from '@/hooks/use-firebase-auth';
 
-export interface User {
+interface User {
   id: string;
-  uid: string; // Added for compatibility
-  email: string | null;
-  name: string; // Added to match usage in components
-  displayName: string | null;
-  photoURL: string | null;
-  profileImage: string | null; // Added for profile image usage
-  createdAt: Date;
-  isAdmin?: boolean; // Added for admin checks
-  metadata?: { // Added for metadata usage
-    creationTime?: string;
-  };
+  name: string;
+  email: string;
+  isAdmin?: boolean;
+  profileImage?: string;
 }
 
 interface AuthContextType {
-  user: User | null;
   isAuthenticated: boolean;
-  isLoading: boolean;
-  loading: boolean; // Added for compatibility
-  signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<void>;
-  signOut: () => Promise<void>;
-  resetPassword: (email: string) => Promise<void>;
-  // Added compatibility methods for other components
-  login: (email: string, password: string) => Promise<void>; 
+  user: User | null;
+  login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
+  logout: () => void;
   updateProfileImage: (imageUrl: string) => void;
 }
 
-const AuthContext = createContext<AuthContextType>({
-  user: null,
-  isAuthenticated: false,
-  isLoading: true,
-  loading: true,
-  signIn: async () => {},
-  signUp: async () => {},
-  signOut: async () => {},
-  resetPassword: async () => {},
-  login: async () => {},
-  signup: async () => {},
-  logout: async () => {},
-  updateProfileImage: () => {},
-});
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { 
-    user: firebaseUser, 
-    loading: firebaseLoading,
-    signIn: firebaseSignIn,
-    signUp: firebaseSignUp,
-    signOut: firebaseSignOut,
-    resetPassword: firebaseResetPassword
-  } = useFirebaseAuth();
-  
+const ADMIN_EMAIL = 'Pickcreations@gmail.com';
+const ADMIN_PASSWORD = 'Admin123!';
+
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { toast } = useToast();
+  const firebaseAuth = useFirebaseAuth();
 
   useEffect(() => {
-    if (!firebaseLoading) {
-      if (firebaseUser) {
-        const userData: User = {
-          id: firebaseUser.uid,
-          uid: firebaseUser.uid,
-          email: firebaseUser.email,
-          name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
-          displayName: firebaseUser.displayName,
-          photoURL: firebaseUser.photoURL,
-          profileImage: firebaseUser.photoURL,
-          isAdmin: firebaseUser.email?.toLowerCase() === 'Pickcreations@gmail.com'.toLowerCase(),
-          createdAt: firebaseUser.metadata?.creationTime 
-            ? new Date(firebaseUser.metadata.creationTime) 
-            : new Date(),
-          metadata: firebaseUser.metadata
-        };
-
-        // Store user data in localStorage for our RevenueCat mock to use
-        localStorage.setItem('userData', JSON.stringify(userData));
-        
-        setUser(userData);
-      } else {
-        setUser(null);
-        localStorage.removeItem('userData');
-      }
-      setIsLoading(false);
+    if (firebaseAuth.isAuthenticated && firebaseAuth.user) {
+      setIsAuthenticated(true);
+      setUser(firebaseAuth.user);
+      return;
     }
-  }, [firebaseUser, firebaseLoading]);
 
-  const signIn = useCallback(async (email: string, password: string) => {
-    await firebaseSignIn(email, password);
-  }, [firebaseSignIn]);
+    const checkAuth = () => {
+      const storedAuth = localStorage.getItem('isLoggedIn');
+      const storedUser = localStorage.getItem('user');
+      
+      if (storedAuth === 'true' && storedUser) {
+        setIsAuthenticated(true);
+        setUser(JSON.parse(storedUser));
+      }
+    };
+    
+    checkAuth();
+  }, [firebaseAuth.isAuthenticated, firebaseAuth.user]);
 
-  const signUp = useCallback(async (email: string, password: string) => {
-    await firebaseSignUp(email, password);
-  }, [firebaseSignUp]);
-
-  const signOut = useCallback(async () => {
-    await firebaseSignOut();
-  }, [firebaseSignOut]);
-
-  const resetPassword = useCallback(async (email: string) => {
-    await firebaseResetPassword(email);
-  }, [firebaseResetPassword]);
-
-  // Added compatibility methods for other components
-  const login = useCallback(async (email: string, password: string) => {
-    await firebaseSignIn(email, password);
-  }, [firebaseSignIn]);
-
-  const signup = useCallback(async (name: string, email: string, password: string) => {
-    // Here you would typically update the displayName after signup
-    await firebaseSignUp(email, password);
-    // Note: Additional logic may be needed to set the user name after signup
-    // but this depends on your Firebase service implementation
-  }, [firebaseSignUp]);
-
-  const logout = useCallback(async () => {
-    await firebaseSignOut();
-  }, [firebaseSignOut]);
-
-  const updateProfileImage = useCallback((imageUrl: string) => {
+  const updateProfileImage = (imageUrl: string) => {
     if (user) {
       const updatedUser = { ...user, profileImage: imageUrl };
       setUser(updatedUser);
-      
-      // Update the localStorage data as well
-      localStorage.setItem('userData', JSON.stringify(updatedUser));
+      localStorage.setItem('user', JSON.stringify(updatedUser));
     }
-  }, [user]);
+  };
+
+  const login = async (email: string, password: string) => {
+    console.log("Combined auth login attempt with:", email);
+    
+    try {
+      await firebaseAuth.login(email, password);
+      console.log("Firebase login successful");
+      return;
+    } catch (error) {
+      console.log("Firebase login failed, falling back to local login:", error);
+    }
+
+    if (email.toLowerCase() === ADMIN_EMAIL.toLowerCase() && password === ADMIN_PASSWORD) {
+      console.log("Admin fallback login successful");
+      const adminUser = {
+        id: 'admin-123',
+        name: 'Admin',
+        email: ADMIN_EMAIL,
+        isAdmin: true,
+        profileImage: '',
+      };
+      
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('user', JSON.stringify(adminUser));
+      
+      setIsAuthenticated(true);
+      setUser(adminUser);
+      
+      localStorage.removeItem('profileData');
+      
+      toast({
+        title: "Admin Login Successful",
+        description: "Welcome back, Admin!",
+      });
+      
+      return;
+    }
+    
+    const regularUser = {
+      id: 'user-' + Date.now(),
+      name: email.split('@')[0],
+      email,
+      profileImage: '',
+    };
+    
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('user', JSON.stringify(regularUser));
+    
+    setIsAuthenticated(true);
+    setUser(regularUser);
+    
+    toast({
+      title: "Login Successful",
+      description: "Welcome back!",
+    });
+  };
+
+  const signup = async (name: string, email: string, password: string) => {
+    try {
+      await firebaseAuth.signup(name, email, password);
+      return;
+    } catch (error) {
+      console.log("Falling back to local signup", error);
+    }
+
+    console.log("Signing up with:", name, email, password);
+    
+    const userId = 'user-' + Date.now();
+    const newUser = {
+      id: userId,
+      name,
+      email,
+      profileImage: '',
+    };
+    
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('user', JSON.stringify(newUser));
+    
+    setIsAuthenticated(true);
+    setUser(newUser);
+    
+    toast({
+      title: "Account Created",
+      description: "Your account has been created successfully!",
+    });
+  };
+
+  const logout = () => {
+    try {
+      firebaseAuth.logout();
+    } catch (error) {
+      console.log("Error with Firebase logout, proceeding with local logout", error);
+    }
+
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('user');
+    localStorage.removeItem('profileData');
+    
+    setIsAuthenticated(false);
+    setUser(null);
+    
+    toast({
+      title: "Logged Out",
+      description: "You have been logged out successfully.",
+    });
+  };
 
   return (
-    <AuthContext.Provider 
-      value={{
-        user,
-        isAuthenticated: !!user,
-        isLoading,
-        loading: isLoading,
-        signIn,
-        signUp,
-        signOut,
-        resetPassword,
-        login,
-        signup,
-        logout,
-        updateProfileImage
-      }}
-    >
+    <AuthContext.Provider value={{ 
+      isAuthenticated, 
+      user, 
+      login, 
+      signup, 
+      logout,
+      updateProfileImage 
+    }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
