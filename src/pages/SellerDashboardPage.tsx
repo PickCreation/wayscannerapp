@@ -21,7 +21,8 @@ import {
   Truck,
   XCircle,
   ExternalLink,
-  CheckCircle
+  CheckCircle,
+  Edit
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -147,7 +148,8 @@ const SellerDashboardPage = () => {
   const [showTrackingDialog, setShowTrackingDialog] = useState(false);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
-  
+  const [shopLogo, setShopLogo] = useState<string | null>(null);
+
   const carrierOptions = [
     // North America
     { id: "usps", name: "USPS (USA)", url: "https://tools.usps.com/go/TrackConfirmAction?tLabels=", continent: "North America" },
@@ -641,6 +643,24 @@ const SellerDashboardPage = () => {
     return null;
   };
 
+  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const logoUrl = reader.result as string;
+        setShopLogo(logoUrl);
+        localStorage.setItem('shopLogo', logoUrl);
+        
+        toast({
+          title: "Shop Logo Updated",
+          description: "Your shop logo has been successfully updated.",
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-wayscanner-blue text-white p-4 relative">
@@ -657,16 +677,32 @@ const SellerDashboardPage = () => {
         <Card className="w-full">
           <CardContent className="p-4">
             <div className="flex">
-              <div className="flex flex-col items-center mr-4">
-                <Avatar className="w-20 h-20 border-2 border-wayscanner-blue mb-2">
-                  {profileImage ? (
-                    <AvatarImage src={profileImage} alt="User" />
-                  ) : (
-                    <AvatarFallback className="bg-wayscanner-blue text-white">
-                      {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
-                    </AvatarFallback>
-                  )}
-                </Avatar>
+              <div className="flex flex-col items-center mr-4 relative">
+                <div className="w-24 h-24 mb-2 relative group">
+                  <Avatar className="w-full h-full border-2 border-wayscanner-blue">
+                    {shopLogo ? (
+                      <AvatarImage src={shopLogo} alt="Shop Logo" className="object-cover" />
+                    ) : (
+                      <AvatarFallback className="bg-wayscanner-blue text-white">
+                        {shopSettings.shopName ? shopSettings.shopName.charAt(0).toUpperCase() : "S"}
+                      </AvatarFallback>
+                    )}
+                  </Avatar>
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    className="hidden" 
+                    id="shopLogoUpload"
+                    onChange={handleLogoUpload}
+                  />
+                  <label 
+                    htmlFor="shopLogoUpload" 
+                    className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center cursor-pointer"
+                  >
+                    <Edit size={20} className="text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </label>
+                </div>
+                
                 <div className="text-center">
                   <div className="font-medium">{user?.name || "Admin"}</div>
                   <div className="text-xs text-gray-500 mt-2">Joined: {currentDate}</div>
