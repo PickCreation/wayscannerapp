@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MoreVertical, Edit, PlusCircle, Trash } from "lucide-react";
@@ -17,9 +18,9 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/use-toast"
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton"
-import { useSession } from "next-auth/react";
+import { useAuth } from "@/hooks/use-auth";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,8 +36,8 @@ import { Separator } from "@/components/ui/separator"
 
 const PlantDetailPage = () => {
   const { plantId } = useParams();
-  const router = useRouter();
-  const { data: session } = useSession();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [isEditMode, setIsEditMode] = useState(false);
   const [plantName, setPlantName] = useState('');
   const [plantDescription, setPlantDescription] = useState('');
@@ -106,7 +107,7 @@ const PlantDetailPage = () => {
         title: "Success!",
         description: "Plant deleted successfully.",
       })
-      router.push('/');
+      navigate('/');
     },
     onError: (error: any) => {
       toast({
@@ -150,7 +151,7 @@ const PlantDetailPage = () => {
             </div>
           </div>
 
-          {session?.user?.email === plant?.userEmail && (
+          {user?.email === plant?.userEmail && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-8 w-8 p-0">
