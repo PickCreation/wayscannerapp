@@ -68,7 +68,7 @@ const ScannerCard: React.FC<ScannerCardProps> = ({
       {/* Text at the bottom */}
       <div className="absolute bottom-4 left-4 right-4 text-white">
         <h3 className="text-base font-semibold mb-1">{title}</h3>
-        <p className="text-xs">{description}</p>
+        <p className="text-xs">Discover insightful articles & stories</p>
       </div>
     </div>
   );
