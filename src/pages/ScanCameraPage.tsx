@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { ChevronLeft, Camera, Upload, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -11,8 +10,6 @@ const ScanCameraPage = () => {
   const navigate = useNavigate();
 
   const handleCapture = () => {
-    // In a real implementation, this would access the device camera
-    // For now, we'll simulate capturing by showing a sample image
     setImagePreview("/lovable-uploads/69501614-b92c-43f9-89e5-85971b5b6ede.png");
   };
 
@@ -32,14 +29,11 @@ const ScanCameraPage = () => {
   };
 
   const handleSubmit = () => {
-    // In a real app, you would send the image to an API for processing
-    // Navigate to animal scan results with simulated success
     navigate("/scan?tab=animals");
   };
 
   return (
     <div className="min-h-screen bg-black flex flex-col">
-      {/* Header */}
       <header className="bg-black text-white py-4 px-4 flex justify-start items-center z-10">
         <button 
           className="p-2" 
@@ -50,7 +44,6 @@ const ScanCameraPage = () => {
         <h1 className="text-[20px] font-medium ml-2">{captureMode === "camera" ? "Scan Animal" : "Upload Image"}</h1>
       </header>
 
-      {/* Camera/Preview Area */}
       <div className="flex-1 flex items-center justify-center bg-black relative">
         {imagePreview ? (
           <div className="relative w-full h-full">
@@ -73,7 +66,6 @@ const ScanCameraPage = () => {
           <div className="relative w-full h-full flex items-center justify-center">
             {captureMode === "camera" ? (
               <div className="text-center">
-                {/* Camera Frame Guide */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                   <div className="w-64 h-64 border-2 border-white rounded-lg opacity-70"></div>
                 </div>
@@ -104,7 +96,6 @@ const ScanCameraPage = () => {
         )}
       </div>
 
-      {/* Bottom Controls */}
       {!imagePreview && (
         <div className="bg-black py-6 px-4">
           <div className="flex justify-around mb-4">
@@ -125,10 +116,11 @@ const ScanCameraPage = () => {
           {captureMode === "camera" && (
             <div className="w-full flex justify-center">
               <Button 
-                className="w-16 h-16 rounded-full bg-white hover:bg-gray-200 mx-auto flex items-center justify-center border-4 border-gray-800"
+                className="w-14 h-14 rounded-full bg-white hover:bg-gray-50 mx-auto flex items-center justify-center relative"
                 onClick={handleCapture}
               >
-                <div className="w-12 h-12 rounded-full bg-red-500"></div>
+                <div className="w-12 h-12 rounded-full bg-white absolute border border-black"></div>
+                <div className="w-11 h-11 rounded-full bg-white absolute"></div>
               </Button>
             </div>
           )}
