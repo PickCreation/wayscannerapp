@@ -4,12 +4,12 @@ import { useFirebaseAuth } from '@/hooks/use-firebase-auth';
 
 export interface User {
   id: string;
-  uid?: string; // Added for compatibility
+  uid: string; // Added for compatibility
   email: string | null;
-  name?: string; // Added to match usage in components
+  name: string; // Added to match usage in components
   displayName: string | null;
   photoURL: string | null;
-  profileImage?: string | null; // Added for profile image usage
+  profileImage: string | null; // Added for profile image usage
   createdAt: Date;
   isAdmin?: boolean; // Added for admin checks
   metadata?: { // Added for metadata usage
@@ -21,7 +21,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  loading?: boolean; // Added for compatibility
+  loading: boolean; // Added for compatibility
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -64,7 +64,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     if (!firebaseLoading) {
       if (firebaseUser) {
-        const userData = {
+        const userData: User = {
           id: firebaseUser.uid,
           uid: firebaseUser.uid,
           email: firebaseUser.email,
