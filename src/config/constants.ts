@@ -1,12 +1,7 @@
 import { Platform } from 'react-native';
 
 // RevenueCat Configuration
-export const REVENUECAT_API_KEY = 
-  // On iOS
-  Platform.OS === 'ios' 
-    ? 'YOUR_IOS_REVENUECAT_API_KEY' 
-    // On Android
-    : 'YOUR_ANDROID_REVENUECAT_API_KEY';
+export const REVENUECAT_API_KEY = 'mock-api-key-for-web';
 
 // RevenueCat Product IDs
 export const SUBSCRIPTION_PRODUCT_IDS = {

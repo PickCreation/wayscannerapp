@@ -1,10 +1,13 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { X, Apple, Flower, Dog, Star, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { getAvailablePackages, purchasePackage, restorePurchases, PurchasesPackage } from "@/services/revenueCatService";
+import { SUBSCRIPTION_PRODUCT_IDS } from "@/config/constants";
+import { useSubscription } from "@/hooks/use-subscription";
 
 const SubscriptionPage = () => {
   const navigate = useNavigate();
@@ -12,6 +15,46 @@ const SubscriptionPage = () => {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [restoringPurchase, setRestoringPurchase] = useState(false);
+  const [packages, setPackages] = useState<PurchasesPackage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { isSubscribed } = useSubscription();
+
+  useEffect(() => {
+    async function loadPackages() {
+      try {
+        const availablePackages = await getAvailablePackages();
+        setPackages(availablePackages);
+      } catch (error) {
+        console.error("Failed to load packages:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load subscription packages",
+          variant: "destructive"
+        });
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadPackages();
+  }, [toast]);
+
+  useEffect(() => {
+    // If user is already subscribed, show a message and redirect
+    if (isSubscribed) {
+      toast({
+        title: "Already Subscribed",
+        description: "You already have an active subscription!",
+      });
+      
+      // Redirect after a short delay to allow the toast to be seen
+      const timer = setTimeout(() => {
+        navigate("/profile");
+      }, 2000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isSubscribed, navigate, toast]);
 
   const handleBackClick = () => {
     navigate("/profile");
@@ -38,32 +81,81 @@ const SubscriptionPage = () => {
     setShowConfirmDialog(true);
   };
 
-  const handleConfirmSubscription = () => {
+  const handleConfirmSubscription = async () => {
     setShowConfirmDialog(false);
-    toast({
-      title: "Subscription Activated",
-      description: `Your ${selectedPlan} plan has been activated successfully!`,
-    });
-    navigate("/profile");
+    
+    try {
+      // Find the selected package
+      const selectedPackage = packages.find(pkg => {
+        if (selectedPlan === 'Weekly') return pkg.identifier === SUBSCRIPTION_PRODUCT_IDS.WEEKLY;
+        if (selectedPlan === 'Monthly') return pkg.identifier === SUBSCRIPTION_PRODUCT_IDS.MONTHLY;
+        if (selectedPlan === 'Annual') return pkg.identifier === SUBSCRIPTION_PRODUCT_IDS.ANNUAL;
+        return false;
+      });
+      
+      if (!selectedPackage) {
+        throw new Error("Selected package not found");
+      }
+      
+      const success = await purchasePackage(selectedPackage);
+      
+      if (success) {
+        toast({
+          title: "Subscription Activated",
+          description: `Your ${selectedPlan} plan has been activated successfully!`,
+        });
+        navigate("/profile");
+      } else {
+        throw new Error("Purchase was not successful");
+      }
+    } catch (error) {
+      console.error("Purchase error:", error);
+      toast({
+        title: "Subscription Failed",
+        description: "There was an error processing your subscription. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
-  const handleRestorePurchase = () => {
+  const handleRestorePurchase = async () => {
     setRestoringPurchase(true);
     
-    // Simulate purchase restoration
-    setTimeout(() => {
-      setRestoringPurchase(false);
+    try {
+      const restored = await restorePurchases();
+      
+      if (restored) {
+        toast({
+          title: "Purchase Restored",
+          description: "Your previous subscription has been restored successfully.",
+        });
+        navigate("/profile");
+      } else {
+        toast({
+          title: "No Subscription Found",
+          description: "We couldn't find any previous subscription to restore.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error("Restore error:", error);
       toast({
-        title: "Purchase Restored",
-        description: "Your previous subscription has been restored successfully.",
+        title: "Restore Failed",
+        description: "There was an error restoring your purchases. Please try again.",
+        variant: "destructive"
       });
-    }, 2000);
-    
-    // In a real app, you would use platform-specific code:
-    // For iOS: StoreKit APIs
-    // For Android: Google Play Billing Library
-    // This would typically be handled through Capacitor plugins or similar
+    } finally {
+      setRestoringPurchase(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="flex flex-col min-h-screen bg-gradient-to-b from-blue-600 to-blue-900 text-white items-center justify-center">
+        <p>Loading subscription options...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-blue-600 to-blue-900 text-white">

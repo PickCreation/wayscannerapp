@@ -1,14 +1,130 @@
 
-import Purchases, { PurchasesPackage, CustomerInfo } from '@revenuecat/purchases-capacitor';
-import { REVENUECAT_API_KEY } from '@/config/constants';
+// This is a mock implementation of RevenueCat for web development
+// In a real app, you would integrate with actual RevenueCat SDKs on native platforms
+
+import { SUBSCRIPTION_PRODUCT_IDS } from '@/config/constants';
+
+// Types to simulate RevenueCat SDK
+export interface CustomerInfo {
+  entitlements: {
+    active: Record<string, unknown>;
+  };
+}
+
+export interface PurchasesPackage {
+  identifier: string;
+  offeringIdentifier: string;
+  product: {
+    price: number;
+    priceString: string;
+    title: string;
+    description: string;
+  };
+}
+
+// Mock RevenueCat singleton
+const Purchases = {
+  async configure({ apiKey }: { apiKey: string }): Promise<void> {
+    console.log('Mock RevenueCat configured with API key:', apiKey);
+    // Store that RevenueCat was initialized
+    localStorage.setItem('revenueCatInitialized', 'true');
+  },
+
+  async getCustomerInfo(): Promise<CustomerInfo> {
+    // Check if user has a stored subscription
+    const hasSubscription = localStorage.getItem('revenueCatSubscription') === 'active';
+    return {
+      entitlements: {
+        active: hasSubscription ? { 'premium_access': {} } : {}
+      }
+    };
+  },
+
+  async getOfferings(): Promise<{ current: { availablePackages: PurchasesPackage[] } | null }> {
+    // Create mock packages based on your product IDs
+    const packages: PurchasesPackage[] = [
+      {
+        identifier: SUBSCRIPTION_PRODUCT_IDS.WEEKLY,
+        offeringIdentifier: 'default',
+        product: {
+          price: 5.99,
+          priceString: '$5.99',
+          title: 'Weekly Subscription',
+          description: 'Access premium features for one week'
+        }
+      },
+      {
+        identifier: SUBSCRIPTION_PRODUCT_IDS.MONTHLY,
+        offeringIdentifier: 'default',
+        product: {
+          price: 15.99,
+          priceString: '$15.99',
+          title: 'Monthly Subscription',
+          description: 'Access premium features for one month'
+        }
+      },
+      {
+        identifier: SUBSCRIPTION_PRODUCT_IDS.ANNUAL,
+        offeringIdentifier: 'default',
+        product: {
+          price: 170.99,
+          priceString: '$170.99',
+          title: 'Annual Subscription',
+          description: 'Access premium features for one year'
+        }
+      }
+    ];
+
+    return {
+      current: {
+        availablePackages: packages
+      }
+    };
+  },
+
+  async purchasePackage({ package: pkg }: { package: PurchasesPackage }): Promise<{ customerInfo: CustomerInfo }> {
+    // In a real app, this would trigger the platform's payment flow
+    console.log(`Purchasing package: ${pkg.identifier}`);
+    
+    // Simulate successful purchase
+    localStorage.setItem('revenueCatSubscription', 'active');
+    localStorage.setItem('revenueCatSubscriptionType', pkg.identifier);
+    localStorage.setItem('revenueCatSubscriptionDate', new Date().toISOString());
+    
+    return {
+      customerInfo: {
+        entitlements: {
+          active: { 'premium_access': {} }
+        }
+      }
+    };
+  },
+
+  async restorePurchases(): Promise<{ customerInfo: CustomerInfo }> {
+    console.log('Restoring purchases...');
+    // Just return current state in this mock
+    const hasSubscription = localStorage.getItem('revenueCatSubscription') === 'active';
+    
+    return {
+      customerInfo: {
+        entitlements: {
+          active: hasSubscription ? { 'premium_access': {} } : {}
+        }
+      }
+    };
+  },
+
+  async logIn({ appUserID }: { appUserID: string }): Promise<void> {
+    console.log('Setting RevenueCat user ID:', appUserID);
+    localStorage.setItem('revenueCatUserId', appUserID);
+  }
+};
 
 // Initialize RevenueCat
-export const initializeRevenueCat = async () => {
+export const initializeRevenueCat = async (): Promise<boolean> => {
   try {
     await Purchases.configure({
-      apiKey: REVENUECAT_API_KEY,
-      // Optional: configure with user ID if user is logged in
-      // appUserID: "user-id-from-your-system"
+      apiKey: 'mock-api-key-for-web'
     });
     console.log('RevenueCat initialized successfully');
     return true;
@@ -106,7 +222,7 @@ const getUserCreationDate = (): Date | null => {
 };
 
 // Set user ID (call this after login)
-export const setRevenueCatUserId = async (userId: string) => {
+export const setRevenueCatUserId = async (userId: string): Promise<boolean> => {
   try {
     await Purchases.logIn({ appUserID: userId });
     console.log('RevenueCat user ID set successfully');

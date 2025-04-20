@@ -1,187 +1,104 @@
-import { useState, useEffect, createContext, useContext } from 'react';
-import { useToast } from '@/hooks/use-toast';
+
+import { useCallback, useEffect, createContext, useContext, useState } from 'react';
 import { useFirebaseAuth } from '@/hooks/use-firebase-auth';
 
-interface User {
+export interface User {
   id: string;
-  name: string;
-  email: string;
-  isAdmin?: boolean;
-  profileImage?: string;
+  email: string | null;
+  displayName: string | null;
+  photoURL: string | null;
+  createdAt: Date;
 }
 
 interface AuthContextType {
-  isAuthenticated: boolean;
   user: User | null;
-  login: (email: string, password: string) => Promise<void>;
-  signup: (name: string, email: string, password: string) => Promise<void>;
-  logout: () => void;
-  updateProfileImage: (imageUrl: string) => void;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string) => Promise<void>;
+  signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  isAuthenticated: false,
+  isLoading: true,
+  signIn: async () => {},
+  signUp: async () => {},
+  signOut: async () => {},
+  resetPassword: async () => {},
+});
 
-const ADMIN_EMAIL = 'Pickcreations@gmail.com';
-const ADMIN_PASSWORD = 'Admin123!';
-
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { 
+    user: firebaseUser, 
+    loading: firebaseLoading,
+    signIn: firebaseSignIn,
+    signUp: firebaseSignUp,
+    signOut: firebaseSignOut,
+    resetPassword: firebaseResetPassword
+  } = useFirebaseAuth();
+  
   const [user, setUser] = useState<User | null>(null);
-  const { toast } = useToast();
-  const firebaseAuth = useFirebaseAuth();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    if (firebaseAuth.isAuthenticated && firebaseAuth.user) {
-      setIsAuthenticated(true);
-      setUser(firebaseAuth.user);
-      return;
-    }
+    if (!firebaseLoading) {
+      if (firebaseUser) {
+        const userData = {
+          id: firebaseUser.uid,
+          email: firebaseUser.email,
+          displayName: firebaseUser.displayName,
+          photoURL: firebaseUser.photoURL,
+          createdAt: firebaseUser.metadata?.creationTime 
+            ? new Date(firebaseUser.metadata.creationTime) 
+            : new Date()
+        };
 
-    const checkAuth = () => {
-      const storedAuth = localStorage.getItem('isLoggedIn');
-      const storedUser = localStorage.getItem('user');
-      
-      if (storedAuth === 'true' && storedUser) {
-        setIsAuthenticated(true);
-        setUser(JSON.parse(storedUser));
+        // Store user data in localStorage for our RevenueCat mock to use
+        localStorage.setItem('userData', JSON.stringify(userData));
+        
+        setUser(userData);
+      } else {
+        setUser(null);
+        localStorage.removeItem('userData');
       }
-    };
-    
-    checkAuth();
-  }, [firebaseAuth.isAuthenticated, firebaseAuth.user]);
-
-  const updateProfileImage = (imageUrl: string) => {
-    if (user) {
-      const updatedUser = { ...user, profileImage: imageUrl };
-      setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
+      setIsLoading(false);
     }
-  };
+  }, [firebaseUser, firebaseLoading]);
 
-  const login = async (email: string, password: string) => {
-    console.log("Combined auth login attempt with:", email);
-    
-    try {
-      await firebaseAuth.login(email, password);
-      console.log("Firebase login successful");
-      return;
-    } catch (error) {
-      console.log("Firebase login failed, falling back to local login:", error);
-    }
+  const signIn = useCallback(async (email: string, password: string) => {
+    await firebaseSignIn(email, password);
+  }, [firebaseSignIn]);
 
-    if (email.toLowerCase() === ADMIN_EMAIL.toLowerCase() && password === ADMIN_PASSWORD) {
-      console.log("Admin fallback login successful");
-      const adminUser = {
-        id: 'admin-123',
-        name: 'Admin',
-        email: ADMIN_EMAIL,
-        isAdmin: true,
-        profileImage: '',
-      };
-      
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('user', JSON.stringify(adminUser));
-      
-      setIsAuthenticated(true);
-      setUser(adminUser);
-      
-      localStorage.removeItem('profileData');
-      
-      toast({
-        title: "Admin Login Successful",
-        description: "Welcome back, Admin!",
-      });
-      
-      return;
-    }
-    
-    const regularUser = {
-      id: 'user-' + Date.now(),
-      name: email.split('@')[0],
-      email,
-      profileImage: '',
-    };
-    
-    localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('user', JSON.stringify(regularUser));
-    
-    setIsAuthenticated(true);
-    setUser(regularUser);
-    
-    toast({
-      title: "Login Successful",
-      description: "Welcome back!",
-    });
-  };
+  const signUp = useCallback(async (email: string, password: string) => {
+    await firebaseSignUp(email, password);
+  }, [firebaseSignUp]);
 
-  const signup = async (name: string, email: string, password: string) => {
-    try {
-      await firebaseAuth.signup(name, email, password);
-      return;
-    } catch (error) {
-      console.log("Falling back to local signup", error);
-    }
+  const signOut = useCallback(async () => {
+    await firebaseSignOut();
+  }, [firebaseSignOut]);
 
-    console.log("Signing up with:", name, email, password);
-    
-    const userId = 'user-' + Date.now();
-    const newUser = {
-      id: userId,
-      name,
-      email,
-      profileImage: '',
-    };
-    
-    localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('user', JSON.stringify(newUser));
-    
-    setIsAuthenticated(true);
-    setUser(newUser);
-    
-    toast({
-      title: "Account Created",
-      description: "Your account has been created successfully!",
-    });
-  };
-
-  const logout = () => {
-    try {
-      firebaseAuth.logout();
-    } catch (error) {
-      console.log("Error with Firebase logout, proceeding with local logout", error);
-    }
-
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('user');
-    localStorage.removeItem('profileData');
-    
-    setIsAuthenticated(false);
-    setUser(null);
-    
-    toast({
-      title: "Logged Out",
-      description: "You have been logged out successfully.",
-    });
-  };
+  const resetPassword = useCallback(async (email: string) => {
+    await firebaseResetPassword(email);
+  }, [firebaseResetPassword]);
 
   return (
-    <AuthContext.Provider value={{ 
-      isAuthenticated, 
-      user, 
-      login, 
-      signup, 
-      logout,
-      updateProfileImage 
-    }}>
+    <AuthContext.Provider 
+      value={{
+        user,
+        isAuthenticated: !!user,
+        isLoading,
+        signIn,
+        signUp,
+        signOut,
+        resetPassword
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
+export const useAuth = () => useContext(AuthContext);
