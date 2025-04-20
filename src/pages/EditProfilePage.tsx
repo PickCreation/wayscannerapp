@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Camera, UserCircle, Mail, Phone } from "lucide-react";
+import { ArrowLeft, Camera, UserCircle, Mail } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -9,9 +9,6 @@ import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
 import { useAuth } from "@/hooks/use-auth";
-import { doc, updateDoc, getDoc } from "firebase/firestore";
-import { db, storage } from "@/lib/firebase";
-import { ref, uploadString, getDownloadURL } from "firebase/storage";
 
 const EditProfilePage = () => {
   const navigate = useNavigate();
@@ -25,8 +22,6 @@ const EditProfilePage = () => {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
-    phone: "+1 555-123-4567",
-    bio: "Nature enthusiast and eco-friendly lifestyle advocate.",
   });
 
   useEffect(() => {
@@ -50,8 +45,6 @@ const EditProfilePage = () => {
         ...prev,
         fullName: user?.name || parsedData.fullName,
         email: user?.email || parsedData.email,
-        phone: parsedData.phone || prev.phone,
-        bio: parsedData.bio || prev.bio,
       }));
     }
   }, [user]);
@@ -206,30 +199,6 @@ const EditProfilePage = () => {
             {user?.isAdmin && (
               <p className="text-xs text-gray-500 mt-1">Admin email cannot be changed</p>
             )}
-          </div>
-
-          <div>
-            <Label htmlFor="phone">Phone Number</Label>
-            <Input
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-              placeholder="Enter your phone number"
-              className="mt-1"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="bio">Bio</Label>
-            <textarea
-              id="bio"
-              name="bio"
-              value={formData.bio}
-              onChange={handleInputChange}
-              placeholder="Write something about yourself"
-              className="w-full p-3 border border-gray-300 rounded-md mt-1 min-h-[100px]"
-            />
           </div>
 
           <Button 
