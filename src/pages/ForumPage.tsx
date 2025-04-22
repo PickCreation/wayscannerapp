@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Loader2, Heart, MessageSquare, Bookmark } from "lucide-react";
+import { Loader2, Heart, MessageSquare, Bookmark, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import BottomNavigation from "@/components/BottomNavigation";
@@ -8,7 +8,7 @@ import CreatePostSheet from "@/components/CreatePostSheet";
 import CameraSheet from "@/components/CameraSheet";
 import LoginDialog from "@/components/LoginDialog";
 import { useAuth } from "@/hooks/use-auth";
-import { getAllPosts, likePost, addBookmark, removeBookmark } from "@/lib/firebaseService";
+import { getAllPosts, likePost, addBookmark, removeBookmark, createTestPosts } from "@/lib/firebaseService";
 
 const CATEGORIES = [
   "All", "Plants", "Gardening", "Nature", "Food", "Healthy Recipes", 
@@ -24,6 +24,7 @@ export const ForumPage = () => {
   const [activeNavItem, setActiveNavItem] = useState<"home" | "forum" | "recipes" | "shop">("forum");
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [creatingTestPosts, setCreatingTestPosts] = useState(false);
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [showCameraSheet, setShowCameraSheet] = useState(false);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
@@ -208,10 +209,41 @@ export const ForumPage = () => {
     }
   };
   
+  const handleCreateTestPosts = async () => {
+    if (creatingTestPosts) return;
+    
+    setCreatingTestPosts(true);
+    try {
+      const newPosts = await createTestPosts();
+      setPosts(prevPosts => [...newPosts, ...prevPosts]);
+      
+      toast({
+        title: "Success",
+        description: `Created ${newPosts.length} test posts`,
+      });
+    } catch (error) {
+      console.error("Error creating test posts:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create test posts. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setCreatingTestPosts(false);
+    }
+  };
+  
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 pb-20">
       <header className="bg-wayscanner-blue text-white py-4 px-4 flex justify-between items-center">
         <h1 className="text-xl font-bold">Forum</h1>
+        <button 
+          onClick={() => setShowCreatePost(true)}
+          className="bg-white bg-opacity-20 rounded-full p-2 hover:bg-opacity-30 transition-colors"
+          type="button"
+        >
+          <Plus size={20} />
+        </button>
       </header>
       
       <div className="flex border-b border-gray-200 bg-white">
@@ -330,7 +362,22 @@ export const ForumPage = () => {
           ))
         ) : (
           <div className="bg-white rounded-lg shadow p-8 border border-gray-200 text-center">
-            <p className="text-gray-500">No posts found in this category.</p>
+            <p className="text-gray-500 mb-4">No posts found in this category.</p>
+            <button
+              onClick={handleCreateTestPosts}
+              className="bg-wayscanner-blue text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+              disabled={creatingTestPosts}
+              type="button"
+            >
+              {creatingTestPosts ? (
+                <>
+                  <Loader2 className="inline-block mr-2 h-4 w-4 animate-spin" />
+                  Creating test posts...
+                </>
+              ) : (
+                "Create Test Posts"
+              )}
+            </button>
           </div>
         )}
       </div>

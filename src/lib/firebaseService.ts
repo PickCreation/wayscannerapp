@@ -941,3 +941,76 @@ export const getRecipeComments = async (recipeId: string) => {
     return savedComments ? JSON.parse(savedComments) : [];
   }
 };
+
+export const createTestPosts = async () => {
+  try {
+    const user = auth.currentUser;
+    
+    // Sample test post data
+    const testPosts = [
+      {
+        content: "Just planted some beautiful flowers in my garden! Anyone have tips for keeping them healthy?",
+        category: "Gardening",
+        imageUrl: "https://images.unsplash.com/photo-1464638681273-0962e9b53566?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
+      },
+      {
+        content: "I made this amazing vegan stir-fry for dinner tonight. So colorful and nutritious!",
+        category: "Healthy Recipes",
+        imageUrl: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
+      },
+      {
+        content: "Does anyone have recommendations for eco-friendly home cleaning products?",
+        category: "Home",
+        imageUrl: null
+      },
+      {
+        content: "My cat keeps knocking things off my shelves. Any behavior tips from fellow pet owners?",
+        category: "Animals & Pets",
+        imageUrl: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
+      }
+    ];
+    
+    const createdPosts = [];
+    
+    // Create posts in localStorage if user is not authenticated
+    if (!user) {
+      const savedPosts = localStorage.getItem('forumPosts');
+      let existingPosts = savedPosts ? JSON.parse(savedPosts) : [];
+      
+      for (const postData of testPosts) {
+        const newPost = {
+          id: `test-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+          author: {
+            name: "Test User",
+            avatar: "/placeholder.svg"
+          },
+          timeAgo: "Just now",
+          category: postData.category,
+          content: postData.content,
+          imageUrl: postData.imageUrl,
+          likes: Math.floor(Math.random() * 50),
+          comments: Math.floor(Math.random() * 10),
+          liked: false,
+          bookmarked: false
+        };
+        
+        existingPosts.unshift(newPost);
+        createdPosts.push(newPost);
+      }
+      
+      localStorage.setItem('forumPosts', JSON.stringify(existingPosts));
+      return createdPosts;
+    }
+    
+    // If user is authenticated, create posts in Firebase
+    for (const postData of testPosts) {
+      const post = await createPost(postData.content, postData.category, null);
+      createdPosts.push(post);
+    }
+    
+    return createdPosts;
+  } catch (error) {
+    console.error('Error creating test posts:', error);
+    throw error;
+  }
+};
