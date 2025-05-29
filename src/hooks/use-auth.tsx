@@ -1,3 +1,4 @@
+
 import { useState, useEffect, createContext, useContext } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useFirebaseAuth } from '@/hooks/use-firebase-auth';
@@ -44,7 +45,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (storedAuth === 'true' && storedUser) {
         setIsAuthenticated(true);
         setUser(JSON.parse(storedUser));
+        return;
       }
+      
+      // Auto-login admin if no other authentication is present
+      const adminUser = {
+        id: 'admin-123',
+        name: 'Admin',
+        email: ADMIN_EMAIL,
+        isAdmin: true,
+        profileImage: '',
+      };
+      
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('user', JSON.stringify(adminUser));
+      
+      setIsAuthenticated(true);
+      setUser(adminUser);
+      
+      localStorage.removeItem('profileData');
     };
     
     checkAuth();
