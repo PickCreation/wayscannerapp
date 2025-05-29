@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, Heart, Bookmark, Send, Bell, User, LogIn, Loader2, WifiOff } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -7,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import BottomNavigation from "@/components/BottomNavigation";
 import { useToast } from "@/hooks/use-toast";
 import CameraSheet from "@/components/CameraSheet";
-import { useFirebaseAuth } from "@/hooks/use-firebase-auth";
+import { useAuth } from "@/hooks/use-auth";
 import { doc, getDoc, collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { likePost, addBookmark, removeBookmark, addComment, getComments } from "@/lib/firebaseService";
@@ -16,7 +17,7 @@ const PostDetailPage = () => {
   const navigate = useNavigate();
   const params = useParams();
   const { toast } = useToast();
-  const { isAuthenticated } = useFirebaseAuth();
+  const { isAuthenticated } = useAuth();
   const [post, setPost] = useState<any>(null);
   const [comments, setComments] = useState<any[]>([]);
   const [newComment, setNewComment] = useState("");
@@ -477,6 +478,7 @@ const PostDetailPage = () => {
           ) : (
             <div className="text-center py-2">
               <Button onClick={handleProfileClick} className="gap-2" type="button">
+                <LogIn size={16} />
                 Login to comment
               </Button>
             </div>
