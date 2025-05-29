@@ -28,27 +28,45 @@ const ADMIN_PASSWORD = 'Admin123!';
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
+  const [authInitialized, setAuthInitialized] = useState<boolean>(false);
   const { toast } = useToast();
   const firebaseAuth = useFirebaseAuth();
 
+  // Initialize authentication on app start
   useEffect(() => {
-    if (firebaseAuth.isAuthenticated && firebaseAuth.user) {
-      setIsAuthenticated(true);
-      setUser(firebaseAuth.user);
-      return;
-    }
+    const initializeAuth = () => {
+      console.log("Initializing authentication...");
+      
+      // First check if Firebase auth is available
+      if (firebaseAuth.isAuthenticated && firebaseAuth.user) {
+        console.log("Firebase auth found, using Firebase user");
+        setIsAuthenticated(true);
+        setUser(firebaseAuth.user);
+        setAuthInitialized(true);
+        return;
+      }
 
-    const checkAuth = () => {
+      // Check localStorage for existing auth
       const storedAuth = localStorage.getItem('isLoggedIn');
       const storedUser = localStorage.getItem('user');
       
       if (storedAuth === 'true' && storedUser) {
-        setIsAuthenticated(true);
-        setUser(JSON.parse(storedUser));
-        return;
+        console.log("Local auth found, restoring user session");
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          setIsAuthenticated(true);
+          setUser(parsedUser);
+          setAuthInitialized(true);
+          return;
+        } catch (error) {
+          console.error("Error parsing stored user:", error);
+          localStorage.removeItem('isLoggedIn');
+          localStorage.removeItem('user');
+        }
       }
       
       // Auto-login admin if no other authentication is present
+      console.log("No existing auth found, auto-logging in admin");
       const adminUser = {
         id: 'admin-123',
         name: 'Admin',
@@ -62,11 +80,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       setIsAuthenticated(true);
       setUser(adminUser);
+      setAuthInitialized(true);
       
-      localStorage.removeItem('profileData');
+      console.log("Admin auto-login completed");
     };
     
-    checkAuth();
+    // Initialize auth immediately
+    initializeAuth();
   }, [firebaseAuth.isAuthenticated, firebaseAuth.user]);
 
   const updateProfileImage = (imageUrl: string) => {
@@ -78,18 +98,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const login = async (email: string, password: string) => {
-    console.log("Combined auth login attempt with:", email);
+    console.log("Login attempt with:", email);
     
     try {
       await firebaseAuth.login(email, password);
       console.log("Firebase login successful");
       return;
     } catch (error) {
-      console.log("Firebase login failed, falling back to local login:", error);
+      console.log("Firebase login failed, trying local login:", error);
     }
 
+    // Local login fallback
     if (email.toLowerCase() === ADMIN_EMAIL.toLowerCase() && password === ADMIN_PASSWORD) {
-      console.log("Admin fallback login successful");
+      console.log("Admin login successful");
       const adminUser = {
         id: 'admin-123',
         name: 'Admin',
@@ -104,16 +125,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsAuthenticated(true);
       setUser(adminUser);
       
-      localStorage.removeItem('profileData');
-      
       toast({
         title: "Admin Login Successful",
         description: "Welcome back, Admin!",
       });
-      
       return;
     }
     
+    // Allow any other credentials for demo purposes
     const regularUser = {
       id: 'user-' + Date.now(),
       name: email.split('@')[0],
@@ -138,10 +157,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       await firebaseAuth.signup(name, email, password);
       return;
     } catch (error) {
-      console.log("Falling back to local signup", error);
+      console.log("Firebase signup failed, using local signup", error);
     }
 
-    console.log("Signing up with:", name, email, password);
+    console.log("Local signup with:", name, email);
     
     const userId = 'user-' + Date.now();
     const newUser = {
@@ -167,12 +186,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       firebaseAuth.logout();
     } catch (error) {
-      console.log("Error with Firebase logout, proceeding with local logout", error);
+      console.log("Firebase logout error, proceeding with local logout", error);
     }
 
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('user');
-    localStorage.removeItem('profileData');
     
     setIsAuthenticated(false);
     setUser(null);
@@ -182,6 +200,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       description: "You have been logged out successfully.",
     });
   };
+
+  // Don't render children until auth is initialized
+  if (!authInitialized) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Initializing...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <AuthContext.Provider value={{ 

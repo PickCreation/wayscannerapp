@@ -42,15 +42,63 @@ export const ForumPage = () => {
     const fetchPosts = async () => {
       setLoading(true);
       try {
+        // First try to load from localStorage
+        const savedPosts = localStorage.getItem('forumPosts');
+        if (savedPosts) {
+          console.log("Loading posts from localStorage");
+          setPosts(JSON.parse(savedPosts));
+          setLoading(false);
+          return;
+        }
+
+        // Try to fetch from Firebase
+        console.log("Attempting to fetch posts from Firebase");
         const fetchedPosts = await getAllPosts();
         setPosts(fetchedPosts);
+        
+        // Save to localStorage for offline access
+        localStorage.setItem('forumPosts', JSON.stringify(fetchedPosts));
       } catch (error) {
         console.error("Error fetching posts:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load posts. Please try again.",
-          variant: "destructive"
-        });
+        
+        // Create some default posts if none exist
+        const defaultPosts = [
+          {
+            id: 'default-1',
+            author: { name: 'Admin', avatar: '/placeholder.svg' },
+            timeAgo: '1h ago',
+            category: 'Plants',
+            content: 'Welcome to the WayScanner forum! Share your discoveries and learn from the community.',
+            imageUrl: null,
+            likes: 5,
+            comments: 2,
+            liked: false,
+            bookmarked: false
+          },
+          {
+            id: 'default-2',
+            author: { name: 'Community', avatar: '/placeholder.svg' },
+            timeAgo: '2h ago',
+            category: 'Food',
+            content: 'Tips for eating healthier: Start by scanning your food with WayScanner to understand nutritional content!',
+            imageUrl: null,
+            likes: 3,
+            comments: 1,
+            liked: false,
+            bookmarked: false
+          }
+        ];
+        
+        setPosts(defaultPosts);
+        localStorage.setItem('forumPosts', JSON.stringify(defaultPosts));
+        
+        if (navigator.onLine) {
+          toast({
+            title: "Connection Error",
+            description: "Using offline content. Some features may be limited.",
+            variant: "destructive"
+          });
+        }
       } finally {
         setLoading(false);
       }
@@ -112,11 +160,17 @@ export const ForumPage = () => {
       }
     } catch (error) {
       console.error("Error liking post:", error);
-      toast({
-        title: "Error",
-        description: "Failed to like post. Please try again.",
-        variant: "destructive"
-      });
+      // Fallback to local update
+      setPosts(posts.map(post => {
+        if (post.id === postId) {
+          return { 
+            ...post, 
+            likes: isLiked ? post.likes - 1 : post.likes + 1, 
+            liked: !isLiked 
+          };
+        }
+        return post;
+      }));
     }
   };
   
@@ -149,11 +203,13 @@ export const ForumPage = () => {
       });
     } catch (error) {
       console.error("Error bookmarking post:", error);
-      toast({
-        title: "Error",
-        description: "Failed to bookmark post. Please try again.",
-        variant: "destructive"
-      });
+      // Fallback to local update
+      setPosts(posts.map(post => {
+        if (post.id === postId) {
+          return { ...post, bookmarked: !isBookmarked };
+        }
+        return post;
+      }));
     }
   };
   
