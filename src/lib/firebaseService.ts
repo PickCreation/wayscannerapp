@@ -1014,3 +1014,81 @@ export const createTestPosts = async () => {
     throw error;
   }
 };
+
+export const createSampleUserPosts = async () => {
+  try {
+    const user = auth.currentUser;
+    
+    // Sample posts data specifically for the current user
+    const samplePosts = [
+      {
+        content: "Just discovered this amazing eco-friendly cleaning product! It works so well and doesn't harm the environment. Highly recommend checking it out.",
+        category: "Home",
+        imageUrl: null
+      },
+      {
+        content: "My garden is thriving this season! These tomatoes are growing so well. Any tips for keeping pests away naturally?",
+        category: "Gardening",
+        imageUrl: "https://images.unsplash.com/photo-1592841200221-a6898f307baa?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
+      },
+      {
+        content: "Made this delicious quinoa salad for lunch today. Packed with nutrients and so satisfying! Perfect for meal prep too.",
+        category: "Healthy Recipes",
+        imageUrl: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
+      },
+      {
+        content: "Question: Does anyone know good alternatives to plastic food storage containers? Looking for something more sustainable.",
+        category: "Questions",
+        imageUrl: null
+      }
+    ];
+    
+    const createdPosts = [];
+    
+    // Create posts in localStorage if user is not authenticated
+    if (!user) {
+      const savedPosts = localStorage.getItem('forumPosts');
+      let existingPosts = savedPosts ? JSON.parse(savedPosts) : [];
+      
+      // Get user data from localStorage
+      const userData = localStorage.getItem('user');
+      const currentUser = userData ? JSON.parse(userData) : { name: 'You', email: 'user@example.com' };
+      
+      for (const postData of samplePosts) {
+        const newPost = {
+          id: `user-post-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+          author: {
+            name: currentUser.name,
+            avatar: currentUser.profileImage || "/placeholder.svg"
+          },
+          timeAgo: "Just now",
+          category: postData.category,
+          content: postData.content,
+          imageUrl: postData.imageUrl,
+          likes: Math.floor(Math.random() * 5),
+          comments: Math.floor(Math.random() * 3),
+          liked: false,
+          bookmarked: false,
+          authorId: currentUser.id || 'current-user'
+        };
+        
+        existingPosts.unshift(newPost);
+        createdPosts.push(newPost);
+      }
+      
+      localStorage.setItem('forumPosts', JSON.stringify(existingPosts));
+      return createdPosts;
+    }
+    
+    // If user is authenticated, create posts in Firebase
+    for (const postData of samplePosts) {
+      const post = await createPost(postData.content, postData.category, null);
+      createdPosts.push(post);
+    }
+    
+    return createdPosts;
+  } catch (error) {
+    console.error('Error creating sample user posts:', error);
+    throw error;
+  }
+};
