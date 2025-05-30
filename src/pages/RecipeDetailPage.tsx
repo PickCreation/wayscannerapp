@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { 
@@ -54,38 +53,40 @@ const recipeData = {
     servings: 4,
     isFeatured: true,
     image: "/lovable-uploads/1485fb6f-36f0-4eee-98e1-0a56eb978616.png",
-    description: "This creamy garlic parmesan pasta is quick, easy, and uses simple ingredients. It's the perfect weeknight dinner!",
+    description: "This creamy garlic parmesan pasta is quick, easy, and uses simple ingredients. Perfect for busy weeknights when you want something delicious and comforting. The secret is using freshly grated Parmesan and not letting the cream boil to avoid curdling.",
     ingredients: [
       "1 pound fettuccine pasta",
       "4 tablespoons butter",
-      "4 cloves garlic, minced",
+      "6 cloves garlic, minced",
       "1 cup heavy cream",
-      "1 cup grated Parmesan cheese",
-      "½ teaspoon salt",
+      "1½ cups freshly grated Parmesan cheese",
+      "½ teaspoon salt (or to taste)",
       "¼ teaspoon black pepper",
-      "2 tablespoons fresh parsley, chopped"
+      "2 tablespoons fresh parsley, chopped",
+      "Optional: ½ cup reserved pasta water"
     ],
     instructions: [
-      "Cook pasta according to package instructions. Reserve ½ cup of pasta water before draining.",
-      "In a large skillet over medium heat, melt butter. Add minced garlic and cook for 1-2 minutes until fragrant.",
-      "Reduce heat to medium-low and add heavy cream. Simmer for 3-4 minutes until it starts to thicken.",
-      "Whisk in the Parmesan cheese until melted and sauce is smooth.",
-      "Season with salt and pepper to taste.",
-      "Add drained pasta to the sauce and toss to coat. If needed, add reserved pasta water to thin the sauce.",
-      "Garnish with fresh parsley before serving."
+      "Bring a large pot of salted water to boil. Cook fettuccine according to package instructions until al dente. Reserve ½ cup pasta water before draining.",
+      "While pasta cooks, melt butter in a large skillet over medium heat. Add minced garlic and sauté for 1-2 minutes until fragrant but not browned.",
+      "Reduce heat to medium-low and slowly pour in heavy cream. Let it simmer gently for 3-4 minutes, stirring occasionally.",
+      "Remove skillet from heat and gradually whisk in the Parmesan cheese until completely melted and sauce is smooth.",
+      "Season with salt and pepper to taste. The cheese will add saltiness, so taste first.",
+      "Add the drained pasta to the sauce and toss gently to coat. If sauce seems too thick, add reserved pasta water gradually.",
+      "Serve immediately, garnished with fresh parsley and extra Parmesan if desired."
     ],
     nutrition: {
-      calories: 650,
-      protein: "22g",
-      carbs: "65g",
-      fat: "35g"
+      calories: 680,
+      protein: "26g",
+      carbs: "68g",
+      fat: "38g"
     },
-    tags: ["pasta", "italian", "dinner", "weeknight", "easy"],
+    tags: ["pasta", "italian", "dinner", "weeknight", "easy", "creamy"],
     tips: [
-      "For extra protein, add grilled chicken or shrimp.",
-      "Use freshly grated Parmesan for the best flavor and melting properties.",
-      "Make the sauce ahead of time for quicker meal prep.",
-      "If sauce becomes too thick, add a splash of milk or pasta water."
+      "Use freshly grated Parmesan for the best flavor and melting properties. Pre-grated cheese won't melt as smoothly.",
+      "Don't let the cream boil vigorously as it may curdle. Keep it at a gentle simmer.",
+      "For extra protein, add grilled chicken, shrimp, or pancetta before adding the pasta.",
+      "Save some pasta water - its starch helps bind the sauce to the pasta perfectly.",
+      "Serve immediately as cream sauces don't reheat well and may separate."
     ],
     comments: [
       {
@@ -93,7 +94,7 @@ const recipeData = {
         author: "Sarah Johnson",
         date: "2 days ago",
         rating: 5,
-        text: "Made this last night and it was amazing! My family loved it. Will definitely make again.",
+        text: "Absolutely incredible! Made this for my family last night and everyone was asking for seconds. The sauce was so creamy and flavorful. I followed the recipe exactly and it turned out perfect. Definitely adding this to my regular rotation!",
         ratingLabel: "Delicious"
       },
       {
@@ -101,81 +102,221 @@ const recipeData = {
         author: "Mike Thompson",
         date: "1 week ago",
         rating: 4,
-        text: "Great recipe! I added some grilled chicken and it was perfect for dinner.",
+        text: "Great recipe! I added some grilled chicken and it was perfect for dinner. The garlic flavor really comes through nicely. Only suggestion would be to add a bit more salt to taste.",
         ratingLabel: "Tasty"
+      },
+      {
+        id: 3,
+        author: "Emily Chen",
+        date: "2 weeks ago",
+        rating: 5,
+        text: "This is now my go-to pasta recipe! So easy and always turns out amazing. I've made it probably 10 times now and it never disappoints. My husband says it's better than restaurant pasta!",
+        ratingLabel: "Delicious"
+      },
+      {
+        id: 4,
+        author: "David Rodriguez",
+        date: "3 weeks ago",
+        rating: 4,
+        text: "Really good! I was a bit worried about making cream sauce but this was surprisingly easy. Added some mushrooms and it was fantastic. Will definitely make again.",
+        ratingLabel: "Tasty"
+      },
+      {
+        id: 5,
+        author: "Lisa Anderson",
+        date: "1 month ago",
+        rating: 5,
+        text: "Perfect comfort food! Made this on a cold winter night and it hit the spot. The kids loved it too, which is always a win. Thank you for sharing this recipe!",
+        ratingLabel: "Delicious"
       }
     ]
   },
   "stir-fry-1": {
     id: "stir-fry-1",
-    title: "Vegetable Stir Fry",
+    title: "Rainbow Vegetable Stir Fry",
     time: "20 mins",
-    rating: 4.5,
-    reviews: 128,
+    rating: 4.6,
+    reviews: 189,
     servings: 3,
     image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80",
-    description: "A quick and healthy vegetable stir fry with a flavorful sauce. Perfect for a simple dinner!",
+    description: "A vibrant and healthy vegetable stir fry packed with colorful vegetables and a savory-sweet sauce. This recipe is perfect for using up vegetables in your fridge and can be customized with your favorites. Serve over rice or noodles for a complete meal.",
     ingredients: [
-      "2 tablespoons vegetable oil",
-      "1 red bell pepper, sliced",
-      "1 yellow bell pepper, sliced",
+      "2 tablespoons vegetable oil (or peanut oil)",
+      "1 red bell pepper, sliced into strips",
+      "1 yellow bell pepper, sliced into strips",
       "1 cup broccoli florets",
-      "1 carrot, julienned",
-      "1 cup snap peas",
-      "2 cloves garlic, minced",
-      "1 tablespoon ginger, grated",
-      "3 tablespoons soy sauce",
-      "1 tablespoon honey",
+      "1 large carrot, julienned or sliced diagonally",
+      "1 cup snap peas, trimmed",
+      "1 small zucchini, sliced into half-moons",
+      "3 cloves garlic, minced",
+      "1 tablespoon fresh ginger, grated",
+      "3 tablespoons low-sodium soy sauce",
+      "2 tablespoons honey or brown sugar",
+      "1 tablespoon rice vinegar",
       "1 teaspoon sesame oil",
       "1 tablespoon cornstarch mixed with 2 tablespoons water",
-      "Sesame seeds for garnish"
+      "2 green onions, sliced",
+      "1 tablespoon sesame seeds for garnish",
+      "Optional: red pepper flakes for heat"
     ],
     instructions: [
-      "Heat vegetable oil in a large wok or skillet over high heat.",
-      "Add bell peppers, broccoli, and carrots. Stir-fry for 3-4 minutes.",
-      "Add snap peas, garlic, and ginger. Cook for another 1-2 minutes.",
-      "In a small bowl, mix soy sauce, honey, and sesame oil.",
-      "Pour sauce mixture over vegetables and stir to coat.",
-      "Add cornstarch slurry and cook until sauce thickens, about 1 minute.",
-      "Garnish with sesame seeds and serve over rice if desired."
+      "Prepare all vegetables and have them ready before you start cooking. Stir-frying goes quickly!",
+      "Heat vegetable oil in a large wok or skillet over high heat until shimmering.",
+      "Add bell peppers and carrots first as they take longer to cook. Stir-fry for 2-3 minutes.",
+      "Add broccoli florets and cook for another 2 minutes, stirring constantly.",
+      "Add zucchini and snap peas. Stir-fry for 1-2 minutes until vegetables are crisp-tender.",
+      "Push vegetables to one side of the pan. Add garlic and ginger to the empty space and cook for 30 seconds until fragrant.",
+      "In a small bowl, whisk together soy sauce, honey, rice vinegar, and sesame oil.",
+      "Pour sauce over vegetables and toss everything together.",
+      "Add cornstarch slurry and cook for 1 minute until sauce thickens and coats the vegetables.",
+      "Remove from heat, garnish with green onions and sesame seeds. Serve immediately over rice or noodles."
     ],
     nutrition: {
-      calories: 180,
-      protein: "5g",
-      carbs: "22g",
-      fat: "9g"
+      calories: 195,
+      protein: "6g",
+      carbs: "28g",
+      fat: "8g"
     },
-    tags: ["vegetarian", "healthy", "quick", "asian"],
+    tags: ["vegetarian", "healthy", "quick", "asian", "colorful", "vegan"],
     tips: [
-      "For protein, add tofu, chicken, or beef.",
-      "Use any vegetables you have on hand.",
-      "Make the sauce ahead of time for even quicker preparation.",
-      "If you like spice, add red pepper flakes or sriracha."
+      "Cut all vegetables to similar sizes for even cooking.",
+      "Don't overcrowd the pan - cook in batches if necessary to avoid steaming the vegetables.",
+      "For added protein, add tofu, chicken, beef, or shrimp in the first step.",
+      "Substitute any vegetables you have on hand - this recipe is very flexible.",
+      "For extra heat, add red pepper flakes or a drizzle of sriracha at the end."
     ],
     comments: [
       {
         id: 1,
-        author: "Sarah J****",
-        date: "2 days ago",
+        author: "Jennifer K.",
+        date: "3 days ago",
         rating: 5,
-        text: "Made this yesterday and it was absolutely delicious! Everyone in my family loved it.",
+        text: "Love this recipe! So colorful and fresh. I added some tofu for protein and it was perfect. The sauce has just the right balance of sweet and savory.",
         ratingLabel: "Delicious"
       },
       {
         id: 2,
-        author: "John M****",
+        author: "Mark Wilson",
         date: "1 week ago",
         rating: 4,
-        text: "Great recipe! I added some extra garlic and it turned out amazing.",
+        text: "Great way to get kids to eat vegetables! Mine loved all the colors. I used frozen vegetables when I was short on time and it still turned out great.",
         ratingLabel: "Tasty"
       },
       {
         id: 3,
-        author: "Alex B****",
+        author: "Amanda Foster",
         date: "2 weeks ago",
         rating: 5,
-        text: "Simple to make and really flavorful. Will definitely make it again!",
+        text: "This has become my go-to weeknight dinner! So quick and healthy. I love that I can use whatever vegetables I have in the fridge.",
         ratingLabel: "Delicious"
+      },
+      {
+        id: 4,
+        author: "Carlos M.",
+        date: "3 weeks ago",
+        rating: 4,
+        text: "Really tasty! Added some chicken and served over brown rice. The sauce is fantastic - will definitely use it for other stir-fries too.",
+        ratingLabel: "Tasty"
+      }
+    ]
+  },
+  "salmon-1": {
+    id: "salmon-1",
+    title: "Honey Garlic Glazed Salmon",
+    time: "25 mins",
+    rating: 4.9,
+    reviews: 342,
+    servings: 4,
+    isFeatured: true,
+    image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&q=80&w=600",
+    description: "Perfectly flaky salmon with a sweet and savory honey garlic glaze. This restaurant-quality dish comes together in just 25 minutes and pairs beautifully with rice and steamed vegetables. The glaze caramelizes beautifully and creates an irresistible flavor combination.",
+    ingredients: [
+      "4 salmon fillets (6 oz each), skin-on or skinless",
+      "3 tablespoons honey",
+      "3 tablespoons soy sauce",
+      "4 cloves garlic, minced",
+      "2 tablespoons olive oil",
+      "1 tablespoon fresh lemon juice",
+      "1 teaspoon fresh ginger, grated",
+      "½ teaspoon red pepper flakes (optional)",
+      "Salt and black pepper to taste",
+      "2 green onions, sliced for garnish",
+      "1 tablespoon sesame seeds for garnish",
+      "Lemon wedges for serving"
+    ],
+    instructions: [
+      "Preheat oven to 400°F (200°C). Line a baking sheet with parchment paper.",
+      "Pat salmon fillets dry and season both sides with salt and pepper.",
+      "In a small bowl, whisk together honey, soy sauce, minced garlic, lemon juice, ginger, and red pepper flakes.",
+      "Heat olive oil in a large oven-safe skillet over medium-high heat.",
+      "Place salmon fillets skin-side up (if using skin-on) and sear for 3-4 minutes until golden brown.",
+      "Flip salmon carefully and brush tops with half of the honey garlic glaze.",
+      "Transfer skillet to preheated oven and bake for 8-10 minutes or until salmon flakes easily with a fork.",
+      "Remove from oven and brush with remaining glaze. Let rest for 2 minutes.",
+      "Garnish with sliced green onions and sesame seeds. Serve with lemon wedges."
+    ],
+    nutrition: {
+      calories: 320,
+      protein: "35g",
+      carbs: "12g",
+      fat: "15g"
+    },
+    tags: ["seafood", "healthy", "protein", "dinner", "easy", "gluten-free"],
+    tips: [
+      "Choose salmon fillets of similar thickness for even cooking.",
+      "Don't overcook the salmon - it should still be slightly pink in the center.",
+      "If you don't have an oven-safe skillet, transfer salmon to the prepared baking sheet before going in the oven.",
+      "For crispy skin, start with skin-side down and don't move the fish until it's time to flip.",
+      "The glaze will thicken as it cools, so serve immediately for best results."
+    ],
+    comments: [
+      {
+        id: 1,
+        author: "Rachel Cooper",
+        date: "1 day ago",
+        rating: 5,
+        text: "This is hands down the best salmon recipe I've ever made! The glaze is incredible and the fish was perfectly cooked. My whole family loved it. Making it again this weekend!",
+        ratingLabel: "Delicious"
+      },
+      {
+        id: 2,
+        author: "Tom Bradley",
+        date: "4 days ago",
+        rating: 5,
+        text: "Restaurant quality at home! The honey garlic combination is perfect. Even my kids who usually don't like fish asked for seconds. This is definitely going in our regular rotation.",
+        ratingLabel: "Delicious"
+      },
+      {
+        id: 3,
+        author: "Maria Santos",
+        date: "1 week ago",
+        rating: 4,
+        text: "Really delicious! The glaze caramelized beautifully. I served it with jasmine rice and steamed broccoli. Only thing I'd change is maybe add a bit more ginger next time.",
+        ratingLabel: "Tasty"
+      },
+      {
+        id: 4,
+        author: "Alex Turner",
+        date: "2 weeks ago",
+        rating: 5,
+        text: "Perfect recipe! So easy to follow and the results were amazing. The salmon was flaky and the glaze had the perfect balance of sweet and savory. Highly recommend!",
+        ratingLabel: "Delicious"
+      },
+      {
+        id: 5,
+        author: "Nicole James",
+        date: "3 weeks ago",
+        rating: 5,
+        text: "Made this for a dinner party and everyone was raving about it! Looks so elegant but surprisingly simple to make. The glaze is absolutely divine.",
+        ratingLabel: "Delicious"
+      },
+      {
+        id: 6,
+        author: "Steve Park",
+        date: "1 month ago",
+        rating: 4,
+        text: "Great recipe! I'm not usually confident cooking fish but this turned out perfectly. The timing was spot on and the flavor was fantastic. Will definitely make again.",
+        ratingLabel: "Tasty"
       }
     ]
   }
@@ -285,7 +426,6 @@ const RecipeDetailPage = () => {
             
             if (firebaseRecipe) {
               console.log('Firebase recipe found:', firebaseRecipe);
-              // Ensure recipe has all required properties
               const safeRecipe = {
                 ...getDefaultRecipe(recipeId),
                 ...firebaseRecipe
@@ -293,7 +433,6 @@ const RecipeDetailPage = () => {
               setRecipe(safeRecipe);
             } else if (localRecipe) {
               console.log('No Firebase recipe, using local:', localRecipe);
-              // Ensure recipe has all required properties
               const safeRecipe = {
                 ...getDefaultRecipe(recipeId),
                 ...localRecipe
@@ -329,7 +468,6 @@ const RecipeDetailPage = () => {
             
             if (localRecipe) {
               console.log('Firebase error, using local recipe');
-              // Ensure recipe has all required properties
               const safeRecipe = {
                 ...getDefaultRecipe(recipeId),
                 ...localRecipe
@@ -370,7 +508,6 @@ const RecipeDetailPage = () => {
       } catch (error) {
         console.error('General error loading recipe:', error);
         
-        // Fallback to default recipe in case of error
         const mockRecipe = recipeData[recipeId as keyof typeof recipeData];
         setRecipe(mockRecipe || getDefaultRecipe(recipeId));
         
