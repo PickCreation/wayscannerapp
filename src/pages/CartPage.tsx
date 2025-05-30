@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, Trash2, Plus, Minus, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -9,8 +8,14 @@ import BottomNavigation from "@/components/BottomNavigation";
 import CameraSheet from "@/components/CameraSheet";
 import { useAuth } from "@/hooks/use-auth";
 import LoginDialog from "@/components/LoginDialog";
-import { getCartItems, removeCartItem, updateCartItemQuantity } from "@/lib/cartService";
-import { CartItem } from "@/lib/cartService";
+
+interface CartItem {
+  id: string;
+  title: string;
+  price: number;
+  quantity: number;
+  image: string;
+}
 
 const CartPage = () => {
   const navigate = useNavigate();
@@ -23,18 +28,13 @@ const CartPage = () => {
   const { isAuthenticated, user } = useAuth();
 
   useEffect(() => {
-    const loadCartItems = async () => {
+    const loadCartItems = () => {
       setLoading(true);
       try {
-        if (isAuthenticated && user) {
-          // Get cart items from Firebase
-          const items = await getCartItems(user.id);
-          setCartItems(items);
-        } else {
-          // Fall back to localStorage
-          const items = JSON.parse(localStorage.getItem('cartItems') || '[]');
-          setCartItems(items);
-        }
+        // Load cart items from localStorage
+        const items = JSON.parse(localStorage.getItem('cartItems') || '[]');
+        console.log('Loaded cart items:', items);
+        setCartItems(items);
       } catch (error) {
         console.error("Error loading cart items:", error);
         toast({
@@ -56,19 +56,16 @@ const CartPage = () => {
 
     window.addEventListener('cartUpdated', handleCartUpdate);
     return () => window.removeEventListener('cartUpdated', handleCartUpdate);
-  }, [isAuthenticated, user, toast]);
+  }, [toast]);
 
-  const handleRemoveItem = async (id: string) => {
+  const handleRemoveItem = (id: string) => {
     try {
-      if (isAuthenticated && user) {
-        // Remove from Firebase
-        await removeCartItem(user.id, id);
-      } else {
-        // Remove from localStorage only
-        const updatedCart = cartItems.filter(item => item.id !== id);
-        setCartItems(updatedCart);
-        localStorage.setItem('cartItems', JSON.stringify(updatedCart));
-      }
+      const updatedCart = cartItems.filter(item => item.id !== id);
+      setCartItems(updatedCart);
+      localStorage.setItem('cartItems', JSON.stringify(updatedCart));
+      
+      // Dispatch cart update event
+      window.dispatchEvent(new Event('cartUpdated'));
       
       toast({
         title: "Item Removed",
@@ -84,16 +81,10 @@ const CartPage = () => {
     }
   };
 
-  const handleUpdateQuantity = async (id: string, newQuantity: number) => {
+  const handleUpdateQuantity = (id: string, newQuantity: number) => {
     if (newQuantity < 1) return;
     
     try {
-      if (isAuthenticated && user) {
-        // Update in Firebase
-        await updateCartItemQuantity(user.id, id, newQuantity);
-      }
-      
-      // Update local state
       const updatedCart = cartItems.map(item => {
         if (item.id === id) {
           return { ...item, quantity: newQuantity };
@@ -102,11 +93,10 @@ const CartPage = () => {
       });
       
       setCartItems(updatedCart);
+      localStorage.setItem('cartItems', JSON.stringify(updatedCart));
       
-      // Update localStorage as fallback
-      if (!isAuthenticated || !user) {
-        localStorage.setItem('cartItems', JSON.stringify(updatedCart));
-      }
+      // Dispatch cart update event
+      window.dispatchEvent(new Event('cartUpdated'));
     } catch (error) {
       console.error("Error updating quantity:", error);
       toast({

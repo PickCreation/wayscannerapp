@@ -4,7 +4,6 @@ import { Star, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { saveCartItem } from "@/lib/cartService";
 import { useAuth } from "@/hooks/use-auth";
 
 interface ProductCardProps {
@@ -46,16 +45,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
     };
     
     try {
-      // First, update localStorage regardless of authentication status
-      updateLocalStorageCart(cartItem);
+      // Update localStorage cart
+      const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      const existingItemIndex = cartItems.findIndex((item: any) => item.id === cartItem.id);
       
-      // If user is authenticated, try to save to Firebase as well
-      if (isAuthenticated && user) {
-        await saveCartItem(user.id, cartItem).catch(error => {
-          console.error("Firebase cart update failed, using localStorage only:", error);
-          // We already updated localStorage above, so no further action needed
-        });
+      if (existingItemIndex >= 0) {
+        cartItems[existingItemIndex].quantity += 1;
+      } else {
+        cartItems.push(cartItem);
       }
+      
+      localStorage.setItem('cartItems', JSON.stringify(cartItems));
       
       // Dispatch a custom event to notify other components
       window.dispatchEvent(new Event('cartUpdated'));
@@ -76,20 +76,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
         setIsAddingToCart(false);
       }, 500);
     }
-  };
-
-  // Helper function to update localStorage cart
-  const updateLocalStorageCart = (item: any) => {
-    const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-    const existingItemIndex = cartItems.findIndex((cartItem: any) => cartItem.id === item.id);
-    
-    if (existingItemIndex >= 0) {
-      cartItems[existingItemIndex].quantity += 1;
-    } else {
-      cartItems.push(item);
-    }
-    
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
   };
 
   return (
