@@ -50,7 +50,6 @@ const MarketplacePage = () => {
           }
         }).catch(error => {
           console.error("Firebase products fetch failed:", error);
-          // We already have local products, so no additional fallback needed
         });
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -265,10 +264,10 @@ const MarketplacePage = () => {
           </div>
         ) : sortedProducts.length > 0 ? (
           <div className="grid grid-cols-2 gap-3">
-            {sortedProducts.map(product => (
+            {sortedProducts.map((product, index) => (
               <ProductCard
                 key={product.id}
-                id={parseInt(product.id.replace('local_', '')) || Math.floor(Math.random() * 1000)}
+                id={parseInt(product.id.replace(/[^0-9]/g, '')) || index + 1}
                 title={product.title}
                 price={product.price}
                 image={product.image || "/placeholder.svg"}

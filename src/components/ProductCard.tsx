@@ -4,7 +4,6 @@ import { Star, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/use-auth";
 
 interface ProductCardProps {
   id: number;
@@ -26,27 +25,26 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isAddingToCart, setIsAddingToCart] = useState(false);
-  const { isAuthenticated, user } = useAuth();
 
   const handleClick = () => {
+    // Use the actual id passed as prop
     navigate(`/marketplace/product/${id}`);
   };
 
   const handleAddToCart = async (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click
+    e.stopPropagation();
     setIsAddingToCart(true);
     
-    const cartItem = {
-      id: id.toString(),
-      title,
-      price,
-      image,
-      quantity: 1
-    };
-    
     try {
-      // Update localStorage cart
       const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      const cartItem = {
+        id: id.toString(),
+        title,
+        price,
+        image,
+        quantity: 1
+      };
+      
       const existingItemIndex = cartItems.findIndex((item: any) => item.id === cartItem.id);
       
       if (existingItemIndex >= 0) {
@@ -56,8 +54,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
       }
       
       localStorage.setItem('cartItems', JSON.stringify(cartItems));
-      
-      // Dispatch a custom event to notify other components
       window.dispatchEvent(new Event('cartUpdated'));
       
       toast({
@@ -68,13 +64,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
       console.error("Error adding to cart:", error);
       toast({
         title: "Error",
-        description: "Failed to add item to cart. Please try again.",
+        description: "Failed to add item to cart",
         variant: "destructive"
       });
     } finally {
-      setTimeout(() => {
-        setIsAddingToCart(false);
-      }, 500);
+      setTimeout(() => setIsAddingToCart(false), 500);
     }
   };
 
@@ -83,7 +77,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
       className="rounded-lg overflow-hidden shadow-md bg-white cursor-pointer hover:shadow-lg transition-shadow duration-300"
       onClick={handleClick}
     >
-      {/* Image */}
       <div className="h-40 overflow-hidden">
         <img
           src={image}
@@ -97,7 +90,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
         />
       </div>
       
-      {/* Content */}
       <div className="p-3">
         <h3 className="font-medium text-sm line-clamp-1">{title}</h3>
         <div className="flex items-center mt-1">
@@ -107,7 +99,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </div>
         <p className="font-bold text-wayscanner-blue mt-2">${price.toFixed(2)}</p>
         
-        {/* Add to Cart Button */}
         <Button 
           variant="default" 
           className="w-full mt-2 bg-wayscanner-blue hover:bg-blue-700"

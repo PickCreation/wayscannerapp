@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, Heart, Share2, Plus, Minus, Tag } from "lucide-react";
+import { ChevronLeft, Heart, Share2, Plus, Minus, Tag, Star } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -22,89 +22,100 @@ const ProductDetailPage = () => {
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
   const [cartCount, setCartCount] = useState(0);
-  const [sellerPolicy, setSellerPolicy] = useState<string>("");
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   
-  // Fetch product from local storage first
+  // Hardcoded products for fallback
+  const hardcodedProducts: Product[] = [
+    {
+      id: '1',
+      title: "Modern Plant Pot",
+      price: 29.99,
+      category: "Plants Accessories",
+      image: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&q=80&w=600",
+      images: [
+        "https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&q=80&w=600",
+        "https://images.unsplash.com/photo-1581504803078-889aa7a2a3c4?auto=format&fit=crop&q=80&w=600"
+      ],
+      rating: 4.5,
+      reviews: 124,
+      description: "A beautiful modern plant pot perfect for your indoor plants. Made with high-quality ceramic and designed to complement any interior decor.",
+      seller: "Green Thumb Co.",
+      createdAt: new Date(),
+      color: "White",
+      condition: "New",
+      weight: "2.5 lbs",
+      brand: "Modern Home",
+      country: "USA",
+      tags: ["ceramic", "modern", "indoor"]
+    },
+    {
+      id: '2',
+      title: "Organic Dog Treats",
+      price: 15.99,
+      category: "Animal Accessories",
+      image: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&q=80&w=600",
+      rating: 4.8,
+      reviews: 89,
+      description: "All-natural organic dog treats made with premium ingredients. Perfect for training or just showing your furry friend some love.",
+      seller: "Pet Paradise",
+      createdAt: new Date(),
+      color: "Brown",
+      condition: "New",
+      weight: "1 lb",
+      brand: "Healthy Paws",
+      country: "Canada",
+      tags: ["organic", "training", "healthy"]
+    }
+  ];
+  
   useEffect(() => {
     const fetchProduct = async () => {
       setIsLoading(true);
+      console.log(`Fetching product with ID: ${productId}`);
+      
       try {
-        console.log(`Attempting to fetch product with ID: ${productId}`);
-        
-        // Try to get products from localStorage first
+        // First try localStorage
         const productsJson = localStorage.getItem('products');
-        const products: Product[] = productsJson ? JSON.parse(productsJson) : [];
-        console.log('Products from localStorage:', products.length);
+        const localProducts: Product[] = productsJson ? JSON.parse(productsJson) : [];
         
-        // First check if we can find the product in localStorage
-        const localProduct = products.find(p => 
+        // Try to find product by ID (handle various ID formats)
+        let foundProduct = localProducts.find(p => 
           p.id === productId || 
-          p.id === `local_${productId}` || 
-          parseInt(p.id.replace('local_', '')) === parseInt(productId as string)
+          p.id === `local_${productId}` ||
+          p.id.replace(/[^0-9]/g, '') === productId
         );
         
-        if (localProduct) {
-          console.log('Found product in localStorage:', localProduct);
-          setProduct(localProduct);
+        // If not found in localStorage, try hardcoded products
+        if (!foundProduct) {
+          foundProduct = hardcodedProducts.find(p => 
+            p.id === productId || 
+            parseInt(p.id) === parseInt(productId as string)
+          );
+        }
+        
+        // If still not found, try Firebase
+        if (!foundProduct && productId) {
+          foundProduct = await getProductById(productId);
+        }
+        
+        if (foundProduct) {
+          console.log('Found product:', foundProduct);
+          setProduct(foundProduct);
         } else {
-          // If not found in localStorage, try to fetch from Firebase
-          console.log('Product not found in localStorage, trying Firebase...');
-          const firebaseProduct = await getProductById(productId as string);
-          if (firebaseProduct) {
-            console.log('Found product in Firebase:', firebaseProduct);
-            setProduct(firebaseProduct);
-          } else {
-            console.log('Product not found in Firebase either');
-            
-            // Fallback to hardcoded products if no products found
-            const hardcodedProducts = [
-              {
-                id: '1',
-                title: "Modern Plant Pot",
-                price: 29.99,
-                category: "Plants Accessories",
-                image: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&q=80&w=600",
-                images: [
-                  "https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&q=80&w=600",
-                  "https://images.unsplash.com/photo-1581504803078-889aa7a2a3c4?auto=format&fit=crop&q=80&w=600",
-                  "https://images.unsplash.com/photo-1582139329109-c10441b6db1c?auto=format&fit=crop&q=80&w=600",
-                ],
-                rating: 4.5,
-                reviews: 124,
-                description: "A beautiful modern plant pot perfect for your indoor plants. Made with high-quality ceramic and designed to complement any interior decor.",
-                seller: "Green Thumb Co.",
-                createdAt: new Date(),
-              },
-              // ... more hardcoded products if needed
-            ];
-            
-            const hardcodedProduct = hardcodedProducts.find(p => 
-              p.id === productId || 
-              parseInt(p.id) === parseInt(productId as string)
-            );
-            
-            if (hardcodedProduct) {
-              console.log('Found product in hardcoded list:', hardcodedProduct);
-              setProduct(hardcodedProduct as Product);
-            }
-          }
+          console.log('Product not found, using first hardcoded product');
+          setProduct(hardcodedProducts[0]);
         }
       } catch (error) {
-        console.error("Error fetching product details:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load product details",
-          variant: "destructive",
-        });
+        console.error("Error fetching product:", error);
+        setProduct(hardcodedProducts[0]);
       } finally {
         setIsLoading(false);
       }
     };
     
     fetchProduct();
-  }, [productId, toast]);
+  }, [productId]);
   
   useEffect(() => {
     const updateCartCount = () => {
@@ -114,22 +125,9 @@ const ProductDetailPage = () => {
     };
     
     updateCartCount();
-    
-    window.addEventListener('storage', updateCartCount);
     window.addEventListener('cartUpdated', updateCartCount);
     
-    // Load seller policy from localStorage
-    const loadSellerPolicy = () => {
-      const shopSettings = JSON.parse(localStorage.getItem('shopSettings') || '{}');
-      if (shopSettings && shopSettings.shopPolicy) {
-        setSellerPolicy(shopSettings.shopPolicy);
-      }
-    };
-    
-    loadSellerPolicy();
-    
     return () => {
-      window.removeEventListener('storage', updateCartCount);
       window.removeEventListener('cartUpdated', updateCartCount);
     };
   }, []);
@@ -195,50 +193,12 @@ const ProductDetailPage = () => {
     }
     
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
-    
     window.dispatchEvent(new Event('cartUpdated'));
     
     toast({
       title: "Added to Cart",
       description: `${quantity} × ${product.title} added to your cart`,
     });
-  };
-
-  const handleAddToFavorites = () => {
-    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    const isAlreadyFavorite = favorites.some((item: any) => item.id === product.id);
-    
-    if (!isAlreadyFavorite) {
-      favorites.push(product);
-      localStorage.setItem('favorites', JSON.stringify(favorites));
-      
-      toast({
-        title: "Added to Favorites",
-        description: `${product.title} added to your favorites`,
-      });
-    } else {
-      const updatedFavorites = favorites.filter((item: any) => item.id !== product.id);
-      localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
-      
-      toast({
-        title: "Removed from Favorites",
-        description: `${product.title} removed from your favorites`,
-      });
-    }
-  };
-
-  const handleIncreaseQuantity = () => {
-    setQuantity(prev => prev + 1);
-  };
-
-  const handleDecreaseQuantity = () => {
-    if (quantity > 1) {
-      setQuantity(prev => prev - 1);
-    }
-  };
-
-  const handleSellerClick = () => {
-    navigate(`/store/1`);
   };
 
   return (
@@ -292,29 +252,11 @@ const ProductDetailPage = () => {
         )}
       </div>
 
-      {productImages.length > 1 && (
-        <div className="px-4 py-2 flex space-x-2 overflow-x-auto">
-          {productImages.map((img, index) => (
-            <button 
-              key={index} 
-              className="w-14 h-14 border border-gray-300 rounded-lg overflow-hidden flex-shrink-0"
-              aria-label={`View image ${index + 1}`}
-            >
-              <img 
-                src={img} 
-                alt={`${product.title} - thumbnail ${index + 1}`} 
-                className="w-full h-full object-cover"
-              />
-            </button>
-          ))}
-        </div>
-      )}
-
       <div className="p-4">
         <div className="flex justify-between items-start mb-2">
           <h2 className="text-xl font-bold">{product.title}</h2>
           <div className="flex space-x-2">
-            <Button size="icon" variant="ghost" className="h-9 w-9" onClick={handleAddToFavorites}>
+            <Button size="icon" variant="ghost" className="h-9 w-9">
               <Heart size={20} />
             </Button>
             <Button size="icon" variant="ghost" className="h-9 w-9">
@@ -326,13 +268,7 @@ const ProductDetailPage = () => {
         <div className="mb-3">
           <p className="text-sm text-gray-600"><span className="font-medium">Category:</span> {product.category}</p>
           <p className="text-sm text-gray-600">
-            <span className="font-medium">Seller:</span>{" "}
-            <button 
-              className="text-wayscanner-blue font-medium hover:underline" 
-              onClick={handleSellerClick}
-            >
-              {product.seller || "Unknown Seller"}
-            </button>
+            <span className="font-medium">Seller:</span> {product.seller || "Unknown Seller"}
           </p>
         </div>
         
@@ -350,50 +286,10 @@ const ProductDetailPage = () => {
           <TabsList className="grid grid-cols-3 mb-2">
             <TabsTrigger value="description">Description</TabsTrigger>
             <TabsTrigger value="reviews">Reviews ({product.reviews || 0})</TabsTrigger>
-            <TabsTrigger value="policies">Policies</TabsTrigger>
+            <TabsTrigger value="details">Details</TabsTrigger>
           </TabsList>
           <TabsContent value="description" className="pt-2">
             <p className="text-gray-700 mb-4">{product.description || "No description available."}</p>
-            
-            <div className="mt-6 space-y-4 border-t pt-4">
-              <h3 className="font-medium text-lg">Product Details</h3>
-              
-              <div className="grid grid-cols-2 gap-y-3">
-                <div className="text-gray-600">Color:</div>
-                <div className="font-medium">{product.color || "Not specified"}</div>
-                
-                <div className="text-gray-600">Condition:</div>
-                <div className="font-medium">{product.condition || "New"}</div>
-                
-                <div className="text-gray-600">Weight:</div>
-                <div className="font-medium">{product.weight || "Not specified"}</div>
-                
-                <div className="text-gray-600">Brand:</div>
-                <div className="font-medium">{product.brand || "Not specified"}</div>
-                
-                <div className="text-gray-600">Country:</div>
-                <div className="font-medium">{product.country || "Not specified"}</div>
-                
-                <div className="text-gray-600">Tags:</div>
-                <div className="font-medium">
-                  {product.tags && product.tags.length > 0 ? (
-                    <div className="flex flex-wrap gap-1">
-                      {product.tags.map((tag, index) => (
-                        <span 
-                          key={index} 
-                          className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full flex items-center"
-                        >
-                          <Tag size={12} className="mr-1" />
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    "No tags"
-                  )}
-                </div>
-              </div>
-            </div>
           </TabsContent>
           <TabsContent value="reviews" className="pt-2">
             <div className="flex items-center mb-4">
@@ -416,16 +312,22 @@ const ProductDetailPage = () => {
             </div>
             <p className="text-sm text-gray-500">Reviews are coming soon!</p>
           </TabsContent>
-          <TabsContent value="policies" className="pt-2">
-            <div className="space-y-4">
-              <h3 className="font-medium text-lg">Seller Policies</h3>
-              {sellerPolicy ? (
-                <div className="bg-gray-50 p-4 rounded-md border border-gray-200">
-                  <p className="text-sm text-gray-700 whitespace-pre-line">{sellerPolicy}</p>
-                </div>
-              ) : (
-                <p className="text-sm text-gray-500">This seller has not specified any policies.</p>
-              )}
+          <TabsContent value="details" className="pt-2">
+            <div className="grid grid-cols-2 gap-y-3">
+              <div className="text-gray-600">Color:</div>
+              <div className="font-medium">{product.color || "Not specified"}</div>
+              
+              <div className="text-gray-600">Condition:</div>
+              <div className="font-medium">{product.condition || "New"}</div>
+              
+              <div className="text-gray-600">Weight:</div>
+              <div className="font-medium">{product.weight || "Not specified"}</div>
+              
+              <div className="text-gray-600">Brand:</div>
+              <div className="font-medium">{product.brand || "Not specified"}</div>
+              
+              <div className="text-gray-600">Country:</div>
+              <div className="font-medium">{product.country || "Not specified"}</div>
             </div>
           </TabsContent>
         </Tabs>
@@ -437,8 +339,7 @@ const ProductDetailPage = () => {
             variant="ghost" 
             size="icon" 
             className="h-8 w-8"
-            onClick={handleDecreaseQuantity}
-            disabled={quantity <= 1}
+            onClick={() => setQuantity(Math.max(1, quantity - 1))}
           >
             <Minus size={16} />
           </Button>
@@ -447,7 +348,7 @@ const ProductDetailPage = () => {
             variant="ghost" 
             size="icon" 
             className="h-8 w-8"
-            onClick={handleIncreaseQuantity}
+            onClick={() => setQuantity(quantity + 1)}
           >
             <Plus size={16} />
           </Button>
@@ -464,22 +365,5 @@ const ProductDetailPage = () => {
     </div>
   );
 };
-
-const Star = ({ size, className }: { size: number, className: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-  </svg>
-);
 
 export default ProductDetailPage;
