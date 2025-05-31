@@ -53,11 +53,95 @@ interface Message {
   typingIndicator?: boolean;
 }
 
+// Sample messages for testing
+const getSampleMessages = (): Message[] => [
+  {
+    id: "1",
+    shopName: "Green Valley Organics",
+    message: "Hi! Thank you for your interest in our organic vegetables. Do you have any questions about our seasonal produce?",
+    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+    isFromBuyer: false,
+    read: false,
+    buyerId: "user123",
+    buyerName: "John Doe"
+  },
+  {
+    id: "2",
+    shopName: "Farm Fresh Dairy",
+    message: "Our fresh milk delivery is available every Tuesday and Friday. Would you like to set up a weekly subscription?",
+    createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 hours ago
+    isFromBuyer: false,
+    read: true,
+    buyerId: "user123",
+    buyerName: "John Doe"
+  },
+  {
+    id: "3",
+    shopName: "Artisan Bakery Co",
+    message: "Hello! Your custom birthday cake order has been confirmed. We'll have it ready for pickup on Saturday at 10 AM.",
+    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+    isFromBuyer: false,
+    read: false,
+    buyerId: "user123",
+    buyerName: "John Doe"
+  },
+  {
+    id: "4",
+    shopName: "Green Valley Organics",
+    message: "Yes, I'm interested in your organic tomatoes. Are they locally grown? What's the price per pound?",
+    createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000), // 3 hours ago
+    isFromBuyer: true,
+    read: true,
+    buyerId: "user123",
+    buyerName: "John Doe"
+  },
+  {
+    id: "5",
+    shopName: "Farm Fresh Dairy",
+    message: "Thank you for the information! I'd like to start with a weekly delivery of 2 gallons of whole milk. How do I proceed?",
+    createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
+    isFromBuyer: true,
+    read: false,
+    buyerId: "user123",
+    buyerName: "John Doe"
+  },
+  {
+    id: "6",
+    shopName: "Honey Bee Haven",
+    message: "Do you have any raw honey available? I'm looking for local honey for my tea.",
+    createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000), // 6 hours ago
+    isFromBuyer: true,
+    read: true,
+    buyerId: "user123",
+    buyerName: "John Doe"
+  },
+  {
+    id: "7",
+    shopName: "Sunset Herbs",
+    message: "Hi there! Yes, we have fresh basil, rosemary, and thyme available. Each bunch is $3. Would you like to place an order?",
+    createdAt: new Date(Date.now() - 8 * 60 * 60 * 1000), // 8 hours ago
+    isFromBuyer: false,
+    read: true,
+    buyerId: "user123",
+    buyerName: "John Doe"
+  },
+  {
+    id: "8",
+    shopName: "Mountain View Meat Co",
+    message: "Perfect! I'll take 2 lbs of grass-fed ground beef. When can I pick it up?",
+    createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000), // 12 hours ago
+    isFromBuyer: true,
+    read: true,
+    buyerId: "user123",
+    buyerName: "John Doe"
+  }
+];
+
 const MessagesPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { isAuthenticated, user } = useAuth();
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>(getSampleMessages());
   const [activeTab, setActiveTab] = useState("received");
   const [selectedShop, setSelectedShop] = useState<string | null>(null);
   const [reply, setReply] = useState("");
@@ -105,7 +189,13 @@ const MessagesPage = () => {
         });
         
         console.log("Fetched messages from Firebase:", fetchedMessages);
-        setMessages(fetchedMessages);
+        
+        // If no Firebase messages, use sample messages
+        if (fetchedMessages.length === 0) {
+          setMessages(getSampleMessages());
+        } else {
+          setMessages(fetchedMessages);
+        }
         
         // Mark messages as read if shop is selected
         if (selectedShop) {
@@ -117,9 +207,8 @@ const MessagesPage = () => {
         }
       }, (error) => {
         console.error("Error fetching messages:", error);
-        // Fallback to localStorage
-        const storedMessages = JSON.parse(localStorage.getItem("sellerMessages") || "[]");
-        setMessages(storedMessages);
+        // Fallback to sample messages
+        setMessages(getSampleMessages());
       });
 
       // Listen for typing indicators
@@ -140,9 +229,8 @@ const MessagesPage = () => {
       };
     } catch (error) {
       console.error("Error setting up Firebase listeners:", error);
-      // Fallback to localStorage
-      const storedMessages = JSON.parse(localStorage.getItem("sellerMessages") || "[]");
-      setMessages(storedMessages);
+      // Fallback to sample messages
+      setMessages(getSampleMessages());
     }
   }, [isAuthenticated, user, selectedShop]);
 
