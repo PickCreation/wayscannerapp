@@ -90,6 +90,28 @@ const SellerDashboardPage = () => {
   });
   const [orders, setOrders] = useState([
     {
+      id: "2346",
+      orderNumber: "WS-2346",
+      product: "Handmade Ceramic Mug",
+      customer: "Olivia Brown",
+      date: new Date("2025-04-07"),
+      status: "Pending",
+      amount: 29.99,
+      shippingDeadline: new Date(new Date("2025-04-07").getTime() + (5 * 24 * 60 * 60 * 1000)),
+      isPastDeadline: false,
+      trackingNumber: "",
+      trackingUrl: "",
+      shippingAddress: {
+        name: "Olivia Brown",
+        street: "123 Maple Street",
+        city: "Springfield",
+        state: "IL",
+        zip: "62704",
+        country: "USA",
+        phone: "+1 555-123-4567"
+      }
+    },
+    {
       id: "2345",
       orderNumber: "WS-2345",
       product: "Eco-friendly Water Bottle",
@@ -149,6 +171,8 @@ const SellerDashboardPage = () => {
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
   const [shopLogo, setShopLogo] = useState<string | null>(null);
+  const [showAddressDialog, setShowAddressDialog] = useState(false);
+  const [addressToView, setAddressToView] = useState<any | null>(null);
 
   const carrierOptions = [
     // North America
@@ -271,7 +295,7 @@ const SellerDashboardPage = () => {
     // Check for shipping deadlines
     const updatedOrders = orders.map(order => {
       const now = new Date();
-      const isPastDeadline = order.status === "Processing" && now > order.shippingDeadline;
+      const isPastDeadline = (order.status === "Processing" || order.status === "Pending") && now > order.shippingDeadline;
       return { ...order, isPastDeadline };
     });
     setOrders(updatedOrders);
@@ -292,7 +316,7 @@ const SellerDashboardPage = () => {
     // Check for orders past deadline - auto cancel them
     const now = new Date();
     const ordersToUpdate = updatedOrders.map(order => {
-      if (order.status === "Processing" && now > order.shippingDeadline) {
+      if ((order.status === "Processing" || order.status === "Pending") && now > order.shippingDeadline) {
         // Auto-cancel the order and refund
         return {
           ...order,
@@ -309,7 +333,7 @@ const SellerDashboardPage = () => {
       // Update escrow balance when orders are auto-cancelled
       const newBalance = { ...escrowBalance };
       ordersToUpdate.forEach((order, index) => {
-        if (order.status === "Cancelled" && updatedOrders[index].status === "Processing") {
+        if (order.status === "Cancelled" && (updatedOrders[index].status === "Processing" || updatedOrders[index].status === "Pending")) {
           newBalance.pendingBalance -= order.amount;
         }
       });
@@ -661,6 +685,19 @@ const SellerDashboardPage = () => {
     }
   };
 
+  const handleViewAddress = (orderId: string) => {
+    const order = orders.find(o => o.id === orderId);
+    if (order && (order as any).shippingAddress) {
+      setAddressToView((order as any).shippingAddress);
+      setShowAddressDialog(true);
+    } else {
+      toast({
+        title: "Address unavailable",
+        description: "No shipping address found for this order.",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-wayscanner-blue text-white p-4 relative">
@@ -801,6 +838,7 @@ const SellerDashboardPage = () => {
               onShipOrder={handleShipOrder} 
               onAddTracking={handleAddTracking}
               onCancelOrder={handleCancelOrder}
+              onViewAddress={handleViewAddress}
               getTrackingUrl={getTrackingUrl}
             />
           </TabsContent>
@@ -920,6 +958,40 @@ const SellerDashboardPage = () => {
               <Button variant="outline">Keep Order</Button>
             </DialogClose>
             <Button onClick={confirmCancelOrder} variant="destructive">Cancel Order</Button>
+          </DialogFooter>
+      </DialogContent>
+      </Dialog>
+
+      {/* Buyer Address Dialog */}
+      <Dialog open={showAddressDialog} onOpenChange={setShowAddressDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Buyer Shipping Address</DialogTitle>
+            <DialogDescription>
+              Details provided by the buyer.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 py-2 text-sm">
+            {addressToView ? (
+              <div className="space-y-1">
+                <p><span className="font-medium">Name:</span> {addressToView.name}</p>
+                <p><span className="font-medium">Street:</span> {addressToView.street}</p>
+                <p><span className="font-medium">City:</span> {addressToView.city}</p>
+                <p><span className="font-medium">State:</span> {addressToView.state}</p>
+                <p><span className="font-medium">ZIP:</span> {addressToView.zip}</p>
+                <p><span className="font-medium">Country:</span> {addressToView.country}</p>
+                {addressToView.phone && (
+                  <p><span className="font-medium">Phone:</span> {addressToView.phone}</p>
+                )}
+              </div>
+            ) : (
+              <p className="text-gray-500">No address available.</p>
+            )}
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Close</Button>
+            </DialogClose>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -1291,14 +1363,16 @@ interface OrdersTabProps {
   onShipOrder: (id: string) => void;
   onAddTracking: (id: string) => void;
   onCancelOrder: (id: string) => void;
+  onViewAddress: (id: string) => void;
   getTrackingUrl: (order: any) => string | null;
 }
 
-const OrdersTab = ({ orders, onShipOrder, onAddTracking, onCancelOrder, getTrackingUrl }: OrdersTabProps) => {
+const OrdersTab = ({ orders, onShipOrder, onAddTracking, onCancelOrder, onViewAddress, getTrackingUrl }: OrdersTabProps) => {
   const getStatusColor = (status: string, isPastDeadline: boolean) => {
     if (isPastDeadline) return "bg-red-100 text-red-800";
     
     switch (status) {
+      case "Pending":
       case "Processing": return "bg-yellow-100 text-yellow-800";
       case "Shipped": return "bg-blue-100 text-blue-800";
       case "Delivered": return "bg-green-100 text-green-800";
@@ -1337,6 +1411,13 @@ const OrdersTab = ({ orders, onShipOrder, onAddTracking, onCancelOrder, getTrack
                   <p className="text-sm text-gray-500">Customer: {order.customer}</p>
                   <p className="text-sm font-medium mt-1">${order.amount.toFixed(2)}</p>
                 </div>
+                {order.shippingAddress && (
+                  <div className="mb-3">
+                    <Button variant="outline" size="sm" className="text-xs" onClick={() => onViewAddress(order.id)}>
+                      View Address
+                    </Button>
+                  </div>
+                )}
                 
                 {order.trackingNumber && (
                   <div className="bg-blue-50 border border-blue-200 rounded-md p-2 mb-3">
@@ -1359,7 +1440,7 @@ const OrdersTab = ({ orders, onShipOrder, onAddTracking, onCancelOrder, getTrack
                   </div>
                 )}
                 
-                {order.status === "Processing" && (
+                {(order.status === "Processing" || order.status === "Pending") && (
                   <div className="mb-3">
                     {order.isPastDeadline ? (
                       <div className="bg-red-50 border border-red-200 rounded-md p-2 mb-2">
