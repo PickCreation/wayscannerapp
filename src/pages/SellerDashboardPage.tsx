@@ -94,10 +94,10 @@ const SellerDashboardPage = () => {
       orderNumber: "WS-2346",
       product: "Handmade Ceramic Mug",
       customer: "Olivia Brown",
-      date: new Date("2025-04-07"),
+      date: new Date("2025-01-15"), // Future date to keep it pending
       status: "Pending",
       amount: 29.99,
-      shippingDeadline: new Date(new Date("2025-04-07").getTime() + (5 * 24 * 60 * 60 * 1000)),
+      shippingDeadline: new Date("2025-01-20"), // Future deadline
       isPastDeadline: false,
       trackingNumber: "",
       trackingUrl: "",
@@ -292,14 +292,6 @@ const SellerDashboardPage = () => {
       }
     }
     
-    // Check for shipping deadlines
-    const updatedOrders = orders.map(order => {
-      const now = new Date();
-      const isPastDeadline = (order.status === "Processing" || order.status === "Pending") && now > order.shippingDeadline;
-      return { ...order, isPastDeadline };
-    });
-    setOrders(updatedOrders);
-    
     // Load escrow balance data
     const savedEscrowBalance = localStorage.getItem('escrowBalance');
     if (savedEscrowBalance) {
@@ -312,42 +304,69 @@ const SellerDashboardPage = () => {
       };
       localStorage.setItem('escrowBalance', JSON.stringify(defaultBalance));
     }
-    
-    // Check for orders past deadline - auto cancel them
-    const now = new Date();
-    const ordersToUpdate = updatedOrders.map(order => {
-      if ((order.status === "Processing" || order.status === "Pending") && now > order.shippingDeadline) {
-        // Auto-cancel the order and refund
-        return {
-          ...order,
-          status: "Cancelled",
-          isPastDeadline: false
-        };
-      }
-      return order;
-    });
-    
-    if (JSON.stringify(ordersToUpdate) !== JSON.stringify(updatedOrders)) {
-      setOrders(ordersToUpdate);
+  }, [isAuthenticated, navigate, toast, user, shopSettings]);
+
+  // Separate useEffect for checking deadlines without causing infinite loop
+  useEffect(() => {
+    const checkDeadlines = () => {
+      const now = new Date();
+      let hasChanges = false;
       
-      // Update escrow balance when orders are auto-cancelled
-      const newBalance = { ...escrowBalance };
-      ordersToUpdate.forEach((order, index) => {
-        if (order.status === "Cancelled" && (updatedOrders[index].status === "Processing" || updatedOrders[index].status === "Pending")) {
-          newBalance.pendingBalance -= order.amount;
+      const updatedOrders = orders.map(order => {
+        const wasPastDeadline = order.isPastDeadline;
+        const isPastDeadline = (order.status === "Processing" || order.status === "Pending") && now > order.shippingDeadline;
+        
+        if (wasPastDeadline !== isPastDeadline) {
+          hasChanges = true;
         }
+        
+        return { ...order, isPastDeadline };
       });
       
-      setEscrowBalance(newBalance);
-      localStorage.setItem('escrowBalance', JSON.stringify(newBalance));
-      
-      toast({
-        title: "Orders Auto-Cancelled",
-        description: "Some orders past their shipping deadline have been automatically cancelled and refunded.",
-        variant: "destructive"
-      });
-    }
-  }, [isAuthenticated, navigate, toast, user, shopSettings, orders]);
+      if (hasChanges) {
+        setOrders(updatedOrders);
+        
+        // Check for auto-cancellation
+        const ordersToCancel = updatedOrders.filter(order => 
+          (order.status === "Processing" || order.status === "Pending") && 
+          order.isPastDeadline
+        );
+        
+        if (ordersToCancel.length > 0) {
+          // Auto-cancel overdue orders
+          const finalOrders = updatedOrders.map(order => {
+            if ((order.status === "Processing" || order.status === "Pending") && order.isPastDeadline) {
+              return { ...order, status: "Cancelled", isPastDeadline: false };
+            }
+            return order;
+          });
+          
+          setOrders(finalOrders);
+          
+          // Update escrow balance
+          const refundAmount = ordersToCancel.reduce((sum, order) => sum + order.amount, 0);
+          setEscrowBalance(prev => ({
+            ...prev,
+            pendingBalance: Math.max(0, prev.pendingBalance - refundAmount)
+          }));
+          
+          toast({
+            title: "Orders Auto-Cancelled",
+            description: "Some orders past their shipping deadline have been automatically cancelled and refunded.",
+            variant: "destructive"
+          });
+        }
+      }
+    };
+    
+    // Check deadlines every minute
+    const interval = setInterval(checkDeadlines, 60000);
+    
+    // Check immediately
+    checkDeadlines();
+    
+    return () => clearInterval(interval);
+  }, [orders, toast, setEscrowBalance]);
 
   const handleBackClick = () => {
     navigate("/profile");
